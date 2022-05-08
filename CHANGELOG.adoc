@@ -1,0 +1,17 @@
+= Changelog
+
+:repo_url: https://github.com/bow/courier
+
+This is a changelog for the `courier` project.
+All notable changes to this project will be documented in this file.
+
+The format is based on https://keepachangelog.com/en/1.0.0/[Keep a Changelog] and this
+project adheres to https://semver.org/spec/v2.0.0.html[semantic versioning (SemVer)] for
+official, non-beta releases.
+
+
+== {repo_url}/-/tree/master[Unreleased]
+
+=== Added
+* First version.
+

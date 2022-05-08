@@ -1,0 +1,24 @@
+# Binary outputs
+bin/
+
+# Directory to ignore in CI to ensure builds are versioned as clean.
+.go/
+.netrc
+
+# Outputs of test-related tools
+*.out
+.coverage.out
+.coverage.xml
+.junit.xml
+coverage.html
+
+# Misc
+.envrc
+.DS_Store
+.idea/
+*.swp
+*.swo
+.tool-versions
+.vscode
+*.pdf
+*.tgz
