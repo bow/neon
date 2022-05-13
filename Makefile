@@ -24,6 +24,13 @@ GIT_DIRTY  := $(shell test -n "$(shell git status --porcelain)" && echo "-dirty"
 BUILD_TIME := $(shell $(DATE_EXE) -u '+%Y-%m-%dT%H:%M:%SZ')
 IS_RELEASE := $(shell ((echo "${GIT_TAG}" | $(GREP_EXE) -qE "^v?[0-9]+\.[0-9]+\.[0-9]+$$") && echo '1') || true)
 
+IMG_NAME   := ghcr.io/bow/$(APP_NAME)
+ifeq ($(IS_RELEASE),1)
+IMG_TAG    := $(GIT_TAG)
+else
+IMG_TAG    := latest
+endif
+
 BIN_DIR  ?= $(CURDIR)/bin
 BIN_NAME ?= $(APP_NAME)
 
@@ -49,7 +56,12 @@ $(BIN_DIR)/$(BIN_NAME): $(shell find . -type f -name '*.go' -print) go.mod
 
 .PHONY: clean
 clean:  ## Remove all build artifacts.
-	@rm -f bin/* coverage.html .coverage.out .junit.xml
+	rm -f bin/* coverage.html .coverage.out .junit.xml && (docker rmi $(IMG_NAME) 2> /dev/null || true)
+
+
+.PHONY: img
+img:  ## Build and tag the Docker container.
+	docker build --build-arg REVISION=$(GIT_COMMIT)$(GIT_DIRTY) --build-arg BUILD_TIME=$(BUILD_TIME) --tag $(IMG_NAME):$(IMG_TAG) .
 
 
 .PHONY: install-dev
