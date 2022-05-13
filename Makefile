@@ -44,6 +44,14 @@ BASE_LD_FLAGS += -X ${REPO_NAME}/version.gitCommit=$(GIT_COMMIT)$(GIT_DIRTY)
 LD_FLAGS := $(strip $(BASE_LD_FLAGS) $(LD_FLAGS))
 
 
+# Protobuf settings.
+PROTOC_VERSION := 3.20.1
+PROTOC_GEN_GO_GRPC_VERSION := v1.2.0
+GO_PROTOBUF_VERSION := $(shell (cat go.mod | $(GREP_EXE) google.golang.org/protobuf | $(SED_EXE) -r 's/[[:space:]]+google.golang.org\/protobuf //g'))
+PROTO_DIR := $(CURDIR)/proto
+PROTO_FILES := $(shell find $(PROTO_DIR) -type f -name "*.proto" -print)
+
+
 all: help
 
 
@@ -71,10 +79,15 @@ install-dev:  ## Install dependencies for local development.
 			(asdf plugin add golang 2> /dev/null || true) \
 				&& asdf install golang $(GO_VERSION) \
 				&& asdf local golang $(GO_VERSION) > .tool-versions; \
+			(asdf plugin add protoc 2> /dev/null || true) \
+				&& asdf install protoc $(PROTOC_VERSION) \
+				&& asdf local protoc $(PROTOC_VERSION) >> .tool-versions; \
 		fi; \
 		asdf reshim; \
 	fi
 	go install gotest.tools/gotestsum@v1.8.0 \
+		&& go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@$(PROTOC_GEN_GO_GRPC_VERSION) \
+		&& go install google.golang.org/protobuf/cmd/protoc-gen-go@$(GO_PROTOBUF_VERSION) \
 		&& go install github.com/boumenot/gocover-cobertura@latest \
 		&& go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.46.0
 	@if command -v asdf 1>/dev/null 2>&1; then \
@@ -98,6 +111,17 @@ help:  ## Show this help.
 .PHONY: lint
 lint:  ## Lint the code.
 	golangci-lint run
+
+
+.PHONY: proto
+proto: $(PROTO_FILES) ## Generate code from protobuf.
+	@protoc \
+		-I=$(PROTO_DIR) \
+		--go_opt=Mcourier.proto="$(REPO_NAME)/proto;proto" \
+		--go-grpc_opt=Mcourier.proto="$(REPO_NAME)/proto;proto" \
+		--go_out=$(PROTO_DIR) --go_opt=paths=source_relative \
+		--go-grpc_out=$(PROTO_DIR) --go-grpc_opt=paths=source_relative \
+		$(PROTO_FILES)
 
 
 .PHONY: test .coverage.out
