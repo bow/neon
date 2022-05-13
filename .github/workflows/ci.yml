@@ -1,0 +1,129 @@
+---
+name: CI
+
+# Ensure only one job per branch.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches: [master]
+    tags: ["*"]
+  pull_request:
+    branches: [master]
+    types: [opened, synchronize]
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Install Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: "1.18"
+          check-latest: true
+
+      - name: Setup cache
+        uses: actions/cache@v3
+        id: cache-go
+        with:
+          path: ~/go/pkg/mod
+          # yamllint disable-line rule:line-length
+          key: ${{ runner.os }}-${{ hashFiles('**/go.sum') }}
+
+      - name: Install and configure dependencies
+        run: |
+          make install-dev
+
+      - name: Run tests
+        run: |
+          make test-cov-xml
+
+      - name: Upload test report
+        if: always()
+        uses: mikepenz/action-junit-report@v3
+        with:
+          check_name: Test report
+          report_paths: '**/.junit.xml'
+
+      - name: Upload coverage
+        uses: paambaati/codeclimate-action@v3.0.0
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+        with:
+          coverageLocations: |
+            ${{ github.workspace }}/.coverage.xml:cobertura
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Install Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: "1.18"
+          check-latest: true
+
+      - name: Run linter
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: v1.46.0
+
+  pub-image:
+    name: Publish Docker image
+    runs-on: ubuntu-latest
+    needs: [lint, test]
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        with:
+          # Ensure all git history is cloned, so we can infer the correct version in Docker.
+          fetch-depth: 0
+
+      - name: Setup docker buildx
+        if: github.event_name != 'pull_request'
+        uses: docker/setup-buildx-action@v2
+
+      - name: Extract metadata for image
+        if: github.event_name != 'pull_request'
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            ghcr.io/${{ github.repository }}
+          tags: |
+            type=semver,pattern={{version}}
+            type=raw,value=latest,enable={{is_default_branch}}
+          flavor: |
+            latest=true
+
+      - name: Get current time
+        run: |
+          echo "BUILD_TIME=$(date -u '+%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_ENV
+
+      - name: Login to container registry
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and publish image
+        if: github.event_name != 'pull_request'
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          build-args: |
+            REVISION=${{ github.sha }}
+            BUILD_TIME=${{ env.BUILD_TIME }}
