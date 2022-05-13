@@ -1,7 +1,13 @@
 package main
 
-import "fmt"
+import (
+	"os"
+
+	"github.com/bow/courier/cmd"
+)
 
 func main() {
-	fmt.Println("Ok")
+	if err := cmd.Execute(); err != nil {
+		os.Exit(1)
+	}
 }
