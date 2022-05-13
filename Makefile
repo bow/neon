@@ -33,6 +33,7 @@ endif
 
 BIN_DIR  ?= $(CURDIR)/bin
 BIN_NAME ?= $(APP_NAME)
+BIN_PATH := $(BIN_DIR)/$(BIN_NAME)
 
 # Linker flags for go-build
 # BASE_LD_FLAGS are linker flags that can not be overwritten.
@@ -56,9 +57,9 @@ all: help
 
 
 .PHONY: bin
-bin: $(BIN_DIR)/$(BIN_NAME)  ## Compile an executable binary.
+bin: $(BIN_PATH)  ## Compile an executable binary.
 
-$(BIN_DIR)/$(BIN_NAME): $(shell find . -type f -name '*.go' -print) go.mod
+$(BIN_PATH): $(shell find . -type f -name '*.go' -print) go.mod
 	go mod tidy && go build -trimpath -ldflags '$(LD_FLAGS)' -o $@
 
 
@@ -122,6 +123,11 @@ proto: $(PROTO_FILES) ## Generate code from protobuf.
 		--go_out=$(PROTO_DIR) --go_opt=paths=source_relative \
 		--go-grpc_out=$(PROTO_DIR) --go-grpc_opt=paths=source_relative \
 		$(PROTO_FILES)
+
+
+.PHONY: serve
+serve: bin  ## Compile the binary and run the server.
+	$(BIN_PATH) serve
 
 
 .PHONY: test .coverage.out
