@@ -5,13 +5,13 @@ package courier;
 option go_package = "github.com/bow/courier/proto";
 
 service Courier {
-  // GetVersion returns the version info of the running server.
-  rpc GetVersion (GetVersionRequest) returns (GetVersionResponse) {}
+  // GetInfo returns the version info of the running server.
+  rpc GetInfo (GetInfoRequest) returns (GetInfoResponse) {}
 }
 
-message GetVersionRequest {}
+message GetInfoRequest {}
 
-message GetVersionResponse {
+message GetInfoResponse {
   string name = 1;
   string version = 2;
   string git_commit = 3;

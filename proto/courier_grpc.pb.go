@@ -22,8 +22,8 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CourierClient interface {
-	// GetVersion returns the version info of the running server.
-	GetVersion(ctx context.Context, in *GetVersionRequest, opts ...grpc.CallOption) (*GetVersionResponse, error)
+	// GetInfo returns the version info of the running server.
+	GetInfo(ctx context.Context, in *GetInfoRequest, opts ...grpc.CallOption) (*GetInfoResponse, error)
 }
 
 type courierClient struct {
@@ -34,9 +34,9 @@ func NewCourierClient(cc grpc.ClientConnInterface) CourierClient {
 	return &courierClient{cc}
 }
 
-func (c *courierClient) GetVersion(ctx context.Context, in *GetVersionRequest, opts ...grpc.CallOption) (*GetVersionResponse, error) {
-	out := new(GetVersionResponse)
-	err := c.cc.Invoke(ctx, "/courier.Courier/GetVersion", in, out, opts...)
+func (c *courierClient) GetInfo(ctx context.Context, in *GetInfoRequest, opts ...grpc.CallOption) (*GetInfoResponse, error) {
+	out := new(GetInfoResponse)
+	err := c.cc.Invoke(ctx, "/courier.Courier/GetInfo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -47,8 +47,8 @@ func (c *courierClient) GetVersion(ctx context.Context, in *GetVersionRequest, o
 // All implementations must embed UnimplementedCourierServer
 // for forward compatibility
 type CourierServer interface {
-	// GetVersion returns the version info of the running server.
-	GetVersion(context.Context, *GetVersionRequest) (*GetVersionResponse, error)
+	// GetInfo returns the version info of the running server.
+	GetInfo(context.Context, *GetInfoRequest) (*GetInfoResponse, error)
 	mustEmbedUnimplementedCourierServer()
 }
 
@@ -56,8 +56,8 @@ type CourierServer interface {
 type UnimplementedCourierServer struct {
 }
 
-func (UnimplementedCourierServer) GetVersion(context.Context, *GetVersionRequest) (*GetVersionResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetVersion not implemented")
+func (UnimplementedCourierServer) GetInfo(context.Context, *GetInfoRequest) (*GetInfoResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetInfo not implemented")
 }
 func (UnimplementedCourierServer) mustEmbedUnimplementedCourierServer() {}
 
@@ -72,20 +72,20 @@ func RegisterCourierServer(s grpc.ServiceRegistrar, srv CourierServer) {
 	s.RegisterService(&Courier_ServiceDesc, srv)
 }
 
-func _Courier_GetVersion_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetVersionRequest)
+func _Courier_GetInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetInfoRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CourierServer).GetVersion(ctx, in)
+		return srv.(CourierServer).GetInfo(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/courier.Courier/GetVersion",
+		FullMethod: "/courier.Courier/GetInfo",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CourierServer).GetVersion(ctx, req.(*GetVersionRequest))
+		return srv.(CourierServer).GetInfo(ctx, req.(*GetInfoRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -98,8 +98,8 @@ var Courier_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*CourierServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GetVersion",
-			Handler:    _Courier_GetVersion_Handler,
+			MethodName: "GetInfo",
+			Handler:    _Courier_GetInfo_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

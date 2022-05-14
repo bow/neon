@@ -20,13 +20,13 @@ func setupService(grpcs *grpc.Server) *service {
 	return &svc
 }
 
-// GetVersion satisfies the service API.
-func (svc *service) GetVersion(
+// GetInfo satisfies the service API.
+func (svc *service) GetInfo(
 	_ context.Context,
-	_ *proto.GetVersionRequest,
-) (*proto.GetVersionResponse, error) {
+	_ *proto.GetInfoRequest,
+) (*proto.GetInfoResponse, error) {
 
-	rsp := proto.GetVersionResponse{
+	rsp := proto.GetInfoResponse{
 		Name:      version.AppName(),
 		Version:   version.Version(),
 		GitCommit: version.GitCommit(),
