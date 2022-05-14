@@ -3,10 +3,10 @@ package server
 import (
 	"context"
 
-	"github.com/bow/courier/proto"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
+
+	"github.com/bow/courier/proto"
+	"github.com/bow/courier/version"
 )
 
 // service implements the Courier service API.
@@ -25,5 +25,13 @@ func (svc *service) GetVersion(
 	_ context.Context,
 	_ *proto.GetVersionRequest,
 ) (*proto.GetVersionResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "not implemented")
+
+	rsp := proto.GetVersionResponse{
+		Name:      version.AppName(),
+		Version:   version.Version(),
+		GitCommit: version.GitCommit(),
+		BuildTime: version.BuildTime(),
+	}
+
+	return &rsp, nil
 }
