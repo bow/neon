@@ -47,8 +47,8 @@ func init() {
 	pflags := rootCmd.PersistentFlags()
 
 	pflags.StringP(logLevelKey, "l", "info", "logging level")
-	viper.BindPFlag(logLevelKey, pflags.Lookup(logLevelKey))
+	_ = viper.BindPFlag(logLevelKey, pflags.Lookup(logLevelKey))
 
 	pflags.String(logStyleKey, "pretty", "logging style")
-	viper.BindPFlag(logStyleKey, pflags.Lookup(logStyleKey))
+	_ = viper.BindPFlag(logStyleKey, pflags.Lookup(logStyleKey))
 }

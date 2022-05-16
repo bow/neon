@@ -36,5 +36,5 @@ func init() {
 	flags := serveCmd.Flags()
 
 	flags.StringP(addrKey, "a", ":50051", "listening address")
-	viper.BindPFlag(addrKey, flags.Lookup(addrKey))
+	_ = viper.BindPFlag(addrKey, flags.Lookup(addrKey))
 }
