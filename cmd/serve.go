@@ -4,14 +4,17 @@ import (
 	"github.com/bow/courier/server"
 	zlog "github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
+
+const addrKey = "addr"
 
 var serveCmd = cobra.Command{
 	Use:   "serve",
 	Short: "Start the server",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		// TODO: Expose as proper flag.
-		addr := ":50051"
+		addr := viper.GetString(addrKey)
+
 		logger := zlog.Logger.With().Logger()
 
 		builder := server.NewBuilder().
@@ -29,4 +32,9 @@ var serveCmd = cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(&serveCmd)
+
+	flags := serveCmd.Flags()
+
+	flags.StringP(addrKey, "a", ":50051", "listening address")
+	viper.BindPFlag(addrKey, flags.Lookup(addrKey))
 }

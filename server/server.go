@@ -42,6 +42,8 @@ func (s *server) start() <-chan error {
 		defer close(ch)
 		ch <- s.grpcServer.Serve(s.lis)
 	}()
+	log.Info().Msgf("server listening at %s", s.lis.Addr().String())
+
 	return ch
 }
 
