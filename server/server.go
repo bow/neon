@@ -4,6 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"net"
+	"os"
+	"os/signal"
+	"syscall"
 
 	grpczerolog "github.com/grpc-ecosystem/go-grpc-middleware/providers/zerolog/v2"
 	middleware "github.com/grpc-ecosystem/go-grpc-middleware/v2"
@@ -15,9 +18,41 @@ import (
 )
 
 type server struct {
-	lis net.Listener
-
+	lis        net.Listener
 	grpcServer *grpc.Server
+	stopf       func()
+}
+
+func newServer(lis net.Listener, grpcServer *grpc.Server) *server {
+
+	var (
+		funcCh = make(chan struct{}, 1)
+		sigCh  = make(chan os.Signal, 1)
+	)
+	signal.Notify(sigCh, os.Interrupt, syscall.SIGTERM)
+
+	go func() {
+		defer close(funcCh)
+		defer close(sigCh)
+
+		select {
+		case sig := <-sigCh:
+			log.Info().Msgf("stopping server (%s)", sig)
+		case <-funcCh:
+			log.Info().Msgf("stopping server (function called)")
+		}
+
+		grpcServer.GracefulStop()
+		log.Info().Msg("server stopped")
+	}()
+
+	s := server{
+		lis:        lis,
+		grpcServer: grpcServer,
+		stopf:      func() { funcCh <- struct{}{} },
+	}
+
+	return &s
 }
 
 func (s *server) Serve() error {
@@ -34,6 +69,10 @@ func (s *server) Serve() error {
 		return nil
 	}
 	return err
+}
+
+func (s *server) Stop() {
+	s.stopf()
 }
 
 func (s *server) start() <-chan error {
@@ -85,7 +124,5 @@ func (b *Builder) Build() (*server, error) {
 	)
 	setupService(grpcs)
 
-	srv := server{grpcServer: grpcs, lis: lis}
-
-	return &srv, nil
+	return newServer(lis, grpcs), nil
 }
