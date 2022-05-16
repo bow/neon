@@ -8,6 +8,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/bow/courier/proto"
 	grpczerolog "github.com/grpc-ecosystem/go-grpc-middleware/providers/zerolog/v2"
 	middleware "github.com/grpc-ecosystem/go-grpc-middleware/v2"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -15,12 +16,16 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/health"
+	healthapi "google.golang.org/grpc/health/grpc_health_v1"
 )
 
 type server struct {
 	lis        net.Listener
 	grpcServer *grpc.Server
-	stopf       func()
+	stopf      func()
+
+	healthSvc *health.Server
 }
 
 func newServer(lis net.Listener, grpcServer *grpc.Server) *server {
@@ -50,9 +55,14 @@ func newServer(lis net.Listener, grpcServer *grpc.Server) *server {
 		lis:        lis,
 		grpcServer: grpcServer,
 		stopf:      func() { funcCh <- struct{}{} },
+		healthSvc:  health.NewServer(),
 	}
 
 	return &s
+}
+
+func (s *server) ServiceName() string {
+	return proto.Courier_ServiceDesc.ServiceName
 }
 
 func (s *server) Serve() error {
@@ -64,6 +74,9 @@ func (s *server) Serve() error {
 
 `)
 	log.Info().Msg("starting server")
+
+	s.healthSvc.SetServingStatus(s.ServiceName(), healthapi.HealthCheckResponse_NOT_SERVING)
+
 	err := <-s.start()
 	if errors.Is(err, grpc.ErrServerStopped) {
 		return nil
@@ -79,6 +92,7 @@ func (s *server) start() <-chan error {
 	ch := make(chan error)
 	go func() {
 		defer close(ch)
+		s.healthSvc.Resume()
 		ch <- s.grpcServer.Serve(s.lis)
 	}()
 	log.Info().Msgf("server listening at %s", s.lis.Addr().String())
@@ -124,5 +138,8 @@ func (b *Builder) Build() (*server, error) {
 	)
 	setupService(grpcs)
 
-	return newServer(lis, grpcs), nil
+	s := newServer(lis, grpcs)
+	healthapi.RegisterHealthServer(grpcs, s.healthSvc)
+
+	return s, nil
 }
