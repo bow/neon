@@ -18,6 +18,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/health"
 	healthapi "google.golang.org/grpc/health/grpc_health_v1"
+	"google.golang.org/grpc/reflection"
 )
 
 type server struct {
@@ -140,6 +141,7 @@ func (b *Builder) Build() (*server, error) {
 
 	s := newServer(lis, grpcs)
 	healthapi.RegisterHealthServer(grpcs, s.healthSvc)
+	reflection.Register(grpcs)
 
 	return s, nil
 }
