@@ -6,7 +6,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/bow/courier/version"
+	"github.com/bow/courier/internal"
 )
 
 var versionCmd = cobra.Command{
@@ -28,10 +28,10 @@ var versionCmd = cobra.Command{
 			}
 		}
 
-		show("App", version.AppName())
-		show("Version", version.Version())
-		show("Git commit", version.GitCommit())
-		show("Build time", version.BuildTime())
+		show("App", internal.AppName())
+		show("Version", internal.Version())
+		show("Git commit", internal.GitCommit())
+		show("Build time", internal.BuildTime())
 		show("OS/Arch", fmt.Sprintf("%s/%s", os, arch))
 		show("Go version", bi.GoVersion)
 

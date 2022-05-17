@@ -37,9 +37,9 @@ BIN_PATH := $(BIN_DIR)/$(BIN_NAME)
 
 # Linker flags for go-build
 # BASE_LD_FLAGS are linker flags that can not be overwritten.
-BASE_LD_FLAGS := -X ${REPO_NAME}/version.version=$(GIT_TAG)
-BASE_LD_FLAGS += -X ${REPO_NAME}/version.buildTime=$(BUILD_TIME)
-BASE_LD_FLAGS += -X ${REPO_NAME}/version.gitCommit=$(GIT_COMMIT)$(GIT_DIRTY)
+BASE_LD_FLAGS := -X ${REPO_NAME}/internal.version=$(GIT_TAG)
+BASE_LD_FLAGS += -X ${REPO_NAME}/internal.buildTime=$(BUILD_TIME)
+BASE_LD_FLAGS += -X ${REPO_NAME}/internal.gitCommit=$(GIT_COMMIT)$(GIT_DIRTY)
 
 # Allow for optional LD flags from env, appended to base flags, stripping trailing whitespaces.
 LD_FLAGS := $(strip $(BASE_LD_FLAGS) $(LD_FLAGS))
@@ -49,7 +49,7 @@ LD_FLAGS := $(strip $(BASE_LD_FLAGS) $(LD_FLAGS))
 PROTOC_VERSION := 3.20.1
 PROTOC_GEN_GO_GRPC_VERSION := v1.2.0
 GO_PROTOBUF_VERSION := $(shell (cat go.mod | $(GREP_EXE) google.golang.org/protobuf | $(SED_EXE) -r 's/[[:space:]]+google.golang.org\/protobuf //g'))
-PROTO_DIR := $(CURDIR)/proto
+PROTO_DIR := $(CURDIR)/api
 PROTO_FILES := $(shell find $(PROTO_DIR) -type f -name "*.proto" -print)
 
 
@@ -118,8 +118,8 @@ lint:  ## Lint the code.
 proto: $(PROTO_FILES) ## Generate code from protobuf.
 	@protoc \
 		-I=$(PROTO_DIR) \
-		--go_opt=Mcourier.proto="$(REPO_NAME)/proto;proto" \
-		--go-grpc_opt=Mcourier.proto="$(REPO_NAME)/proto;proto" \
+		--go_opt=Mcourier.proto="$(REPO_NAME)/api;api" \
+		--go-grpc_opt=Mcourier.proto="$(REPO_NAME)/api;api" \
 		--go_out=$(PROTO_DIR) --go_opt=paths=source_relative \
 		--go-grpc_out=$(PROTO_DIR) --go-grpc_opt=paths=source_relative \
 		$(PROTO_FILES)

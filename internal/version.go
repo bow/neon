@@ -1,4 +1,4 @@
-package version
+package internal
 
 // All values declared here are meant to be overwritten at compile time.
 var buildTime, gitCommit, version string

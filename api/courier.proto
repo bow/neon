@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package courier;
 
-option go_package = "github.com/bow/courier/proto";
+option go_package = "github.com/bow/courier/api";
 
 service Courier {
   // GetInfo returns the version info of the running server.

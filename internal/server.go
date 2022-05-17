@@ -1,4 +1,4 @@
-package server
+package internal
 
 import (
 	"errors"
@@ -8,7 +8,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/bow/courier/proto"
+	"github.com/bow/courier/api"
 	grpczerolog "github.com/grpc-ecosystem/go-grpc-middleware/providers/zerolog/v2"
 	middleware "github.com/grpc-ecosystem/go-grpc-middleware/v2"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -63,7 +63,7 @@ func newServer(lis net.Listener, grpcServer *grpc.Server) *server {
 }
 
 func (s *server) ServiceName() string {
-	return proto.Courier_ServiceDesc.ServiceName
+	return api.Courier_ServiceDesc.ServiceName
 }
 
 func (s *server) Serve() error {
@@ -101,27 +101,27 @@ func (s *server) start() <-chan error {
 	return ch
 }
 
-type Builder struct {
+type ServerBuilder struct {
 	addr   string
 	logger zerolog.Logger
 }
 
-func NewBuilder() *Builder {
-	builder := Builder{logger: zerolog.Nop()}
+func NewServerBuilder() *ServerBuilder {
+	builder := ServerBuilder{logger: zerolog.Nop()}
 	return &builder
 }
 
-func (b *Builder) Address(addr string) *Builder {
+func (b *ServerBuilder) Address(addr string) *ServerBuilder {
 	b.addr = addr
 	return b
 }
 
-func (b *Builder) Logger(logger zerolog.Logger) *Builder {
+func (b *ServerBuilder) Logger(logger zerolog.Logger) *ServerBuilder {
 	b.logger = logger
 	return b
 }
 
-func (b *Builder) Build() (*server, error) {
+func (b *ServerBuilder) Build() (*server, error) {
 	lis, err := net.Listen("tcp", b.addr)
 	if err != nil {
 		return nil, err

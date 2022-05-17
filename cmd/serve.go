@@ -1,10 +1,11 @@
 package cmd
 
 import (
-	"github.com/bow/courier/server"
 	zlog "github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+
+	"github.com/bow/courier/internal"
 )
 
 const addrKey = "addr"
@@ -13,15 +14,12 @@ var serveCmd = cobra.Command{
 	Use:   "serve",
 	Short: "Start the server",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		addr := viper.GetString(addrKey)
 
-		logger := zlog.Logger.With().Logger()
+		server, err := internal.NewServerBuilder().
+			Address(viper.GetString(addrKey)).
+			Logger(zlog.Logger.With().Logger()).
+			Build()
 
-		builder := server.NewBuilder().
-			Address(addr).
-			Logger(logger)
-
-		server, err := builder.Build()
 		if err != nil {
 			return err
 		}

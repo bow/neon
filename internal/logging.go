@@ -1,4 +1,4 @@
-package logging
+package internal
 
 import (
 	"fmt"
@@ -7,22 +7,21 @@ import (
 	"strings"
 	"time"
 
-	"github.com/bow/courier/version"
 	"github.com/rs/zerolog"
 	zlog "github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
 )
 
-type Style uint8
+type LogStyle uint8
 
 const (
-	PrettyConsoleStyle Style = iota
-	JSONStyle
+	PrettyLogStyle LogStyle = iota
+	JSONLogStyle
 )
 
-func Init(
+func InitGlobalLog(
 	logLevel string,
-	style Style,
+	style LogStyle,
 	writer io.Writer,
 ) error {
 
@@ -34,9 +33,9 @@ func Init(
 	)
 
 	switch style {
-	case PrettyConsoleStyle:
+	case PrettyLogStyle:
 		cw = zerolog.ConsoleWriter{Out: writer, TimeFormat: tf}
-	case JSONStyle:
+	case JSONLogStyle:
 		cw = writer
 	}
 
@@ -55,8 +54,8 @@ func Init(
 		logger: zerolog.New(cw).
 			With().
 			Timestamp().
-			Str("app", version.AppName()).
-			Str("app_version", version.Version()).
+			Str("app", AppName()).
+			Str("app_version", Version()).
 			Str("grpc.version", grpc.Version).
 			Int("pid", os.Getpid()).
 			Logger(),

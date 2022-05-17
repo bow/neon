@@ -4,8 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/bow/courier/logging"
-	"github.com/bow/courier/version"
+	"github.com/bow/courier/internal"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -16,7 +15,7 @@ const (
 )
 
 var rootCmd = cobra.Command{
-	Use:               version.AppName(),
+	Use:               internal.AppName(),
 	Short:             "RSS reader suite",
 	SilenceUsage:      true,
 	SilenceErrors:     true,
@@ -24,17 +23,17 @@ var rootCmd = cobra.Command{
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 		logLevel := viper.GetString(logLevelKey)
 
-		var ls logging.Style
+		var ls internal.LogStyle
 		switch rls := viper.GetString(logStyleKey); rls {
 		case "pretty":
-			ls = logging.PrettyConsoleStyle
+			ls = internal.PrettyLogStyle
 		case "json":
-			ls = logging.JSONStyle
+			ls = internal.JSONLogStyle
 		default:
 			return fmt.Errorf("invalid %s value: '%s'", logStyleKey, rls)
 		}
 
-		return logging.Init(logLevel, ls, os.Stderr)
+		return internal.InitGlobalLog(logLevel, ls, os.Stderr)
 	},
 }
 
