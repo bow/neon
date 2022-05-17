@@ -24,12 +24,13 @@ import (
 type server struct {
 	lis        net.Listener
 	grpcServer *grpc.Server
+	quiet      bool
 	stopf      func()
 
 	healthSvc *health.Server
 }
 
-func newServer(lis net.Listener, grpcServer *grpc.Server) *server {
+func newServer(lis net.Listener, grpcServer *grpc.Server, quiet bool) *server {
 
 	var (
 		funcCh = make(chan struct{}, 1)
@@ -56,6 +57,7 @@ func newServer(lis net.Listener, grpcServer *grpc.Server) *server {
 		lis:        lis,
 		grpcServer: grpcServer,
 		stopf:      func() { funcCh <- struct{}{} },
+		quiet:      quiet,
 		healthSvc:  health.NewServer(),
 	}
 
@@ -67,13 +69,15 @@ func (s *server) ServiceName() string {
 }
 
 func (s *server) Serve() error {
-	fmt.Printf(`   ______                 _
+	if !s.quiet {
+		fmt.Printf(`   ______                 _
   / ____/___  __  _______(_)__  _____
  / /   / __ \/ / / / ___/ / _ \/ ___/
 / /___/ /_/ / /_/ / /  / /  __/ /
 \____/\____/\__,_/_/  /_/\___/_/
 
 `)
+	}
 	log.Info().Msg("starting server")
 
 	s.healthSvc.SetServingStatus(s.ServiceName(), healthapi.HealthCheckResponse_NOT_SERVING)
@@ -104,10 +108,11 @@ func (s *server) start() <-chan error {
 type ServerBuilder struct {
 	addr   string
 	logger zerolog.Logger
+	quiet  bool
 }
 
 func NewServerBuilder() *ServerBuilder {
-	builder := ServerBuilder{logger: zerolog.Nop()}
+	builder := ServerBuilder{logger: zerolog.Nop(), quiet: false}
 	return &builder
 }
 
@@ -118,6 +123,11 @@ func (b *ServerBuilder) Address(addr string) *ServerBuilder {
 
 func (b *ServerBuilder) Logger(logger zerolog.Logger) *ServerBuilder {
 	b.logger = logger
+	return b
+}
+
+func (b *ServerBuilder) Quiet(quiet bool) *ServerBuilder {
+	b.quiet = quiet
 	return b
 }
 
@@ -139,7 +149,7 @@ func (b *ServerBuilder) Build() (*server, error) {
 	)
 	setupService(grpcs)
 
-	s := newServer(lis, grpcs)
+	s := newServer(lis, grpcs, b.quiet)
 	healthapi.RegisterHealthServer(grpcs, s.healthSvc)
 	reflection.Register(grpcs)
 
