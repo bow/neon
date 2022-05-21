@@ -16,7 +16,7 @@ const (
 
 var rootCmd = cobra.Command{
 	Use:               internal.AppName(),
-	Short:             "RSS reader suite",
+	Short:             "Feed reader suite",
 	SilenceUsage:      true,
 	SilenceErrors:     true,
 	CompletionOptions: cobra.CompletionOptions{DisableDefaultCmd: true},
