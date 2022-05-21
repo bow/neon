@@ -36,7 +36,8 @@ func TestParseOkSimple(t *testing.T) {
 	r.NoError(err)
 
 	a := assert.New(t)
-	a.Equal("Example Feed", doc.Title)
+	a.Equal("Example Feed", doc.Title.Value)
+	a.Equal(PlainText, doc.Title.Type)
 	a.Equal(2003, doc.Updated.Year())
 	a.Equal(time.December, doc.Updated.Month())
 	a.Equal(13, doc.Updated.Day())
@@ -52,7 +53,8 @@ func TestParseOkSimple(t *testing.T) {
 	r.Len(doc.Entries, 1)
 	entry := doc.Entries[0]
 
-	a.Equal("Atom-Powered Robots Run Amok", entry.Title)
+	a.Equal("Atom-Powered Robots Run Amok", entry.Title.Value)
+	a.Equal(PlainText, entry.Title.Type)
 	a.Equal("urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a", entry.ID)
 	a.Equal(2003, entry.Updated.Year())
 	a.Equal(time.December, entry.Updated.Month())
@@ -87,7 +89,8 @@ func TestParseOkMinimal(t *testing.T) {
 	r.NoError(err)
 
 	a := assert.New(t)
-	a.Equal("Example Feed", doc.Title)
+	a.Equal("Example Feed", doc.Title.Value)
+	a.Equal(PlainText, doc.Title.Type)
 	a.Equal(2003, doc.Updated.Year())
 	a.Equal(time.December, doc.Updated.Month())
 	a.Equal(13, doc.Updated.Day())

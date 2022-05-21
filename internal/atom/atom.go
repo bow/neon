@@ -2,7 +2,17 @@ package atom
 
 import (
 	"encoding/xml"
+	"fmt"
+	"strings"
 	"time"
+)
+
+type TextType uint8
+
+const (
+	PlainText TextType = iota
+	HTMLText
+	XHTMLText
 )
 
 func Parse(raw []byte) (*Document, error) {
@@ -28,8 +38,9 @@ func Parse(raw []byte) (*Document, error) {
 
 // Document follows RFC3287: https://datatracker.ietf.org/doc/html/rfc4287.
 type Document struct {
-	XMLName xml.Name     `xml:"http://www.w3.org/2005/Atom feed"`
-	Title   string       `xml:"title"`
+	XMLName xml.Name `xml:"http://www.w3.org/2005/Atom feed"`
+
+	Title   *Text        `xml:"title"`
 	Links   []*Link      `xml:"link,omitempty"`
 	Updated *RFC3399Time `xml:"updated,omitempty"`
 	Author  *Author      `xml:"author"`
@@ -38,8 +49,9 @@ type Document struct {
 }
 
 type Entry struct {
-	XMLName xml.Name     `xml:"entry"`
-	Title   string       `xml:"title"`
+	XMLName xml.Name `xml:"entry"`
+
+	Title   *Text        `xml:"title"`
 	Links   []*Link      `xml:"link,omitempty"`
 	ID      string       `xml:"id"`
 	Updated *RFC3399Time `xml:"updated,omitempty"`
@@ -47,11 +59,41 @@ type Entry struct {
 }
 
 func (e *Entry) IsNotEmpty() bool {
-	return e.Title != "" ||
+	return (e.Title != nil && e.Title.Value != "") ||
 		len(e.Links) > 0 ||
 		e.ID != "" ||
 		e.Updated != nil ||
 		e.Summary != ""
+}
+
+type Text struct {
+	Type  TextType
+	Value string
+}
+
+func (t *Text) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+	var raw string
+	_ = d.DecodeElement(&raw, &start)
+
+	var typ = PlainText
+	for _, attr := range start.Attr {
+		if strings.ToLower(attr.Name.Local) != "type" {
+			continue
+		}
+		switch rt := strings.ToLower(attr.Value); rt {
+		case "", "text":
+			typ = PlainText
+		case "html":
+			typ = HTMLText
+		case "xhtml":
+			typ = XHTMLText
+		default:
+			return fmt.Errorf("invalid 'type' attribute for tag '%s': '%s'", start.Name.Local, rt)
+		}
+	}
+
+	*t = Text{Value: raw, Type: typ}
+	return nil
 }
 
 type Link struct {
