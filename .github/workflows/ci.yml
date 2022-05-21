@@ -51,6 +51,14 @@ jobs:
           check_name: Test report
           report_paths: '**/.junit.xml'
 
+      - name: Upload coverage
+        uses: paambaati/codeclimate-action@v3.0.0
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+        with:
+          coverageLocations: |
+            ${{ github.workspace }}/.coverage.xml:cobertura
+
   lint:
     name: Lint
     runs-on: ubuntu-latest
