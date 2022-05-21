@@ -50,6 +50,9 @@ func TestParseOkSimple(t *testing.T) {
 	a.Equal(2, feed.Updated.Second())
 
 	a.Equal("John Doe", feed.Author.Name)
+	a.Equal("", feed.Author.URI)
+	a.Equal("", feed.Author.Email)
+
 	a.Equal("urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6", feed.ID)
 
 	r.Len(feed.Links, 1)
@@ -108,6 +111,9 @@ func TestParseOkMinimal(t *testing.T) {
 	a.Equal(2, feed.Updated.Second())
 
 	a.Equal("John Doe", feed.Author.Name)
+	a.Equal("", feed.Author.URI)
+	a.Equal("", feed.Author.Email)
+
 	a.Equal("urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6", feed.ID)
 
 	a.Len(feed.Entries, 0)
@@ -171,6 +177,17 @@ func TestParseOkExtended(t *testing.T) {
   `,
 		feed.Subtitle.Value)
 	a.Equal(HTMLText, feed.Subtitle.Type)
+
+	a.Equal(2005, feed.Updated.Year())
+	a.Equal(time.July, feed.Updated.Month())
+	a.Equal(31, feed.Updated.Day())
+	a.Equal(12, feed.Updated.Hour())
+	a.Equal(29, feed.Updated.Minute())
+	a.Equal(29, feed.Updated.Second())
+
+	a.Nil(feed.Author)
+
+	a.Equal("tag:example.org,2003:3", feed.ID)
 
 	a.Len(feed.Entries, 1)
 }
