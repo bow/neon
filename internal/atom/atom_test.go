@@ -36,14 +36,19 @@ func TestParseOkSimple(t *testing.T) {
 	r.NoError(err)
 
 	a := assert.New(t)
+
 	a.Equal("Example Feed", doc.Title.Value)
 	a.Equal(PlainText, doc.Title.Type)
+
+	a.Nil(doc.Subtitle)
+
 	a.Equal(2003, doc.Updated.Year())
 	a.Equal(time.December, doc.Updated.Month())
 	a.Equal(13, doc.Updated.Day())
 	a.Equal(18, doc.Updated.Hour())
 	a.Equal(30, doc.Updated.Minute())
 	a.Equal(2, doc.Updated.Second())
+
 	a.Equal("John Doe", doc.Author.Name)
 	a.Equal("urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6", doc.ID)
 
@@ -151,8 +156,16 @@ func TestParseOkExtended(t *testing.T) {
 	r.NoError(err)
 
 	a := assert.New(t)
+
 	a.Equal("dive into mark", doc.Title.Value)
 	a.Equal(PlainText, doc.Title.Type)
+
+	a.Equal(`
+    A <em>lot</em> of effort
+    went into making this effortless
+  `,
+		doc.Subtitle.Value)
+	a.Equal(HTMLText, doc.Subtitle.Type)
 
 	a.Len(doc.Entries, 1)
 }

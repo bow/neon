@@ -41,12 +41,13 @@ type Document struct {
 	XMLName xml.Name `xml:"http://www.w3.org/2005/Atom feed"`
 	XMLBase string   `xml:"xml:base,attr"`
 
-	Title   *Text        `xml:"title"`
-	Links   []*Link      `xml:"link,omitempty"`
-	Updated *RFC3399Time `xml:"updated,omitempty"`
-	Author  *Author      `xml:"author"`
-	ID      string       `xml:"id"`
-	Entries []*Entry     `xml:"entry,omitempty"`
+	Title    *Text        `xml:"title"`
+	Subtitle *Text        `xml:"subtitle"`
+	Links    []*Link      `xml:"link,omitempty"`
+	Updated  *RFC3399Time `xml:"updated,omitempty"`
+	Author   *Author      `xml:"author"`
+	ID       string       `xml:"id"`
+	Entries  []*Entry     `xml:"entry,omitempty"`
 }
 
 type Entry struct {
