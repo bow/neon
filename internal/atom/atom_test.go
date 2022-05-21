@@ -94,14 +94,19 @@ func TestParseOkMinimal(t *testing.T) {
 	r.NoError(err)
 
 	a := assert.New(t)
+
 	a.Equal("Example Feed", feed.Title.Value)
 	a.Equal(PlainText, feed.Title.Type)
+
+	a.Nil(feed.Subtitle)
+
 	a.Equal(2003, feed.Updated.Year())
 	a.Equal(time.December, feed.Updated.Month())
 	a.Equal(13, feed.Updated.Day())
 	a.Equal(18, feed.Updated.Hour())
 	a.Equal(30, feed.Updated.Minute())
 	a.Equal(2, feed.Updated.Second())
+
 	a.Equal("John Doe", feed.Author.Name)
 	a.Equal("urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6", feed.ID)
 
