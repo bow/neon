@@ -15,8 +15,8 @@ const (
 	XHTMLText
 )
 
-func Parse(raw []byte) (*Document, error) {
-	var doc Document
+func Parse(raw []byte) (*Feed, error) {
+	var doc Feed
 	err := xml.Unmarshal(raw, &doc)
 	if err != nil {
 		return nil, err
@@ -36,8 +36,8 @@ func Parse(raw []byte) (*Document, error) {
 	return &doc, nil
 }
 
-// Document follows RFC3287: https://datatracker.ietf.org/doc/html/rfc4287.
-type Document struct {
+// Feed follows RFC3287: https://datatracker.ietf.org/doc/html/rfc4287.
+type Feed struct {
 	XMLName xml.Name `xml:"http://www.w3.org/2005/Atom feed"`
 	XMLBase string   `xml:"xml:base,attr"`
 

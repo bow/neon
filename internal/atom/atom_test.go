@@ -32,31 +32,31 @@ func TestParseOkSimple(t *testing.T) {
 `
 	r := require.New(t)
 
-	doc, err := Parse([]byte(raw))
+	feed, err := Parse([]byte(raw))
 	r.NoError(err)
 
 	a := assert.New(t)
 
-	a.Equal("Example Feed", doc.Title.Value)
-	a.Equal(PlainText, doc.Title.Type)
+	a.Equal("Example Feed", feed.Title.Value)
+	a.Equal(PlainText, feed.Title.Type)
 
-	a.Nil(doc.Subtitle)
+	a.Nil(feed.Subtitle)
 
-	a.Equal(2003, doc.Updated.Year())
-	a.Equal(time.December, doc.Updated.Month())
-	a.Equal(13, doc.Updated.Day())
-	a.Equal(18, doc.Updated.Hour())
-	a.Equal(30, doc.Updated.Minute())
-	a.Equal(2, doc.Updated.Second())
+	a.Equal(2003, feed.Updated.Year())
+	a.Equal(time.December, feed.Updated.Month())
+	a.Equal(13, feed.Updated.Day())
+	a.Equal(18, feed.Updated.Hour())
+	a.Equal(30, feed.Updated.Minute())
+	a.Equal(2, feed.Updated.Second())
 
-	a.Equal("John Doe", doc.Author.Name)
-	a.Equal("urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6", doc.ID)
+	a.Equal("John Doe", feed.Author.Name)
+	a.Equal("urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6", feed.ID)
 
-	r.Len(doc.Links, 1)
-	a.Equal("http://example.org/", doc.Links[0].Href)
+	r.Len(feed.Links, 1)
+	a.Equal("http://example.org/", feed.Links[0].Href)
 
-	r.Len(doc.Entries, 1)
-	entry := doc.Entries[0]
+	r.Len(feed.Entries, 1)
+	entry := feed.Entries[0]
 
 	a.Equal("Atom-Powered Robots Run Amok", entry.Title.Value)
 	a.Equal(PlainText, entry.Title.Type)
@@ -90,22 +90,22 @@ func TestParseOkMinimal(t *testing.T) {
 `
 	r := require.New(t)
 
-	doc, err := Parse([]byte(raw))
+	feed, err := Parse([]byte(raw))
 	r.NoError(err)
 
 	a := assert.New(t)
-	a.Equal("Example Feed", doc.Title.Value)
-	a.Equal(PlainText, doc.Title.Type)
-	a.Equal(2003, doc.Updated.Year())
-	a.Equal(time.December, doc.Updated.Month())
-	a.Equal(13, doc.Updated.Day())
-	a.Equal(18, doc.Updated.Hour())
-	a.Equal(30, doc.Updated.Minute())
-	a.Equal(2, doc.Updated.Second())
-	a.Equal("John Doe", doc.Author.Name)
-	a.Equal("urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6", doc.ID)
+	a.Equal("Example Feed", feed.Title.Value)
+	a.Equal(PlainText, feed.Title.Type)
+	a.Equal(2003, feed.Updated.Year())
+	a.Equal(time.December, feed.Updated.Month())
+	a.Equal(13, feed.Updated.Day())
+	a.Equal(18, feed.Updated.Hour())
+	a.Equal(30, feed.Updated.Minute())
+	a.Equal(2, feed.Updated.Second())
+	a.Equal("John Doe", feed.Author.Name)
+	a.Equal("urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6", feed.ID)
 
-	a.Len(doc.Entries, 0)
+	a.Len(feed.Entries, 0)
 }
 
 func TestParseOkExtended(t *testing.T) {
@@ -152,22 +152,22 @@ func TestParseOkExtended(t *testing.T) {
 `
 	r := require.New(t)
 
-	doc, err := Parse([]byte(raw))
+	feed, err := Parse([]byte(raw))
 	r.NoError(err)
 
 	a := assert.New(t)
 
-	a.Equal("dive into mark", doc.Title.Value)
-	a.Equal(PlainText, doc.Title.Type)
+	a.Equal("dive into mark", feed.Title.Value)
+	a.Equal(PlainText, feed.Title.Type)
 
 	a.Equal(`
     A <em>lot</em> of effort
     went into making this effortless
   `,
-		doc.Subtitle.Value)
-	a.Equal(HTMLText, doc.Subtitle.Type)
+		feed.Subtitle.Value)
+	a.Equal(HTMLText, feed.Subtitle.Type)
 
-	a.Len(doc.Entries, 1)
+	a.Len(feed.Entries, 1)
 }
 
 func TestParseErrInvalidTime(t *testing.T) {
@@ -182,9 +182,9 @@ func TestParseErrInvalidTime(t *testing.T) {
 
 </feed>
 `
-	doc, err := Parse([]byte(raw))
+	feed, err := Parse([]byte(raw))
 
 	a := assert.New(t)
-	a.Nil(doc)
+	a.Nil(feed)
 	a.Error(err)
 }
