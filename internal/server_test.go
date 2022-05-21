@@ -20,7 +20,7 @@ func setupTestServer(t *testing.T) api.CourierClient {
 	zerolog.SetGlobalLevel(zerolog.Disabled)
 
 	var (
-		b            = NewServerBuilder().Address(":0").Quiet(true)
+		b            = NewServerBuilder().Address(":0").Logger(zerolog.Nop()).Quiet(true)
 		srv, addr    = newRunningServer(t, b)
 		client, conn = newClient(t, addr)
 	)
