@@ -8,6 +8,7 @@ import (
 
 	"github.com/bow/courier/api"
 	"github.com/rs/zerolog"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -88,4 +89,11 @@ func newClient(
 	client := api.NewCourierClient(conn)
 
 	return client, conn
+}
+
+func TestServerBuilderErrInvalidAddr(t *testing.T) {
+	b := NewServerBuilder().Address("invalid")
+	srv, err := b.Build()
+	assert.Nil(t, srv)
+	assert.EqualError(t, err, "listen tcp: address invalid: missing port in address")
 }
