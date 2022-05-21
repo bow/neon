@@ -45,7 +45,7 @@ type Feed struct {
 	Subtitle *Text        `xml:"subtitle"`
 	Links    []*Link      `xml:"link,omitempty"`
 	Updated  *RFC3399Time `xml:"updated,omitempty"`
-	Author   *Author      `xml:"author"`
+	Author   *Person      `xml:"author"`
 	ID       string       `xml:"id"`
 	Entries  []*Entry     `xml:"entry,omitempty"`
 }
@@ -67,6 +67,14 @@ func (e *Entry) IsNotEmpty() bool {
 		e.ID != "" ||
 		e.Updated != nil ||
 		e.Summary != ""
+}
+
+type Person struct {
+	XMLBase string `xml:"xml:base,attr"`
+
+	Name  string `xml:"name"`
+	URI   string `xml:"uri"`
+	Email string `xml:"email"`
 }
 
 type Text struct {
@@ -102,11 +110,6 @@ func (t *Text) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 type Link struct {
 	XMLName xml.Name `xml:"link"`
 	Href    string   `xml:"href,attr"`
-}
-
-type Author struct {
-	XMLName xml.Name `xml:"author"`
-	Name    string   `xml:"name"`
 }
 
 type RFC3399Time struct {
