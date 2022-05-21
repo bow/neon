@@ -39,6 +39,7 @@ func Parse(raw []byte) (*Document, error) {
 // Document follows RFC3287: https://datatracker.ietf.org/doc/html/rfc4287.
 type Document struct {
 	XMLName xml.Name `xml:"http://www.w3.org/2005/Atom feed"`
+	XMLBase string   `xml:"xml:base,attr"`
 
 	Title   *Text        `xml:"title"`
 	Links   []*Link      `xml:"link,omitempty"`
@@ -50,6 +51,7 @@ type Document struct {
 
 type Entry struct {
 	XMLName xml.Name `xml:"entry"`
+	XMLBase string   `xml:"xml:base,attr"`
 
 	Title   *Text        `xml:"title"`
 	Links   []*Link      `xml:"link,omitempty"`
