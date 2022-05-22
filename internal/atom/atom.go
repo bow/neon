@@ -16,14 +16,7 @@ func Parse(raw []byte) (*Feed, error) {
 
 	// Remove empty entries ~ necessary since we can not define the empty / zero value for the
 	// Entry struct using the XML field tags.
-	es, j := make([]*Entry, len(doc.Entries)), 0
-	for _, e := range doc.Entries {
-		if !e.IsZero() {
-			es[j] = e
-			j++
-		}
-	}
-	doc.Entries = es[0:j]
+	removeEmptyItems(&doc.Entries)
 
 	return &doc, nil
 }
@@ -164,4 +157,24 @@ func (t *RFC3399Time) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error
 	}
 	*t = RFC3399Time{ts}
 	return nil
+}
+
+type zeroer interface {
+	IsZero() bool
+}
+
+func removeEmptyItems[T zeroer](arr *[]T) {
+	var (
+		deref = *arr
+		n     = len(deref)
+		items = make([]T, n)
+		j     = 0
+	)
+	for i := 0; i < n; i++ {
+		if item := deref[i]; !item.IsZero() {
+			items[j] = item
+			j++
+		}
+	}
+	*arr = items[0:j]
 }
