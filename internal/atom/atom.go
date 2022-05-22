@@ -7,14 +7,6 @@ import (
 	"time"
 )
 
-type TextType uint8
-
-const (
-	PlainText TextType = iota
-	HTMLText
-	XHTMLText
-)
-
 func Parse(raw []byte) (*Feed, error) {
 	var doc Feed
 	err := xml.Unmarshal(raw, &doc)
@@ -85,6 +77,14 @@ type Person struct {
 	URI   string `xml:"uri"`
 	Email string `xml:"email"`
 }
+
+type TextType uint8
+
+const (
+	PlainText TextType = iota
+	HTMLText
+	XHTMLText
+)
 
 type Text struct {
 	Type  TextType
