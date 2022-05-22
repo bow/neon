@@ -31,15 +31,15 @@ func Parse(raw []byte) (*Feed, error) {
 // Feed follows RFC3287: https://datatracker.ietf.org/doc/html/rfc4287.
 type Feed struct {
 	XMLName xml.Name `xml:"http://www.w3.org/2005/Atom feed"`
-	XMLBase string   `xml:"xml:base,attr"`
+	XMLBase *string  `xml:"xml:base,attr"`
 
-	Title    *Text        `xml:"title"`
-	Subtitle *Text        `xml:"subtitle"`
-	Links    []*Link      `xml:"link,omitempty"`
-	Updated  *RFC3399Time `xml:"updated,omitempty"`
-	Author   *Person      `xml:"author"`
-	ID       string       `xml:"id"`
-	Entries  []*Entry     `xml:"entry,omitempty"`
+	Title    Text        `xml:"title"`
+	Subtitle *Text       `xml:"subtitle"`
+	Links    []*Link     `xml:"link,omitempty"`
+	Updated  RFC3399Time `xml:"updated,omitempty"`
+	Author   *Person     `xml:"author"`
+	ID       string      `xml:"id"`
+	Entries  []*Entry    `xml:"entry,omitempty"`
 }
 
 func (f *Feed) GetURI() string {
@@ -53,29 +53,29 @@ func (f *Feed) GetURI() string {
 
 type Entry struct {
 	XMLName xml.Name `xml:"entry"`
-	XMLBase string   `xml:"xml:base,attr"`
+	XMLBase *string  `xml:"xml:base,attr"`
 
-	Title   *Text        `xml:"title"`
-	Links   []*Link      `xml:"link,omitempty"`
-	ID      string       `xml:"id"`
-	Updated *RFC3399Time `xml:"updated,omitempty"`
-	Summary string       `xml:"summary"`
+	Title   Text        `xml:"title"`
+	Links   []*Link     `xml:"link,omitempty"`
+	ID      string      `xml:"id"`
+	Updated RFC3399Time `xml:"updated,omitempty"`
+	Summary string      `xml:"summary"`
 }
 
 func (e *Entry) IsNotEmpty() bool {
-	return (e.Title != nil && e.Title.Value != "") ||
+	return e.Title.Value != "" ||
 		len(e.Links) > 0 ||
 		e.ID != "" ||
-		e.Updated != nil ||
+		!e.Updated.IsZero() ||
 		e.Summary != ""
 }
 
 type Person struct {
-	XMLBase string `xml:"xml:base,attr"`
+	XMLBase *string `xml:"xml:base,attr"`
 
-	Name  string `xml:"name"`
-	URI   string `xml:"uri"`
-	Email string `xml:"email"`
+	Name  string  `xml:"name"`
+	URI   *string `xml:"uri"`
+	Email *string `xml:"email"`
 }
 
 type TextType uint8
@@ -118,7 +118,7 @@ func (t *Text) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 
 type Link struct {
 	XMLName xml.Name `xml:"link"`
-	XMLBase string   `xml:"xml:base,attr"`
+	XMLBase *string  `xml:"xml:base,attr"`
 
 	Href     string  `xml:"href,attr"`
 	Rel      *string `xml:"rel,attr"`
@@ -149,5 +149,3 @@ func (t *RFC3399Time) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error
 	*t = RFC3399Time{ts}
 	return nil
 }
-
-func stringp(value string) *string { return &value }

@@ -50,8 +50,8 @@ func TestParseOkSimple(t *testing.T) {
 	a.Equal(2, feed.Updated.Second())
 
 	a.Equal("John Doe", feed.Author.Name)
-	a.Equal("", feed.Author.URI)
-	a.Equal("", feed.Author.Email)
+	a.Nil(feed.Author.URI)
+	a.Nil(feed.Author.Email)
 
 	a.Equal("urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6", feed.ID)
 
@@ -118,8 +118,8 @@ func TestParseOkMinimal(t *testing.T) {
 	a.Equal(2, feed.Updated.Second())
 
 	a.Equal("John Doe", feed.Author.Name)
-	a.Equal("", feed.Author.URI)
-	a.Equal("", feed.Author.Email)
+	a.Nil(feed.Author.URI)
+	a.Nil(feed.Author.Email)
 
 	r.Len(feed.Links, 0)
 	a.Equal("", feed.GetURI())
@@ -241,3 +241,5 @@ func TestParseErrInvalidTime(t *testing.T) {
 	a.Nil(feed)
 	a.Error(err)
 }
+
+func stringp(value string) *string { return &value }
