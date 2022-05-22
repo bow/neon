@@ -17,6 +17,7 @@ func Parse(raw []byte) (*Feed, error) {
 	// Remove empty entries ~ necessary since we can not define the empty / zero value for the
 	// Entry struct using the XML field tags.
 	removeEmptyItems(&doc.Entries)
+	removeEmptyItems(&doc.Categories)
 
 	return &doc, nil
 }
@@ -26,14 +27,14 @@ type Feed struct {
 	XMLName xml.Name `xml:"http://www.w3.org/2005/Atom feed"`
 	XMLBase *string  `xml:"xml:base,attr"`
 
-	Title    Text        `xml:"title"`
-	Subtitle *Text       `xml:"subtitle"`
-	Links    []*Link     `xml:"link,omitempty"`
-	Updated  RFC3399Time `xml:"updated,omitempty"`
-	Author   *Person     `xml:"author"`
-	Category []*Category `xml:"category"`
-	ID       string      `xml:"id"`
-	Entries  []*Entry    `xml:"entry,omitempty"`
+	Title      Text        `xml:"title"`
+	Subtitle   *Text       `xml:"subtitle"`
+	Links      []*Link     `xml:"link,omitempty"`
+	Updated    RFC3399Time `xml:"updated,omitempty"`
+	Author     *Person     `xml:"author"`
+	Categories []*Category `xml:"category"`
+	ID         string      `xml:"id"`
+	Entries    []*Entry    `xml:"entry,omitempty"`
 }
 
 func (f *Feed) GetURI() string {
