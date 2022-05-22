@@ -42,6 +42,8 @@ func TestParseOkSimple(t *testing.T) {
 
 	a.Nil(feed.Subtitle)
 
+	a.Len(feed.Category, 0)
+
 	a.Equal(2003, feed.Updated.Year())
 	a.Equal(time.December, feed.Updated.Month())
 	a.Equal(13, feed.Updated.Day())
@@ -109,6 +111,8 @@ func TestParseOkMinimal(t *testing.T) {
 	a.Equal(PlainText, feed.Title.Type)
 
 	a.Nil(feed.Subtitle)
+
+	a.Len(feed.Category, 0)
 
 	a.Equal(2003, feed.Updated.Year())
 	a.Equal(time.December, feed.Updated.Month())
@@ -192,6 +196,8 @@ func TestParseOkExtended(t *testing.T) {
   `,
 		feed.Subtitle.Value)
 	a.Equal(HTMLText, feed.Subtitle.Type)
+
+	a.Len(feed.Category, 0)
 
 	a.Equal(2005, feed.Updated.Year())
 	a.Equal(time.July, feed.Updated.Month())

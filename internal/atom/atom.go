@@ -38,6 +38,7 @@ type Feed struct {
 	Links    []*Link     `xml:"link,omitempty"`
 	Updated  RFC3399Time `xml:"updated,omitempty"`
 	Author   *Person     `xml:"author"`
+	Category []*Category `xml:"category"`
 	ID       string      `xml:"id"`
 	Entries  []*Entry    `xml:"entry,omitempty"`
 }
@@ -76,6 +77,21 @@ type Person struct {
 	Name  string  `xml:"name"`
 	URI   *string `xml:"uri"`
 	Email *string `xml:"email"`
+}
+
+type Category struct {
+	XMLName xml.Name `xml:"category"`
+	XMLBase *string  `xml:"xml:base,attr"`
+
+	Term   string  `xml:"term"`
+	Scheme *string `xml:"scheme"`
+	Label  *string `xml:"label"`
+}
+
+func (c *Category) IsZero() bool {
+	return c.Term == "" &&
+		c.Scheme == nil &&
+		c.Label == nil
 }
 
 type TextType uint8
