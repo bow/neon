@@ -14,11 +14,11 @@ func Parse(raw []byte) (*Feed, error) {
 		return nil, err
 	}
 
-	// Remove empty entries ~ necessary since we can't define 'emptiness' for the Entry structs
-	// using tags.
+	// Remove empty entries ~ necessary since we can not define the empty / zero value for the
+	// Entry struct using the XML field tags.
 	es, j := make([]*Entry, len(doc.Entries)), 0
 	for _, e := range doc.Entries {
-		if e.IsNotEmpty() {
+		if !e.IsZero() {
 			es[j] = e
 			j++
 		}
@@ -62,12 +62,12 @@ type Entry struct {
 	Summary string      `xml:"summary"`
 }
 
-func (e *Entry) IsNotEmpty() bool {
-	return e.Title.Value != "" ||
-		len(e.Links) > 0 ||
-		e.ID != "" ||
-		!e.Updated.IsZero() ||
-		e.Summary != ""
+func (e *Entry) IsZero() bool {
+	return e.Title.Value == "" &&
+		len(e.Links) == 0 &&
+		e.ID == "" &&
+		e.Updated.IsZero() &&
+		e.Summary == ""
 }
 
 type Person struct {
