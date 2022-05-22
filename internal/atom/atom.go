@@ -50,6 +50,15 @@ type Feed struct {
 	Entries  []*Entry     `xml:"entry,omitempty"`
 }
 
+func (f *Feed) GetURI() string {
+	for _, link := range f.Links {
+		if link.GetRel() == "self" {
+			return link.Href
+		}
+	}
+	return ""
+}
+
 type Entry struct {
 	XMLName xml.Name `xml:"entry"`
 	XMLBase string   `xml:"xml:base,attr"`
@@ -109,7 +118,21 @@ func (t *Text) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 
 type Link struct {
 	XMLName xml.Name `xml:"link"`
-	Href    string   `xml:"href,attr"`
+	XMLBase string   `xml:"xml:base,attr"`
+
+	Href     string  `xml:"href,attr"`
+	Rel      *string `xml:"rel,attr"`
+	Type     *string `xml:"type,attr"`
+	Hreflang *string `xml:"hreflang,attr"`
+	Title    *string `xml:"title,attr"`
+	Length   *int    `xml:"length,attr"`
+}
+
+func (l *Link) GetRel() string {
+	if l.Rel == nil {
+		return "alternate"
+	}
+	return *l.Rel
 }
 
 type RFC3399Time struct {
@@ -126,3 +149,5 @@ func (t *RFC3399Time) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error
 	*t = RFC3399Time{ts}
 	return nil
 }
+
+func stringp(value string) *string { return &value }

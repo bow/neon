@@ -56,7 +56,14 @@ func TestParseOkSimple(t *testing.T) {
 	a.Equal("urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6", feed.ID)
 
 	r.Len(feed.Links, 1)
-	a.Equal("http://example.org/", feed.Links[0].Href)
+	link0 := feed.Links[0]
+	a.Equal("http://example.org/", link0.Href)
+	a.Nil(link0.Rel)
+	a.Nil(link0.Type)
+	a.Nil(link0.Hreflang)
+	a.Nil(link0.Title)
+	a.Nil(link0.Length)
+	a.Equal("", feed.GetURI())
 
 	r.Len(feed.Entries, 1)
 	entry := feed.Entries[0]
@@ -113,6 +120,9 @@ func TestParseOkMinimal(t *testing.T) {
 	a.Equal("John Doe", feed.Author.Name)
 	a.Equal("", feed.Author.URI)
 	a.Equal("", feed.Author.Email)
+
+	r.Len(feed.Links, 0)
+	a.Equal("", feed.GetURI())
 
 	a.Equal("urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6", feed.ID)
 
@@ -193,6 +203,22 @@ func TestParseOkExtended(t *testing.T) {
 	a.Nil(feed.Author)
 
 	a.Equal("tag:example.org,2003:3", feed.ID)
+
+	r.Len(feed.Links, 2)
+	link0 := feed.Links[0]
+	a.Equal("http://example.org/", link0.Href)
+	a.Equal(stringp("alternate"), link0.Rel)
+	a.Equal(stringp("text/html"), link0.Type)
+	a.Equal(stringp("en"), link0.Hreflang)
+	a.Nil(link0.Title)
+	link1 := feed.Links[1]
+	a.Equal("http://example.org/feed.atom", link1.Href)
+	a.Equal(stringp("self"), link1.Rel)
+	a.Equal(stringp("application/atom+xml"), link1.Type)
+	a.Nil(link1.Hreflang)
+	a.Nil(link1.Title)
+	a.Nil(link1.Length)
+	a.Equal("http://example.org/feed.atom", feed.GetURI())
 
 	a.Len(feed.Entries, 1)
 }
