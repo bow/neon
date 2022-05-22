@@ -1,3 +1,0 @@
-= Courier
-
-Courier is a feed reader suite.
