@@ -252,6 +252,17 @@ func TestParseOkExtended(t *testing.T) {
 	a.Nil(entry0.Categories[1].Label)
 	a.Nil(entry0.Categories[1].Scheme)
 	//
+	r.NotNil(entry0.Content)
+	a.Equal(stringp("xhtml"), entry0.Content.Type)
+	a.Equal(stringp("http://diveintomark.org/"), entry0.Content.XMLBase)
+	a.Equal(`
+      <div xmlns="http://www.w3.org/1999/xhtml">
+        <p><i>[Update: The Atom draft is finished.]</i></p>
+      </div>
+    `,
+		entry0.Content.Value,
+	)
+	//
 	r.Len(entry0.Contributors, 2)
 	a.Nil(entry0.Contributors[0].Email)
 	a.Equal("Sam Ruby", entry0.Contributors[0].Name)

@@ -56,6 +56,7 @@ type Entry struct {
 
 	Author       *Person     `xml:"author"`
 	Categories   []*Category `xml:"category"`
+	Content      *Content    `xml:"content"`
 	Contributors []*Person   `xml:"contributor"`
 	ID           string      `xml:"id"`
 	Links        []*Link     `xml:"link,omitempty"`
@@ -70,6 +71,15 @@ func (e *Entry) IsZero() bool {
 		e.ID == "" &&
 		e.Updated.IsZero() &&
 		e.Summary == nil
+}
+
+type Content struct {
+	XMLName xml.Name `xml:"content"`
+	XMLBase *string  `xml:"base,attr"`
+
+	Src   *string `xml:"src,attr"`
+	Type  *string `xml:"type,attr"`
+	Value string  `xml:",innerxml"`
 }
 
 type Person struct {
