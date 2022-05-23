@@ -196,6 +196,8 @@ func TestParseOkExtended(t *testing.T) {
 	//
 	a.Len(feed.Categories, 0)
 	//
+	a.Len(feed.Contributors, 0)
+	//
 	a.Equal("tag:example.org,2003:3", feed.ID)
 	//
 	a.Equal(`
@@ -238,6 +240,10 @@ func TestParseOkExtended(t *testing.T) {
 	r.Len(feed.Entries, 1)
 	entry0 := feed.Entries[0]
 	//
+	a.Equal(stringp("f8dy@example.com"), entry0.Author.Email)
+	a.Equal("Mark Pilgrim", entry0.Author.Name)
+	a.Equal(stringp("http://example.org/"), entry0.Author.URI)
+	//
 	r.Len(entry0.Categories, 2)
 	a.Equal("misc", entry0.Categories[0].Term)
 	a.Nil(entry0.Categories[0].Label)
@@ -245,6 +251,14 @@ func TestParseOkExtended(t *testing.T) {
 	a.Equal("atom", entry0.Categories[1].Term)
 	a.Nil(entry0.Categories[1].Label)
 	a.Nil(entry0.Categories[1].Scheme)
+	//
+	r.Len(entry0.Contributors, 2)
+	a.Nil(entry0.Contributors[0].Email)
+	a.Equal("Sam Ruby", entry0.Contributors[0].Name)
+	a.Nil(entry0.Contributors[0].URI)
+	a.Nil(entry0.Contributors[1].Email)
+	a.Equal("Joe Gregorio", entry0.Contributors[1].Name)
+	a.Nil(entry0.Contributors[1].URI)
 	//
 	a.Equal("tag:example.org,2003:3.2397", entry0.ID)
 	a.Nil(entry0.Summary)

@@ -30,14 +30,15 @@ type Feed struct {
 	XMLName xml.Name `xml:"http://www.w3.org/2005/Atom feed"`
 	XMLBase *string  `xml:"xml:base,attr"`
 
-	Author     *Person     `xml:"author"`
-	Categories []*Category `xml:"category"`
-	Entries    []*Entry    `xml:"entry,omitempty"`
-	ID         string      `xml:"id"`
-	Links      []*Link     `xml:"link,omitempty"`
-	Subtitle   *Text       `xml:"subtitle"`
-	Title      Text        `xml:"title"`
-	Updated    RFC3399Time `xml:"updated,omitempty"`
+	Author       *Person     `xml:"author"`
+	Categories   []*Category `xml:"category"`
+	Contributors []*Person   `xml:"contributor"`
+	Entries      []*Entry    `xml:"entry,omitempty"`
+	ID           string      `xml:"id"`
+	Links        []*Link     `xml:"link,omitempty"`
+	Subtitle     *Text       `xml:"subtitle"`
+	Title        Text        `xml:"title"`
+	Updated      RFC3399Time `xml:"updated,omitempty"`
 }
 
 func (f *Feed) GetURI() string {
@@ -53,12 +54,14 @@ type Entry struct {
 	XMLName xml.Name `xml:"entry"`
 	XMLBase *string  `xml:"xml:base,attr"`
 
-	Categories []*Category `xml:"category"`
-	ID         string      `xml:"id"`
-	Links      []*Link     `xml:"link,omitempty"`
-	Summary    *string     `xml:"summary"`
-	Title      Text        `xml:"title"`
-	Updated    RFC3399Time `xml:"updated,omitempty"`
+	Author       *Person     `xml:"author"`
+	Categories   []*Category `xml:"category"`
+	Contributors []*Person   `xml:"contributor"`
+	ID           string      `xml:"id"`
+	Links        []*Link     `xml:"link,omitempty"`
+	Summary      *string     `xml:"summary"`
+	Title        Text        `xml:"title"`
+	Updated      RFC3399Time `xml:"updated,omitempty"`
 }
 
 func (e *Entry) IsZero() bool {
