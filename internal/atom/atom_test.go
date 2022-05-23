@@ -198,6 +198,11 @@ func TestParseOkExtended(t *testing.T) {
 	//
 	a.Len(feed.Contributors, 0)
 	//
+	r.NotNil(feed.Generator)
+	a.Equal(stringp("http://www.example.com/"), feed.Generator.URI)
+	a.Equal(stringp("1.0"), feed.Generator.Version)
+	a.Equal("\n    Example Toolkit\n  ", feed.Generator.Value)
+	//
 	a.Equal("tag:example.org,2003:3", feed.ID)
 	//
 	a.Equal(`

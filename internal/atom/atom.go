@@ -34,6 +34,7 @@ type Feed struct {
 	Categories   []*Category `xml:"category"`
 	Contributors []*Person   `xml:"contributor"`
 	Entries      []*Entry    `xml:"entry,omitempty"`
+	Generator    *Generator  `xml:"generator"`
 	ID           string      `xml:"id"`
 	Links        []*Link     `xml:"link,omitempty"`
 	Subtitle     *Text       `xml:"subtitle"`
@@ -80,6 +81,15 @@ type Content struct {
 	Src   *string `xml:"src,attr"`
 	Type  *string `xml:"type,attr"`
 	Value string  `xml:",innerxml"`
+}
+
+type Generator struct {
+	XMLName xml.Name `xml:"generator"`
+	XMLBase *string  `xml:"base,attr"`
+
+	URI     *string `xml:"uri,attr"`
+	Version *string `xml:"version,attr"`
+	Value   string  `xml:",innerxml"`
 }
 
 type Person struct {
