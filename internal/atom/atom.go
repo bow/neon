@@ -28,7 +28,7 @@ func Parse(raw []byte) (*Feed, error) {
 // Feed follows RFC3287: https://datatracker.ietf.org/doc/html/rfc4287.
 type Feed struct {
 	XMLName xml.Name `xml:"http://www.w3.org/2005/Atom feed"`
-	XMLBase *string  `xml:"xml:base,attr"`
+	XMLBase *string  `xml:"base,attr"`
 
 	Author       *Person     `xml:"author"`
 	Categories   []*Category `xml:"category"`
@@ -52,7 +52,7 @@ func (f *Feed) GetURI() string {
 
 type Entry struct {
 	XMLName xml.Name `xml:"entry"`
-	XMLBase *string  `xml:"xml:base,attr"`
+	XMLBase *string  `xml:"base,attr"`
 
 	Author       *Person     `xml:"author"`
 	Categories   []*Category `xml:"category"`
@@ -73,7 +73,7 @@ func (e *Entry) IsZero() bool {
 }
 
 type Person struct {
-	XMLBase *string `xml:"xml:base,attr"`
+	XMLBase *string `xml:"base,attr"`
 
 	Email *string `xml:"email"`
 	Name  string  `xml:"name"`
@@ -82,7 +82,7 @@ type Person struct {
 
 type Category struct {
 	XMLName xml.Name `xml:"category"`
-	XMLBase *string  `xml:"xml:base,attr"`
+	XMLBase *string  `xml:"base,attr"`
 
 	Label  *string `xml:"label,attr"`
 	Scheme *string `xml:"scheme,attr"`
@@ -139,7 +139,7 @@ func (t *Text) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 
 type Link struct {
 	XMLName xml.Name `xml:"link"`
-	XMLBase *string  `xml:"xml:base,attr"`
+	XMLBase *string  `xml:"base,attr"`
 
 	Href     string  `xml:"href,attr"`
 	Hreflang *string `xml:"hreflang,attr"`
