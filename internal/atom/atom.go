@@ -18,6 +18,9 @@ func Parse(raw []byte) (*Feed, error) {
 	// Entry struct using the XML field tags.
 	removeEmptyItems(&doc.Entries)
 	removeEmptyItems(&doc.Categories)
+	for _, entry := range doc.Entries {
+		removeEmptyItems(&entry.Categories)
+	}
 
 	return &doc, nil
 }
@@ -50,11 +53,12 @@ type Entry struct {
 	XMLName xml.Name `xml:"entry"`
 	XMLBase *string  `xml:"xml:base,attr"`
 
-	ID      string      `xml:"id"`
-	Links   []*Link     `xml:"link,omitempty"`
-	Summary string      `xml:"summary"`
-	Title   Text        `xml:"title"`
-	Updated RFC3399Time `xml:"updated,omitempty"`
+	Categories []*Category `xml:"category"`
+	ID         string      `xml:"id"`
+	Links      []*Link     `xml:"link,omitempty"`
+	Summary    *string     `xml:"summary"`
+	Title      Text        `xml:"title"`
+	Updated    RFC3399Time `xml:"updated,omitempty"`
 }
 
 func (e *Entry) IsZero() bool {
@@ -77,9 +81,9 @@ type Category struct {
 	XMLName xml.Name `xml:"category"`
 	XMLBase *string  `xml:"xml:base,attr"`
 
-	Label  *string `xml:"label"`
-	Scheme *string `xml:"scheme"`
-	Term   string  `xml:"term"`
+	Label  *string `xml:"label,attr"`
+	Scheme *string `xml:"scheme,attr"`
+	Term   string  `xml:"term,attr"`
 }
 
 func (c *Category) IsZero() bool {

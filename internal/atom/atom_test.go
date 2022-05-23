@@ -71,6 +71,7 @@ func TestParseOkSimple(t *testing.T) {
 	r.Len(feed.Entries, 1)
 	//
 	entry0 := feed.Entries[0]
+	a.Len(entry0.Categories, 0)
 	a.Equal("urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a", entry0.ID)
 	a.Equal(stringp("Some text."), entry0.Summary)
 	a.Equal("Atom-Powered Robots Run Amok", entry0.Title.Value)
@@ -180,6 +181,8 @@ func TestParseOkExtended(t *testing.T) {
         <p><i>[Update: The Atom draft is finished.]</i></p>
       </div>
     </content>
+    <category term="misc"/>
+    <category term="atom"/>
   </entry>
 </feed>
 `
@@ -234,6 +237,14 @@ func TestParseOkExtended(t *testing.T) {
 
 	r.Len(feed.Entries, 1)
 	entry0 := feed.Entries[0]
+	//
+	r.Len(entry0.Categories, 2)
+	a.Equal("misc", entry0.Categories[0].Term)
+	a.Nil(entry0.Categories[0].Label)
+	a.Nil(entry0.Categories[0].Scheme)
+	a.Equal("atom", entry0.Categories[1].Term)
+	a.Nil(entry0.Categories[1].Label)
+	a.Nil(entry0.Categories[1].Scheme)
 	//
 	a.Equal("tag:example.org,2003:3.2397", entry0.ID)
 	a.Nil(entry0.Summary)
