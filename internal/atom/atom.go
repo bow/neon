@@ -58,7 +58,7 @@ type Entry struct {
 }
 
 func (e *Entry) IsZero() bool {
-	return e.Title.Value == "" &&
+	return e.Title.IsZero() &&
 		len(e.Links) == 0 &&
 		e.ID == "" &&
 		e.Updated.IsZero() &&
@@ -99,6 +99,10 @@ const (
 type Text struct {
 	Type  TextType
 	Value string
+}
+
+func (t *Text) IsZero() bool {
+	return t.Value == ""
 }
 
 func (t *Text) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
