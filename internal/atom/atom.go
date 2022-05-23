@@ -62,7 +62,7 @@ func (e *Entry) IsZero() bool {
 		len(e.Links) == 0 &&
 		e.ID == "" &&
 		e.Updated.IsZero() &&
-		e.Summary == ""
+		e.Summary == nil
 }
 
 type Person struct {
