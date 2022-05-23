@@ -27,14 +27,14 @@ type Feed struct {
 	XMLName xml.Name `xml:"http://www.w3.org/2005/Atom feed"`
 	XMLBase *string  `xml:"xml:base,attr"`
 
-	Title      Text        `xml:"title"`
-	Subtitle   *Text       `xml:"subtitle"`
-	Links      []*Link     `xml:"link,omitempty"`
-	Updated    RFC3399Time `xml:"updated,omitempty"`
 	Author     *Person     `xml:"author"`
 	Categories []*Category `xml:"category"`
-	ID         string      `xml:"id"`
 	Entries    []*Entry    `xml:"entry,omitempty"`
+	ID         string      `xml:"id"`
+	Links      []*Link     `xml:"link,omitempty"`
+	Subtitle   *Text       `xml:"subtitle"`
+	Title      Text        `xml:"title"`
+	Updated    RFC3399Time `xml:"updated,omitempty"`
 }
 
 func (f *Feed) GetURI() string {
@@ -50,11 +50,11 @@ type Entry struct {
 	XMLName xml.Name `xml:"entry"`
 	XMLBase *string  `xml:"xml:base,attr"`
 
-	Title   Text        `xml:"title"`
-	Links   []*Link     `xml:"link,omitempty"`
 	ID      string      `xml:"id"`
-	Updated RFC3399Time `xml:"updated,omitempty"`
+	Links   []*Link     `xml:"link,omitempty"`
 	Summary string      `xml:"summary"`
+	Title   Text        `xml:"title"`
+	Updated RFC3399Time `xml:"updated,omitempty"`
 }
 
 func (e *Entry) IsZero() bool {
@@ -68,18 +68,18 @@ func (e *Entry) IsZero() bool {
 type Person struct {
 	XMLBase *string `xml:"xml:base,attr"`
 
+	Email *string `xml:"email"`
 	Name  string  `xml:"name"`
 	URI   *string `xml:"uri"`
-	Email *string `xml:"email"`
 }
 
 type Category struct {
 	XMLName xml.Name `xml:"category"`
 	XMLBase *string  `xml:"xml:base,attr"`
 
-	Term   string  `xml:"term"`
-	Scheme *string `xml:"scheme"`
 	Label  *string `xml:"label"`
+	Scheme *string `xml:"scheme"`
+	Term   string  `xml:"term"`
 }
 
 func (c *Category) IsZero() bool {
@@ -131,11 +131,11 @@ type Link struct {
 	XMLBase *string  `xml:"xml:base,attr"`
 
 	Href     string  `xml:"href,attr"`
-	Rel      *string `xml:"rel,attr"`
-	Type     *string `xml:"type,attr"`
 	Hreflang *string `xml:"hreflang,attr"`
-	Title    *string `xml:"title,attr"`
 	Length   *int    `xml:"length,attr"`
+	Rel      *string `xml:"rel,attr"`
+	Title    *string `xml:"title,attr"`
+	Type     *string `xml:"type,attr"`
 }
 
 func (l *Link) GetRel() string {

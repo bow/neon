@@ -31,58 +31,61 @@ func TestParseOkSimple(t *testing.T) {
 </feed>
 `
 	r := require.New(t)
+	a := assert.New(t)
 
 	feed, err := Parse([]byte(raw))
 	r.NoError(err)
-
-	a := assert.New(t)
-
+	//
+	a.Equal("John Doe", feed.Author.Name)
+	a.Nil(feed.Author.URI)
+	a.Nil(feed.Author.Email)
+	//
+	a.Len(feed.Categories, 0)
+	//
+	a.Equal("urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6", feed.ID)
+	//
+	a.Nil(feed.Subtitle)
+	//
 	a.Equal("Example Feed", feed.Title.Value)
 	a.Equal(PlainText, feed.Title.Type)
-
-	a.Nil(feed.Subtitle)
-
-	a.Len(feed.Categories, 0)
-
+	//
 	a.Equal(2003, feed.Updated.Year())
 	a.Equal(time.December, feed.Updated.Month())
 	a.Equal(13, feed.Updated.Day())
 	a.Equal(18, feed.Updated.Hour())
 	a.Equal(30, feed.Updated.Minute())
 	a.Equal(2, feed.Updated.Second())
-
-	a.Equal("John Doe", feed.Author.Name)
-	a.Nil(feed.Author.URI)
-	a.Nil(feed.Author.Email)
-
-	a.Equal("urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6", feed.ID)
-
-	r.Len(feed.Links, 1)
-	link0 := feed.Links[0]
-	a.Equal("http://example.org/", link0.Href)
-	a.Nil(link0.Rel)
-	a.Nil(link0.Type)
-	a.Nil(link0.Hreflang)
-	a.Nil(link0.Title)
-	a.Nil(link0.Length)
+	//
 	a.Equal("", feed.GetURI())
 
+	r.Len(feed.Links, 1)
+	//
+	flink0 := feed.Links[0]
+	a.Equal("http://example.org/", flink0.Href)
+	a.Nil(flink0.Hreflang)
+	a.Nil(flink0.Length)
+	a.Nil(flink0.Rel)
+	a.Nil(flink0.Title)
+	a.Nil(flink0.Type)
+
 	r.Len(feed.Entries, 1)
-	entry := feed.Entries[0]
+	//
+	entry0 := feed.Entries[0]
+	a.Equal("urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a", entry0.ID)
+	a.Equal("Some text.", entry0.Summary)
+	a.Equal("Atom-Powered Robots Run Amok", entry0.Title.Value)
+	a.Equal(PlainText, entry0.Title.Type)
+	a.Equal(2003, entry0.Updated.Year())
+	a.Equal(time.December, entry0.Updated.Month())
+	a.Equal(13, entry0.Updated.Day())
+	a.Equal(18, entry0.Updated.Hour())
+	a.Equal(30, entry0.Updated.Minute())
+	a.Equal(2, entry0.Updated.Second())
 
-	a.Equal("Atom-Powered Robots Run Amok", entry.Title.Value)
-	a.Equal(PlainText, entry.Title.Type)
-	a.Equal("urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a", entry.ID)
-	a.Equal(2003, entry.Updated.Year())
-	a.Equal(time.December, entry.Updated.Month())
-	a.Equal(13, entry.Updated.Day())
-	a.Equal(18, entry.Updated.Hour())
-	a.Equal(30, entry.Updated.Minute())
-	a.Equal(2, entry.Updated.Second())
-	a.Equal("Some text.", entry.Summary)
-
-	r.Len(entry.Links, 1)
-	a.Equal("http://example.org/2003/12/13/atom03", entry.Links[0].Href)
+	r.Len(entry0.Links, 1)
+	//
+	elink0 := entry0.Links[0]
+	a.Equal("http://example.org/2003/12/13/atom03", elink0.Href)
 }
 
 func TestParseOkMinimal(t *testing.T) {
@@ -101,36 +104,36 @@ func TestParseOkMinimal(t *testing.T) {
 </feed>
 `
 	r := require.New(t)
+	a := assert.New(t)
 
 	feed, err := Parse([]byte(raw))
 	r.NoError(err)
-
-	a := assert.New(t)
-
+	//
+	a.Equal("John Doe", feed.Author.Name)
+	a.Nil(feed.Author.URI)
+	a.Nil(feed.Author.Email)
+	//
+	a.Len(feed.Categories, 0)
+	//
+	a.Equal("urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6", feed.ID)
+	//
+	a.Nil(feed.Subtitle)
+	//
 	a.Equal("Example Feed", feed.Title.Value)
 	a.Equal(PlainText, feed.Title.Type)
-
-	a.Nil(feed.Subtitle)
-
-	a.Len(feed.Categories, 0)
-
+	//
 	a.Equal(2003, feed.Updated.Year())
 	a.Equal(time.December, feed.Updated.Month())
 	a.Equal(13, feed.Updated.Day())
 	a.Equal(18, feed.Updated.Hour())
 	a.Equal(30, feed.Updated.Minute())
 	a.Equal(2, feed.Updated.Second())
-
-	a.Equal("John Doe", feed.Author.Name)
-	a.Nil(feed.Author.URI)
-	a.Nil(feed.Author.Email)
-
-	r.Len(feed.Links, 0)
+	//
 	a.Equal("", feed.GetURI())
 
-	a.Equal("urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6", feed.ID)
+	r.Len(feed.Links, 0)
 
-	a.Len(feed.Entries, 0)
+	r.Len(feed.Entries, 0)
 }
 
 func TestParseOkExtended(t *testing.T) {
@@ -181,52 +184,55 @@ func TestParseOkExtended(t *testing.T) {
 </feed>
 `
 	r := require.New(t)
+	a := assert.New(t)
 
 	feed, err := Parse([]byte(raw))
 	r.NoError(err)
-
-	a := assert.New(t)
-
-	a.Equal("dive into mark", feed.Title.Value)
-	a.Equal(PlainText, feed.Title.Type)
-
+	//
+	a.Nil(feed.Author)
+	//
+	a.Len(feed.Categories, 0)
+	//
+	a.Equal("tag:example.org,2003:3", feed.ID)
+	//
 	a.Equal(`
     A <em>lot</em> of effort
     went into making this effortless
   `,
-		feed.Subtitle.Value)
+		feed.Subtitle.Value,
+	)
 	a.Equal(HTMLText, feed.Subtitle.Type)
-
-	a.Len(feed.Categories, 0)
-
+	//
+	a.Equal("dive into mark", feed.Title.Value)
+	a.Equal(PlainText, feed.Title.Type)
+	//
 	a.Equal(2005, feed.Updated.Year())
 	a.Equal(time.July, feed.Updated.Month())
 	a.Equal(31, feed.Updated.Day())
 	a.Equal(12, feed.Updated.Hour())
 	a.Equal(29, feed.Updated.Minute())
 	a.Equal(29, feed.Updated.Second())
-
-	a.Nil(feed.Author)
-
-	a.Equal("tag:example.org,2003:3", feed.ID)
-
-	r.Len(feed.Links, 2)
-	link0 := feed.Links[0]
-	a.Equal("http://example.org/", link0.Href)
-	a.Equal(stringp("alternate"), link0.Rel)
-	a.Equal(stringp("text/html"), link0.Type)
-	a.Equal(stringp("en"), link0.Hreflang)
-	a.Nil(link0.Title)
-	link1 := feed.Links[1]
-	a.Equal("http://example.org/feed.atom", link1.Href)
-	a.Equal(stringp("self"), link1.Rel)
-	a.Equal(stringp("application/atom+xml"), link1.Type)
-	a.Nil(link1.Hreflang)
-	a.Nil(link1.Title)
-	a.Nil(link1.Length)
+	//
 	a.Equal("http://example.org/feed.atom", feed.GetURI())
 
-	a.Len(feed.Entries, 1)
+	r.Len(feed.Links, 2)
+	//
+	flink0 := feed.Links[0]
+	a.Equal("http://example.org/", flink0.Href)
+	a.Equal(stringp("en"), flink0.Hreflang)
+	a.Equal(stringp("alternate"), flink0.Rel)
+	a.Nil(flink0.Title)
+	a.Equal(stringp("text/html"), flink0.Type)
+	//
+	flink1 := feed.Links[1]
+	a.Equal("http://example.org/feed.atom", flink1.Href)
+	a.Nil(flink1.Hreflang)
+	a.Nil(flink1.Length)
+	a.Equal(stringp("self"), flink1.Rel)
+	a.Nil(flink1.Title)
+	a.Equal(stringp("application/atom+xml"), flink1.Type)
+
+	r.Len(feed.Entries, 1)
 }
 
 func TestParseErrInvalidTime(t *testing.T) {
