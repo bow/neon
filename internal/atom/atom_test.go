@@ -233,6 +233,23 @@ func TestParseOkExtended(t *testing.T) {
 	a.Equal(stringp("application/atom+xml"), flink1.Type)
 
 	r.Len(feed.Entries, 1)
+	entry0 := feed.Entries[0]
+	//
+	a.Equal("tag:example.org,2003:3.2397", entry0.ID)
+	a.Nil(entry0.Summary)
+	a.Equal("Atom draft-07 snapshot", entry0.Title.Value)
+	a.Equal(PlainText, entry0.Title.Type)
+	a.Equal(2005, entry0.Updated.Year())
+	a.Equal(time.July, entry0.Updated.Month())
+	a.Equal(31, entry0.Updated.Day())
+	a.Equal(12, entry0.Updated.Hour())
+	a.Equal(29, entry0.Updated.Minute())
+	a.Equal(29, entry0.Updated.Second())
+
+	r.Len(entry0.Links, 2)
+	//
+	elink0 := entry0.Links[0]
+	a.Equal("http://example.org/2005/04/02/atom", elink0.Href)
 }
 
 func TestParseErrInvalidTime(t *testing.T) {
