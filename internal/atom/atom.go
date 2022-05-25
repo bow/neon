@@ -42,7 +42,7 @@ type Feed struct {
 	Rights       *string     `xml:"rights"`
 	Subtitle     *Text       `xml:"subtitle"`
 	Title        Text        `xml:"title"`
-	Updated      RFC3399Time `xml:"updated,omitempty"`
+	UpdatedUTC   RFC3399Time `xml:"updated,omitempty"`
 }
 
 func (f *Feed) GetPreferredURI() string {
@@ -58,22 +58,23 @@ type Entry struct {
 	CommonAttributes
 	XMLName xml.Name
 
-	Author       *Person     `xml:"author"`
-	Categories   []*Category `xml:"category"`
-	Content      *Content    `xml:"content"`
-	Contributors []*Person   `xml:"contributor"`
-	ID           string      `xml:"id"`
-	Links        []*Link     `xml:"link,omitempty"`
-	Summary      *string     `xml:"summary"`
-	Title        Text        `xml:"title"`
-	Updated      RFC3399Time `xml:"updated,omitempty"`
+	Author       *Person      `xml:"author"`
+	Categories   []*Category  `xml:"category"`
+	Content      *Content     `xml:"content"`
+	Contributors []*Person    `xml:"contributor"`
+	ID           string       `xml:"id"`
+	Links        []*Link      `xml:"link,omitempty"`
+	PublishedUTC *RFC3399Time `xml:"published,omitempty"`
+	Summary      *string      `xml:"summary"`
+	Title        Text         `xml:"title"`
+	UpdatedUTC   RFC3399Time  `xml:"updated,omitempty"`
 }
 
 func (e *Entry) IsZero() bool {
 	return e.Title.IsZero() &&
 		len(e.Links) == 0 &&
 		e.ID == "" &&
-		e.Updated.IsZero() &&
+		e.UpdatedUTC.IsZero() &&
 		e.Summary == nil
 }
 
@@ -195,7 +196,7 @@ func (t *RFC3399Time) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error
 	if err != nil {
 		return err
 	}
-	*t = RFC3399Time{ts}
+	*t = RFC3399Time{ts.UTC()}
 	return nil
 }
 
