@@ -33,16 +33,16 @@ type Feed struct {
 	Authors      []*Person   `xml:"author"`
 	Categories   []*Category `xml:"category"`
 	Contributors []*Person   `xml:"contributor"`
-	Entries      []*Entry    `xml:"entry,omitempty"`
+	Entries      []*Entry    `xml:"entry"`
 	Generator    *Generator  `xml:"generator"`
 	Icon         *string     `xml:"icon"`
 	ID           string      `xml:"id"`
-	Links        []*Link     `xml:"link,omitempty"`
+	Links        []*Link     `xml:"link"`
 	Logo         *string     `xml:"logo"`
 	Rights       *string     `xml:"rights"`
 	Subtitle     *Text       `xml:"subtitle"`
 	Title        Text        `xml:"title"`
-	UpdatedUTC   RFC3399Time `xml:"updated,omitempty"`
+	UpdatedUTC   RFC3399Time `xml:"updated"`
 }
 
 func (f *Feed) GetPreferredURI() string {
@@ -63,12 +63,12 @@ type Entry struct {
 	Content      *Content     `xml:"content"`
 	Contributors []*Person    `xml:"contributor"`
 	ID           string       `xml:"id"`
-	Links        []*Link      `xml:"link,omitempty"`
-	PublishedUTC *RFC3399Time `xml:"published,omitempty"`
+	Links        []*Link      `xml:"link"`
+	PublishedUTC *RFC3399Time `xml:"published"`
 	Source       *Source      `xml:"source"`
 	Summary      *Text        `xml:"summary"`
 	Title        Text         `xml:"title"`
-	UpdatedUTC   RFC3399Time  `xml:"updated,omitempty"`
+	UpdatedUTC   RFC3399Time  `xml:"updated"`
 }
 
 func (e *Entry) IsZero() bool {
