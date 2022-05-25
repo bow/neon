@@ -56,7 +56,7 @@ func (f *Feed) GetURI() string {
 
 type Entry struct {
 	CommonAttributes
-	XMLName xml.Name `xml:"entry"`
+	XMLName xml.Name
 
 	Author       *Person     `xml:"author"`
 	Categories   []*Category `xml:"category"`
@@ -79,7 +79,7 @@ func (e *Entry) IsZero() bool {
 
 type Content struct {
 	CommonAttributes
-	XMLName xml.Name `xml:"content"`
+	XMLName xml.Name
 
 	Src   *string `xml:"src,attr"`
 	Type  *string `xml:"type,attr"`
@@ -88,7 +88,7 @@ type Content struct {
 
 type Generator struct {
 	CommonAttributes
-	XMLName xml.Name `xml:"generator"`
+	XMLName xml.Name
 
 	URI     *string `xml:"uri,attr"`
 	Version *string `xml:"version,attr"`
@@ -105,7 +105,7 @@ type Person struct {
 
 type Category struct {
 	CommonAttributes
-	XMLName xml.Name `xml:"category"`
+	XMLName xml.Name
 
 	Label  *string `xml:"label,attr"`
 	Scheme *string `xml:"scheme,attr"`
@@ -162,7 +162,7 @@ func (t *Text) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 
 type Link struct {
 	CommonAttributes
-	XMLName xml.Name `xml:"link"`
+	XMLName xml.Name
 
 	Href     string  `xml:"href,attr"`
 	Hreflang *string `xml:"hreflang,attr"`
