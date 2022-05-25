@@ -203,7 +203,13 @@ func TestParseOkExtended(t *testing.T) {
 	a.Equal(stringp("1.0"), feed.Generator.Version)
 	a.Equal("\n    Example Toolkit\n  ", feed.Generator.Value)
 	//
+	a.Nil(feed.Icon)
+	//
 	a.Equal("tag:example.org,2003:3", feed.ID)
+	//
+	a.Nil(feed.Logo)
+	//
+	a.Equal(stringp("Copyright (c) 2003, Mark Pilgrim"), feed.Rights)
 	//
 	a.Equal(`
     A <em>lot</em> of effort

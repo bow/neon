@@ -35,8 +35,11 @@ type Feed struct {
 	Contributors []*Person   `xml:"contributor"`
 	Entries      []*Entry    `xml:"entry,omitempty"`
 	Generator    *Generator  `xml:"generator"`
+	Icon         *string     `xml:"icon"`
 	ID           string      `xml:"id"`
 	Links        []*Link     `xml:"link,omitempty"`
+	Logo         *string     `xml:"logo"`
+	Rights       *string     `xml:"rights"`
 	Subtitle     *Text       `xml:"subtitle"`
 	Title        Text        `xml:"title"`
 	Updated      RFC3399Time `xml:"updated,omitempty"`
