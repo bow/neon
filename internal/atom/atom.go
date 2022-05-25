@@ -27,8 +27,8 @@ func Parse(raw []byte) (*Feed, error) {
 
 // Feed follows RFC3287: https://datatracker.ietf.org/doc/html/rfc4287.
 type Feed struct {
+	CommonAttributes
 	XMLName xml.Name `xml:"http://www.w3.org/2005/Atom feed"`
-	XMLBase *string  `xml:"base,attr"`
 
 	Author       *Person     `xml:"author"`
 	Categories   []*Category `xml:"category"`
@@ -55,8 +55,8 @@ func (f *Feed) GetURI() string {
 }
 
 type Entry struct {
+	CommonAttributes
 	XMLName xml.Name `xml:"entry"`
-	XMLBase *string  `xml:"base,attr"`
 
 	Author       *Person     `xml:"author"`
 	Categories   []*Category `xml:"category"`
@@ -78,8 +78,8 @@ func (e *Entry) IsZero() bool {
 }
 
 type Content struct {
+	CommonAttributes
 	XMLName xml.Name `xml:"content"`
-	XMLBase *string  `xml:"base,attr"`
 
 	Src   *string `xml:"src,attr"`
 	Type  *string `xml:"type,attr"`
@@ -87,8 +87,8 @@ type Content struct {
 }
 
 type Generator struct {
+	CommonAttributes
 	XMLName xml.Name `xml:"generator"`
-	XMLBase *string  `xml:"base,attr"`
 
 	URI     *string `xml:"uri,attr"`
 	Version *string `xml:"version,attr"`
@@ -96,7 +96,7 @@ type Generator struct {
 }
 
 type Person struct {
-	XMLBase *string `xml:"base,attr"`
+	CommonAttributes
 
 	Email *string `xml:"email"`
 	Name  string  `xml:"name"`
@@ -104,8 +104,8 @@ type Person struct {
 }
 
 type Category struct {
+	CommonAttributes
 	XMLName xml.Name `xml:"category"`
-	XMLBase *string  `xml:"base,attr"`
 
 	Label  *string `xml:"label,attr"`
 	Scheme *string `xml:"scheme,attr"`
@@ -161,8 +161,8 @@ func (t *Text) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 }
 
 type Link struct {
+	CommonAttributes
 	XMLName xml.Name `xml:"link"`
-	XMLBase *string  `xml:"base,attr"`
 
 	Href     string  `xml:"href,attr"`
 	Hreflang *string `xml:"hreflang,attr"`
@@ -192,6 +192,11 @@ func (t *RFC3399Time) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error
 	}
 	*t = RFC3399Time{ts}
 	return nil
+}
+
+type CommonAttributes struct {
+	XMLBase *string `xml:"base,attr"`
+	XMLLang *string `xml:"lang,attr"`
 }
 
 type zeroer interface {
