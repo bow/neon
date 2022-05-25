@@ -45,7 +45,7 @@ type Feed struct {
 	Updated      RFC3399Time `xml:"updated,omitempty"`
 }
 
-func (f *Feed) GetURI() string {
+func (f *Feed) GetPreferredURI() string {
 	for _, link := range f.Links {
 		if link.GetRel() == "self" {
 			return link.Href

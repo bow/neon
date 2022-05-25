@@ -56,7 +56,7 @@ func TestParseOkSimple(t *testing.T) {
 	a.Equal(30, feed.Updated.Minute())
 	a.Equal(2, feed.Updated.Second())
 	//
-	a.Equal("", feed.GetURI())
+	a.Equal("", feed.GetPreferredURI())
 
 	r.Len(feed.Links, 1)
 	//
@@ -130,7 +130,7 @@ func TestParseOkMinimal(t *testing.T) {
 	a.Equal(30, feed.Updated.Minute())
 	a.Equal(2, feed.Updated.Second())
 	//
-	a.Equal("", feed.GetURI())
+	a.Equal("", feed.GetPreferredURI())
 
 	r.Len(feed.Links, 0)
 
@@ -229,7 +229,7 @@ func TestParseOkExtended(t *testing.T) {
 	a.Equal(29, feed.Updated.Minute())
 	a.Equal(29, feed.Updated.Second())
 	//
-	a.Equal("http://example.org/feed.atom", feed.GetURI())
+	a.Equal("http://example.org/feed.atom", feed.GetPreferredURI())
 
 	r.Len(feed.Links, 2)
 	//
