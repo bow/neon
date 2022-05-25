@@ -73,7 +73,7 @@ func TestParseOkSimple(t *testing.T) {
 	entry0 := feed.Entries[0]
 	a.Len(entry0.Categories, 0)
 	a.Equal("urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a", entry0.ID)
-	a.Equal(stringp("Some text."), entry0.Summary)
+	a.Equal("Some text.", entry0.Summary.Value)
 	a.Equal("Atom-Powered Robots Run Amok", entry0.Title.Value)
 	a.Equal(PlainText, entry0.Title.Type)
 	a.Equal(2003, entry0.UpdatedUTC.Year())

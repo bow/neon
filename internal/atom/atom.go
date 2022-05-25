@@ -65,7 +65,7 @@ type Entry struct {
 	ID           string       `xml:"id"`
 	Links        []*Link      `xml:"link,omitempty"`
 	PublishedUTC *RFC3399Time `xml:"published,omitempty"`
-	Summary      *string      `xml:"summary"`
+	Summary      *Text        `xml:"summary"`
 	Title        Text         `xml:"title"`
 	UpdatedUTC   RFC3399Time  `xml:"updated,omitempty"`
 }
