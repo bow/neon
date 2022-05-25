@@ -41,7 +41,7 @@ func TestParseOkSimple(t *testing.T) {
 	a.Nil(feed.Authors[0].URI)
 	a.Nil(feed.Authors[0].Email)
 	//
-	a.Len(feed.Categories, 0)
+	a.Empty(feed.Categories)
 	//
 	a.Equal("urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6", feed.ID)
 	//
@@ -72,7 +72,7 @@ func TestParseOkSimple(t *testing.T) {
 	r.Len(feed.Entries, 1)
 	//
 	entry0 := feed.Entries[0]
-	a.Len(entry0.Categories, 0)
+	a.Empty(entry0.Categories)
 	a.Equal("urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a", entry0.ID)
 	a.Equal("Some text.", entry0.Summary.Value)
 	a.Equal("Atom-Powered Robots Run Amok", entry0.Title.Value)
@@ -116,7 +116,7 @@ func TestParseOkMinimal(t *testing.T) {
 	a.Nil(feed.Authors[0].URI)
 	a.Nil(feed.Authors[0].Email)
 	//
-	a.Len(feed.Categories, 0)
+	a.Empty(feed.Categories)
 	//
 	a.Equal("urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6", feed.ID)
 	//
@@ -134,9 +134,9 @@ func TestParseOkMinimal(t *testing.T) {
 	//
 	a.Equal("", feed.GetPreferredURI())
 
-	r.Len(feed.Links, 0)
+	r.Empty(feed.Links)
 
-	r.Len(feed.Entries, 0)
+	r.Empty(feed.Entries)
 }
 
 func TestParseOkExtended(t *testing.T) {
@@ -194,11 +194,11 @@ func TestParseOkExtended(t *testing.T) {
 	feed, err := Parse([]byte(raw))
 	r.NoError(err)
 	//
-	a.Len(feed.Authors, 0)
+	a.Empty(feed.Authors)
 	//
-	a.Len(feed.Categories, 0)
+	a.Empty(feed.Categories)
 	//
-	a.Len(feed.Contributors, 0)
+	a.Empty(feed.Contributors)
 	//
 	r.NotNil(feed.Generator)
 	a.Equal(stringp("http://www.example.com/"), feed.Generator.URI)
