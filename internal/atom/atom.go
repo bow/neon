@@ -77,6 +77,26 @@ func (e *Entry) IsZero() bool {
 		e.Summary == nil
 }
 
+type CommonAttributes struct {
+	XMLBase *string `xml:"base,attr"`
+	XMLLang *string `xml:"lang,attr"`
+}
+
+type Category struct {
+	CommonAttributes
+	XMLName xml.Name
+
+	Label  *string `xml:"label,attr"`
+	Scheme *string `xml:"scheme,attr"`
+	Term   string  `xml:"term,attr"`
+}
+
+func (c *Category) IsZero() bool {
+	return c.Term == "" &&
+		c.Scheme == nil &&
+		c.Label == nil
+}
+
 type Content struct {
 	CommonAttributes
 	XMLName xml.Name
@@ -95,27 +115,31 @@ type Generator struct {
 	Value   string  `xml:",innerxml"`
 }
 
+type Link struct {
+	CommonAttributes
+	XMLName xml.Name
+
+	Href     string  `xml:"href,attr"`
+	Hreflang *string `xml:"hreflang,attr"`
+	Length   *int    `xml:"length,attr"`
+	Rel      *string `xml:"rel,attr"`
+	Title    *string `xml:"title,attr"`
+	Type     *string `xml:"type,attr"`
+}
+
+func (l *Link) GetRel() string {
+	if l.Rel == nil {
+		return "alternate"
+	}
+	return *l.Rel
+}
+
 type Person struct {
 	CommonAttributes
 
 	Email *string `xml:"email"`
 	Name  string  `xml:"name"`
 	URI   *string `xml:"uri"`
-}
-
-type Category struct {
-	CommonAttributes
-	XMLName xml.Name
-
-	Label  *string `xml:"label,attr"`
-	Scheme *string `xml:"scheme,attr"`
-	Term   string  `xml:"term,attr"`
-}
-
-func (c *Category) IsZero() bool {
-	return c.Term == "" &&
-		c.Scheme == nil &&
-		c.Label == nil
 }
 
 type TextType uint8
@@ -160,25 +184,6 @@ func (t *Text) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	return nil
 }
 
-type Link struct {
-	CommonAttributes
-	XMLName xml.Name
-
-	Href     string  `xml:"href,attr"`
-	Hreflang *string `xml:"hreflang,attr"`
-	Length   *int    `xml:"length,attr"`
-	Rel      *string `xml:"rel,attr"`
-	Title    *string `xml:"title,attr"`
-	Type     *string `xml:"type,attr"`
-}
-
-func (l *Link) GetRel() string {
-	if l.Rel == nil {
-		return "alternate"
-	}
-	return *l.Rel
-}
-
 type RFC3399Time struct {
 	time.Time
 }
@@ -192,11 +197,6 @@ func (t *RFC3399Time) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error
 	}
 	*t = RFC3399Time{ts}
 	return nil
-}
-
-type CommonAttributes struct {
-	XMLBase *string `xml:"base,attr"`
-	XMLLang *string `xml:"lang,attr"`
 }
 
 type zeroer interface {
