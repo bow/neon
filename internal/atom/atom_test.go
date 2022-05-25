@@ -292,6 +292,7 @@ func TestParseOkExtended(t *testing.T) {
 	a.Equal(12, entry0.PublishedUTC.Hour())
 	a.Equal(29, entry0.PublishedUTC.Minute())
 	a.Equal(29, entry0.PublishedUTC.Second())
+	a.Nil(entry0.Source)
 	a.Nil(entry0.Summary)
 	a.Equal("Atom draft-07 snapshot", entry0.Title.Value)
 	a.Equal(PlainText, entry0.Title.Type)

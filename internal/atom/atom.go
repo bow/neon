@@ -65,6 +65,7 @@ type Entry struct {
 	ID           string       `xml:"id"`
 	Links        []*Link      `xml:"link,omitempty"`
 	PublishedUTC *RFC3399Time `xml:"published,omitempty"`
+	Source       *Source      `xml:"source"`
 	Summary      *Text        `xml:"summary"`
 	Title        Text         `xml:"title"`
 	UpdatedUTC   RFC3399Time  `xml:"updated,omitempty"`
@@ -133,6 +134,27 @@ func (l *Link) GetRel() string {
 		return "alternate"
 	}
 	return *l.Rel
+}
+
+type Source struct {
+	CommonAttributes
+
+	Authors      []*Person   `xml:"author"`
+	Categories   []*Category `xml:"category"`
+	Contributors []*Person   `xml:"contributor"`
+	Generator    *Generator  `xml:"generator"`
+	Icon         *string     `xml:"icon"`
+	ID           *string     `xml:"id"`
+	Links        []*Link     `xml:"link"`
+	Logo         *string     `xml:"logo"`
+	Rights       *string     `xml:"rights"`
+	Subtitle     *Text       `xml:"subtitle"`
+	Title        Text        `xml:"title"`
+	UpdatedUTC   RFC3399Time `xml:"updated"`
+}
+
+func (s *Source) IsZero() bool {
+	return false
 }
 
 type Person struct {
