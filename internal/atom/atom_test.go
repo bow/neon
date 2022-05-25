@@ -36,9 +36,10 @@ func TestParseOkSimple(t *testing.T) {
 	feed, err := Parse([]byte(raw))
 	r.NoError(err)
 	//
-	a.Equal("John Doe", feed.Author.Name)
-	a.Nil(feed.Author.URI)
-	a.Nil(feed.Author.Email)
+	r.Len(feed.Authors, 1)
+	a.Equal("John Doe", feed.Authors[0].Name)
+	a.Nil(feed.Authors[0].URI)
+	a.Nil(feed.Authors[0].Email)
 	//
 	a.Len(feed.Categories, 0)
 	//
@@ -110,9 +111,10 @@ func TestParseOkMinimal(t *testing.T) {
 	feed, err := Parse([]byte(raw))
 	r.NoError(err)
 	//
-	a.Equal("John Doe", feed.Author.Name)
-	a.Nil(feed.Author.URI)
-	a.Nil(feed.Author.Email)
+	r.Len(feed.Authors, 1)
+	a.Equal("John Doe", feed.Authors[0].Name)
+	a.Nil(feed.Authors[0].URI)
+	a.Nil(feed.Authors[0].Email)
 	//
 	a.Len(feed.Categories, 0)
 	//
@@ -192,7 +194,7 @@ func TestParseOkExtended(t *testing.T) {
 	feed, err := Parse([]byte(raw))
 	r.NoError(err)
 	//
-	a.Nil(feed.Author)
+	a.Len(feed.Authors, 0)
 	//
 	a.Len(feed.Categories, 0)
 	//
@@ -251,9 +253,10 @@ func TestParseOkExtended(t *testing.T) {
 	r.Len(feed.Entries, 1)
 	entry0 := feed.Entries[0]
 	//
-	a.Equal(stringp("f8dy@example.com"), entry0.Author.Email)
-	a.Equal("Mark Pilgrim", entry0.Author.Name)
-	a.Equal(stringp("http://example.org/"), entry0.Author.URI)
+	r.Len(entry0.Authors, 1)
+	a.Equal(stringp("f8dy@example.com"), entry0.Authors[0].Email)
+	a.Equal("Mark Pilgrim", entry0.Authors[0].Name)
+	a.Equal(stringp("http://example.org/"), entry0.Authors[0].URI)
 	//
 	r.Len(entry0.Categories, 2)
 	a.Equal("misc", entry0.Categories[0].Term)

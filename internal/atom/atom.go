@@ -30,7 +30,7 @@ type Feed struct {
 	CommonAttributes
 	XMLName xml.Name `xml:"http://www.w3.org/2005/Atom feed"`
 
-	Author       *Person     `xml:"author"`
+	Authors      []*Person   `xml:"author"`
 	Categories   []*Category `xml:"category"`
 	Contributors []*Person   `xml:"contributor"`
 	Entries      []*Entry    `xml:"entry,omitempty"`
@@ -58,7 +58,7 @@ type Entry struct {
 	CommonAttributes
 	XMLName xml.Name
 
-	Author       *Person      `xml:"author"`
+	Authors      []*Person    `xml:"author"`
 	Categories   []*Category  `xml:"category"`
 	Content      *Content     `xml:"content"`
 	Contributors []*Person    `xml:"contributor"`
