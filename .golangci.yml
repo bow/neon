@@ -118,9 +118,8 @@ issues:
     # ctx can be specified as function param without it being used, by convention
     - text: "parameter 'ctx' seems to be unused, consider removing"
       linters: [revive]
-    # structs in tests are optimized for readability instead of memory alignment, so we exclude this linter.
     - path: _test\.go
-      text: "fieldalignment"
+      text: "line-length-limit"
 severity:
   default-severity: major
   rules:
