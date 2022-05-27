@@ -5,26 +5,127 @@ import (
 	"testing"
 
 	"github.com/bow/courier/api"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
-func TestGetInfoOk(t *testing.T) {
+func TestAddFeedOk(t *testing.T) {
+	t.Parallel()
+
+	r := require.New(t)
 	client := setupTestServer(t)
 
-	req := api.GetInfoRequest{}
-	rsp, err := client.GetInfo(context.Background(), &req)
-	require.NoError(t, err)
+	req := api.AddFeedRequest{}
+	rsp, err := client.AddFeed(context.Background(), &req)
 
-	want := &api.GetInfoResponse{
-		Name:      AppName(),
-		Version:   Version(),
-		GitCommit: GitCommit(),
-		BuildTime: BuildTime(),
-	}
-	a := assert.New(t)
-	a.Equal(want.Name, rsp.Name)
-	a.Equal(want.Version, rsp.Version)
-	a.Equal(want.GitCommit, rsp.GitCommit)
-	a.Equal(want.BuildTime, rsp.BuildTime)
+	r.Nil(rsp)
+	r.EqualError(err, status.New(codes.Unimplemented, "unimplemented").String())
+}
+
+func TestEditFeedOk(t *testing.T) {
+	t.Parallel()
+
+	r := require.New(t)
+	client := setupTestServer(t)
+
+	req := api.EditFeedRequest{}
+	rsp, err := client.EditFeed(context.Background(), &req)
+
+	r.Nil(rsp)
+	r.EqualError(err, status.New(codes.Unimplemented, "unimplemented").String())
+}
+
+func TestListFeedsOk(t *testing.T) {
+	t.Parallel()
+
+	r := require.New(t)
+	client := setupTestServer(t)
+
+	req := api.ListFeedsRequest{}
+	rsp, err := client.ListFeeds(context.Background(), &req)
+
+	r.Nil(rsp)
+	r.EqualError(err, status.New(codes.Unimplemented, "unimplemented").String())
+}
+
+func TestDeleteFeedsOk(t *testing.T) {
+	t.Parallel()
+
+	r := require.New(t)
+	client := setupTestServer(t)
+
+	req := api.DeleteFeedsRequest{}
+	rsp, err := client.DeleteFeeds(context.Background(), &req)
+
+	r.Nil(rsp)
+	r.EqualError(err, status.New(codes.Unimplemented, "unimplemented").String())
+}
+
+func TestPollFeedsOk(t *testing.T) {
+	t.Parallel()
+
+	r := require.New(t)
+	client := setupTestServer(t)
+
+	stream, err := client.PollFeeds(context.Background())
+	r.NoError(err)
+	waitc := make(chan struct{})
+
+	go func() {
+		for {
+			rsp, errStream := stream.Recv()
+			r.Nil(rsp)
+			r.EqualError(errStream, status.New(codes.Unimplemented, "unimplemented").String())
+			close(waitc)
+			return
+		}
+	}()
+
+	req := api.PollFeedsRequest{}
+	err = stream.Send(&req)
+	r.NoError(err)
+
+	err = stream.CloseSend()
+	r.NoError(err)
+	<-waitc
+}
+
+func TestEditEntryOk(t *testing.T) {
+	t.Parallel()
+
+	r := require.New(t)
+	client := setupTestServer(t)
+
+	req := api.EditEntryRequest{}
+	rsp, err := client.EditEntry(context.Background(), &req)
+
+	r.Nil(rsp)
+	r.EqualError(err, status.New(codes.Unimplemented, "unimplemented").String())
+}
+
+func TestExportOPMLOk(t *testing.T) {
+	t.Parallel()
+
+	r := require.New(t)
+	client := setupTestServer(t)
+
+	req := api.ExportOPMLRequest{}
+	rsp, err := client.ExportOPML(context.Background(), &req)
+
+	r.Nil(rsp)
+	r.EqualError(err, status.New(codes.Unimplemented, "unimplemented").String())
+}
+
+func TestImportOPMLOk(t *testing.T) {
+	t.Parallel()
+
+	r := require.New(t)
+	client := setupTestServer(t)
+
+	req := api.ImportOPMLRequest{}
+	rsp, err := client.ImportOPML(context.Background(), &req)
+
+	r.Nil(rsp)
+	r.EqualError(err, status.New(codes.Unimplemented, "unimplemented").String())
 }

@@ -22,6 +22,22 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CourierClient interface {
+	// AddFeeds adds a new feed source.
+	AddFeed(ctx context.Context, in *AddFeedRequest, opts ...grpc.CallOption) (*AddFeedResponse, error)
+	// EditFeed updates the properties of an existing feed.
+	EditFeed(ctx context.Context, in *EditFeedRequest, opts ...grpc.CallOption) (*EditFeedResponse, error)
+	// ListFeeds lists all added feed sources.
+	ListFeeds(ctx context.Context, in *ListFeedsRequest, opts ...grpc.CallOption) (*ListFeedsResponse, error)
+	// DeleteFeeds removes one or more feed sources.
+	DeleteFeeds(ctx context.Context, in *DeleteFeedsRequest, opts ...grpc.CallOption) (*DeleteFeedsResponse, error)
+	// PollFeeds listens for feed updates.
+	PollFeeds(ctx context.Context, opts ...grpc.CallOption) (Courier_PollFeedsClient, error)
+	// EditEntry updates the properties of an existing feed entry.
+	EditEntry(ctx context.Context, in *EditEntryRequest, opts ...grpc.CallOption) (*EditEntryResponse, error)
+	// ExportOPML exports feed subscriptions as an OPML document.
+	ExportOPML(ctx context.Context, in *ExportOPMLRequest, opts ...grpc.CallOption) (*ExportOPMLResponse, error)
+	// ImportOPML imports an OPML document.
+	ImportOPML(ctx context.Context, in *ImportOPMLRequest, opts ...grpc.CallOption) (*ImportOPMLResponse, error)
 	// GetInfo returns the version info of the running server.
 	GetInfo(ctx context.Context, in *GetInfoRequest, opts ...grpc.CallOption) (*GetInfoResponse, error)
 }
@@ -32,6 +48,100 @@ type courierClient struct {
 
 func NewCourierClient(cc grpc.ClientConnInterface) CourierClient {
 	return &courierClient{cc}
+}
+
+func (c *courierClient) AddFeed(ctx context.Context, in *AddFeedRequest, opts ...grpc.CallOption) (*AddFeedResponse, error) {
+	out := new(AddFeedResponse)
+	err := c.cc.Invoke(ctx, "/courier.Courier/AddFeed", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *courierClient) EditFeed(ctx context.Context, in *EditFeedRequest, opts ...grpc.CallOption) (*EditFeedResponse, error) {
+	out := new(EditFeedResponse)
+	err := c.cc.Invoke(ctx, "/courier.Courier/EditFeed", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *courierClient) ListFeeds(ctx context.Context, in *ListFeedsRequest, opts ...grpc.CallOption) (*ListFeedsResponse, error) {
+	out := new(ListFeedsResponse)
+	err := c.cc.Invoke(ctx, "/courier.Courier/ListFeeds", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *courierClient) DeleteFeeds(ctx context.Context, in *DeleteFeedsRequest, opts ...grpc.CallOption) (*DeleteFeedsResponse, error) {
+	out := new(DeleteFeedsResponse)
+	err := c.cc.Invoke(ctx, "/courier.Courier/DeleteFeeds", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *courierClient) PollFeeds(ctx context.Context, opts ...grpc.CallOption) (Courier_PollFeedsClient, error) {
+	stream, err := c.cc.NewStream(ctx, &Courier_ServiceDesc.Streams[0], "/courier.Courier/PollFeeds", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &courierPollFeedsClient{stream}
+	return x, nil
+}
+
+type Courier_PollFeedsClient interface {
+	Send(*PollFeedsRequest) error
+	Recv() (*PollFeedsResponse, error)
+	grpc.ClientStream
+}
+
+type courierPollFeedsClient struct {
+	grpc.ClientStream
+}
+
+func (x *courierPollFeedsClient) Send(m *PollFeedsRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *courierPollFeedsClient) Recv() (*PollFeedsResponse, error) {
+	m := new(PollFeedsResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *courierClient) EditEntry(ctx context.Context, in *EditEntryRequest, opts ...grpc.CallOption) (*EditEntryResponse, error) {
+	out := new(EditEntryResponse)
+	err := c.cc.Invoke(ctx, "/courier.Courier/EditEntry", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *courierClient) ExportOPML(ctx context.Context, in *ExportOPMLRequest, opts ...grpc.CallOption) (*ExportOPMLResponse, error) {
+	out := new(ExportOPMLResponse)
+	err := c.cc.Invoke(ctx, "/courier.Courier/ExportOPML", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *courierClient) ImportOPML(ctx context.Context, in *ImportOPMLRequest, opts ...grpc.CallOption) (*ImportOPMLResponse, error) {
+	out := new(ImportOPMLResponse)
+	err := c.cc.Invoke(ctx, "/courier.Courier/ImportOPML", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *courierClient) GetInfo(ctx context.Context, in *GetInfoRequest, opts ...grpc.CallOption) (*GetInfoResponse, error) {
@@ -47,6 +157,22 @@ func (c *courierClient) GetInfo(ctx context.Context, in *GetInfoRequest, opts ..
 // All implementations must embed UnimplementedCourierServer
 // for forward compatibility
 type CourierServer interface {
+	// AddFeeds adds a new feed source.
+	AddFeed(context.Context, *AddFeedRequest) (*AddFeedResponse, error)
+	// EditFeed updates the properties of an existing feed.
+	EditFeed(context.Context, *EditFeedRequest) (*EditFeedResponse, error)
+	// ListFeeds lists all added feed sources.
+	ListFeeds(context.Context, *ListFeedsRequest) (*ListFeedsResponse, error)
+	// DeleteFeeds removes one or more feed sources.
+	DeleteFeeds(context.Context, *DeleteFeedsRequest) (*DeleteFeedsResponse, error)
+	// PollFeeds listens for feed updates.
+	PollFeeds(Courier_PollFeedsServer) error
+	// EditEntry updates the properties of an existing feed entry.
+	EditEntry(context.Context, *EditEntryRequest) (*EditEntryResponse, error)
+	// ExportOPML exports feed subscriptions as an OPML document.
+	ExportOPML(context.Context, *ExportOPMLRequest) (*ExportOPMLResponse, error)
+	// ImportOPML imports an OPML document.
+	ImportOPML(context.Context, *ImportOPMLRequest) (*ImportOPMLResponse, error)
 	// GetInfo returns the version info of the running server.
 	GetInfo(context.Context, *GetInfoRequest) (*GetInfoResponse, error)
 	mustEmbedUnimplementedCourierServer()
@@ -56,6 +182,30 @@ type CourierServer interface {
 type UnimplementedCourierServer struct {
 }
 
+func (UnimplementedCourierServer) AddFeed(context.Context, *AddFeedRequest) (*AddFeedResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddFeed not implemented")
+}
+func (UnimplementedCourierServer) EditFeed(context.Context, *EditFeedRequest) (*EditFeedResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method EditFeed not implemented")
+}
+func (UnimplementedCourierServer) ListFeeds(context.Context, *ListFeedsRequest) (*ListFeedsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListFeeds not implemented")
+}
+func (UnimplementedCourierServer) DeleteFeeds(context.Context, *DeleteFeedsRequest) (*DeleteFeedsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteFeeds not implemented")
+}
+func (UnimplementedCourierServer) PollFeeds(Courier_PollFeedsServer) error {
+	return status.Errorf(codes.Unimplemented, "method PollFeeds not implemented")
+}
+func (UnimplementedCourierServer) EditEntry(context.Context, *EditEntryRequest) (*EditEntryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method EditEntry not implemented")
+}
+func (UnimplementedCourierServer) ExportOPML(context.Context, *ExportOPMLRequest) (*ExportOPMLResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ExportOPML not implemented")
+}
+func (UnimplementedCourierServer) ImportOPML(context.Context, *ImportOPMLRequest) (*ImportOPMLResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ImportOPML not implemented")
+}
 func (UnimplementedCourierServer) GetInfo(context.Context, *GetInfoRequest) (*GetInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetInfo not implemented")
 }
@@ -70,6 +220,158 @@ type UnsafeCourierServer interface {
 
 func RegisterCourierServer(s grpc.ServiceRegistrar, srv CourierServer) {
 	s.RegisterService(&Courier_ServiceDesc, srv)
+}
+
+func _Courier_AddFeed_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddFeedRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CourierServer).AddFeed(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/courier.Courier/AddFeed",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CourierServer).AddFeed(ctx, req.(*AddFeedRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Courier_EditFeed_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EditFeedRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CourierServer).EditFeed(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/courier.Courier/EditFeed",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CourierServer).EditFeed(ctx, req.(*EditFeedRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Courier_ListFeeds_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListFeedsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CourierServer).ListFeeds(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/courier.Courier/ListFeeds",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CourierServer).ListFeeds(ctx, req.(*ListFeedsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Courier_DeleteFeeds_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteFeedsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CourierServer).DeleteFeeds(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/courier.Courier/DeleteFeeds",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CourierServer).DeleteFeeds(ctx, req.(*DeleteFeedsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Courier_PollFeeds_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(CourierServer).PollFeeds(&courierPollFeedsServer{stream})
+}
+
+type Courier_PollFeedsServer interface {
+	Send(*PollFeedsResponse) error
+	Recv() (*PollFeedsRequest, error)
+	grpc.ServerStream
+}
+
+type courierPollFeedsServer struct {
+	grpc.ServerStream
+}
+
+func (x *courierPollFeedsServer) Send(m *PollFeedsResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *courierPollFeedsServer) Recv() (*PollFeedsRequest, error) {
+	m := new(PollFeedsRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func _Courier_EditEntry_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EditEntryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CourierServer).EditEntry(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/courier.Courier/EditEntry",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CourierServer).EditEntry(ctx, req.(*EditEntryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Courier_ExportOPML_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ExportOPMLRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CourierServer).ExportOPML(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/courier.Courier/ExportOPML",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CourierServer).ExportOPML(ctx, req.(*ExportOPMLRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Courier_ImportOPML_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ImportOPMLRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CourierServer).ImportOPML(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/courier.Courier/ImportOPML",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CourierServer).ImportOPML(ctx, req.(*ImportOPMLRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _Courier_GetInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -98,10 +400,45 @@ var Courier_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*CourierServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
+			MethodName: "AddFeed",
+			Handler:    _Courier_AddFeed_Handler,
+		},
+		{
+			MethodName: "EditFeed",
+			Handler:    _Courier_EditFeed_Handler,
+		},
+		{
+			MethodName: "ListFeeds",
+			Handler:    _Courier_ListFeeds_Handler,
+		},
+		{
+			MethodName: "DeleteFeeds",
+			Handler:    _Courier_DeleteFeeds_Handler,
+		},
+		{
+			MethodName: "EditEntry",
+			Handler:    _Courier_EditEntry_Handler,
+		},
+		{
+			MethodName: "ExportOPML",
+			Handler:    _Courier_ExportOPML_Handler,
+		},
+		{
+			MethodName: "ImportOPML",
+			Handler:    _Courier_ImportOPML_Handler,
+		},
+		{
 			MethodName: "GetInfo",
 			Handler:    _Courier_GetInfo_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "PollFeeds",
+			Handler:       _Courier_PollFeeds_Handler,
+			ServerStreams: true,
+			ClientStreams: true,
+		},
+	},
 	Metadata: "courier.proto",
 }

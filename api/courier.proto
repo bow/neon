@@ -5,9 +5,65 @@ package courier;
 option go_package = "github.com/bow/courier/api";
 
 service Courier {
+  // AddFeeds adds a new feed source.
+  rpc AddFeed (AddFeedRequest) returns (AddFeedResponse) {}
+
+  // EditFeed updates the properties of an existing feed.
+  rpc EditFeed (EditFeedRequest) returns (EditFeedResponse) {}
+
+  // ListFeeds lists all added feed sources.
+  rpc ListFeeds (ListFeedsRequest) returns (ListFeedsResponse) {}
+
+  // DeleteFeeds removes one or more feed sources.
+  rpc DeleteFeeds (DeleteFeedsRequest) returns (DeleteFeedsResponse) {}
+
+  // PollFeeds listens for feed updates.
+  rpc PollFeeds (stream PollFeedsRequest) returns (stream PollFeedsResponse) {}
+
+  // EditEntry updates the properties of an existing feed entry.
+  rpc EditEntry (EditEntryRequest) returns (EditEntryResponse) {}
+
+  // ExportOPML exports feed subscriptions as an OPML document.
+  rpc ExportOPML (ExportOPMLRequest) returns (ExportOPMLResponse) {}
+
+  // ImportOPML imports an OPML document.
+  rpc ImportOPML (ImportOPMLRequest) returns (ImportOPMLResponse) {}
+
   // GetInfo returns the version info of the running server.
   rpc GetInfo (GetInfoRequest) returns (GetInfoResponse) {}
 }
+
+message AddFeedRequest {}
+
+message AddFeedResponse {}
+
+message EditFeedRequest {}
+
+message EditFeedResponse {}
+
+message ListFeedsRequest {}
+
+message ListFeedsResponse {}
+
+message DeleteFeedsRequest {}
+
+message DeleteFeedsResponse {}
+
+message PollFeedsRequest {}
+
+message PollFeedsResponse {}
+
+message EditEntryRequest {}
+
+message EditEntryResponse {}
+
+message ExportOPMLRequest {}
+
+message ExportOPMLResponse {}
+
+message ImportOPMLRequest {}
+
+message ImportOPMLResponse {}
 
 message GetInfoRequest {}
 
