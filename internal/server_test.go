@@ -3,6 +3,7 @@ package internal
 import (
 	"context"
 	"net"
+	"path/filepath"
 	"testing"
 	"time"
 
@@ -20,8 +21,13 @@ func setupTestServer(t *testing.T) api.CourierClient {
 	// TODO: Avoid global states like this.
 	zerolog.SetGlobalLevel(zerolog.Disabled)
 
+	storePath := filepath.Join(t.TempDir(), "courier-test.db")
+
 	var (
-		b            = NewServerBuilder().Address(":0").Logger(zerolog.Nop())
+		b = NewServerBuilder().
+			Address(":0").
+			StorePath(storePath).
+			Logger(zerolog.Nop())
 		srv, addr    = newRunningServer(t, b)
 		client, conn = newClient(t, addr)
 	)
@@ -92,7 +98,8 @@ func newClient(
 }
 
 func TestServerBuilderErrInvalidAddr(t *testing.T) {
-	b := NewServerBuilder().Address("invalid")
+	storePath := filepath.Join(t.TempDir(), "courier-test-err-invalid-addr.db")
+	b := NewServerBuilder().Address("invalid").StorePath(storePath)
 	srv, err := b.Build()
 	assert.Nil(t, srv)
 	assert.EqualError(t, err, "listen tcp: address invalid: missing port in address")

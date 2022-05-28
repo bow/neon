@@ -31,14 +31,9 @@ var serveCmd = cobra.Command{
 			return err
 		}
 
-		store, err := internal.NewFeedsDB(dbPath)
-		if err != nil {
-			return err
-		}
-
 		server, err := internal.NewServerBuilder().
 			Address(viper.GetString(addrKey)).
-			Store(store).
+			StorePath(dbPath).
 			Logger(zlog.Logger.With().Logger()).
 			Build()
 

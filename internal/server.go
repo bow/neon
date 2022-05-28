@@ -2,6 +2,7 @@ package internal
 
 import (
 	"errors"
+	"fmt"
 	"net"
 	"os"
 	"os/signal"
@@ -101,9 +102,10 @@ func (s *server) start() <-chan error {
 }
 
 type ServerBuilder struct {
-	addr   string
-	feeds  FeedsStore
-	logger zerolog.Logger
+	addr      string
+	store     FeedsStore
+	storePath string
+	logger    zerolog.Logger
 }
 
 func NewServerBuilder() *ServerBuilder {
@@ -116,8 +118,13 @@ func (b *ServerBuilder) Address(addr string) *ServerBuilder {
 	return b
 }
 
-func (b *ServerBuilder) Store(feeds FeedsStore) *ServerBuilder {
-	b.feeds = feeds
+func (b *ServerBuilder) StorePath(path string) *ServerBuilder {
+	b.storePath = path
+	return b
+}
+
+func (b *ServerBuilder) Store(store FeedsStore) *ServerBuilder {
+	b.store = store
 	return b
 }
 
@@ -127,9 +134,24 @@ func (b *ServerBuilder) Logger(logger zerolog.Logger) *ServerBuilder {
 }
 
 func (b *ServerBuilder) Build() (*server, error) {
+
 	lis, err := net.Listen("tcp", b.addr)
 	if err != nil {
 		return nil, err
+	}
+
+	if b.store != nil && b.storePath != "" {
+		return nil, fmt.Errorf("server build: only one of store and storePath may be set")
+	}
+	if b.store == nil && b.storePath == "" {
+		return nil, fmt.Errorf("server build: exactly one of store or storePath must be set")
+	}
+
+	store := b.store
+	if sp := b.storePath; sp != "" {
+		if store, err = newFeedsDB(sp); err != nil {
+			return nil, fmt.Errorf("server build: %w", err)
+		}
 	}
 
 	grpcs := grpc.NewServer(
@@ -144,7 +166,7 @@ func (b *ServerBuilder) Build() (*server, error) {
 	)
 	setupService(grpcs)
 
-	s := newServer(lis, grpcs, b.feeds)
+	s := newServer(lis, grpcs, store)
 	healthapi.RegisterHealthServer(grpcs, s.healthSvc)
 	reflection.Register(grpcs)
 

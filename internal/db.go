@@ -19,7 +19,7 @@ type FeedsDB struct {
 	db *sql.DB
 }
 
-func NewFeedsDB(filename string) (*FeedsDB, error) {
+func newFeedsDB(filename string) (*FeedsDB, error) {
 	log.Debug().Msgf("preparing '%s' as data store", filename)
 
 	m, err := migration.New(filename)
