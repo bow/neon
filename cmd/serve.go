@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/adrg/xdg"
 	zlog "github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
@@ -14,12 +16,22 @@ const (
 	dbNameKey = "db"
 )
 
+var (
+	relDBName     = "courier/courier.db"
+	defaultDBName = fmt.Sprintf("$XDG_DATA_HOME/%s", relDBName)
+)
+
 var serveCmd = cobra.Command{
 	Use:   "serve",
 	Short: "Start the server",
 	RunE: func(cmd *cobra.Command, args []string) error {
 
-		store, err := internal.NewFeedsDB(viper.GetString(dbNameKey))
+		dbPath, err := resolveDBPath()
+		if err != nil {
+			return err
+		}
+
+		store, err := internal.NewFeedsDB(dbPath)
 		if err != nil {
 			return err
 		}
@@ -46,8 +58,17 @@ func init() {
 	flags.StringP(addrKey, "a", ":50051", "listening address")
 	_ = viper.BindPFlag(addrKey, flags.Lookup(addrKey))
 
-	// TODO: Handle error.
-	defaultDBName, _ := xdg.DataFile("courier/courier.db")
 	flags.StringP(dbNameKey, "d", defaultDBName, "data store location")
 	_ = viper.BindPFlag(dbNameKey, flags.Lookup(dbNameKey))
+}
+
+func resolveDBPath() (dbPath string, err error) {
+	dbPath = viper.GetString(dbNameKey)
+	if dbPath == defaultDBName {
+		dbPath, err = xdg.DataFile(relDBName)
+		if err != nil {
+			return "", err
+		}
+	}
+	return dbPath, nil
 }
