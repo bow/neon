@@ -20,7 +20,7 @@ type FeedsStore interface {
 
 type FeedsDB struct {
 	db *sql.DB
-	mu sync.Mutex
+	mu sync.RWMutex
 }
 
 func newFeedsDB(filename string) (*FeedsDB, error) {
