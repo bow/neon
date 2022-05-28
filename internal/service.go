@@ -14,11 +14,12 @@ import (
 type service struct {
 	api.UnimplementedCourierServer
 
-	store FeedsStore
+	store  FeedsStore
+	parser FeedParser
 }
 
-func setupService(grpcs *grpc.Server, store FeedsStore) *service {
-	svc := service{store: store}
+func setupService(grpcs *grpc.Server, store FeedsStore, parser FeedParser) *service {
+	svc := service{store: store, parser: parser}
 	api.RegisterCourierServer(grpcs, &svc)
 	return &svc
 }

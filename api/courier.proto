@@ -33,7 +33,9 @@ service Courier {
   rpc GetInfo (GetInfoRequest) returns (GetInfoResponse) {}
 }
 
-message AddFeedRequest {}
+message AddFeedRequest {
+  string url = 1;
+}
 
 message AddFeedResponse {}
 

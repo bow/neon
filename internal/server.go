@@ -13,6 +13,7 @@ import (
 	middleware "github.com/grpc-ecosystem/go-grpc-middleware/v2"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/tags"
+	"github.com/mmcdole/gofeed"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
@@ -98,6 +99,7 @@ type ServerBuilder struct {
 	addr      string
 	store     FeedsStore
 	storePath string
+	parser    FeedParser
 	logger    zerolog.Logger
 }
 
@@ -118,6 +120,11 @@ func (b *ServerBuilder) StorePath(path string) *ServerBuilder {
 
 func (b *ServerBuilder) Store(store FeedsStore) *ServerBuilder {
 	b.store = store
+	return b
+}
+
+func (b *ServerBuilder) Parser(parser FeedParser) *ServerBuilder {
+	b.parser = parser
 	return b
 }
 
@@ -147,6 +154,10 @@ func (b *ServerBuilder) Build() (*server, error) {
 		}
 	}
 
+	if b.parser == nil {
+		b.parser = gofeed.NewParser()
+	}
+
 	grpcs := grpc.NewServer(
 		middleware.WithUnaryServerChain(
 			tags.UnaryServerInterceptor(),
@@ -157,7 +168,7 @@ func (b *ServerBuilder) Build() (*server, error) {
 			logging.StreamServerInterceptor(grpczerolog.InterceptorLogger(b.logger)),
 		),
 	)
-	setupService(grpcs, store)
+	setupService(grpcs, store, b.parser)
 
 	s := newServer(lis, grpcs)
 	healthapi.RegisterHealthServer(grpcs, s.healthSvc)
