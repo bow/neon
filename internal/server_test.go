@@ -16,12 +16,13 @@ import (
 	"google.golang.org/grpc/health/grpc_health_v1"
 )
 
-func setupTestServer(t *testing.T) api.CourierClient {
+func setupTestServer(t *testing.T, dialOpts ...grpc.DialOption) api.CourierClient {
 	t.Helper()
 	// TODO: Avoid global states like this.
 	zerolog.SetGlobalLevel(zerolog.Disabled)
 
 	storePath := filepath.Join(t.TempDir(), "courier-test.db")
+	dialOpts = append(dialOpts, grpc.WithTransportCredentials(insecure.NewCredentials()))
 
 	var (
 		b = NewServerBuilder().
@@ -29,7 +30,7 @@ func setupTestServer(t *testing.T) api.CourierClient {
 			StorePath(storePath).
 			Logger(zerolog.Nop())
 		srv, addr    = newRunningServer(t, b)
-		client, conn = newClient(t, addr)
+		client, conn = newClient(t, addr, dialOpts...)
 	)
 	t.Cleanup(
 		func() {
@@ -89,7 +90,6 @@ func newClient(
 ) (api.CourierClient, *grpc.ClientConn) {
 	t.Helper()
 
-	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	conn, err := grpc.Dial(addr.String(), opts...)
 	require.NoError(t, err)
 	client := api.NewCourierClient(conn)
