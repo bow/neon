@@ -44,7 +44,6 @@ BASE_LD_FLAGS += -X ${REPO_NAME}/internal.gitCommit=$(GIT_COMMIT)$(GIT_DIRTY)
 # Allow for optional LD flags from env, appended to base flags, stripping trailing whitespaces.
 LD_FLAGS := $(strip $(BASE_LD_FLAGS) $(LD_FLAGS))
 
-
 # Protobuf settings.
 PROTOC_VERSION := 3.20.1
 PROTOC_GEN_GO_GRPC_VERSION := v1.2.0
@@ -52,6 +51,9 @@ GO_PROTOBUF_VERSION := $(shell (cat go.mod | $(GREP_EXE) google.golang.org/proto
 PROTO_DIR := $(CURDIR)/api
 PROTO_FILES := $(shell find $(PROTO_DIR) -type f -name "*.proto" -print)
 
+# DB settings.
+GOLANG_MIGRATE_VERSION := $(shell (cat go.mod | $(GREP_EXE) github.com/golang-migrate/migrate/v4 | $(SED_EXE) -r 's/[[:space:]]+github.com\/golang-migrate\/migrate\/v4 //g'))
+DEV_DB_FILE := dev.db
 
 all: help
 
@@ -65,7 +67,7 @@ $(BIN_PATH): $(shell find . -type f -name '*.go' -print) go.mod
 
 .PHONY: clean
 clean:  ## Remove all build artifacts.
-	rm -f bin/* coverage.html .coverage.out .junit.xml && (docker rmi $(IMG_NAME) 2> /dev/null || true)
+	rm -f bin/* coverage.html .coverage.out .junit.xml $(DEV_DB_FILE) && (docker rmi $(IMG_NAME) 2> /dev/null || true)
 
 
 .PHONY: img
@@ -90,7 +92,8 @@ install-dev:  ## Install dependencies for local development.
 		&& go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@$(PROTOC_GEN_GO_GRPC_VERSION) \
 		&& go install google.golang.org/protobuf/cmd/protoc-gen-go@$(GO_PROTOBUF_VERSION) \
 		&& go install github.com/boumenot/gocover-cobertura@latest \
-		&& go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.46.0
+		&& go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.46.0 \
+		&& go install -tags 'sqlite3' github.com/golang-migrate/migrate/v4/cmd/migrate@$(GOLANG_MIGRATE_VERSION)
 	@if command -v asdf 1>/dev/null 2>&1; then \
 		asdf reshim; \
 	fi
@@ -126,8 +129,8 @@ proto: $(PROTO_FILES) ## Generate code from protobuf.
 
 
 .PHONY: serve
-serve: bin  ## Compile the binary and run the server.
-	$(BIN_PATH) serve
+serve: bin  ## Compile the binary and run the server in development mode.
+	$(BIN_PATH) serve --db $(DEV_DB_FILE)
 
 
 .PHONY: test .coverage.out

@@ -28,9 +28,16 @@ type server struct {
 	stopf      func()
 
 	healthSvc *health.Server
+
+	feeds FeedsStore
 }
 
-func newServer(lis net.Listener, grpcServer *grpc.Server, quiet bool) *server {
+func newServer(
+	lis net.Listener,
+	grpcServer *grpc.Server,
+	feeds FeedsStore,
+	quiet bool,
+) *server {
 
 	var (
 		funcCh = make(chan struct{}, 1)
@@ -59,6 +66,7 @@ func newServer(lis net.Listener, grpcServer *grpc.Server, quiet bool) *server {
 		stopf:      func() { funcCh <- struct{}{} },
 		quiet:      quiet,
 		healthSvc:  health.NewServer(),
+		feeds:      feeds,
 	}
 
 	return &s
@@ -107,6 +115,7 @@ func (s *server) start() <-chan error {
 
 type ServerBuilder struct {
 	addr   string
+	feeds  FeedsStore
 	logger zerolog.Logger
 	quiet  bool
 }
@@ -118,6 +127,11 @@ func NewServerBuilder() *ServerBuilder {
 
 func (b *ServerBuilder) Address(addr string) *ServerBuilder {
 	b.addr = addr
+	return b
+}
+
+func (b *ServerBuilder) Store(feeds FeedsStore) *ServerBuilder {
+	b.feeds = feeds
 	return b
 }
 
@@ -149,7 +163,7 @@ func (b *ServerBuilder) Build() (*server, error) {
 	)
 	setupService(grpcs)
 
-	s := newServer(lis, grpcs, b.quiet)
+	s := newServer(lis, grpcs, b.feeds, b.quiet)
 	healthapi.RegisterHealthServer(grpcs, s.healthSvc)
 	reflection.Register(grpcs)
 
