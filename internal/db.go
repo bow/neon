@@ -7,12 +7,14 @@ import (
 
 	"github.com/bow/courier/internal/migration"
 	"github.com/golang-migrate/migrate/v4"
+	"github.com/mmcdole/gofeed"
 	"github.com/rs/zerolog/log"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
-// TODO: Define actual methods.
 type FeedsStore interface {
-	Foo() string
+	AddFeed(*gofeed.Feed) error
 }
 
 type FeedsDB struct {
@@ -39,6 +41,6 @@ func newFeedsDB(filename string) (*FeedsDB, error) {
 	return &store, nil
 }
 
-func (f *FeedsDB) Foo() string {
-	return "ok!"
+func (f *FeedsDB) AddFeed(feed *gofeed.Feed) error {
+	return status.Errorf(codes.Unimplemented, "unimplemented")
 }
