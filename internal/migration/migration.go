@@ -10,9 +10,9 @@ import (
 	"github.com/golang-migrate/migrate/v4/source/iofs"
 
 	// blank import required by migrate.
-	_ "github.com/golang-migrate/migrate/v4/database/sqlite3"
+	_ "github.com/golang-migrate/migrate/v4/database/sqlite"
 	// blank import required by migrate.
-	_ "github.com/mattn/go-sqlite3"
+	_ "modernc.org/sqlite"
 )
 
 //go:embed *.sql
@@ -30,7 +30,7 @@ func New(filename string) (*migrate.Migrate, error) {
 		return nil, fmt.Errorf("abs: %w", err)
 	}
 
-	source := fmt.Sprintf("sqlite3://%s", p)
+	source := fmt.Sprintf("sqlite://%s", p)
 	m, err := migrate.NewWithSourceInstance("iofs", d, source)
 	if err != nil {
 		return nil, fmt.Errorf("migrate source: %w", err)

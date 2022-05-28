@@ -93,7 +93,7 @@ install-dev:  ## Install dependencies for local development.
 		&& go install google.golang.org/protobuf/cmd/protoc-gen-go@$(GO_PROTOBUF_VERSION) \
 		&& go install github.com/boumenot/gocover-cobertura@latest \
 		&& go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.46.0 \
-		&& go install -tags 'sqlite3' github.com/golang-migrate/migrate/v4/cmd/migrate@$(GOLANG_MIGRATE_VERSION)
+		&& go install -tags 'sqlite' github.com/golang-migrate/migrate/v4/cmd/migrate@$(GOLANG_MIGRATE_VERSION)
 	@if command -v asdf 1>/dev/null 2>&1; then \
 		asdf reshim; \
 	fi

@@ -33,7 +33,7 @@ func newFeedDB(filename string) (*feedDB, error) {
 	if err = m.Up(); err != nil && !errors.Is(err, migrate.ErrNoChange) {
 		return nil, fmt.Errorf("migration up: %w", err)
 	}
-	db, err := sql.Open("sqlite3", filename)
+	db, err := sql.Open("sqlite", filename)
 	if err != nil {
 		return nil, fmt.Errorf("db open: %w", err)
 	}
