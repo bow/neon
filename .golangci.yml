@@ -27,8 +27,10 @@ linters:
     # - tparallel
     - unconvert
     # - unparam
+    - unused
     # - wastedassign
   disable:
+    - deadcode
     - structcheck
   disable-all: false
   exclude-use-default: false
