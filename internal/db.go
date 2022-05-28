@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"sync"
 
 	"github.com/bow/courier/internal/migration"
 	"github.com/golang-migrate/migrate/v4"
@@ -19,6 +20,7 @@ type FeedsStore interface {
 
 type FeedsDB struct {
 	db *sql.DB
+	mu sync.Mutex
 }
 
 func newFeedsDB(filename string) (*FeedsDB, error) {
@@ -36,11 +38,13 @@ func newFeedsDB(filename string) (*FeedsDB, error) {
 		return nil, fmt.Errorf("db open: %w", err)
 	}
 
-	store := FeedsDB{db}
+	store := FeedsDB{db: db}
 
 	return &store, nil
 }
 
-func (f *FeedsDB) AddFeed(feed *gofeed.Feed) error {
+func (f *FeedsDB) AddFeed(_ *gofeed.Feed) error {
+	f.mu.Lock()
+	defer f.mu.Unlock()
 	return status.Errorf(codes.Unimplemented, "unimplemented")
 }

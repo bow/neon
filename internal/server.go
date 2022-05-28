@@ -27,15 +27,9 @@ type server struct {
 	stopf      func()
 
 	healthSvc *health.Server
-
-	feeds FeedsStore
 }
 
-func newServer(
-	lis net.Listener,
-	grpcServer *grpc.Server,
-	feeds FeedsStore,
-) *server {
+func newServer(lis net.Listener, grpcServer *grpc.Server) *server {
 
 	var (
 		funcCh = make(chan struct{}, 1)
@@ -63,7 +57,6 @@ func newServer(
 		grpcServer: grpcServer,
 		stopf:      func() { funcCh <- struct{}{} },
 		healthSvc:  health.NewServer(),
-		feeds:      feeds,
 	}
 
 	return &s
@@ -164,9 +157,9 @@ func (b *ServerBuilder) Build() (*server, error) {
 			logging.StreamServerInterceptor(grpczerolog.InterceptorLogger(b.logger)),
 		),
 	)
-	setupService(grpcs)
+	setupService(grpcs, store)
 
-	s := newServer(lis, grpcs, store)
+	s := newServer(lis, grpcs)
 	healthapi.RegisterHealthServer(grpcs, s.healthSvc)
 	reflection.Register(grpcs)
 

@@ -13,20 +13,14 @@ import (
 // service implements the Courier service API.
 type service struct {
 	api.UnimplementedCourierServer
+
+	store FeedsStore
 }
 
-func setupService(grpcs *grpc.Server) *service {
-	svc := service{}
+func setupService(grpcs *grpc.Server, store FeedsStore) *service {
+	svc := service{store: store}
 	api.RegisterCourierServer(grpcs, &svc)
 	return &svc
-}
-
-// AddFeed satisfies the service API.
-func (svc *service) AddFeed(
-	_ context.Context,
-	_ *api.AddFeedRequest,
-) (*api.AddFeedResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "unimplemented")
 }
 
 // EditFeed satisfies the service API.
