@@ -12,6 +12,7 @@ import (
 const (
 	logLevelKey = "log-level"
 	logStyleKey = "log-style"
+	quietKey    = "quiet"
 )
 
 var rootCmd = cobra.Command{
@@ -33,7 +34,16 @@ var rootCmd = cobra.Command{
 			return fmt.Errorf("invalid %s value: '%s'", logStyleKey, rls)
 		}
 
-		return internal.InitGlobalLog(logLevel, ls, os.Stderr)
+		err := internal.InitGlobalLog(logLevel, ls, os.Stderr)
+		if err != nil {
+			return err
+		}
+
+		if !viper.GetBool(quietKey) {
+			showBanner()
+		}
+
+		return nil
 	},
 }
 
@@ -45,9 +55,22 @@ func Execute() error {
 func init() {
 	pflags := rootCmd.PersistentFlags()
 
+	pflags.BoolP(quietKey, "q", false, "show banner")
+	_ = viper.BindPFlag(quietKey, pflags.Lookup(quietKey))
+
 	pflags.StringP(logLevelKey, "l", "info", "logging level")
 	_ = viper.BindPFlag(logLevelKey, pflags.Lookup(logLevelKey))
 
 	pflags.String(logStyleKey, "pretty", "logging style")
 	_ = viper.BindPFlag(logStyleKey, pflags.Lookup(logStyleKey))
+}
+
+func showBanner() {
+	fmt.Printf(`   ______                 _
+  / ____/___  __  _______(_)__  _____
+ / /   / __ \/ / / / ___/ / _ \/ ___/
+/ /___/ /_/ / /_/ / /  / /  __/ /
+\____/\____/\__,_/_/  /_/\___/_/
+
+`)
 }
