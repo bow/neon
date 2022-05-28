@@ -18,7 +18,7 @@ type service struct {
 	parser FeedParser
 }
 
-func setupService(grpcs *grpc.Server, store FeedStore, parser FeedParser) *service {
+func newService(grpcs *grpc.Server, store FeedStore, parser FeedParser) *service {
 	svc := service{store: store, parser: parser}
 	api.RegisterCourierServer(grpcs, &svc)
 	return &svc

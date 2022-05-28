@@ -53,11 +53,16 @@ func newServer(lis net.Listener, grpcServer *grpc.Server) *server {
 		log.Info().Msg("server stopped")
 	}()
 
+	healthSvc := health.NewServer()
+	healthapi.RegisterHealthServer(grpcServer, healthSvc)
+
+	reflection.Register(grpcServer)
+
 	s := server{
 		lis:        lis,
 		grpcServer: grpcServer,
 		stopf:      func() { funcCh <- struct{}{} },
-		healthSvc:  health.NewServer(),
+		healthSvc:  healthSvc,
 	}
 
 	return &s
@@ -154,8 +159,9 @@ func (b *ServerBuilder) Build() (*server, error) {
 		}
 	}
 
-	if b.parser == nil {
-		b.parser = gofeed.NewParser()
+	parser := b.parser
+	if parser == nil {
+		parser = gofeed.NewParser()
 	}
 
 	grpcs := grpc.NewServer(
@@ -168,11 +174,9 @@ func (b *ServerBuilder) Build() (*server, error) {
 			logging.StreamServerInterceptor(grpczerolog.InterceptorLogger(b.logger)),
 		),
 	)
-	setupService(grpcs, store, b.parser)
+	_ = newService(grpcs, store, parser)
 
 	s := newServer(lis, grpcs)
-	healthapi.RegisterHealthServer(grpcs, s.healthSvc)
-	reflection.Register(grpcs)
 
 	return s, nil
 }
