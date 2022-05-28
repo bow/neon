@@ -14,16 +14,16 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-type FeedsStore interface {
+type FeedStore interface {
 	AddFeed(*gofeed.Feed) error
 }
 
-type FeedsDB struct {
+type feedDB struct {
 	db *sql.DB
 	mu sync.RWMutex
 }
 
-func newFeedsDB(filename string) (*FeedsDB, error) {
+func newFeedDB(filename string) (*feedDB, error) {
 	log.Debug().Msgf("preparing '%s' as data store", filename)
 
 	m, err := migration.New(filename)
@@ -38,12 +38,12 @@ func newFeedsDB(filename string) (*FeedsDB, error) {
 		return nil, fmt.Errorf("db open: %w", err)
 	}
 
-	store := FeedsDB{db: db}
+	store := feedDB{db: db}
 
 	return &store, nil
 }
 
-func (f *FeedsDB) AddFeed(_ *gofeed.Feed) error {
+func (f *feedDB) AddFeed(_ *gofeed.Feed) error {
 	f.mu.Lock()
 	defer f.mu.Unlock()
 	return status.Errorf(codes.Unimplemented, "unimplemented")

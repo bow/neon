@@ -97,7 +97,7 @@ func (s *server) start() <-chan error {
 
 type ServerBuilder struct {
 	addr      string
-	store     FeedsStore
+	store     FeedStore
 	storePath string
 	parser    FeedParser
 	logger    zerolog.Logger
@@ -118,7 +118,7 @@ func (b *ServerBuilder) StorePath(path string) *ServerBuilder {
 	return b
 }
 
-func (b *ServerBuilder) Store(store FeedsStore) *ServerBuilder {
+func (b *ServerBuilder) Store(store FeedStore) *ServerBuilder {
 	b.store = store
 	return b
 }
@@ -149,7 +149,7 @@ func (b *ServerBuilder) Build() (*server, error) {
 
 	store := b.store
 	if sp := b.storePath; sp != "" {
-		if store, err = newFeedsDB(sp); err != nil {
+		if store, err = newFeedDB(sp); err != nil {
 			return nil, fmt.Errorf("server build: %w", err)
 		}
 	}
