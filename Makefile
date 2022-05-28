@@ -11,7 +11,7 @@ DATE_EXE := gdate
 GREP_EXE := ggrep
 SED_EXE  := gsed
 else
-$(error Unsupported development platform)
+$(error error: unsupported development platform)
 endif
 
 APP_NAME   := courier
