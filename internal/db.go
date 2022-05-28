@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/bow/courier/migration"
+	"github.com/bow/courier/internal/migration"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/rs/zerolog/log"
 )
