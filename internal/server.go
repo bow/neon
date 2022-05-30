@@ -120,11 +120,13 @@ func (b *ServerBuilder) Address(addr string) *ServerBuilder {
 
 func (b *ServerBuilder) StorePath(path string) *ServerBuilder {
 	b.storePath = path
+	b.store = nil
 	return b
 }
 
 func (b *ServerBuilder) Store(store FeedStore) *ServerBuilder {
 	b.store = store
+	b.storePath = ""
 	return b
 }
 
@@ -143,13 +145,6 @@ func (b *ServerBuilder) Build() (*server, error) {
 	lis, err := net.Listen("tcp", b.addr)
 	if err != nil {
 		return nil, err
-	}
-
-	if b.store != nil && b.storePath != "" {
-		return nil, fmt.Errorf("server build: only one of store and storePath may be set")
-	}
-	if b.store == nil && b.storePath == "" {
-		return nil, fmt.Errorf("server build: exactly one of store or storePath must be set")
 	}
 
 	store := b.store
