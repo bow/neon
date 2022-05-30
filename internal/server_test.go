@@ -16,22 +16,50 @@ import (
 	"google.golang.org/grpc/health/grpc_health_v1"
 )
 
-func setupTestServer(t *testing.T, dialOpts ...grpc.DialOption) api.CourierClient {
+func defaultTestServerBuilder(t *testing.T) *ServerBuilder {
 	t.Helper()
+
+	return NewServerBuilder().
+		Address(":0").
+		StorePath(filepath.Join(t.TempDir(), "courier-test.db")).
+		Logger(zerolog.Nop())
+}
+
+type testClientBuilder struct {
+	serverBuilder *ServerBuilder
+	dialOpts      []grpc.DialOption
+}
+
+func newTestClientBuilder() *testClientBuilder {
+	return &testClientBuilder{}
+}
+
+func (tcb *testClientBuilder) DialOpts(opts ...grpc.DialOption) *testClientBuilder {
+	tcb.dialOpts = opts
+	return tcb
+}
+
+func (tcb *testClientBuilder) ServerBuilder(b *ServerBuilder) *testClientBuilder {
+	tcb.serverBuilder = b
+	return tcb
+}
+
+func (tcb *testClientBuilder) Build(t *testing.T) api.CourierClient {
+	t.Helper()
+
 	// TODO: Avoid global states like this.
 	zerolog.SetGlobalLevel(zerolog.Disabled)
 
-	storePath := filepath.Join(t.TempDir(), "courier-test.db")
-	dialOpts = append(dialOpts, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	b := tcb.serverBuilder
+	if b == nil {
+		b = defaultTestServerBuilder(t)
+	}
+	srv, addr := newTestServer(t, b)
 
-	var (
-		b = NewServerBuilder().
-			Address(":0").
-			StorePath(storePath).
-			Logger(zerolog.Nop())
-		srv, addr    = newRunningServer(t, b)
-		client, conn = newClient(t, addr, dialOpts...)
-	)
+	dialOpts := tcb.dialOpts
+	dialOpts = append(dialOpts, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	client, conn := newTestClient(t, addr, dialOpts...)
+
 	t.Cleanup(
 		func() {
 			require.NoError(t, conn.Close())
@@ -42,7 +70,7 @@ func setupTestServer(t *testing.T, dialOpts ...grpc.DialOption) api.CourierClien
 	return client
 }
 
-func newRunningServer(t *testing.T, b *ServerBuilder) (*server, net.Addr) {
+func newTestServer(t *testing.T, b *ServerBuilder) (*server, net.Addr) {
 	t.Helper()
 
 	r := require.New(t)
@@ -83,7 +111,7 @@ startwait:
 	return srv, srv.lis.Addr()
 }
 
-func newClient(
+func newTestClient(
 	t *testing.T,
 	addr net.Addr,
 	opts ...grpc.DialOption,

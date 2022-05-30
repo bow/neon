@@ -14,7 +14,7 @@ func TestAddFeedOk(t *testing.T) {
 	t.Parallel()
 
 	r := require.New(t)
-	client := setupTestServer(t)
+	client := newTestClientBuilder().Build(t)
 
 	req := api.AddFeedRequest{}
 	rsp, err := client.AddFeed(context.Background(), &req)
@@ -27,7 +27,7 @@ func TestEditFeedOk(t *testing.T) {
 	t.Parallel()
 
 	r := require.New(t)
-	client := setupTestServer(t)
+	client := newTestClientBuilder().Build(t)
 
 	req := api.EditFeedRequest{}
 	rsp, err := client.EditFeed(context.Background(), &req)
@@ -40,7 +40,7 @@ func TestListFeedsOk(t *testing.T) {
 	t.Parallel()
 
 	r := require.New(t)
-	client := setupTestServer(t)
+	client := newTestClientBuilder().Build(t)
 
 	req := api.ListFeedsRequest{}
 	rsp, err := client.ListFeeds(context.Background(), &req)
@@ -53,7 +53,7 @@ func TestDeleteFeedsOk(t *testing.T) {
 	t.Parallel()
 
 	r := require.New(t)
-	client := setupTestServer(t)
+	client := newTestClientBuilder().Build(t)
 
 	req := api.DeleteFeedsRequest{}
 	rsp, err := client.DeleteFeeds(context.Background(), &req)
@@ -66,7 +66,7 @@ func TestPollFeedsOk(t *testing.T) {
 	t.Parallel()
 
 	r := require.New(t)
-	client := setupTestServer(t)
+	client := newTestClientBuilder().Build(t)
 
 	stream, err := client.PollFeeds(context.Background())
 	r.NoError(err)
@@ -95,7 +95,7 @@ func TestEditEntryOk(t *testing.T) {
 	t.Parallel()
 
 	r := require.New(t)
-	client := setupTestServer(t)
+	client := newTestClientBuilder().Build(t)
 
 	req := api.EditEntryRequest{}
 	rsp, err := client.EditEntry(context.Background(), &req)
@@ -108,7 +108,7 @@ func TestExportOPMLOk(t *testing.T) {
 	t.Parallel()
 
 	r := require.New(t)
-	client := setupTestServer(t)
+	client := newTestClientBuilder().Build(t)
 
 	req := api.ExportOPMLRequest{}
 	rsp, err := client.ExportOPML(context.Background(), &req)
@@ -121,7 +121,7 @@ func TestImportOPMLOk(t *testing.T) {
 	t.Parallel()
 
 	r := require.New(t)
-	client := setupTestServer(t)
+	client := newTestClientBuilder().Build(t)
 
 	req := api.ImportOPMLRequest{}
 	rsp, err := client.ImportOPML(context.Background(), &req)

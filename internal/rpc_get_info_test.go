@@ -14,7 +14,7 @@ func TestGetInfoOk(t *testing.T) {
 
 	r := require.New(t)
 	a := assert.New(t)
-	client := setupTestServer(t)
+	client := newTestClientBuilder().Build(t)
 
 	req := api.GetInfoRequest{}
 	rsp, err := client.GetInfo(context.Background(), &req)
