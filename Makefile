@@ -91,6 +91,7 @@ install-dev:  ## Install dependencies for local development.
 	go install gotest.tools/gotestsum@v1.8.0 \
 		&& go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@$(PROTOC_GEN_GO_GRPC_VERSION) \
 		&& go install google.golang.org/protobuf/cmd/protoc-gen-go@$(GO_PROTOBUF_VERSION) \
+		&& go install github.com/golang/mock/mockgen@v1.6.0 \
 		&& go install github.com/boumenot/gocover-cobertura@latest \
 		&& go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.46.0 \
 		&& go install -tags 'sqlite' github.com/golang-migrate/migrate/v4/cmd/migrate@$(GOLANG_MIGRATE_VERSION)
@@ -134,10 +135,17 @@ serve: bin  ## Compile the binary and run the server in development mode.
 
 
 .PHONY: test .coverage.out
-test: .coverage.out  ## Run the test suite.
+test: internal/parser_mock_test.go internal/store_mock_test.go .coverage.out  ## Run the test suite.
+
 .coverage.out:
 	gotestsum --format dots-v2 --junitfile .junit.xml -- ./... -parallel=$(shell nproc) -coverprofile=$@ -covermode=atomic \
 		&& go tool cover -func=$@
+
+internal/parser_mock_test.go: internal/parser.go
+	mockgen -source=$< -package=internal FeedParser > $@
+
+internal/store_mock_test.go: internal/store.go
+	mockgen -source=$< -package=internal FeedStore > $@
 
 
 .PHONY: test-cov-xml

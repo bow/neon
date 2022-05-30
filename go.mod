@@ -5,6 +5,7 @@ go 1.18
 require (
 	github.com/adrg/xdg v0.4.0
 	github.com/golang-migrate/migrate/v4 v4.15.2
+	github.com/golang/mock v1.6.0
 	github.com/grpc-ecosystem/go-grpc-middleware/providers/zerolog/v2 v2.0.0-rc.2
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.0.0-rc.2
 	github.com/mmcdole/gofeed v1.1.3
