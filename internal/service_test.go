@@ -10,19 +10,6 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func TestAddFeedOk(t *testing.T) {
-	t.Parallel()
-
-	r := require.New(t)
-	client := newTestClientBuilder().Build(t)
-
-	req := api.AddFeedRequest{}
-	rsp, err := client.AddFeed(context.Background(), &req)
-
-	r.Nil(rsp)
-	r.EqualError(err, status.New(codes.Unimplemented, "unimplemented").String())
-}
-
 func TestEditFeedOk(t *testing.T) {
 	t.Parallel()
 

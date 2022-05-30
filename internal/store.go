@@ -10,8 +10,6 @@ import (
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/mmcdole/gofeed"
 	"github.com/rs/zerolog/log"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 type FeedStore interface {
@@ -46,5 +44,6 @@ func newFeedDB(filename string) (*feedDB, error) {
 func (f *feedDB) AddFeed(_ *gofeed.Feed) error {
 	f.mu.Lock()
 	defer f.mu.Unlock()
-	return status.Errorf(codes.Unimplemented, "unimplemented")
+
+	return nil
 }
