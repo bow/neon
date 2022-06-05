@@ -5,6 +5,7 @@
 package internal
 
 import (
+	context "context"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
@@ -35,15 +36,15 @@ func (m *MockFeedStore) EXPECT() *MockFeedStoreMockRecorder {
 }
 
 // AddFeed mocks base method.
-func (m *MockFeedStore) AddFeed(arg0 *gofeed.Feed) error {
+func (m *MockFeedStore) AddFeed(arg0 context.Context, arg1 *gofeed.Feed, arg2, arg3 *string, arg4 []string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "AddFeed", arg0)
+	ret := m.ctrl.Call(m, "AddFeed", arg0, arg1, arg2, arg3, arg4)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // AddFeed indicates an expected call of AddFeed.
-func (mr *MockFeedStoreMockRecorder) AddFeed(arg0 interface{}) *gomock.Call {
+func (mr *MockFeedStoreMockRecorder) AddFeed(arg0, arg1, arg2, arg3, arg4 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddFeed", reflect.TypeOf((*MockFeedStore)(nil).AddFeed), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddFeed", reflect.TypeOf((*MockFeedStore)(nil).AddFeed), arg0, arg1, arg2, arg3, arg4)
 }

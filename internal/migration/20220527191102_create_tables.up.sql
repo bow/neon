@@ -1,11 +1,9 @@
 CREATE TABLE IF NOT EXISTS
   feeds
   ( id INTEGER PRIMARY KEY AUTOINCREMENT
-  , ext_id TEXT NOT NULL
   , title TEXT NOT NULL
-  , subtitle TEXT NULL
-  , authors JSON NOT NULL DEFAULT '[]'
-  , update_time TIMESTAMP NOT NULL
+  , description TEXT NULL
+  , creation_time TIMESTAMP NOT NULL DEFAULT (DATETIME('now'))
 );
 
 CREATE TABLE IF NOT EXISTS

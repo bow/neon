@@ -35,7 +35,9 @@ service Courier {
 
 message AddFeedRequest {
   string url = 1;
-  repeated string categories = 2;
+  optional string title = 2;
+  optional string description = 3;
+  repeated string categories = 4;
 }
 
 message AddFeedResponse {}

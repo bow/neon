@@ -4,25 +4,21 @@ import (
 	"context"
 
 	"github.com/bow/courier/api"
-	"github.com/mmcdole/gofeed"
 )
 
 // AddFeed satisfies the service API.
 func (svc *service) AddFeed(
-	_ context.Context,
+	ctx context.Context,
 	req *api.AddFeedRequest,
 ) (*api.AddFeedResponse, error) {
 
-	var (
-		err  error
-		feed *gofeed.Feed
-	)
-
-	if feed, err = svc.parser.ParseURL(req.GetUrl()); err != nil {
+	feed, err := svc.parser.ParseURL(req.GetUrl())
+	if err != nil {
 		return nil, err
 	}
 
-	if err = svc.store.AddFeed(feed); err != nil {
+	err = svc.store.AddFeed(ctx, feed, req.Title, req.Description, req.GetCategories())
+	if err != nil {
 		return nil, err
 	}
 
