@@ -3,6 +3,8 @@ CREATE TABLE IF NOT EXISTS
   ( id INTEGER PRIMARY KEY AUTOINCREMENT
   , title TEXT NOT NULL
   , description TEXT NULL
+  , xml_url TEXT NOT NULL
+  , html_url TEXT NULL
   , subscription_time TIMESTAMP NOT NULL DEFAULT (DATETIME('now'))
 );
 

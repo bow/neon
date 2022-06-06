@@ -58,7 +58,7 @@ func (f *feedDB) AddFeed(
 	fail := failF("FeedStore.AddFeed")
 
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
-		sql1 := `INSERT INTO feeds(title, description) VALUES (?, ?)`
+		sql1 := `INSERT INTO feeds(title, description, xml_url, html_url) VALUES (?, ?, ?, ?)`
 		stmt1, err := tx.PrepareContext(ctx, sql1)
 		if err != nil {
 			return fail(err)
@@ -69,6 +69,8 @@ func (f *feedDB) AddFeed(
 			ctx,
 			resolve(title, feed.Title),
 			resolve(desc, feed.Description),
+			feed.FeedLink,
+			nullIf(feed.Link, textEmpty),
 		)
 		if err != nil {
 			return fail(err)
