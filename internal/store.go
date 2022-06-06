@@ -57,40 +57,37 @@ func (f *feedDB) AddFeed(
 
 	fail := failF("FeedStore.AddFeed")
 
-	tx, err := f.db.BeginTx(ctx, nil)
-	if err != nil {
-		return fail(err)
-	}
-	defer tx.Rollback() // nolint: errcheck
+	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
+		sql1 := `INSERT INTO feeds(title, description) VALUES (?, ?)`
+		stmt1, err := tx.PrepareContext(ctx, sql1)
+		if err != nil {
+			return fail(err)
+		}
+		defer stmt1.Close()
 
-	sql1 := `INSERT INTO feeds(title, description) VALUES (?, ?)`
-	stmt1, err := tx.PrepareContext(ctx, sql1)
-	if err != nil {
-		return fail(err)
-	}
-	defer stmt1.Close()
+		res, err := stmt1.ExecContext(
+			ctx,
+			resolve(title, feed.Title),
+			resolve(desc, feed.Description),
+		)
+		if err != nil {
+			return fail(err)
+		}
 
-	res, err := stmt1.ExecContext(ctx, resolve(title, feed.Title), resolve(desc, feed.Description))
-	if err != nil {
-		return fail(err)
-	}
+		feedDBID, err := res.LastInsertId()
+		if err != nil {
+			return fail(err)
+		}
 
-	feedDBID, err := res.LastInsertId()
-	if err != nil {
-		return fail(err)
-	}
+		err = f.addFeedCategories(ctx, tx, DBID(feedDBID), categories)
+		if err != nil {
+			return fail(err)
+		}
 
-	err = f.addFeedCategories(ctx, tx, DBID(feedDBID), categories)
-	if err != nil {
-		return fail(err)
-	}
-
-	err = tx.Commit()
-	if err != nil {
-		return fail(err)
+		return nil
 	}
 
-	return nil
+	return f.withTx(ctx, dbFunc, nil)
 }
 
 func (f *feedDB) addFeedCategories(
@@ -146,4 +143,39 @@ func (f *feedDB) addFeedCategories(
 	}
 
 	return nil
+}
+
+func (f *feedDB) withTx(
+	ctx context.Context,
+	dbFunc func(context.Context, *sql.Tx) error,
+	txOpts *sql.TxOptions,
+) (err error) {
+	tx, err := f.db.BeginTx(ctx, txOpts)
+	if err != nil {
+		return err
+	}
+
+	rb := func(tx *sql.Tx) {
+		rerr := tx.Rollback()
+		if rerr != nil {
+			log.Error().Err(rerr).Msg("failed to roll back transaction")
+		}
+	}
+
+	defer func() {
+		if p := recover(); p != nil {
+			rb(tx)
+			panic(p)
+		}
+		if err != nil {
+			rb(tx)
+		} else {
+			err = tx.Commit()
+		}
+	}()
+
+	// Store txFunc results in err first so defer call above sees return value.
+	err = dbFunc(ctx, tx)
+
+	return err
 }
