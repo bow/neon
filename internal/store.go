@@ -100,25 +100,23 @@ func (f *feedDB) addFeedCategories(
 	cats []string,
 ) error {
 
-	fail := failF("FeedStore.addFeedCategories")
-
 	sql1 := `INSERT OR IGNORE INTO feed_categories(name) VALUES (?)`
 	stmt1, err := tx.PrepareContext(ctx, sql1)
 	if err != nil {
-		return fail(err)
+		return err
 	}
 	defer stmt1.Close()
 	for _, cat := range cats {
 		_, err = stmt1.ExecContext(ctx, cat)
 		if err != nil {
-			return fail(err)
+			return err
 		}
 	}
 
 	sql2 := `SELECT id FROM feed_categories WHERE name = ?`
 	stmt2, err := tx.PrepareContext(ctx, sql2)
 	if err != nil {
-		return fail(err)
+		return err
 	}
 	defer stmt2.Close()
 	ids := make(map[string]DBID)
@@ -129,7 +127,7 @@ func (f *feedDB) addFeedCategories(
 		var id DBID
 		row := stmt2.QueryRowContext(ctx, cat)
 		if err = row.Scan(&id); err != nil {
-			return fail(err)
+			return err
 		}
 		ids[cat] = id
 	}
@@ -137,13 +135,13 @@ func (f *feedDB) addFeedCategories(
 	sql3 := `INSERT INTO feeds_x_feed_categories(feed_id, feed_category_id) VALUES (?, ?)`
 	stmt3, err := tx.PrepareContext(ctx, sql3)
 	if err != nil {
-		return fail(err)
+		return err
 	}
 	defer stmt3.Close()
 
 	for _, catDBID := range ids {
 		if _, err := stmt3.ExecContext(ctx, feedDBID, catDBID); err != nil {
-			return fail(err)
+			return err
 		}
 	}
 
