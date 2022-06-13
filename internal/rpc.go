@@ -10,22 +10,22 @@ import (
 	"github.com/bow/courier/api"
 )
 
-// service implements the Courier service API.
-type service struct {
+// rpc implements the Courier rpc API.
+type rpc struct {
 	api.UnimplementedCourierServer
 
 	store  FeedStore
 	parser FeedParser
 }
 
-func newService(grpcs *grpc.Server, store FeedStore, parser FeedParser) *service {
-	svc := service{store: store, parser: parser}
+func newRPC(grpcs *grpc.Server, store FeedStore, parser FeedParser) *rpc {
+	svc := rpc{store: store, parser: parser}
 	api.RegisterCourierServer(grpcs, &svc)
 	return &svc
 }
 
 // EditFeed satisfies the service API.
-func (svc *service) EditFeed(
+func (r *rpc) EditFeed(
 	_ context.Context,
 	_ *api.EditFeedRequest,
 ) (*api.EditFeedResponse, error) {
@@ -33,7 +33,7 @@ func (svc *service) EditFeed(
 }
 
 // ListFeeds satisfies the service API.
-func (svc *service) ListFeeds(
+func (r *rpc) ListFeeds(
 	_ context.Context,
 	_ *api.ListFeedsRequest,
 ) (*api.ListFeedsResponse, error) {
@@ -41,7 +41,7 @@ func (svc *service) ListFeeds(
 }
 
 // DeleteFeeds satisfies the service API.
-func (svc *service) DeleteFeeds(
+func (r *rpc) DeleteFeeds(
 	_ context.Context,
 	_ *api.DeleteFeedsRequest,
 ) (*api.DeleteFeedsResponse, error) {
@@ -49,12 +49,12 @@ func (svc *service) DeleteFeeds(
 }
 
 // PollFeeds satisfies the service API.
-func (svc *service) PollFeeds(_ api.Courier_PollFeedsServer) error {
+func (r *rpc) PollFeeds(_ api.Courier_PollFeedsServer) error {
 	return status.Errorf(codes.Unimplemented, "unimplemented")
 }
 
 // EditEntry satisfies the service API.
-func (svc *service) EditEntry(
+func (r *rpc) EditEntry(
 	_ context.Context,
 	_ *api.EditEntryRequest,
 ) (*api.EditEntryResponse, error) {
@@ -62,7 +62,7 @@ func (svc *service) EditEntry(
 }
 
 // ExportOPML satisfies the service API.
-func (svc *service) ExportOPML(
+func (r *rpc) ExportOPML(
 	_ context.Context,
 	_ *api.ExportOPMLRequest,
 ) (*api.ExportOPMLResponse, error) {
@@ -70,7 +70,7 @@ func (svc *service) ExportOPML(
 }
 
 // ImportOPML satisfies the service API.
-func (svc *service) ImportOPML(
+func (r *rpc) ImportOPML(
 	_ context.Context,
 	_ *api.ImportOPMLRequest,
 ) (*api.ImportOPMLResponse, error) {

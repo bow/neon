@@ -7,7 +7,7 @@ import (
 )
 
 // GetInfo satisfies the service API.
-func (svc *service) GetInfo(
+func (r *rpc) GetInfo(
 	_ context.Context,
 	_ *api.GetInfoRequest,
 ) (*api.GetInfoResponse, error) {

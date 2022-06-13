@@ -169,7 +169,7 @@ func (b *ServerBuilder) Build() (*server, error) {
 			logging.StreamServerInterceptor(grpczerolog.InterceptorLogger(b.logger)),
 		),
 	)
-	_ = newService(grpcs, store, parser)
+	_ = newRPC(grpcs, store, parser)
 
 	s := newServer(lis, grpcs)
 

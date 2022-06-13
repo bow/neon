@@ -7,17 +7,17 @@ import (
 )
 
 // AddFeed satisfies the service API.
-func (svc *service) AddFeed(
+func (r *rpc) AddFeed(
 	ctx context.Context,
 	req *api.AddFeedRequest,
 ) (*api.AddFeedResponse, error) {
 
-	feed, err := svc.parser.ParseURL(req.GetUrl())
+	feed, err := r.parser.ParseURL(req.GetUrl())
 	if err != nil {
 		return nil, err
 	}
 
-	err = svc.store.AddFeed(ctx, feed, req.Title, req.Description, req.GetCategories())
+	err = r.store.AddFeed(ctx, feed, req.Title, req.Description, req.GetCategories())
 	if err != nil {
 		return nil, err
 	}
