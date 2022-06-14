@@ -33,13 +33,8 @@ func TestAddFeedOkMinimal(t *testing.T) {
 		Return(&feed, nil)
 
 	storePath := filepath.Join(t.TempDir(), t.Name()+".db")
-	r.NoFileExists(storePath)
-
 	server := defaultTestServerBuilder(t).Parser(parser).StorePath(storePath)
 	client := newTestClientBuilder().ServerBuilder(server).Build(t)
-	r.FileExists(storePath)
-
-	ctx := context.Background()
 	db := newTestDB(t, storePath)
 
 	existf := func() bool {
@@ -47,16 +42,14 @@ func TestAddFeedOkMinimal(t *testing.T) {
 		return db.rowExists(sql, feed.FeedLink)
 	}
 
-	preFeedCount := db.countFeeds()
-	a.Equal(0, preFeedCount)
+	a.Equal(0, db.countFeeds())
 	a.False(existf())
 
 	req := api.AddFeedRequest{Url: url}
-	rsp, err := client.AddFeed(ctx, &req)
+	rsp, err := client.AddFeed(context.Background(), &req)
 	r.NoError(err)
 	r.NotNil(rsp)
 
-	postFeedCount := db.countFeeds()
-	a.Equal(1, postFeedCount)
+	a.Equal(1, db.countFeeds())
 	a.True(existf())
 }

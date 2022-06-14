@@ -19,9 +19,12 @@ import (
 func defaultTestServerBuilder(t *testing.T) *ServerBuilder {
 	t.Helper()
 
+	storePath := filepath.Join(t.TempDir(), t.Name()+".db")
+	require.NoFileExists(t, storePath)
+
 	return NewServerBuilder().
 		Address(":0").
-		StorePath(filepath.Join(t.TempDir(), "courier-test.db")).
+		StorePath(storePath).
 		Logger(zerolog.Nop())
 }
 
@@ -54,7 +57,13 @@ func (tcb *testClientBuilder) Build(t *testing.T) api.CourierClient {
 	if b == nil {
 		b = defaultTestServerBuilder(t)
 	}
+	if b.storePath != "" {
+		require.NoFileExists(t, b.storePath)
+	}
 	srv, addr := newTestServer(t, b)
+	if b.storePath != "" {
+		require.FileExists(t, b.storePath)
+	}
 
 	dialOpts := tcb.dialOpts
 	dialOpts = append(dialOpts, grpc.WithTransportCredentials(insecure.NewCredentials()))
@@ -126,8 +135,7 @@ func newTestClient(
 }
 
 func TestServerBuilderErrInvalidAddr(t *testing.T) {
-	storePath := filepath.Join(t.TempDir(), "courier-test-err-invalid-addr.db")
-	b := NewServerBuilder().Address("invalid").StorePath(storePath)
+	b := NewServerBuilder().Address("invalid")
 	srv, err := b.Build()
 	assert.Nil(t, srv)
 	assert.EqualError(t, err, "listen tcp: address invalid: missing port in address")
