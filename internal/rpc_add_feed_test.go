@@ -2,7 +2,6 @@ package internal
 
 import (
 	"context"
-	"path/filepath"
 	"testing"
 
 	"github.com/bow/courier/api"
@@ -32,10 +31,7 @@ func TestAddFeedOkMinimal(t *testing.T) {
 		MaxTimes(1).
 		Return(&feed, nil)
 
-	storePath := filepath.Join(t.TempDir(), t.Name()+".db")
-	server := defaultTestServerBuilder(t).Parser(parser).StorePath(storePath)
-	client := newTestClientBuilder().ServerBuilder(server).Build(t)
-	db := newTestDB(t, storePath)
+	client, db := setupOfflineTest(t, parser)
 
 	existf := func() bool {
 		sql := `SELECT * FROM feeds WHERE xml_url = ?`

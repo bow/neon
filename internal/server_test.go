@@ -29,12 +29,14 @@ func defaultTestServerBuilder(t *testing.T) *ServerBuilder {
 }
 
 type testClientBuilder struct {
+	t             *testing.T
 	serverBuilder *ServerBuilder
 	dialOpts      []grpc.DialOption
 }
 
-func newTestClientBuilder() *testClientBuilder {
-	return &testClientBuilder{}
+func newTestClientBuilder(t *testing.T) *testClientBuilder {
+	t.Helper()
+	return &testClientBuilder{t: t, serverBuilder: defaultTestServerBuilder(t)}
 }
 
 func (tcb *testClientBuilder) DialOpts(opts ...grpc.DialOption) *testClientBuilder {
@@ -42,13 +44,20 @@ func (tcb *testClientBuilder) DialOpts(opts ...grpc.DialOption) *testClientBuild
 	return tcb
 }
 
-func (tcb *testClientBuilder) ServerBuilder(b *ServerBuilder) *testClientBuilder {
-	tcb.serverBuilder = b
+func (tcb *testClientBuilder) ServerParser(parser FeedParser) *testClientBuilder {
+	tcb.serverBuilder = tcb.serverBuilder.Parser(parser)
 	return tcb
 }
 
-func (tcb *testClientBuilder) Build(t *testing.T) api.CourierClient {
-	t.Helper()
+func (tcb *testClientBuilder) ServerStorePath(filename string) *testClientBuilder {
+	tcb.serverBuilder = tcb.serverBuilder.StorePath(filename)
+	return tcb
+}
+
+func (tcb *testClientBuilder) Build() api.CourierClient {
+	tcb.t.Helper()
+
+	t := tcb.t
 
 	// TODO: Avoid global states like this.
 	zerolog.SetGlobalLevel(zerolog.Disabled)
@@ -132,6 +141,15 @@ func newTestClient(
 	client := api.NewCourierClient(conn)
 
 	return client, conn
+}
+
+// setupOfflineTest is a shortcut method for creating server tests which mocks out the feed parser.
+func setupOfflineTest(t *testing.T, parser FeedParser) (api.CourierClient, testDB) {
+	t.Helper()
+	cbuilder := newTestClientBuilder(t).ServerParser(parser)
+	db := newTestDB(t, cbuilder.serverBuilder.storePath)
+	client := cbuilder.Build()
+	return client, db
 }
 
 func TestServerBuilderErrInvalidAddr(t *testing.T) {
