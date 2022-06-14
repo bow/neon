@@ -34,18 +34,7 @@ func TestAddFeedOkMinimal(t *testing.T) {
 	client, db := setupOfflineTest(t, parser)
 
 	existf := func() bool {
-		sql := `
-			SELECT
-				*
-			FROM
-				feeds
-			WHERE
-				title = ?
-				AND description = ?
-				AND xml_url = ?
-				AND html_url = ?
-		`
-		return db.rowExists(sql, feed.Title, feed.Description, feed.FeedLink, feed.Link)
+		return db.rowExists(feedExistSQL, feed.Title, feed.Description, feed.FeedLink, feed.Link)
 	}
 
 	a.Equal(0, db.countFeeds())
@@ -61,3 +50,16 @@ func TestAddFeedOkMinimal(t *testing.T) {
 	a.Equal(0, db.countFeedCategories())
 	a.True(existf())
 }
+
+// Query for checking that a feed row with the given columns exist.
+const feedExistSQL = `
+	SELECT
+		*
+	FROM
+		feeds
+	WHERE
+		title = ?
+		AND description = ?
+		AND xml_url = ?
+		AND html_url = ?
+`
