@@ -17,7 +17,7 @@ func TestAddFeedOkMinimal(t *testing.T) {
 	r := require.New(t)
 	a := assert.New(t)
 
-	url := "http://bar.com/feed.xml"
+	req := api.AddFeedRequest{Url: "http://bar.com/feed.xml"}
 	feed := gofeed.Feed{
 		Title:       "feed-title",
 		Description: "feed-description",
@@ -27,7 +27,7 @@ func TestAddFeedOkMinimal(t *testing.T) {
 	parser := NewMockFeedParser(gomock.NewController(t))
 	parser.
 		EXPECT().
-		ParseURL(url).
+		ParseURL(req.Url).
 		MaxTimes(1).
 		Return(&feed, nil)
 
@@ -41,7 +41,6 @@ func TestAddFeedOkMinimal(t *testing.T) {
 	a.Equal(0, db.countFeedCategories())
 	a.False(existf())
 
-	req := api.AddFeedRequest{Url: url}
 	rsp, err := client.AddFeed(context.Background(), &req)
 	r.NoError(err)
 	r.NotNil(rsp)
