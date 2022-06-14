@@ -2,6 +2,7 @@ package internal
 
 import (
 	"database/sql"
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -43,4 +44,22 @@ func (tdb *testDB) countFeeds() int {
 	require.NoError(tdb.t, tx.Rollback())
 
 	return count
+}
+
+func (tdb *testDB) rowExists(
+	query string,
+	args ...any,
+) bool {
+	tdb.t.Helper()
+
+	tx := tdb.tx()
+	stmt, err := tx.Prepare(fmt.Sprintf("SELECT EXISTS (%s)", query))
+	require.NoError(tdb.t, err)
+
+	var exists bool
+	row := stmt.QueryRow(args...)
+	require.NoError(tdb.t, row.Scan(&exists))
+	require.NoError(tdb.t, tx.Rollback())
+
+	return exists
 }
