@@ -34,8 +34,18 @@ func TestAddFeedOkMinimal(t *testing.T) {
 	client, db := setupOfflineTest(t, parser)
 
 	existf := func() bool {
-		sql := `SELECT * FROM feeds WHERE xml_url = ?`
-		return db.rowExists(sql, feed.FeedLink)
+		sql := `
+			SELECT
+				*
+			FROM
+				feeds
+			WHERE
+				title = ?
+				AND description = ?
+				AND xml_url = ?
+				AND html_url = ?
+		`
+		return db.rowExists(sql, feed.Title, feed.Description, feed.FeedLink, feed.Link)
 	}
 
 	a.Equal(0, db.countFeeds())
