@@ -31,11 +31,11 @@ func (tdb *testDB) tx() *sql.Tx {
 	return tx
 }
 
-func (tdb *testDB) countFeeds() int {
+func (tdb *testDB) countTableRows(tableName string) int {
 	tdb.t.Helper()
 
 	tx := tdb.tx()
-	stmt, err := tx.Prepare(`SELECT count(id) FROM feeds`)
+	stmt, err := tx.Prepare(fmt.Sprintf(`SELECT count(id) FROM %s`, tableName))
 	require.NoError(tdb.t, err)
 
 	var count int
@@ -62,4 +62,12 @@ func (tdb *testDB) rowExists(
 	require.NoError(tdb.t, tx.Rollback())
 
 	return exists
+}
+
+func (tdb *testDB) countFeeds() int {
+	return tdb.countTableRows("feeds")
+}
+
+func (tdb *testDB) countFeedCategories() int {
+	return tdb.countTableRows("feed_categories")
 }

@@ -49,6 +49,7 @@ func TestAddFeedOkMinimal(t *testing.T) {
 	}
 
 	a.Equal(0, db.countFeeds())
+	a.Equal(0, db.countFeedCategories())
 	a.False(existf())
 
 	req := api.AddFeedRequest{Url: url}
@@ -57,5 +58,6 @@ func TestAddFeedOkMinimal(t *testing.T) {
 	r.NotNil(rsp)
 
 	a.Equal(1, db.countFeeds())
+	a.Equal(0, db.countFeedCategories())
 	a.True(existf())
 }
