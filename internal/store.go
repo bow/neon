@@ -67,8 +67,8 @@ func (f *feedDB) AddFeed(
 
 		res, err := stmt1.ExecContext(
 			ctx,
-			resolve(title, feed.Title),
-			resolve(desc, feed.Description),
+			nullIf(resolve(title, feed.Title), textEmpty),
+			nullIf(resolve(desc, feed.Description), textEmpty),
 			feed.FeedLink,
 			nullIf(feed.Link, textEmpty),
 		)
