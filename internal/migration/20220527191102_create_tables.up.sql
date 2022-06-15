@@ -29,6 +29,7 @@ CREATE TABLE IF NOT EXISTS
   , categories JSON NOT NULL DEFAULT '[]'
   , publication_time TIMESTAMP NULL
   , update_time TIMESTAMP NULL
+  , is_read BOOLEAN NOT NULL DEFAULT false
   , FOREIGN KEY(feed_id) REFERENCES feeds(id) ON DELETE CASCADE
 );
 CREATE INDEX IF NOT EXISTS entries_feed_id ON entries(feed_id);
