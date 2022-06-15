@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS
   , xml_url TEXT NOT NULL
   , html_url TEXT NULL
   , subscription_time TIMESTAMP NOT NULL DEFAULT (DATETIME('now'))
+  , UNIQUE(xml_url)
 );
 
 CREATE TABLE IF NOT EXISTS
