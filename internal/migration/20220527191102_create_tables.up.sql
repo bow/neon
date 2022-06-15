@@ -20,12 +20,14 @@ CREATE TABLE IF NOT EXISTS
   entries
   ( id INTEGER PRIMARY KEY AUTOINCREMENT
   , feed_id INTEGER NOT NULL
-  , ext_id TEXT NOT NULL
+  , external_id TEXT NOT NULL
+  , url TEXT NULL
   , title TEXT NOT NULL
+  , summary TEXT NULL
   , content TEXT NULL
   , authors JSON NOT NULL DEFAULT '[]'
   , categories JSON NOT NULL DEFAULT '[]'
-  , publish_time TIMESTAMP NULL
+  , publication_time TIMESTAMP NULL
   , update_time TIMESTAMP NOT NULL
   , FOREIGN KEY(feed_id) REFERENCES feeds(id) ON DELETE CASCADE
 );
