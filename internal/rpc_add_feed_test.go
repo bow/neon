@@ -2,6 +2,7 @@ package internal
 
 import (
 	"context"
+	"fmt"
 	"testing"
 
 	"github.com/bow/courier/api"
@@ -97,6 +98,84 @@ func TestAddFeedOkExtended(t *testing.T) {
 	a.Equal(2, db.countFeedCategories())
 	a.False(existf1())
 	a.True(existf2())
+}
+
+func TestAddFeedErrURLExistsPreParse(t *testing.T) {
+	t.Parallel()
+
+	r := require.New(t)
+	a := assert.New(t)
+
+	req := api.AddFeedRequest{Url: "http://qux.net/feed.xml"}
+	feed := gofeed.Feed{
+		Title:       "feed-title",
+		Description: "feed-description",
+		Link:        "https://bar.com",
+		FeedLink:    "https://bar.com/feed.xml",
+	}
+	parser := NewMockFeedParser(gomock.NewController(t))
+	parser.
+		EXPECT().
+		ParseURL(req.Url).
+		MaxTimes(1).
+		Return(&feed, nil)
+
+	client, db := setupOfflineTest(t, parser)
+	db.addFeedWithURL(req.GetUrl())
+
+	existf := func() bool {
+		return db.rowExists(feedExistSQL, feed.Title, feed.Description, feed.FeedLink, feed.Link)
+	}
+
+	a.Equal(1, db.countFeeds())
+	a.False(existf())
+
+	rsp, err := client.AddFeed(context.Background(), &req)
+	wantErr := fmt.Sprintf("rpc error: code = AlreadyExists desc = feed with URL '%s' already added", req.GetUrl())
+	r.EqualError(err, wantErr)
+	r.Nil(rsp)
+
+	a.Equal(1, db.countFeeds())
+	a.False(existf())
+}
+
+func TestAddFeedErrURLExistsPostParse(t *testing.T) {
+	t.Parallel()
+
+	r := require.New(t)
+	a := assert.New(t)
+
+	req := api.AddFeedRequest{Url: "http://qux.net/feed.xml"}
+	feed := gofeed.Feed{
+		Title:       "feed-title",
+		Description: "feed-description",
+		Link:        "https://bar.com",
+		FeedLink:    "https://bar.com/feed.xml",
+	}
+	parser := NewMockFeedParser(gomock.NewController(t))
+	parser.
+		EXPECT().
+		ParseURL(req.Url).
+		MaxTimes(1).
+		Return(&feed, nil)
+
+	client, db := setupOfflineTest(t, parser)
+	db.addFeedWithURL(feed.FeedLink)
+
+	existf := func() bool {
+		return db.rowExists(feedExistSQL, feed.Title, feed.Description, feed.FeedLink, feed.Link)
+	}
+
+	a.Equal(1, db.countFeeds())
+	a.False(existf())
+
+	rsp, err := client.AddFeed(context.Background(), &req)
+	wantErr := fmt.Sprintf("rpc error: code = AlreadyExists desc = feed with URL '%s' already added", feed.FeedLink)
+	r.EqualError(err, wantErr)
+	r.Nil(rsp)
+
+	a.Equal(1, db.countFeeds())
+	a.False(existf())
 }
 
 // Query for checking that a feed row with the given columns exist.

@@ -48,3 +48,18 @@ func (mr *MockFeedStoreMockRecorder) AddFeed(arg0, arg1, arg2, arg3, arg4 interf
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddFeed", reflect.TypeOf((*MockFeedStore)(nil).AddFeed), arg0, arg1, arg2, arg3, arg4)
 }
+
+// HasFeedURL mocks base method.
+func (m *MockFeedStore) HasFeedURL(arg0 context.Context, arg1 string) (bool, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "HasFeedURL", arg0, arg1)
+	ret0, _ := ret[0].(bool)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// HasFeedURL indicates an expected call of HasFeedURL.
+func (mr *MockFeedStoreMockRecorder) HasFeedURL(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HasFeedURL", reflect.TypeOf((*MockFeedStore)(nil).HasFeedURL), arg0, arg1)
+}

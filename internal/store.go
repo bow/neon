@@ -4,16 +4,20 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"strings"
 	"sync"
 
 	"github.com/bow/courier/internal/migration"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/mmcdole/gofeed"
 	"github.com/rs/zerolog/log"
+	"modernc.org/sqlite"
+	sqlite3 "modernc.org/sqlite/lib"
 )
 
 type FeedStore interface {
 	AddFeed(context.Context, *gofeed.Feed, *string, *string, []string) error
+	HasFeedURL(context.Context, string) (bool, error)
 }
 
 type DBID = int
@@ -78,4 +82,18 @@ func (f *feedDB) withTx(
 	err = dbFunc(ctx, tx)
 
 	return err
+}
+
+// isUniqueErr returns true if the given error represents or wraps an SQLite unique constraint
+// violation.
+func isUniqueErr(err error, txtMatch string) bool {
+	serr, matches := err.(*sqlite.Error)
+	if matches {
+		return serr.Code() == sqlite3.SQLITE_CONSTRAINT_UNIQUE &&
+			(txtMatch == "" || strings.Contains(serr.Error(), txtMatch))
+	}
+	if ierr := errors.Unwrap(err); ierr != nil {
+		return isUniqueErr(ierr, txtMatch)
+	}
+	return false
 }

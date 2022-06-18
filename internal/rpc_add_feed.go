@@ -6,6 +6,8 @@ import (
 
 	"github.com/bow/courier/api"
 	"github.com/mmcdole/gofeed"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 // AddFeed satisfies the service API.
@@ -14,19 +16,65 @@ func (r *rpc) AddFeed(
 	req *api.AddFeedRequest,
 ) (*api.AddFeedResponse, error) {
 
-	feed, err := r.parser.ParseURL(req.GetUrl())
+	url := req.GetUrl()
+	errExistsF := func(url string) error {
+		return status.Errorf(codes.AlreadyExists, "feed with URL '%s' already added", url)
+	}
+
+	hasFeed, err := r.store.HasFeedURL(ctx, url)
+	if err != nil {
+		return nil, err
+	}
+	if hasFeed {
+		return nil, errExistsF(url)
+	}
+
+	feed, err := r.parser.ParseURL(url)
 	if err != nil {
 		return nil, err
 	}
 
 	err = r.store.AddFeed(ctx, feed, req.Title, req.Description, req.GetCategories())
 	if err != nil {
+		if isUniqueErr(err, "UNIQUE constraint failed: feeds.xml_url") {
+			return nil, errExistsF(feed.FeedLink)
+		}
 		return nil, err
 	}
 
 	rsp := api.AddFeedResponse{}
 
 	return &rsp, nil
+}
+
+// HasFeedURL checks if a feed with the given URL already exists in the database.
+func (f *feedDB) HasFeedURL(ctx context.Context, url string) (bool, error) {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+
+	fail := failF("FeedStore.HasFeedURL")
+
+	var exists bool
+	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
+		sql1 := `SELECT EXISTS (SELECT id FROM feeds WHERE xml_url = ?)`
+		stmt1, err := tx.PrepareContext(ctx, sql1)
+		if err != nil {
+			return fail(err)
+		}
+		defer stmt1.Close()
+
+		if err := stmt1.QueryRowContext(ctx, url).Scan(&exists); err != nil {
+			return fail(err)
+		}
+
+		return nil
+	}
+
+	if err := f.withTx(ctx, dbFunc, nil); err != nil {
+		return exists, err
+	}
+
+	return exists, nil
 }
 
 // AddFeed adds the given feed into the database.

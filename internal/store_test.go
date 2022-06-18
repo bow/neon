@@ -71,3 +71,15 @@ func (tdb *testDB) countFeeds() int {
 func (tdb *testDB) countFeedCategories() int {
 	return tdb.countTableRows("feed_categories")
 }
+
+func (tdb *testDB) addFeedWithURL(url string) {
+	tdb.t.Helper()
+
+	tx := tdb.tx()
+	stmt, err := tx.Prepare(`INSERT INTO feeds(title, xml_url) VALUES (?, ?)`)
+	require.NoError(tdb.t, err)
+
+	_, err = stmt.Exec(tdb.t.Name(), url)
+	require.NoError(tdb.t, err)
+	require.NoError(tdb.t, tx.Commit())
+}
