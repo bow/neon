@@ -92,6 +92,7 @@ install-dev:  ## Install dependencies for local development.
 		&& go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@$(PROTOC_GEN_GO_GRPC_VERSION) \
 		&& go install google.golang.org/protobuf/cmd/protoc-gen-go@$(GO_PROTOBUF_VERSION) \
 		&& go install github.com/golang/mock/mockgen@v1.6.0 \
+		&& go install github.com/securego/gosec/v2/cmd/gosec@latest \
 		&& go install github.com/boumenot/gocover-cobertura@latest \
 		&& go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.46.0 \
 		&& go install -tags 'sqlite' github.com/golang-migrate/migrate/v4/cmd/migrate@$(GOLANG_MIGRATE_VERSION)
@@ -128,6 +129,10 @@ proto: $(PROTO_FILES) ## Generate code from protobuf.
 		--go-grpc_out=$(PROTO_DIR) --go-grpc_opt=paths=source_relative \
 		$(PROTO_FILES)
 
+
+.PHONY: scan-security
+scan-security:  ## Perform static security analysis.
+	gosec ./...
 
 .PHONY: serve
 serve: bin  ## Compile the binary and run the server in development mode.
