@@ -93,6 +93,7 @@ install-dev:  ## Install dependencies for local development.
 		&& go install google.golang.org/protobuf/cmd/protoc-gen-go@$(GO_PROTOBUF_VERSION) \
 		&& go install github.com/golang/mock/mockgen@v1.6.0 \
 		&& go install github.com/securego/gosec/v2/cmd/gosec@latest \
+		&& go install github.com/sonatype-nexus-community/nancy@latest \
 		&& go install github.com/boumenot/gocover-cobertura@latest \
 		&& go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.46.0 \
 		&& go install -tags 'sqlite' github.com/golang-migrate/migrate/v4/cmd/migrate@$(GOLANG_MIGRATE_VERSION)
@@ -133,6 +134,7 @@ proto: $(PROTO_FILES) ## Generate code from protobuf.
 .PHONY: scan-security
 scan-security:  ## Perform static security analysis.
 	gosec ./...
+	go list -json -deps ./... | nancy sleuth
 
 .PHONY: serve
 serve: bin  ## Compile the binary and run the server in development mode.
