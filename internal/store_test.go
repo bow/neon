@@ -68,6 +68,30 @@ func (tdb *testDB) countFeeds() int {
 	return tdb.countTableRows("feeds")
 }
 
+func (tdb *testDB) countEntries(xmlURL string) int {
+	tdb.t.Helper()
+
+	tx := tdb.tx()
+	stmt, err := tx.Prepare(`
+	SELECT
+		count(e.id)
+	FROM
+		entries e
+		INNER JOIN feeds f ON e.feed_id = f.id
+	WHERE
+		f.xml_url = ?
+`,
+	)
+	require.NoError(tdb.t, err)
+
+	var count int
+	row := stmt.QueryRow(xmlURL)
+	require.NoError(tdb.t, row.Scan(&count))
+	require.NoError(tdb.t, tx.Rollback())
+
+	return count
+}
+
 func (tdb *testDB) countFeedCategories() int {
 	return tdb.countTableRows("feed_categories")
 }

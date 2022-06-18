@@ -2,7 +2,6 @@ package internal
 
 import (
 	"context"
-	"fmt"
 	"testing"
 
 	"github.com/bow/courier/api"
@@ -39,6 +38,7 @@ func TestAddFeedOkMinimal(t *testing.T) {
 	}
 
 	a.Equal(0, db.countFeeds())
+	a.Equal(0, db.countEntries(feed.FeedLink))
 	a.Equal(0, db.countFeedCategories())
 	a.False(existf())
 
@@ -47,6 +47,7 @@ func TestAddFeedOkMinimal(t *testing.T) {
 	r.NotNil(rsp)
 
 	a.Equal(1, db.countFeeds())
+	a.Equal(0, db.countEntries(feed.FeedLink))
 	a.Equal(0, db.countFeedCategories())
 	a.True(existf())
 }
@@ -61,13 +62,30 @@ func TestAddFeedOkExtended(t *testing.T) {
 		Url:         "http://foo.com/feed.xml",
 		Title:       stringp("user-title"),
 		Description: stringp("user-description"),
-		Categories:  []string{"cat-1", "cat-2"},
+		Categories:  []string{"cat-1", "cat-2", "cat-3"},
 	}
 	feed := gofeed.Feed{
 		Title:       "feed-title-original",
 		Description: "feed-description-original",
 		Link:        "https://foo.com",
 		FeedLink:    "https://foo.com/feed.xml",
+		Items: []*gofeed.Item{
+			{
+				GUID:      "entry1",
+				Link:      "https://bar.com/entry1.html",
+				Title:     "First Entry",
+				Content:   "This is the first entry.",
+				Published: "2021-06-18T21:45:26.794+0200",
+			},
+			{
+				GUID:      "entry2",
+				Link:      "https://bar.com/entry2.html",
+				Title:     "Second Entry",
+				Content:   "This is the second entry.",
+				Published: "2021-06-18T22:08:16.526+0200",
+				Updated:   "2021-06-18T22:11:49.094+0200",
+			},
+		},
 	}
 	parser := NewMockFeedParser(gomock.NewController(t))
 	parser.
@@ -84,73 +102,60 @@ func TestAddFeedOkExtended(t *testing.T) {
 	existf2 := func() bool {
 		return db.rowExists(feedExistSQL, req.Title, req.Description, feed.FeedLink, feed.Link)
 	}
+	existe := func(item *gofeed.Item) bool {
+		return db.rowExists(entryExistSQL, feed.FeedLink, item.Title, item.Link)
+	}
 
 	a.Equal(0, db.countFeeds())
+	a.Equal(0, db.countEntries(feed.FeedLink))
 	a.Equal(0, db.countFeedCategories())
 	a.False(existf1())
 	a.False(existf2())
+	a.False(existe(feed.Items[0]))
+	a.False(existe(feed.Items[1]))
 
 	rsp, err := client.AddFeed(context.Background(), &req)
 	r.NoError(err)
 	r.NotNil(rsp)
 
 	a.Equal(1, db.countFeeds())
-	a.Equal(2, db.countFeedCategories())
+	a.Equal(2, db.countEntries(feed.FeedLink))
+	a.Equal(3, db.countFeedCategories())
 	a.False(existf1())
 	a.True(existf2())
+	a.True(existe(feed.Items[0]))
+	a.True(existe(feed.Items[1]))
 }
 
-func TestAddFeedErrURLExistsPreParse(t *testing.T) {
+func TestAddFeedOkFeedExists(t *testing.T) {
 	t.Parallel()
 
 	r := require.New(t)
 	a := assert.New(t)
 
-	req := api.AddFeedRequest{Url: "http://qux.net/feed.xml"}
+	req := api.AddFeedRequest{Url: "http://qux.net/feed.xml", Categories: []string{"cat-0"}}
 	feed := gofeed.Feed{
 		Title:       "feed-title",
 		Description: "feed-description",
 		Link:        "https://bar.com",
 		FeedLink:    "https://bar.com/feed.xml",
-	}
-	parser := NewMockFeedParser(gomock.NewController(t))
-	parser.
-		EXPECT().
-		ParseURL(req.Url).
-		MaxTimes(1).
-		Return(&feed, nil)
-
-	client, db := setupOfflineTest(t, parser)
-	db.addFeedWithURL(req.GetUrl())
-
-	existf := func() bool {
-		return db.rowExists(feedExistSQL, feed.Title, feed.Description, feed.FeedLink, feed.Link)
-	}
-
-	a.Equal(1, db.countFeeds())
-	a.False(existf())
-
-	rsp, err := client.AddFeed(context.Background(), &req)
-	wantErr := fmt.Sprintf("rpc error: code = AlreadyExists desc = feed with URL '%s' already added", req.GetUrl())
-	r.EqualError(err, wantErr)
-	r.Nil(rsp)
-
-	a.Equal(1, db.countFeeds())
-	a.False(existf())
-}
-
-func TestAddFeedErrURLExistsPostParse(t *testing.T) {
-	t.Parallel()
-
-	r := require.New(t)
-	a := assert.New(t)
-
-	req := api.AddFeedRequest{Url: "http://qux.net/feed.xml"}
-	feed := gofeed.Feed{
-		Title:       "feed-title",
-		Description: "feed-description",
-		Link:        "https://bar.com",
-		FeedLink:    "https://bar.com/feed.xml",
+		Items: []*gofeed.Item{
+			{
+				GUID:      "entry1",
+				Link:      "https://bar.com/entry1.html",
+				Title:     "First Entry",
+				Content:   "This is the first entry.",
+				Published: "2021-06-18T21:45:26.794+0200",
+			},
+			{
+				GUID:      "entry2",
+				Link:      "https://bar.com/entry2.html",
+				Title:     "Second Entry",
+				Content:   "This is the second entry.",
+				Published: "2021-06-18T22:08:16.526+0200",
+				Updated:   "2021-06-18T22:11:49.094+0200",
+			},
+		},
 	}
 	parser := NewMockFeedParser(gomock.NewController(t))
 	parser.
@@ -165,20 +170,30 @@ func TestAddFeedErrURLExistsPostParse(t *testing.T) {
 	existf := func() bool {
 		return db.rowExists(feedExistSQL, feed.Title, feed.Description, feed.FeedLink, feed.Link)
 	}
+	existe := func(item *gofeed.Item) bool {
+		return db.rowExists(entryExistSQL, feed.FeedLink, item.Title, item.Link)
+	}
 
 	a.Equal(1, db.countFeeds())
+	a.Equal(0, db.countEntries(feed.FeedLink))
+	a.Equal(0, db.countFeedCategories())
 	a.False(existf())
+	a.False(existe(feed.Items[0]))
+	a.False(existe(feed.Items[1]))
 
 	rsp, err := client.AddFeed(context.Background(), &req)
-	wantErr := fmt.Sprintf("rpc error: code = AlreadyExists desc = feed with URL '%s' already added", feed.FeedLink)
-	r.EqualError(err, wantErr)
-	r.Nil(rsp)
+	r.NoError(err)
+	r.NotNil(rsp)
 
 	a.Equal(1, db.countFeeds())
+	a.Equal(2, db.countEntries(feed.FeedLink))
+	a.Equal(1, db.countFeedCategories())
 	a.False(existf())
+	a.True(existe(feed.Items[0]))
+	a.True(existe(feed.Items[1]))
 }
 
-// Query for checking that a feed row with the given columns exist.
+// Query for checking that a feed exists.
 const feedExistSQL = `
 	SELECT
 		*
@@ -189,6 +204,19 @@ const feedExistSQL = `
 		AND description = ?
 		AND xml_url = ?
 		AND html_url = ?
+`
+
+// Query for checking that an entry exists.
+const entryExistSQL = `
+	SELECT
+		*
+	FROM
+		entries e
+		INNER JOIN feeds f ON e.feed_id = f.id
+	WHERE
+		f.xml_url = ?
+		AND e.title = ?
+		AND e.url = ?
 `
 
 func stringp(value string) *string { return &value }

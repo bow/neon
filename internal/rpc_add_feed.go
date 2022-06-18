@@ -6,8 +6,6 @@ import (
 
 	"github.com/bow/courier/api"
 	"github.com/mmcdole/gofeed"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 // AddFeed satisfies the service API.
@@ -16,65 +14,19 @@ func (r *rpc) AddFeed(
 	req *api.AddFeedRequest,
 ) (*api.AddFeedResponse, error) {
 
-	url := req.GetUrl()
-	errExistsF := func(url string) error {
-		return status.Errorf(codes.AlreadyExists, "feed with URL '%s' already added", url)
-	}
-
-	hasFeed, err := r.store.HasFeedURL(ctx, url)
-	if err != nil {
-		return nil, err
-	}
-	if hasFeed {
-		return nil, errExistsF(url)
-	}
-
-	feed, err := r.parser.ParseURL(url)
+	feed, err := r.parser.ParseURL(req.GetUrl())
 	if err != nil {
 		return nil, err
 	}
 
 	err = r.store.AddFeed(ctx, feed, req.Title, req.Description, req.GetCategories())
 	if err != nil {
-		if isUniqueErr(err, "UNIQUE constraint failed: feeds.xml_url") {
-			return nil, errExistsF(feed.FeedLink)
-		}
 		return nil, err
 	}
 
 	rsp := api.AddFeedResponse{}
 
 	return &rsp, nil
-}
-
-// HasFeedURL checks if a feed with the given URL already exists in the database.
-func (s *sqliteStore) HasFeedURL(ctx context.Context, url string) (bool, error) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-
-	fail := failF("FeedStore.HasFeedURL")
-
-	var exists bool
-	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
-		sql1 := `SELECT EXISTS (SELECT id FROM feeds WHERE xml_url = ?)`
-		stmt1, err := tx.PrepareContext(ctx, sql1)
-		if err != nil {
-			return fail(err)
-		}
-		defer stmt1.Close()
-
-		if err := stmt1.QueryRowContext(ctx, url).Scan(&exists); err != nil {
-			return fail(err)
-		}
-
-		return nil
-	}
-
-	if err := s.withTx(ctx, dbFunc, nil); err != nil {
-		return exists, err
-	}
-
-	return exists, nil
 }
 
 // AddFeed adds the given feed into the database.
@@ -105,16 +57,35 @@ func (s *sqliteStore) AddFeed(
 			feed.FeedLink,
 			nullIf(feed.Link, textEmpty),
 		)
-		if err != nil {
-			return fail(err)
-		}
-
-		feedDBID, err := res.LastInsertId()
-		if err != nil {
-			return fail(err)
+		var feedDBID int64
+		if err == nil {
+			feedDBID, err = res.LastInsertId()
+			if err != nil {
+				return fail(err)
+			}
+		} else {
+			if !isUniqueErr(err, "UNIQUE constraint failed: feeds.xml_url") {
+				return fail(err)
+			}
+			if ierr := tx.QueryRowContext(
+				ctx,
+				`SELECT id FROM feeds WHERE xml_url = ?`,
+				feed.FeedLink,
+			).Scan(&feedDBID); ierr != nil {
+				return fail(err)
+			}
+			// TODO: Add and combine with proper update call.
+			if ierr := s.upsertEntries(ctx, tx, DBID(feedDBID), feed.Items); ierr != nil {
+				return fail(err)
+			}
 		}
 
 		err = s.addFeedCategories(ctx, tx, DBID(feedDBID), categories)
+		if err != nil {
+			return fail(err)
+		}
+
+		err = s.upsertEntries(ctx, tx, DBID(feedDBID), feed.Items)
 		if err != nil {
 			return fail(err)
 		}
@@ -123,6 +94,69 @@ func (s *sqliteStore) AddFeed(
 	}
 
 	return s.withTx(ctx, dbFunc, nil)
+}
+
+func (s *sqliteStore) upsertEntries(
+	ctx context.Context,
+	tx *sql.Tx,
+	feedDBID DBID,
+	entries []*gofeed.Item,
+) error {
+
+	sql1 := `
+	INSERT INTO
+		entries(
+			feed_id,
+			external_id,
+			url,
+			title,
+			description,
+			content,
+			publication_time,
+			update_time
+		)
+		VALUES(?, ?, ?, ?, ?, ?, ?, ?)
+`
+	stmt1, err := tx.PrepareContext(ctx, sql1)
+	if err != nil {
+		return err
+	}
+	defer stmt1.Close()
+
+	sql2 := `UPDATE entries SET is_read = (update_time = ?)`
+	stmt2, err := tx.PrepareContext(ctx, sql2)
+	if err != nil {
+		return err
+	}
+	defer stmt2.Close()
+
+	for _, entry := range entries {
+		updated := entry.Updated
+		if updated == "" {
+			updated = entry.Published
+		}
+		_, err = stmt1.ExecContext(
+			ctx,
+			feedDBID,
+			entry.GUID,
+			entry.Link,
+			entry.Title,
+			nullIf(entry.Description, textEmpty),
+			nullIf(entry.Content, textEmpty),
+			nullIf(entry.Published, textEmpty),
+			nullIf(updated, textEmpty),
+		)
+		if err != nil {
+			if isUniqueErr(err, "UNIQUE constraint failed: entries.feed_id, entries.external_id") {
+				if _, err = stmt2.ExecContext(ctx, entry.Updated); err != nil {
+					return err
+				}
+			}
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (s *sqliteStore) addFeedCategories(
@@ -164,7 +198,7 @@ func (s *sqliteStore) addFeedCategories(
 		ids[cat] = id
 	}
 
-	sql3 := `INSERT INTO feeds_x_feed_categories(feed_id, feed_category_id) VALUES (?, ?)`
+	sql3 := `INSERT OR IGNORE INTO feeds_x_feed_categories(feed_id, feed_category_id) VALUES (?, ?)`
 	stmt3, err := tx.PrepareContext(ctx, sql3)
 	if err != nil {
 		return err

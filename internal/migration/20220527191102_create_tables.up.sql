@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS
   , external_id TEXT NOT NULL
   , url TEXT NULL CHECK(url IS NULL or length(url) > 0)
   , title TEXT NOT NULL CHECK(title IS NULL or length(title) > 0)
-  , summary TEXT NULL CHECK(summary IS NULL or length(summary) > 0)
+  , description TEXT NULL CHECK(description IS NULL or length(description) > 0)
   , content TEXT NULL CHECK(content IS NULL or length(content) > 0)
   , authors JSON NOT NULL DEFAULT '[]'
   , categories JSON NOT NULL DEFAULT '[]'
@@ -31,8 +31,10 @@ CREATE TABLE IF NOT EXISTS
   , update_time TIMESTAMP NULL
   , is_read BOOLEAN NOT NULL DEFAULT false
   , FOREIGN KEY(feed_id) REFERENCES feeds(id) ON DELETE CASCADE
+  , UNIQUE(feed_id, external_id)
 );
 CREATE INDEX IF NOT EXISTS entries_feed_id ON entries(feed_id);
+CREATE INDEX IF NOT EXISTS entries_external_id ON entries(external_id);
 
 CREATE TABLE IF NOT EXISTS
   feeds_x_feed_categories
