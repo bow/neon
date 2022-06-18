@@ -48,9 +48,9 @@ func (r *rpc) AddFeed(
 }
 
 // HasFeedURL checks if a feed with the given URL already exists in the database.
-func (f *feedDB) HasFeedURL(ctx context.Context, url string) (bool, error) {
-	f.mu.Lock()
-	defer f.mu.Unlock()
+func (s *sqliteStore) HasFeedURL(ctx context.Context, url string) (bool, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
 
 	fail := failF("FeedStore.HasFeedURL")
 
@@ -70,7 +70,7 @@ func (f *feedDB) HasFeedURL(ctx context.Context, url string) (bool, error) {
 		return nil
 	}
 
-	if err := f.withTx(ctx, dbFunc, nil); err != nil {
+	if err := s.withTx(ctx, dbFunc, nil); err != nil {
 		return exists, err
 	}
 
@@ -78,15 +78,15 @@ func (f *feedDB) HasFeedURL(ctx context.Context, url string) (bool, error) {
 }
 
 // AddFeed adds the given feed into the database.
-func (f *feedDB) AddFeed(
+func (s *sqliteStore) AddFeed(
 	ctx context.Context,
 	feed *gofeed.Feed,
 	title *string,
 	desc *string,
 	categories []string,
 ) error {
-	f.mu.Lock()
-	defer f.mu.Unlock()
+	s.mu.Lock()
+	defer s.mu.Unlock()
 
 	fail := failF("FeedStore.AddFeed")
 
@@ -114,7 +114,7 @@ func (f *feedDB) AddFeed(
 			return fail(err)
 		}
 
-		err = f.addFeedCategories(ctx, tx, DBID(feedDBID), categories)
+		err = s.addFeedCategories(ctx, tx, DBID(feedDBID), categories)
 		if err != nil {
 			return fail(err)
 		}
@@ -122,10 +122,10 @@ func (f *feedDB) AddFeed(
 		return nil
 	}
 
-	return f.withTx(ctx, dbFunc, nil)
+	return s.withTx(ctx, dbFunc, nil)
 }
 
-func (f *feedDB) addFeedCategories(
+func (s *sqliteStore) addFeedCategories(
 	ctx context.Context,
 	tx *sql.Tx,
 	feedDBID DBID,

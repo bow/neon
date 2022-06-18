@@ -22,12 +22,12 @@ type FeedStore interface {
 
 type DBID = int
 
-type feedDB struct {
+type sqliteStore struct {
 	db *sql.DB
 	mu sync.RWMutex
 }
 
-func newFeedDB(filename string) (*feedDB, error) {
+func newSQLiteStore(filename string) (*sqliteStore, error) {
 
 	log.Debug().Msgf("preparing '%s' as data store", filename)
 	fail := failF("newFeedDB")
@@ -44,17 +44,17 @@ func newFeedDB(filename string) (*feedDB, error) {
 		return nil, fail(err)
 	}
 
-	store := feedDB{db: db}
+	store := sqliteStore{db: db}
 
 	return &store, nil
 }
 
-func (f *feedDB) withTx(
+func (s *sqliteStore) withTx(
 	ctx context.Context,
 	dbFunc func(context.Context, *sql.Tx) error,
 	txOpts *sql.TxOptions,
 ) (err error) {
-	tx, err := f.db.BeginTx(ctx, txOpts)
+	tx, err := s.db.BeginTx(ctx, txOpts)
 	if err != nil {
 		return err
 	}

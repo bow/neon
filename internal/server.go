@@ -149,7 +149,7 @@ func (b *ServerBuilder) Build() (*server, error) {
 
 	store := b.store
 	if sp := b.storePath; sp != "" {
-		if store, err = newFeedDB(sp); err != nil {
+		if store, err = newSQLiteStore(sp); err != nil {
 			return nil, fmt.Errorf("server build: %w", err)
 		}
 	}
