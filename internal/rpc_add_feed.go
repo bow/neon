@@ -40,7 +40,7 @@ func (s *sqliteStore) AddFeed(
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	fail := failF("FeedStore.AddFeed")
+	fail := failF("sqliteStore.AddFeed")
 
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
 		sql1 := `INSERT INTO feeds(title, description, feed_url, site_url) VALUES (?, ?, ?, ?)`
