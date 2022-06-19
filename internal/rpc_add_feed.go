@@ -43,7 +43,11 @@ func (s *sqliteStore) AddFeed(
 	fail := failF("sqliteStore.AddFeed")
 
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
-		sql1 := `INSERT INTO feeds(title, description, feed_url, site_url) VALUES (?, ?, ?, ?)`
+		sql1 := `
+			INSERT INTO
+				feeds(title, description, feed_url, site_url, update_time)
+				VALUES (?, ?, ?, ?, ?)
+`
 		stmt1, err := tx.PrepareContext(ctx, sql1)
 		if err != nil {
 			return fail(err)
@@ -56,6 +60,7 @@ func (s *sqliteStore) AddFeed(
 			nullIf(resolve(desc, feed.Description), textEmpty),
 			feed.FeedLink,
 			nullIf(feed.Link, textEmpty),
+			nullIf(feed.Updated, textEmpty),
 		)
 		var feedDBID int64
 		if err == nil {

@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS
   , feed_url TEXT NOT NULL CHECK(length(feed_url) > 0)
   , site_url TEXT NULL CHECK(site_url IS NULL or length(site_url) > 0)
   , subscription_time TIMESTAMP NOT NULL DEFAULT (DATETIME('now'))
+  , update_time TIMESTAMP NULL
   , UNIQUE(feed_url)
 );
 
