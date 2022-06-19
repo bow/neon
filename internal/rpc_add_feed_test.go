@@ -3,6 +3,7 @@ package internal
 import (
 	"context"
 	"testing"
+	"time"
 
 	"github.com/bow/courier/api"
 	gomock "github.com/golang/mock/gomock"
@@ -71,19 +72,19 @@ func TestAddFeedOkExtended(t *testing.T) {
 		FeedLink:    "https://foo.com/feed.xml",
 		Items: []*gofeed.Item{
 			{
-				GUID:      "entry1",
-				Link:      "https://bar.com/entry1.html",
-				Title:     "First Entry",
-				Content:   "This is the first entry.",
-				Published: "2021-06-18T21:45:26.794+0200",
+				GUID:            "entry1",
+				Link:            "https://bar.com/entry1.html",
+				Title:           "First Entry",
+				Content:         "This is the first entry.",
+				PublishedParsed: ts(t, "2021-06-18T21:45:26.794+02:00"),
 			},
 			{
-				GUID:      "entry2",
-				Link:      "https://bar.com/entry2.html",
-				Title:     "Second Entry",
-				Content:   "This is the second entry.",
-				Published: "2021-06-18T22:08:16.526+0200",
-				Updated:   "2021-06-18T22:11:49.094+0200",
+				GUID:            "entry2",
+				Link:            "https://bar.com/entry2.html",
+				Title:           "Second Entry",
+				Content:         "This is the second entry.",
+				PublishedParsed: ts(t, "2021-06-18T22:08:16.526+02:00"),
+				UpdatedParsed:   ts(t, "2021-06-18T22:11:49.094+02:00"),
 			},
 		},
 	}
@@ -141,19 +142,19 @@ func TestAddFeedOkFeedExists(t *testing.T) {
 		FeedLink:    "https://bar.com/feed.xml",
 		Items: []*gofeed.Item{
 			{
-				GUID:      "entry1",
-				Link:      "https://bar.com/entry1.html",
-				Title:     "First Entry",
-				Content:   "This is the first entry.",
-				Published: "2021-06-18T21:45:26.794+0200",
+				GUID:            "entry1",
+				Link:            "https://bar.com/entry1.html",
+				Title:           "First Entry",
+				Content:         "This is the first entry.",
+				PublishedParsed: ts(t, "2021-06-18T21:45:26.794+02:00"),
 			},
 			{
-				GUID:      "entry2",
-				Link:      "https://bar.com/entry2.html",
-				Title:     "Second Entry",
-				Content:   "This is the second entry.",
-				Published: "2021-06-18T22:08:16.526+0200",
-				Updated:   "2021-06-18T22:11:49.094+0200",
+				GUID:            "entry2",
+				Link:            "https://bar.com/entry2.html",
+				Title:           "Second Entry",
+				Content:         "This is the second entry.",
+				PublishedParsed: ts(t, "2021-06-18T22:08:16.526+02:00"),
+				UpdatedParsed:   ts(t, "2021-06-18T22:11:49.094+02:00"),
 			},
 		},
 	}
@@ -218,5 +219,13 @@ const entryExistSQL = `
 		AND e.title = ?
 		AND e.url = ?
 `
+
+func ts(t *testing.T, value string) *time.Time {
+	t.Helper()
+	rtv, err := time.Parse(time.RFC3339Nano, value)
+	require.NoError(t, err)
+	tv := rtv.UTC()
+	return &tv
+}
 
 func stringp(value string) *string { return &value }

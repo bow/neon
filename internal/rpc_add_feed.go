@@ -60,7 +60,7 @@ func (s *sqliteStore) AddFeed(
 			nullIf(resolve(desc, feed.Description), textEmpty),
 			feed.FeedLink,
 			nullIf(feed.Link, textEmpty),
-			nullIf(feed.Updated, textEmpty),
+			serializeTime(resolveFeedUpdateTime(feed)),
 		)
 		var feedDBID int64
 		if err == nil {
@@ -136,10 +136,7 @@ func (s *sqliteStore) upsertEntries(
 	defer stmt2.Close()
 
 	for _, entry := range entries {
-		updated := entry.Updated
-		if updated == "" {
-			updated = entry.Published
-		}
+		updateTime := serializeTime(resolveEntryUpdateTime(entry))
 		_, err = stmt1.ExecContext(
 			ctx,
 			feedDBID,
@@ -149,12 +146,13 @@ func (s *sqliteStore) upsertEntries(
 			nullIf(entry.Description, textEmpty),
 			nullIf(entry.Content, textEmpty),
 			nullIf(entry.Published, textEmpty),
-			nullIf(updated, textEmpty),
+			serializeTime(resolveEntryPublishedTime(entry)),
+			updateTime,
 		)
 		if err != nil {
 			if isUniqueErr(err, "UNIQUE constraint failed: entries.feed_id, entries.external_id") {
-				if _, err = stmt2.ExecContext(ctx, entry.Updated); err != nil {
-					return err
+				if _, ierr := stmt2.ExecContext(ctx, updateTime); ierr != nil {
+					return ierr
 				}
 			}
 			return err
