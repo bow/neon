@@ -33,6 +33,11 @@ service Courier {
   rpc GetInfo (GetInfoRequest) returns (GetInfoResponse) {}
 }
 
+message Feed {
+  int32 id = 1;
+  string url = 2;
+}
+
 message AddFeedRequest {
   string url = 1;
   optional string title = 2;
@@ -48,7 +53,9 @@ message EditFeedResponse {}
 
 message ListFeedsRequest {}
 
-message ListFeedsResponse {}
+message ListFeedsResponse {
+  repeated Feed feeds = 1;
+}
 
 message DeleteFeedsRequest {}
 

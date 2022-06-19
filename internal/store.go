@@ -17,6 +17,7 @@ import (
 
 type FeedStore interface {
 	AddFeed(context.Context, *gofeed.Feed, *string, *string, []string) error
+	ListFeeds(context.Context) ([]*Feed, error)
 }
 
 type DBID = int

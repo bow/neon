@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/bow/courier/api"
+	gomock "github.com/golang/mock/gomock"
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -25,6 +26,7 @@ func defaultTestServerBuilder(t *testing.T) *ServerBuilder {
 	return NewServerBuilder().
 		Address(":0").
 		StorePath(storePath).
+		Parser(NewMockFeedParser(gomock.NewController(t))).
 		Logger(zerolog.Nop())
 }
 

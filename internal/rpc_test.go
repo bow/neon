@@ -23,19 +23,6 @@ func TestEditFeedOk(t *testing.T) {
 	r.EqualError(err, status.New(codes.Unimplemented, "unimplemented").String())
 }
 
-func TestListFeedsOk(t *testing.T) {
-	t.Parallel()
-
-	r := require.New(t)
-	client := newTestClientBuilder(t).Build()
-
-	req := api.ListFeedsRequest{}
-	rsp, err := client.ListFeeds(context.Background(), &req)
-
-	r.Nil(rsp)
-	r.EqualError(err, status.New(codes.Unimplemented, "unimplemented").String())
-}
-
 func TestDeleteFeedsOk(t *testing.T) {
 	t.Parallel()
 

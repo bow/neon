@@ -32,14 +32,6 @@ func (r *rpc) EditFeed(
 	return nil, status.Errorf(codes.Unimplemented, "unimplemented")
 }
 
-// ListFeeds satisfies the service API.
-func (r *rpc) ListFeeds(
-	_ context.Context,
-	_ *api.ListFeedsRequest,
-) (*api.ListFeedsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "unimplemented")
-}
-
 // DeleteFeeds satisfies the service API.
 func (r *rpc) DeleteFeeds(
 	_ context.Context,
