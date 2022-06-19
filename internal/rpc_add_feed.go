@@ -43,7 +43,7 @@ func (s *sqliteStore) AddFeed(
 	fail := failF("FeedStore.AddFeed")
 
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
-		sql1 := `INSERT INTO feeds(title, description, xml_url, html_url) VALUES (?, ?, ?, ?)`
+		sql1 := `INSERT INTO feeds(title, description, feed_url, site_url) VALUES (?, ?, ?, ?)`
 		stmt1, err := tx.PrepareContext(ctx, sql1)
 		if err != nil {
 			return fail(err)
@@ -64,12 +64,12 @@ func (s *sqliteStore) AddFeed(
 				return fail(err)
 			}
 		} else {
-			if !isUniqueErr(err, "UNIQUE constraint failed: feeds.xml_url") {
+			if !isUniqueErr(err, "UNIQUE constraint failed: feeds.feed_url") {
 				return fail(err)
 			}
 			if ierr := tx.QueryRowContext(
 				ctx,
-				`SELECT id FROM feeds WHERE xml_url = ?`,
+				`SELECT id FROM feeds WHERE feed_url = ?`,
 				feed.FeedLink,
 			).Scan(&feedDBID); ierr != nil {
 				return fail(err)

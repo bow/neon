@@ -3,10 +3,10 @@ CREATE TABLE IF NOT EXISTS
   ( id INTEGER PRIMARY KEY AUTOINCREMENT
   , title TEXT NOT NULL
   , description TEXT NULL CHECK(description IS NULL or length(description) > 0)
-  , xml_url TEXT NOT NULL CHECK(length(xml_url) > 0)
-  , html_url TEXT NULL CHECK(html_url IS NULL or length(html_url) > 0)
+  , feed_url TEXT NOT NULL CHECK(length(feed_url) > 0)
+  , site_url TEXT NULL CHECK(site_url IS NULL or length(site_url) > 0)
   , subscription_time TIMESTAMP NOT NULL DEFAULT (DATETIME('now'))
-  , UNIQUE(xml_url)
+  , UNIQUE(feed_url)
 );
 
 CREATE TABLE IF NOT EXISTS

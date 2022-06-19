@@ -79,7 +79,7 @@ func (tdb *testDB) countEntries(xmlURL string) int {
 		entries e
 		INNER JOIN feeds f ON e.feed_id = f.id
 	WHERE
-		f.xml_url = ?
+		f.feed_url = ?
 `,
 	)
 	require.NoError(tdb.t, err)
@@ -100,7 +100,7 @@ func (tdb *testDB) addFeedWithURL(url string) {
 	tdb.t.Helper()
 
 	tx := tdb.tx()
-	stmt, err := tx.Prepare(`INSERT INTO feeds(title, xml_url) VALUES (?, ?)`)
+	stmt, err := tx.Prepare(`INSERT INTO feeds(title, feed_url) VALUES (?, ?)`)
 	require.NoError(tdb.t, err)
 
 	_, err = stmt.Exec(tdb.t.Name(), url)

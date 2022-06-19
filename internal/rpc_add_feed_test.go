@@ -202,8 +202,8 @@ const feedExistSQL = `
 	WHERE
 		title = ?
 		AND description = ?
-		AND xml_url = ?
-		AND html_url = ?
+		AND feed_url = ?
+		AND site_url = ?
 `
 
 // Query for checking that an entry exists.
@@ -214,7 +214,7 @@ const entryExistSQL = `
 		entries e
 		INNER JOIN feeds f ON e.feed_id = f.id
 	WHERE
-		f.xml_url = ?
+		f.feed_url = ?
 		AND e.title = ?
 		AND e.url = ?
 `
