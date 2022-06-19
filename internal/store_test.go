@@ -96,6 +96,20 @@ func (tdb *testDB) countFeedCategories() int {
 	return tdb.countTableRows("feed_categories")
 }
 
+func (tdb *testDB) addFeeds(feeds []*Feed) {
+	tdb.t.Helper()
+
+	tx := tdb.tx()
+	stmt, err := tx.Prepare(`INSERT INTO feeds(title, feed_url, update_time) VALUES (?, ?, ?)`)
+	require.NoError(tdb.t, err)
+
+	for _, feed := range feeds {
+		_, err = stmt.Exec(tdb.t.Name(), feed.inner.FeedLink, feed.inner.Updated)
+		require.NoError(tdb.t, err)
+	}
+	require.NoError(tdb.t, tx.Commit())
+}
+
 func (tdb *testDB) addFeedWithURL(url string) {
 	tdb.t.Helper()
 

@@ -24,7 +24,7 @@ func (r *rpc) ListFeeds(
 			rsp.Feeds,
 			&api.Feed{
 				Id:  int32(feed.DBID),
-				Url: feed.FeedLink,
+				Url: feed.inner.FeedLink,
 			},
 		)
 	}
@@ -36,9 +36,37 @@ func (s *sqliteStore) ListFeeds(ctx context.Context) ([]*Feed, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
+	fail := failF("sqliteStore.ListFeeds")
+
 	feeds := make([]*Feed, 0)
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
-		// TODO: Full implementation.
+		sql1 := `
+			SELECT
+				id, feed_url
+			FROM
+				feeds
+			ORDER BY
+				COALESCE(update_time, subscription_time) DESC
+`
+		stmt1, err := tx.PrepareContext(ctx, sql1)
+		if err != nil {
+			return fail(err)
+		}
+		defer stmt1.Close()
+
+		rows, err := stmt1.QueryContext(ctx)
+		if err != nil {
+			return fail(err)
+		}
+
+		for rows.Next() {
+			var feed Feed
+			if err := rows.Scan(&feed.DBID, &feed.inner.FeedLink); err != nil {
+				return fail(err)
+			}
+			feeds = append(feeds, &feed)
+		}
+
 		return nil
 	}
 
