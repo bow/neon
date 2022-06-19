@@ -153,12 +153,11 @@ func (s *sqliteStore) upsertEntries(
 			updateTime,
 		)
 		if err != nil {
-			if isUniqueErr(err, "UNIQUE constraint failed: entries.feed_id, entries.external_id") {
-				if _, ierr := stmt2.ExecContext(ctx, updateTime); ierr != nil {
-					return ierr
-				}
-			} else {
+			if !isUniqueErr(err, "UNIQUE constraint failed: entries.feed_id, entries.external_id") {
 				return err
+			}
+			if _, ierr := stmt2.ExecContext(ctx, updateTime); ierr != nil {
+				return ierr
 			}
 		}
 	}
