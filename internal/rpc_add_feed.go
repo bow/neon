@@ -3,6 +3,7 @@ package internal
 import (
 	"context"
 	"database/sql"
+	"time"
 
 	"github.com/bow/courier/api"
 	"github.com/mmcdole/gofeed"
@@ -45,8 +46,8 @@ func (s *sqliteStore) AddFeed(
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
 		sql1 := `
 			INSERT INTO
-				feeds(title, description, feed_url, site_url, update_time)
-				VALUES (?, ?, ?, ?, ?)
+				feeds(title, description, feed_url, site_url, update_time, subscription_time)
+				VALUES (?, ?, ?, ?, ?, ?)
 `
 		stmt1, err := tx.PrepareContext(ctx, sql1)
 		if err != nil {
@@ -54,6 +55,7 @@ func (s *sqliteStore) AddFeed(
 		}
 		defer stmt1.Close()
 
+		now := time.Now()
 		res, err := stmt1.ExecContext(
 			ctx,
 			nullIf(resolve(title, feed.Title), textEmpty),
@@ -61,6 +63,7 @@ func (s *sqliteStore) AddFeed(
 			feed.FeedLink,
 			nullIf(feed.Link, textEmpty),
 			serializeTime(resolveFeedUpdateTime(feed)),
+			serializeTime(&now),
 		)
 		var feedDBID int64
 		if err == nil {
