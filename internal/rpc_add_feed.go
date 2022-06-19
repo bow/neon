@@ -77,11 +77,11 @@ func (s *sqliteStore) AddFeed(
 				`SELECT id FROM feeds WHERE feed_url = ?`,
 				feed.FeedLink,
 			).Scan(&feedDBID); ierr != nil {
-				return fail(err)
+				return fail(ierr)
 			}
 			// TODO: Add and combine with proper update call.
 			if ierr := s.upsertEntries(ctx, tx, DBID(feedDBID), feed.Items); ierr != nil {
-				return fail(err)
+				return fail(ierr)
 			}
 		}
 
@@ -154,8 +154,9 @@ func (s *sqliteStore) upsertEntries(
 				if _, ierr := stmt2.ExecContext(ctx, updateTime); ierr != nil {
 					return ierr
 				}
+			} else {
+				return err
 			}
-			return err
 		}
 	}
 
