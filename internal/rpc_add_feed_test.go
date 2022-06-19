@@ -27,7 +27,7 @@ func TestAddFeedOkMinimal(t *testing.T) {
 	parser := NewMockFeedParser(gomock.NewController(t))
 	parser.
 		EXPECT().
-		ParseURL(req.Url).
+		ParseURLWithContext(req.Url, gomock.Any()).
 		MaxTimes(1).
 		Return(&feed, nil)
 
@@ -90,7 +90,7 @@ func TestAddFeedOkExtended(t *testing.T) {
 	parser := NewMockFeedParser(gomock.NewController(t))
 	parser.
 		EXPECT().
-		ParseURL(req.Url).
+		ParseURLWithContext(req.Url, gomock.Any()).
 		MaxTimes(1).
 		Return(&feed, nil)
 
@@ -160,7 +160,7 @@ func TestAddFeedOkFeedExists(t *testing.T) {
 	parser := NewMockFeedParser(gomock.NewController(t))
 	parser.
 		EXPECT().
-		ParseURL(req.Url).
+		ParseURLWithContext(req.Url, gomock.Any()).
 		MaxTimes(1).
 		Return(&feed, nil)
 

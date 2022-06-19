@@ -6,7 +6,6 @@ package internal
 
 import (
 	context "context"
-	io "io"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
@@ -34,36 +33,6 @@ func NewMockFeedParser(ctrl *gomock.Controller) *MockFeedParser {
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockFeedParser) EXPECT() *MockFeedParserMockRecorder {
 	return m.recorder
-}
-
-// Parse mocks base method.
-func (m *MockFeedParser) Parse(arg0 io.Reader) (*gofeed.Feed, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Parse", arg0)
-	ret0, _ := ret[0].(*gofeed.Feed)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// Parse indicates an expected call of Parse.
-func (mr *MockFeedParserMockRecorder) Parse(arg0 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Parse", reflect.TypeOf((*MockFeedParser)(nil).Parse), arg0)
-}
-
-// ParseURL mocks base method.
-func (m *MockFeedParser) ParseURL(arg0 string) (*gofeed.Feed, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ParseURL", arg0)
-	ret0, _ := ret[0].(*gofeed.Feed)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// ParseURL indicates an expected call of ParseURL.
-func (mr *MockFeedParserMockRecorder) ParseURL(arg0 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseURL", reflect.TypeOf((*MockFeedParser)(nil).ParseURL), arg0)
 }
 
 // ParseURLWithContext mocks base method.

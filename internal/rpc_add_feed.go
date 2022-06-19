@@ -14,7 +14,7 @@ func (r *rpc) AddFeed(
 	req *api.AddFeedRequest,
 ) (*api.AddFeedResponse, error) {
 
-	feed, err := r.parser.ParseURL(req.GetUrl())
+	feed, err := r.parser.ParseURLWithContext(req.GetUrl(), ctx)
 	if err != nil {
 		return nil, err
 	}
