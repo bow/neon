@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package courier;
 
+import "google/protobuf/timestamp.proto";
+
 option go_package = "github.com/bow/courier/api";
 
 service Courier {
@@ -35,7 +37,24 @@ service Courier {
 
 message Feed {
   int32 id = 1;
+  string title = 2;
   string feed_url = 3;
+  repeated string categories = 4;
+  optional string site_url = 5;
+  optional google.protobuf.Timestamp update_time = 6;
+  google.protobuf.Timestamp subscription_time = 7;
+  repeated Entry entries = 8;
+
+  message Entry {
+    string title = 1;
+    bool is_read = 2;
+    string ext_id = 3;
+    google.protobuf.Timestamp update_time = 4;
+    google.protobuf.Timestamp publication_time = 5;
+    optional string description = 6;
+    optional string content = 7;
+    optional string url = 8;
+  }
 }
 
 message AddFeedRequest {
