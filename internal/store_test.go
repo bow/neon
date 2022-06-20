@@ -104,7 +104,7 @@ func (tdb *testDB) addFeeds(feeds []*Feed) {
 	require.NoError(tdb.t, err)
 
 	for _, feed := range feeds {
-		_, err = stmt.Exec(tdb.t.Name(), feed.inner.FeedLink, feed.inner.Updated)
+		_, err = stmt.Exec(tdb.t.Name(), feed.FeedURL, feed.Updated)
 		require.NoError(tdb.t, err)
 	}
 	require.NoError(tdb.t, tx.Commit())

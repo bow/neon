@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/bow/courier/api"
-	"github.com/mmcdole/gofeed"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -41,18 +40,14 @@ func TestListFeedsOk(t *testing.T) {
 
 	dbFeeds := []*Feed{
 		{
-			inner: gofeed.Feed{
-				Title:    "Feed A",
-				FeedLink: "http://a.com/feed.xml",
-				Updated:  "2022-03-19T16:23:18.600+0200",
-			},
+			Title:   "Feed A",
+			FeedURL: "http://a.com/feed.xml",
+			Updated: WrapNullString("2022-03-19T16:23:18.600+02:00"),
 		},
 		{
-			inner: gofeed.Feed{
-				Title:    "Feed X",
-				FeedLink: "http://x.com/feed.xml",
-				Updated:  "2022-04-20T16:32:30.760+0200",
-			},
+			Title:   "Feed X",
+			FeedURL: "http://x.com/feed.xml",
+			Updated: WrapNullString("2022-04-20T16:32:30.760+02:00"),
 		},
 	}
 	db.addFeeds(dbFeeds)
@@ -67,8 +62,8 @@ func TestListFeedsOk(t *testing.T) {
 	r.Len(feeds, 2)
 
 	feed0 := feeds[0]
-	a.Equal(feed0.GetFeedUrl(), dbFeeds[1].inner.FeedLink)
+	a.Equal(feed0.GetFeedUrl(), dbFeeds[1].FeedURL)
 
 	feed1 := feeds[1]
-	a.Equal(feed1.GetFeedUrl(), dbFeeds[0].inner.FeedLink)
+	a.Equal(feed1.GetFeedUrl(), dbFeeds[0].FeedURL)
 }

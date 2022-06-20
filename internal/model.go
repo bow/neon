@@ -1,14 +1,54 @@
 package internal
 
 import (
+	"database/sql"
 	"time"
 
+	"github.com/bow/courier/api"
 	"github.com/mmcdole/gofeed"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type Feed struct {
-	DBID  DBID
-	inner gofeed.Feed
+	DBID        DBID
+	Title       string
+	Description sql.NullString
+	FeedURL     string
+	SiteURL     sql.NullString
+	Subscribed  string
+	Updated     sql.NullString
+	Categories  jsonArrayString
+	Entries     []*Entry
+}
+
+func (f *Feed) Proto() (*api.Feed, error) {
+	proto := api.Feed{
+		Id:         int32(f.DBID),
+		Title:      f.Title,
+		FeedUrl:    f.FeedURL,
+		SiteUrl:    UnwrapNullString(f.SiteURL),
+		Categories: []string(f.Categories),
+	}
+
+	stv, err := deserializeTime(&f.Subscribed)
+	if err != nil {
+		return nil, err
+	}
+	proto.SubscriptionTime = timestamppb.New(*stv)
+
+	utv, err := deserializeTime(UnwrapNullString(f.Updated))
+	if err != nil {
+		return nil, err
+	}
+	if utv != nil {
+		proto.UpdateTime = timestamppb.New(*utv)
+	}
+
+	return &proto, nil
+}
+
+type Entry struct {
+	Title string
 }
 
 func resolveFeedUpdateTime(feed *gofeed.Feed) *time.Time {
@@ -56,4 +96,16 @@ func serializeTime(tv *time.Time) *string {
 	}
 	ts := tv.UTC().Format(time.RFC3339)
 	return &ts
+}
+
+func deserializeTime(v *string) (*time.Time, error) {
+	if v == nil {
+		return nil, nil
+	}
+	pv, err := time.Parse(time.RFC3339, *v)
+	if err != nil {
+		return nil, err
+	}
+	upv := pv.UTC()
+	return &upv, nil
 }

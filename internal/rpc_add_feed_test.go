@@ -222,10 +222,9 @@ const entryExistSQL = `
 
 func ts(t *testing.T, value string) *time.Time {
 	t.Helper()
-	rtv, err := time.Parse(time.RFC3339Nano, value)
+	tv, err := deserializeTime(&value)
 	require.NoError(t, err)
-	tv := rtv.UTC()
-	return &tv
+	return tv
 }
 
 func stringp(value string) *string { return &value }
