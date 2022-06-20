@@ -67,8 +67,8 @@ func TestListFeedsOk(t *testing.T) {
 	r.Len(feeds, 2)
 
 	feed0 := feeds[0]
-	a.Equal(feed0.GetUrl(), dbFeeds[1].inner.FeedLink)
+	a.Equal(feed0.GetFeedUrl(), dbFeeds[1].inner.FeedLink)
 
 	feed1 := feeds[1]
-	a.Equal(feed1.GetUrl(), dbFeeds[0].inner.FeedLink)
+	a.Equal(feed1.GetFeedUrl(), dbFeeds[0].inner.FeedLink)
 }

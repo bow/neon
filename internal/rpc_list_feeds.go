@@ -23,8 +23,8 @@ func (r *rpc) ListFeeds(
 		rsp.Feeds = append(
 			rsp.Feeds,
 			&api.Feed{
-				Id:  int32(feed.DBID),
-				Url: feed.inner.FeedLink,
+				Id:      int32(feed.DBID),
+				FeedUrl: feed.inner.FeedLink,
 			},
 		)
 	}
