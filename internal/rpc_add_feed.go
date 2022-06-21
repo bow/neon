@@ -148,7 +148,6 @@ func (s *sqliteStore) upsertEntries(
 			entry.Title,
 			nullIf(entry.Description, textEmpty),
 			nullIf(entry.Content, textEmpty),
-			nullIf(entry.Published, textEmpty),
 			serializeTime(resolveEntryPublishedTime(entry)),
 			updateTime,
 		)

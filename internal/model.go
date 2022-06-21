@@ -75,18 +75,17 @@ func (e *Entry) Proto() (*api.Feed_Entry, error) {
 		Url:         UnwrapNullString(e.URL),
 	}
 
-	// TODO: Ensure timestamp is serializable.
-	// var err error
+	var err error
 
-	// proto.PublicationTime, err = toProtoTime(UnwrapNullString(e.Published))
-	// if err != nil {
-	// 	return nil, err
-	// }
+	proto.PublicationTime, err = toProtoTime(UnwrapNullString(e.Published))
+	if err != nil {
+		return nil, err
+	}
 
-	// proto.UpdateTime, err = toProtoTime(UnwrapNullString(e.Updated))
-	// if err != nil {
-	// 	return nil, err
-	// }
+	proto.UpdateTime, err = toProtoTime(UnwrapNullString(e.Updated))
+	if err != nil {
+		return nil, err
+	}
 
 	return &proto, nil
 }
