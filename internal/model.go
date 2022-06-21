@@ -31,18 +31,16 @@ func (f *Feed) Proto() (*api.Feed, error) {
 		Description: UnwrapNullString(f.Description),
 	}
 
-	stv, err := deserializeTime(&f.Subscribed)
-	if err != nil {
-		return nil, err
-	}
-	proto.SubscriptionTime = timestamppb.New(*stv)
+	var err error
 
-	utv, err := deserializeTime(UnwrapNullString(f.Updated))
+	proto.SubscriptionTime, err = toProtoTime(&f.Subscribed)
 	if err != nil {
 		return nil, err
 	}
-	if utv != nil {
-		proto.UpdateTime = timestamppb.New(*utv)
+
+	proto.UpdateTime, err = toProtoTime(UnwrapNullString(f.Updated))
+	if err != nil {
+		return nil, err
 	}
 
 	return &proto, nil
@@ -109,4 +107,15 @@ func deserializeTime(v *string) (*time.Time, error) {
 	}
 	upv := pv.UTC()
 	return &upv, nil
+}
+
+func toProtoTime(v *string) (*timestamppb.Timestamp, error) {
+	tv, err := deserializeTime(v)
+	if err != nil {
+		return nil, err
+	}
+	if tv == nil {
+		return nil, nil
+	}
+	return timestamppb.New(*tv), nil
 }
