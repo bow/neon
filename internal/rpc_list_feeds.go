@@ -46,7 +46,7 @@ func (s *sqliteStore) ListFeeds(ctx context.Context) ([]*Feed, error) {
 		}
 		for _, ifeed := range ifeeds {
 			ifeed := ifeed
-			if err := s.populateEntries(ctx, tx, ifeed); err != nil {
+			if err := s.populateFeedEntries(ctx, tx, ifeed); err != nil {
 				return fail(err)
 			}
 		}
@@ -121,6 +121,62 @@ func (s *sqliteStore) getAllFeeds(ctx context.Context, tx *sql.Tx) ([]*Feed, err
 	return feeds, nil
 }
 
-func (s *sqliteStore) populateEntries(_ context.Context, _ *sql.Tx, _ *Feed) error {
+func (s *sqliteStore) populateFeedEntries(ctx context.Context, tx *sql.Tx, feed *Feed) error {
+
+	sql1 := `
+		SELECT
+			e.title AS title,
+			e.is_read AS is_read,
+			e.external_id AS ext_id,
+			e.description AS description,
+			e.content AS content,
+			e.url AS url,
+			e.update_time AS update_time,
+			e.publication_time AS publication_time
+		FROM
+			entries e
+		WHERE
+			e.feed_id = ?
+		ORDER BY
+			COALESCE(e.update_time, e.publication_time) DESC
+`
+	scanRow := func(rows *sql.Rows) (*Entry, error) {
+		var entry Entry
+		if err := rows.Scan(
+			&entry.Title,
+			&entry.IsRead,
+			&entry.ExtID,
+			&entry.Description,
+			&entry.Content,
+			&entry.URL,
+			&entry.Updated,
+			&entry.Published,
+		); err != nil {
+			return nil, err
+		}
+		return &entry, nil
+	}
+
+	stmt1, err := tx.PrepareContext(ctx, sql1)
+	if err != nil {
+		return err
+	}
+	defer stmt1.Close()
+
+	rows, err := stmt1.QueryContext(ctx, feed.DBID)
+	if err != nil {
+		return err
+	}
+
+	entries := make([]*Entry, 0)
+	for rows.Next() {
+		entry, err := scanRow(rows)
+		if err != nil {
+			return err
+		}
+		entries = append(entries, entry)
+	}
+	feed.Entries = entries
+
 	return nil
 }

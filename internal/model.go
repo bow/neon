@@ -43,11 +43,52 @@ func (f *Feed) Proto() (*api.Feed, error) {
 		return nil, err
 	}
 
+	for _, entry := range f.Entries {
+		ep, err := entry.Proto()
+		if err != nil {
+			return nil, err
+		}
+		proto.Entries = append(proto.Entries, ep)
+	}
+
 	return &proto, nil
 }
 
 type Entry struct {
-	Title string
+	Title       string
+	IsRead      bool
+	ExtID       string
+	Updated     sql.NullString
+	Published   sql.NullString
+	Description sql.NullString
+	Content     sql.NullString
+	URL         sql.NullString
+}
+
+func (e *Entry) Proto() (*api.Feed_Entry, error) {
+	proto := api.Feed_Entry{
+		Title:       e.Title,
+		IsRead:      e.IsRead,
+		ExtId:       e.ExtID,
+		Description: UnwrapNullString(e.Description),
+		Content:     UnwrapNullString(e.Content),
+		Url:         UnwrapNullString(e.URL),
+	}
+
+	// TODO: Ensure timestamp is serializable.
+	// var err error
+
+	// proto.PublicationTime, err = toProtoTime(UnwrapNullString(e.Published))
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	// proto.UpdateTime, err = toProtoTime(UnwrapNullString(e.Updated))
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	return &proto, nil
 }
 
 func resolveFeedUpdateTime(feed *gofeed.Feed) *time.Time {
