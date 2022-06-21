@@ -23,11 +23,12 @@ type Feed struct {
 
 func (f *Feed) Proto() (*api.Feed, error) {
 	proto := api.Feed{
-		Id:         int32(f.DBID),
-		Title:      f.Title,
-		FeedUrl:    f.FeedURL,
-		SiteUrl:    UnwrapNullString(f.SiteURL),
-		Categories: []string(f.Categories),
+		Id:          int32(f.DBID),
+		Title:       f.Title,
+		FeedUrl:     f.FeedURL,
+		SiteUrl:     UnwrapNullString(f.SiteURL),
+		Categories:  []string(f.Categories),
+		Description: UnwrapNullString(f.Description),
 	}
 
 	stv, err := deserializeTime(&f.Subscribed)

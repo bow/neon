@@ -41,9 +41,10 @@ message Feed {
   string feed_url = 3;
   repeated string categories = 4;
   optional string site_url = 5;
-  optional google.protobuf.Timestamp update_time = 6;
-  google.protobuf.Timestamp subscription_time = 7;
-  repeated Entry entries = 8;
+  optional string description = 6;
+  optional google.protobuf.Timestamp update_time = 7;
+  google.protobuf.Timestamp subscription_time = 8;
+  repeated Entry entries = 9;
 
   message Entry {
     string title = 1;
