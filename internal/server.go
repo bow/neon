@@ -8,7 +8,6 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/bow/courier/api"
 	grpczerolog "github.com/grpc-ecosystem/go-grpc-middleware/providers/zerolog/v2"
 	middleware "github.com/grpc-ecosystem/go-grpc-middleware/v2"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -20,6 +19,9 @@ import (
 	"google.golang.org/grpc/health"
 	healthapi "google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/reflection"
+
+	"github.com/bow/courier/api"
+	st "github.com/bow/courier/internal/store"
 )
 
 type server struct {
@@ -102,7 +104,7 @@ func (s *server) start() <-chan error {
 
 type ServerBuilder struct {
 	addr      string
-	store     FeedStore
+	store     st.FeedStore
 	storePath string
 	parser    FeedParser
 	logger    zerolog.Logger
@@ -124,7 +126,7 @@ func (b *ServerBuilder) StorePath(path string) *ServerBuilder {
 	return b
 }
 
-func (b *ServerBuilder) Store(store FeedStore) *ServerBuilder {
+func (b *ServerBuilder) Store(store st.FeedStore) *ServerBuilder {
 	b.store = store
 	b.storePath = ""
 	return b
@@ -149,7 +151,7 @@ func (b *ServerBuilder) Build() (*server, error) {
 
 	store := b.store
 	if sp := b.storePath; sp != "" {
-		if store, err = newSQLiteStore(sp); err != nil {
+		if store, err = st.NewSQLiteStore(sp); err != nil {
 			return nil, fmt.Errorf("server build: %w", err)
 		}
 	}

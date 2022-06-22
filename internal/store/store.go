@@ -1,4 +1,4 @@
-package internal
+package store
 
 import (
 	"context"
@@ -25,12 +25,12 @@ type FeedStore interface {
 
 type DBID = int
 
-type sqliteStore struct {
+type SQLiteStore struct {
 	db *sql.DB
 	mu sync.RWMutex
 }
 
-func newSQLiteStore(filename string) (*sqliteStore, error) {
+func NewSQLiteStore(filename string) (*SQLiteStore, error) {
 
 	log.Debug().Msgf("preparing '%s' as data store", filename)
 	fail := failF("newFeedDB")
@@ -47,12 +47,12 @@ func newSQLiteStore(filename string) (*sqliteStore, error) {
 		return nil, fail(err)
 	}
 
-	store := sqliteStore{db: db}
+	store := SQLiteStore{db: db}
 
 	return &store, nil
 }
 
-func (s *sqliteStore) withTx(
+func (s *SQLiteStore) withTx(
 	ctx context.Context,
 	dbFunc func(context.Context, *sql.Tx) error,
 	txOpts *sql.TxOptions,
@@ -143,4 +143,33 @@ func (arr *jsonArrayString) Scan(value any) error {
 	}
 
 	return json.Unmarshal(bv, arr)
+}
+
+// failF creates a function for wrapping other error functions.
+func failF(funcName string) func(error) error {
+	return func(err error) error {
+		return fmt.Errorf("%s: %w", funcName, err)
+	}
+}
+
+// nullIf returns nil if the given string is empty or only contains whitespaces, otherwise
+// it returns a pointer to the string value.
+func nullIf[T any](value T, pred func(T) bool) *T {
+	if pred(value) {
+		return nil
+	}
+	return &value
+}
+
+func textEmpty(v string) bool {
+	return v == "" || strings.TrimSpace(v) == ""
+}
+
+// resolve returns the dereferenced pointer value if the pointer is non-nil,
+// otherwise it returns the given default.
+func resolve[T any](v *T, def T) T {
+	if v != nil {
+		return *v
+	}
+	return def
 }

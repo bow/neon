@@ -35,7 +35,7 @@ func TestListFeedsOk(t *testing.T) {
 	req := api.ListFeedsRequest{}
 
 	cbuilder := newTestClientBuilder(t)
-	db := newTestDB(t, cbuilder.serverBuilder.storePath)
+	db := newTestDB(t, cbuilder.serverBuilder.stpath)
 	client := cbuilder.Build()
 
 	dbFeeds := []*Feed{

@@ -1,37 +1,15 @@
-package internal
+package store
 
 import (
 	"context"
 	"database/sql"
 	"time"
 
-	"github.com/bow/courier/api"
 	"github.com/mmcdole/gofeed"
 )
 
-// AddFeed satisfies the service API.
-func (r *rpc) AddFeed(
-	ctx context.Context,
-	req *api.AddFeedRequest,
-) (*api.AddFeedResponse, error) {
-
-	feed, err := r.parser.ParseURLWithContext(req.GetUrl(), ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	err = r.store.AddFeed(ctx, feed, req.Title, req.Description, req.GetCategories())
-	if err != nil {
-		return nil, err
-	}
-
-	rsp := api.AddFeedResponse{}
-
-	return &rsp, nil
-}
-
 // AddFeed adds the given feed into the database.
-func (s *sqliteStore) AddFeed(
+func (s *SQLiteStore) AddFeed(
 	ctx context.Context,
 	feed *gofeed.Feed,
 	title *string,
@@ -63,7 +41,7 @@ func (s *sqliteStore) AddFeed(
 	return s.withTx(ctx, dbFunc, nil)
 }
 
-func (s *sqliteStore) insertFeedRow(
+func (s *SQLiteStore) insertFeedRow(
 	ctx context.Context,
 	tx *sql.Tx,
 	feed *gofeed.Feed,
@@ -127,7 +105,7 @@ func (s *sqliteStore) insertFeedRow(
 	return feedDBID, nil
 }
 
-func (s *sqliteStore) upsertEntries(
+func (s *SQLiteStore) upsertEntries(
 	ctx context.Context,
 	tx *sql.Tx,
 	feedDBID DBID,
@@ -195,7 +173,7 @@ func (s *sqliteStore) upsertEntries(
 	return nil
 }
 
-func (s *sqliteStore) addFeedCategories(
+func (s *SQLiteStore) addFeedCategories(
 	ctx context.Context,
 	tx *sql.Tx,
 	feedDBID DBID,

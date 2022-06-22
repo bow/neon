@@ -1,4 +1,4 @@
-package internal
+package store
 
 import (
 	"database/sql"
@@ -92,7 +92,7 @@ func (e *Entry) Proto() (*api.Feed_Entry, error) {
 
 func resolveFeedUpdateTime(feed *gofeed.Feed) *time.Time {
 	// Use feed value if defined.
-	var latest *time.Time = feed.UpdatedParsed
+	var latest = feed.UpdatedParsed
 	if latest != nil {
 		return latest
 	}

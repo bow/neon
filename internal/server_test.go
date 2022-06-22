@@ -7,7 +7,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/bow/courier/api"
 	gomock "github.com/golang/mock/gomock"
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/assert"
@@ -15,6 +14,8 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/health/grpc_health_v1"
+
+	"github.com/bow/courier/api"
 )
 
 func defaultTestServerBuilder(t *testing.T) *ServerBuilder {

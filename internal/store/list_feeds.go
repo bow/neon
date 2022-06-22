@@ -1,37 +1,11 @@
-package internal
+package store
 
 import (
 	"context"
 	"database/sql"
-
-	"github.com/bow/courier/api"
 )
 
-// ListFeeds satisfies the service API.
-func (r *rpc) ListFeeds(
-	ctx context.Context,
-	_ *api.ListFeedsRequest,
-) (*api.ListFeedsResponse, error) {
-
-	feeds, err := r.store.ListFeeds(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	rsp := api.ListFeedsResponse{}
-	for _, feed := range feeds {
-		// TODO: Use gRPC INTERNAL error for this.
-		proto, err := feed.Proto()
-		if err != nil {
-			return nil, err
-		}
-		rsp.Feeds = append(rsp.Feeds, proto)
-	}
-
-	return &rsp, nil
-}
-
-func (s *sqliteStore) ListFeeds(ctx context.Context) ([]*Feed, error) {
+func (s *SQLiteStore) ListFeeds(ctx context.Context) ([]*Feed, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -60,7 +34,7 @@ func (s *sqliteStore) ListFeeds(ctx context.Context) ([]*Feed, error) {
 	return feeds, err
 }
 
-func (s *sqliteStore) getAllFeeds(ctx context.Context, tx *sql.Tx) ([]*Feed, error) {
+func (s *SQLiteStore) getAllFeeds(ctx context.Context, tx *sql.Tx) ([]*Feed, error) {
 
 	sql1 := `
 		SELECT
@@ -121,7 +95,7 @@ func (s *sqliteStore) getAllFeeds(ctx context.Context, tx *sql.Tx) ([]*Feed, err
 	return feeds, nil
 }
 
-func (s *sqliteStore) populateFeedEntries(ctx context.Context, tx *sql.Tx, feed *Feed) error {
+func (s *SQLiteStore) populateFeedEntries(ctx context.Context, tx *sql.Tx, feed *Feed) error {
 
 	sql1 := `
 		SELECT
