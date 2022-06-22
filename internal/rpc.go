@@ -8,18 +8,17 @@ import (
 	"google.golang.org/grpc/status"
 
 	"github.com/bow/courier/api"
-	st "github.com/bow/courier/internal/store"
 )
 
 // rpc implements the Courier rpc API.
 type rpc struct {
 	api.UnimplementedCourierServer
 
-	store  st.FeedStore
+	store  FeedStore
 	parser FeedParser
 }
 
-func newRPC(grpcs *grpc.Server, store st.FeedStore, parser FeedParser) *rpc {
+func newRPC(grpcs *grpc.Server, store FeedStore, parser FeedParser) *rpc {
 	svc := rpc{store: store, parser: parser}
 	api.RegisterCourierServer(grpcs, &svc)
 	return &svc

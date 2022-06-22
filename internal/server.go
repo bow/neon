@@ -104,7 +104,7 @@ func (s *server) start() <-chan error {
 
 type ServerBuilder struct {
 	addr      string
-	store     st.FeedStore
+	store     FeedStore
 	storePath string
 	parser    FeedParser
 	logger    zerolog.Logger
@@ -126,7 +126,7 @@ func (b *ServerBuilder) StorePath(path string) *ServerBuilder {
 	return b
 }
 
-func (b *ServerBuilder) Store(store st.FeedStore) *ServerBuilder {
+func (b *ServerBuilder) Store(store FeedStore) *ServerBuilder {
 	b.store = store
 	b.storePath = ""
 	return b
@@ -151,7 +151,7 @@ func (b *ServerBuilder) Build() (*server, error) {
 
 	store := b.store
 	if sp := b.storePath; sp != "" {
-		if store, err = st.NewSQLiteStore(sp); err != nil {
+		if store, err = st.NewSQLite(sp); err != nil {
 			return nil, fmt.Errorf("server build: %w", err)
 		}
 	}

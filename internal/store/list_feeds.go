@@ -5,7 +5,7 @@ import (
 	"database/sql"
 )
 
-func (s *SQLiteStore) ListFeeds(ctx context.Context) ([]*Feed, error) {
+func (s *SQLite) ListFeeds(ctx context.Context) ([]*Feed, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -34,7 +34,7 @@ func (s *SQLiteStore) ListFeeds(ctx context.Context) ([]*Feed, error) {
 	return feeds, err
 }
 
-func (s *SQLiteStore) getAllFeeds(ctx context.Context, tx *sql.Tx) ([]*Feed, error) {
+func (s *SQLite) getAllFeeds(ctx context.Context, tx *sql.Tx) ([]*Feed, error) {
 
 	sql1 := `
 		SELECT
@@ -95,7 +95,7 @@ func (s *SQLiteStore) getAllFeeds(ctx context.Context, tx *sql.Tx) ([]*Feed, err
 	return feeds, nil
 }
 
-func (s *SQLiteStore) populateFeedEntries(ctx context.Context, tx *sql.Tx, feed *Feed) error {
+func (s *SQLite) populateFeedEntries(ctx context.Context, tx *sql.Tx, feed *Feed) error {
 
 	sql1 := `
 		SELECT

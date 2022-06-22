@@ -9,7 +9,7 @@ import (
 )
 
 // AddFeed adds the given feed into the database.
-func (s *SQLiteStore) AddFeed(
+func (s *SQLite) AddFeed(
 	ctx context.Context,
 	feed *gofeed.Feed,
 	title *string,
@@ -41,7 +41,7 @@ func (s *SQLiteStore) AddFeed(
 	return s.withTx(ctx, dbFunc, nil)
 }
 
-func (s *SQLiteStore) insertFeedRow(
+func (s *SQLite) insertFeedRow(
 	ctx context.Context,
 	tx *sql.Tx,
 	feed *gofeed.Feed,
@@ -105,7 +105,7 @@ func (s *SQLiteStore) insertFeedRow(
 	return feedDBID, nil
 }
 
-func (s *SQLiteStore) upsertEntries(
+func (s *SQLite) upsertEntries(
 	ctx context.Context,
 	tx *sql.Tx,
 	feedDBID DBID,
@@ -173,7 +173,7 @@ func (s *SQLiteStore) upsertEntries(
 	return nil
 }
 
-func (s *SQLiteStore) addFeedCategories(
+func (s *SQLite) addFeedCategories(
 	ctx context.Context,
 	tx *sql.Tx,
 	feedDBID DBID,

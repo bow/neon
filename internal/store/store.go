@@ -12,28 +12,22 @@ import (
 
 	"github.com/bow/courier/internal/migration"
 	"github.com/golang-migrate/migrate/v4"
-	"github.com/mmcdole/gofeed"
 	"github.com/rs/zerolog/log"
 	"modernc.org/sqlite"
 	sqlite3 "modernc.org/sqlite/lib"
 )
 
-type FeedStore interface {
-	AddFeed(context.Context, *gofeed.Feed, *string, *string, []string) error
-	ListFeeds(context.Context) ([]*Feed, error)
-}
-
 type DBID = int
 
-type SQLiteStore struct {
+type SQLite struct {
 	db *sql.DB
 	mu sync.RWMutex
 }
 
-func NewSQLiteStore(filename string) (*SQLiteStore, error) {
+func NewSQLite(filename string) (*SQLite, error) {
 
 	log.Debug().Msgf("preparing '%s' as data store", filename)
-	fail := failF("newFeedDB")
+	fail := failF("NewSQLiteStore")
 
 	m, err := migration.New(filename)
 	if err != nil {
@@ -47,12 +41,12 @@ func NewSQLiteStore(filename string) (*SQLiteStore, error) {
 		return nil, fail(err)
 	}
 
-	store := SQLiteStore{db: db}
+	store := SQLite{db: db}
 
 	return &store, nil
 }
 
-func (s *SQLiteStore) withTx(
+func (s *SQLite) withTx(
 	ctx context.Context,
 	dbFunc func(context.Context, *sql.Tx) error,
 	txOpts *sql.TxOptions,
@@ -107,9 +101,9 @@ func WrapNullString(v string) sql.NullString {
 	return sql.NullString{String: v, Valid: v != ""}
 }
 
-// UnwrapNullString unwraps the given sql.NullString value into a string pointer. If the input value
+// unwrapNullString unwraps the given sql.NullString value into a string pointer. If the input value
 // is NULL (i.e. its `Valid` field is `false`), `nil` is returned.
-func UnwrapNullString(v sql.NullString) *string {
+func unwrapNullString(v sql.NullString) *string {
 	if v.Valid {
 		s := v.String
 		return &s

@@ -1,12 +1,9 @@
-package internal
+package store
 
 import (
 	"context"
 	"testing"
-	"time"
 
-	"github.com/bow/courier/api"
-	gomock "github.com/golang/mock/gomock"
 	"github.com/mmcdole/gofeed"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -15,56 +12,42 @@ import (
 func TestAddFeedOkMinimal(t *testing.T) {
 	t.Parallel()
 
-	r := require.New(t)
 	a := assert.New(t)
+	r := require.New(t)
+	st := newTestStore(t)
 
-	req := api.AddFeedRequest{Url: "http://bar.com/feed.xml"}
 	feed := gofeed.Feed{
 		Title:       "feed-title",
 		Description: "feed-description",
 		Link:        "https://bar.com",
 		FeedLink:    "https://bar.com/feed.xml",
 	}
-	parser := NewMockFeedParser(gomock.NewController(t))
-	parser.
-		EXPECT().
-		ParseURLWithContext(req.Url, gomock.Any()).
-		MaxTimes(1).
-		Return(&feed, nil)
-
-	client, db := setupOfflineTest(t, parser)
 
 	existf := func() bool {
-		return db.rowExists(feedExistSQL, feed.Title, feed.Description, feed.FeedLink, feed.Link)
+		return st.rowExists(feedExistSQL, feed.Title, feed.Description, feed.FeedLink, feed.Link)
 	}
 
-	a.Equal(0, db.countFeeds())
-	a.Equal(0, db.countEntries(feed.FeedLink))
-	a.Equal(0, db.countFeedCategories())
+	a.Equal(0, st.countFeeds())
+	a.Equal(0, st.countEntries(feed.FeedLink))
+	a.Equal(0, st.countFeedCategories())
 	a.False(existf())
 
-	rsp, err := client.AddFeed(context.Background(), &req)
+	err := st.AddFeed(context.Background(), &feed, nil, nil, nil)
 	r.NoError(err)
-	r.NotNil(rsp)
 
-	a.Equal(1, db.countFeeds())
-	a.Equal(0, db.countEntries(feed.FeedLink))
-	a.Equal(0, db.countFeedCategories())
+	a.Equal(1, st.countFeeds())
+	a.Equal(0, st.countEntries(feed.FeedLink))
+	a.Equal(0, st.countFeedCategories())
 	a.True(existf())
 }
 
 func TestAddFeedOkExtended(t *testing.T) {
 	t.Parallel()
 
-	r := require.New(t)
 	a := assert.New(t)
+	r := require.New(t)
+	st := newTestStore(t)
 
-	req := api.AddFeedRequest{
-		Url:         "http://foo.com/feed.xml",
-		Title:       stringp("user-title"),
-		Description: stringp("user-description"),
-		Categories:  []string{"cat-1", "cat-2", "cat-3"},
-	}
 	feed := gofeed.Feed{
 		Title:       "feed-title-original",
 		Description: "feed-description-original",
@@ -88,53 +71,49 @@ func TestAddFeedOkExtended(t *testing.T) {
 			},
 		},
 	}
-	parser := NewMockFeedParser(gomock.NewController(t))
-	parser.
-		EXPECT().
-		ParseURLWithContext(req.Url, gomock.Any()).
-		MaxTimes(1).
-		Return(&feed, nil)
-
-	client, db := setupOfflineTest(t, parser)
+	var (
+		title       = "user-title"
+		description = "user-description"
+		categories  = []string{"cat-1", "cat-2", "cat-3"}
+	)
 
 	existf1 := func() bool {
-		return db.rowExists(feedExistSQL, feed.Title, feed.Description, feed.FeedLink, feed.Link)
+		return st.rowExists(feedExistSQL, feed.Title, feed.Description, feed.FeedLink, feed.Link)
 	}
 	existf2 := func() bool {
-		return db.rowExists(feedExistSQL, req.Title, req.Description, feed.FeedLink, feed.Link)
+		return st.rowExists(feedExistSQL, title, description, feed.FeedLink, feed.Link)
 	}
 	existe := func(item *gofeed.Item) bool {
-		return db.rowExists(entryExistSQL, feed.FeedLink, item.Title, item.Link)
+		return st.rowExists(entryExistSQL, feed.FeedLink, item.Title, item.Link)
 	}
 
-	a.Equal(0, db.countFeeds())
-	a.Equal(0, db.countEntries(feed.FeedLink))
-	a.Equal(0, db.countFeedCategories())
+	a.Equal(0, st.countFeeds())
+	a.Equal(0, st.countEntries(feed.FeedLink))
+	a.Equal(0, st.countFeedCategories())
 	a.False(existf1())
 	a.False(existf2())
 	a.False(existe(feed.Items[0]))
 	a.False(existe(feed.Items[1]))
 
-	rsp, err := client.AddFeed(context.Background(), &req)
+	err := st.AddFeed(context.Background(), &feed, &title, &description, categories)
 	r.NoError(err)
-	r.NotNil(rsp)
 
-	a.Equal(1, db.countFeeds())
-	a.Equal(2, db.countEntries(feed.FeedLink))
-	a.Equal(3, db.countFeedCategories())
+	a.Equal(1, st.countFeeds())
+	a.Equal(2, st.countEntries(feed.FeedLink))
+	a.Equal(3, st.countFeedCategories())
 	a.False(existf1())
 	a.True(existf2())
 	a.True(existe(feed.Items[0]))
 	a.True(existe(feed.Items[1]))
 }
 
-func TestAddFeedOkFeedExists(t *testing.T) {
+func TestAddFeedOkURLExists(t *testing.T) {
 	t.Parallel()
 
-	r := require.New(t)
 	a := assert.New(t)
+	r := require.New(t)
+	st := newTestStore(t)
 
-	req := api.AddFeedRequest{Url: "http://qux.net/feed.xml", Categories: []string{"cat-0"}}
 	feed := gofeed.Feed{
 		Title:       "feed-title",
 		Description: "feed-description",
@@ -158,37 +137,29 @@ func TestAddFeedOkFeedExists(t *testing.T) {
 			},
 		},
 	}
-	parser := NewMockFeedParser(gomock.NewController(t))
-	parser.
-		EXPECT().
-		ParseURLWithContext(req.Url, gomock.Any()).
-		MaxTimes(1).
-		Return(&feed, nil)
-
-	client, db := setupOfflineTest(t, parser)
-	db.addFeedWithURL(feed.FeedLink)
+	var categories = []string{"cat-0"}
+	st.addFeedWithURL(feed.FeedLink)
 
 	existf := func() bool {
-		return db.rowExists(feedExistSQL, feed.Title, feed.Description, feed.FeedLink, feed.Link)
+		return st.rowExists(feedExistSQL, feed.Title, feed.Description, feed.FeedLink, feed.Link)
 	}
 	existe := func(item *gofeed.Item) bool {
-		return db.rowExists(entryExistSQL, feed.FeedLink, item.Title, item.Link)
+		return st.rowExists(entryExistSQL, feed.FeedLink, item.Title, item.Link)
 	}
 
-	a.Equal(1, db.countFeeds())
-	a.Equal(0, db.countEntries(feed.FeedLink))
-	a.Equal(0, db.countFeedCategories())
+	a.Equal(1, st.countFeeds())
+	a.Equal(0, st.countEntries(feed.FeedLink))
+	a.Equal(0, st.countFeedCategories())
 	a.False(existf())
 	a.False(existe(feed.Items[0]))
 	a.False(existe(feed.Items[1]))
 
-	rsp, err := client.AddFeed(context.Background(), &req)
+	err := st.AddFeed(context.Background(), &feed, nil, nil, categories)
 	r.NoError(err)
-	r.NotNil(rsp)
 
-	a.Equal(1, db.countFeeds())
-	a.Equal(2, db.countEntries(feed.FeedLink))
-	a.Equal(1, db.countFeedCategories())
+	a.Equal(1, st.countFeeds())
+	a.Equal(2, st.countEntries(feed.FeedLink))
+	a.Equal(1, st.countFeedCategories())
 	a.False(existf())
 	a.True(existe(feed.Items[0]))
 	a.True(existe(feed.Items[1]))
@@ -219,12 +190,3 @@ const entryExistSQL = `
 		AND e.title = ?
 		AND e.url = ?
 `
-
-func ts(t *testing.T, value string) *time.Time {
-	t.Helper()
-	tv, err := deserializeTime(&value)
-	require.NoError(t, err)
-	return tv
-}
-
-func stringp(value string) *string { return &value }

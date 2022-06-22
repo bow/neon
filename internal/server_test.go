@@ -3,7 +3,6 @@ package internal
 import (
 	"context"
 	"net"
-	"path/filepath"
 	"testing"
 	"time"
 
@@ -21,12 +20,9 @@ import (
 func defaultTestServerBuilder(t *testing.T) *ServerBuilder {
 	t.Helper()
 
-	storePath := filepath.Join(t.TempDir(), t.Name()+".db")
-	require.NoFileExists(t, storePath)
-
 	return NewServerBuilder().
 		Address(":0").
-		StorePath(storePath).
+		Store(NewMockFeedStore(gomock.NewController(t))).
 		Parser(NewMockFeedParser(gomock.NewController(t))).
 		Logger(zerolog.Nop())
 }
@@ -52,8 +48,8 @@ func (tcb *testClientBuilder) ServerParser(parser FeedParser) *testClientBuilder
 	return tcb
 }
 
-func (tcb *testClientBuilder) ServerStorePath(filename string) *testClientBuilder {
-	tcb.serverBuilder = tcb.serverBuilder.StorePath(filename)
+func (tcb *testClientBuilder) ServerStore(store FeedStore) *testClientBuilder {
+	tcb.serverBuilder = tcb.serverBuilder.Store(store)
 	return tcb
 }
 
@@ -69,13 +65,7 @@ func (tcb *testClientBuilder) Build() api.CourierClient {
 	if b == nil {
 		b = defaultTestServerBuilder(t)
 	}
-	if b.storePath != "" {
-		require.NoFileExists(t, b.storePath)
-	}
 	srv, addr := newTestServer(t, b)
-	if b.storePath != "" {
-		require.FileExists(t, b.storePath)
-	}
 
 	dialOpts := tcb.dialOpts
 	dialOpts = append(dialOpts, grpc.WithTransportCredentials(insecure.NewCredentials()))
@@ -146,13 +136,16 @@ func newTestClient(
 	return client, conn
 }
 
-// setupOfflineTest is a shortcut method for creating server tests which mocks out the feed parser.
-func setupOfflineTest(t *testing.T, parser FeedParser) (api.CourierClient, testDB) {
+// setupServerTest is a shortcut method for creating server tests through a client.
+func setupServerTest(t *testing.T) (api.CourierClient, *MockFeedParser, *MockFeedStore) {
 	t.Helper()
-	cbuilder := newTestClientBuilder(t).ServerParser(parser)
-	db := newTestDB(t, cbuilder.serverBuilder.storePath)
-	client := cbuilder.Build()
-	return client, db
+
+	parser := NewMockFeedParser(gomock.NewController(t))
+	store := NewMockFeedStore(gomock.NewController(t))
+
+	clb := newTestClientBuilder(t).ServerParser(parser).ServerStore(store)
+
+	return clb.Build(), parser, store
 }
 
 func TestServerBuilderErrInvalidAddr(t *testing.T) {

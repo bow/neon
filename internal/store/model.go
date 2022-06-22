@@ -26,9 +26,9 @@ func (f *Feed) Proto() (*api.Feed, error) {
 		Id:          int32(f.DBID),
 		Title:       f.Title,
 		FeedUrl:     f.FeedURL,
-		SiteUrl:     UnwrapNullString(f.SiteURL),
+		SiteUrl:     unwrapNullString(f.SiteURL),
 		Categories:  []string(f.Categories),
-		Description: UnwrapNullString(f.Description),
+		Description: unwrapNullString(f.Description),
 	}
 
 	var err error
@@ -38,7 +38,7 @@ func (f *Feed) Proto() (*api.Feed, error) {
 		return nil, err
 	}
 
-	proto.UpdateTime, err = toProtoTime(UnwrapNullString(f.Updated))
+	proto.UpdateTime, err = toProtoTime(unwrapNullString(f.Updated))
 	if err != nil {
 		return nil, err
 	}
@@ -70,19 +70,19 @@ func (e *Entry) Proto() (*api.Feed_Entry, error) {
 		Title:       e.Title,
 		IsRead:      e.IsRead,
 		ExtId:       e.ExtID,
-		Description: UnwrapNullString(e.Description),
-		Content:     UnwrapNullString(e.Content),
-		Url:         UnwrapNullString(e.URL),
+		Description: unwrapNullString(e.Description),
+		Content:     unwrapNullString(e.Content),
+		Url:         unwrapNullString(e.URL),
 	}
 
 	var err error
 
-	proto.PublicationTime, err = toProtoTime(UnwrapNullString(e.Published))
+	proto.PublicationTime, err = toProtoTime(unwrapNullString(e.Published))
 	if err != nil {
 		return nil, err
 	}
 
-	proto.UpdateTime, err = toProtoTime(UnwrapNullString(e.Updated))
+	proto.UpdateTime, err = toProtoTime(unwrapNullString(e.Updated))
 	if err != nil {
 		return nil, err
 	}
@@ -137,7 +137,7 @@ func serializeTime(tv *time.Time) *string {
 	return &ts
 }
 
-func deserializeTime(v *string) (*time.Time, error) {
+func DeserializeTime(v *string) (*time.Time, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -150,7 +150,7 @@ func deserializeTime(v *string) (*time.Time, error) {
 }
 
 func toProtoTime(v *string) (*timestamppb.Timestamp, error) {
-	tv, err := deserializeTime(v)
+	tv, err := DeserializeTime(v)
 	if err != nil {
 		return nil, err
 	}
