@@ -142,17 +142,14 @@ serve: bin  ## Compile the binary and run the server in development mode.
 
 
 .PHONY: test .coverage.out
-test: internal/parser_mock_test.go internal/store_mock_test.go .coverage.out  ## Run the test suite.
+test: internal/internal_mock_test.go .coverage.out  ## Run the test suite.
 
 .coverage.out:
 	gotestsum --format dots-v2 --junitfile .junit.xml -- ./... -parallel=$(shell nproc) -coverprofile=$@ -covermode=atomic \
 		&& go tool cover -func=$@
 
-internal/parser_mock_test.go: internal/parser.go
-	mockgen -source=$< -package=internal FeedParser > $@
-
-internal/store_mock_test.go: internal/store.go
-	mockgen -source=$< -package=internal FeedStore > $@
+internal/internal_mock_test.go: internal/internal.go
+	mockgen -source=$< -package=internal FeedParser,FeedStore > $@
 
 
 .PHONY: test-cov-xml
