@@ -47,14 +47,15 @@ message Feed {
   repeated Entry entries = 9;
 
   message Entry {
-    string title = 1;
-    bool is_read = 2;
-    string ext_id = 3;
-    google.protobuf.Timestamp update_time = 4;
-    google.protobuf.Timestamp publication_time = 5;
-    optional string description = 6;
-    optional string content = 7;
-    optional string url = 8;
+    int32 id = 1;
+    string title = 2;
+    bool is_read = 3;
+    string ext_id = 4;
+    google.protobuf.Timestamp update_time = 5;
+    google.protobuf.Timestamp publication_time = 6;
+    optional string description = 7;
+    optional string content = 8;
+    optional string url = 9;
   }
 }
 

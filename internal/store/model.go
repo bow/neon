@@ -55,6 +55,7 @@ func (f *Feed) Proto() (*api.Feed, error) {
 }
 
 type Entry struct {
+	DBID        DBID
 	Title       string
 	IsRead      bool
 	ExtID       string
@@ -67,6 +68,7 @@ type Entry struct {
 
 func (e *Entry) Proto() (*api.Feed_Entry, error) {
 	proto := api.Feed_Entry{
+		Id:          int32(e.DBID),
 		Title:       e.Title,
 		IsRead:      e.IsRead,
 		ExtId:       e.ExtID,
