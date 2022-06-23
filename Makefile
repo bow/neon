@@ -34,6 +34,9 @@ endif
 BIN_DIR  ?= $(CURDIR)/bin
 BIN_NAME ?= $(APP_NAME)
 BIN_PATH := $(BIN_DIR)/$(BIN_NAME)
+ifeq ($(shell go env GOOS 2> /dev/null),windows)
+BIN_PATH := $(addsuffix .exe,$(BIN_PATH))
+endif
 
 # Linker flags for go-build
 # BASE_LD_FLAGS are linker flags that can not be overwritten.
