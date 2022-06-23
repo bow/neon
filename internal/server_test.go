@@ -21,7 +21,7 @@ func defaultTestServerBuilder(t *testing.T) *ServerBuilder {
 	t.Helper()
 
 	return NewServerBuilder().
-		Address(":0").
+		Address("file://" + t.TempDir() + "/courier.socket").
 		Store(NewMockFeedStore(gomock.NewController(t))).
 		Parser(NewMockFeedParser(gomock.NewController(t))).
 		Logger(zerolog.Nop())
@@ -129,6 +129,10 @@ func newTestClient(
 ) (api.CourierClient, *grpc.ClientConn) {
 	t.Helper()
 
+	dialer := func(_ context.Context, rawAddr string) (net.Conn, error) {
+		return net.Dial(addr.Network(), rawAddr)
+	}
+	opts = append(opts, grpc.WithContextDialer(dialer))
 	conn, err := grpc.Dial(addr.String(), opts...)
 	require.NoError(t, err)
 	client := api.NewCourierClient(conn)
@@ -152,5 +156,5 @@ func TestServerBuilderErrInvalidAddr(t *testing.T) {
 	b := NewServerBuilder().Address("invalid")
 	srv, err := b.Build()
 	assert.Nil(t, srv)
-	assert.EqualError(t, err, "listen tcp: address invalid: missing port in address")
+	assert.EqualError(t, err, "unexpected address type: invalid")
 }

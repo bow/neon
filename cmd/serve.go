@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/adrg/xdg"
 	zlog "github.com/rs/zerolog/log"
@@ -19,6 +20,9 @@ const (
 var (
 	relDBName     = "courier/courier.db"
 	defaultDBName = fmt.Sprintf("$XDG_DATA_HOME/%s", relDBName)
+
+	relUDS      = "courier/courier.socket"
+	defaultAddr = fmt.Sprintf("$XDG_RUNTIME_DIR/%s", relUDS)
 )
 
 var serveCmd = cobra.Command{
@@ -31,8 +35,13 @@ var serveCmd = cobra.Command{
 			return err
 		}
 
+		addr, err := resolveUDSAddr()
+		if err != nil {
+			return err
+		}
+
 		server, err := internal.NewServerBuilder().
-			Address(viper.GetString(addrKey)).
+			Address(addr).
 			StorePath(dbPath).
 			Logger(zlog.Logger.With().Logger()).
 			Build()
@@ -50,7 +59,7 @@ func init() {
 
 	flags := serveCmd.Flags()
 
-	flags.StringP(addrKey, "a", ":50051", "listening address")
+	flags.StringP(addrKey, "a", defaultAddr, "listening address")
 	_ = viper.BindPFlag(addrKey, flags.Lookup(addrKey))
 
 	flags.StringP(dbNameKey, "d", defaultDBName, "data store location")
@@ -66,4 +75,19 @@ func resolveDBPath() (dbPath string, err error) {
 		}
 	}
 	return dbPath, nil
+}
+
+func resolveUDSAddr() (addr string, err error) {
+	addr = viper.GetString(addrKey)
+	// return string unchanged if tcp is requested.
+	if strings.HasPrefix(strings.ToLower(addr), "tcp") {
+		return addr, nil
+	}
+	if addr == defaultAddr {
+		addr, err = xdg.RuntimeFile(relUDS)
+		if err != nil {
+			return "", err
+		}
+	}
+	return fmt.Sprintf("file://%s", addr), nil
 }

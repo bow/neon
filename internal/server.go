@@ -6,6 +6,7 @@ import (
 	"net"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 
 	grpczerolog "github.com/grpc-ecosystem/go-grpc-middleware/providers/zerolog/v2"
@@ -22,6 +23,11 @@ import (
 
 	"github.com/bow/courier/api"
 	st "github.com/bow/courier/internal/store"
+)
+
+const (
+	tcpPrefix  = "tcp://"
+	filePrefix = "file://"
 )
 
 type server struct {
@@ -144,7 +150,19 @@ func (b *ServerBuilder) Logger(logger zerolog.Logger) *ServerBuilder {
 
 func (b *ServerBuilder) Build() (*server, error) {
 
-	lis, err := net.Listen("tcp", b.addr)
+	var netw string
+	switch addr := b.addr; {
+	case isTCPAddr(addr):
+		netw = "tcp"
+		b.addr = addr[len(tcpPrefix):]
+	case isFileAddr(addr):
+		netw = "unix"
+		b.addr = addr[len(filePrefix):]
+	default:
+		return nil, fmt.Errorf("unexpected address type: %s", b.addr)
+	}
+
+	lis, err := net.Listen(netw, b.addr)
 	if err != nil {
 		return nil, err
 	}
@@ -177,3 +195,14 @@ func (b *ServerBuilder) Build() (*server, error) {
 
 	return s, nil
 }
+
+func isAddrF(prefix string) func(string) bool {
+	return func(addr string) bool {
+		return strings.HasPrefix(strings.ToLower(addr), prefix)
+	}
+}
+
+var (
+	isTCPAddr  = isAddrF(tcpPrefix)
+	isFileAddr = isAddrF(filePrefix)
+)
