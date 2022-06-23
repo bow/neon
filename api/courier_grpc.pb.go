@@ -32,8 +32,8 @@ type CourierClient interface {
 	DeleteFeeds(ctx context.Context, in *DeleteFeedsRequest, opts ...grpc.CallOption) (*DeleteFeedsResponse, error)
 	// PollFeeds listens for feed updates.
 	PollFeeds(ctx context.Context, opts ...grpc.CallOption) (Courier_PollFeedsClient, error)
-	// EditEntry updates the properties of an existing feed entry.
-	EditEntry(ctx context.Context, in *EditEntryRequest, opts ...grpc.CallOption) (*EditEntryResponse, error)
+	// SetEntryFields sets one or more fields of an entry.
+	SetEntryFields(ctx context.Context, in *SetEntryFieldsRequest, opts ...grpc.CallOption) (*SetEntryFieldsResponse, error)
 	// ExportOPML exports feed subscriptions as an OPML document.
 	ExportOPML(ctx context.Context, in *ExportOPMLRequest, opts ...grpc.CallOption) (*ExportOPMLResponse, error)
 	// ImportOPML imports an OPML document.
@@ -117,9 +117,9 @@ func (x *courierPollFeedsClient) Recv() (*PollFeedsResponse, error) {
 	return m, nil
 }
 
-func (c *courierClient) EditEntry(ctx context.Context, in *EditEntryRequest, opts ...grpc.CallOption) (*EditEntryResponse, error) {
-	out := new(EditEntryResponse)
-	err := c.cc.Invoke(ctx, "/courier.Courier/EditEntry", in, out, opts...)
+func (c *courierClient) SetEntryFields(ctx context.Context, in *SetEntryFieldsRequest, opts ...grpc.CallOption) (*SetEntryFieldsResponse, error) {
+	out := new(SetEntryFieldsResponse)
+	err := c.cc.Invoke(ctx, "/courier.Courier/SetEntryFields", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -167,8 +167,8 @@ type CourierServer interface {
 	DeleteFeeds(context.Context, *DeleteFeedsRequest) (*DeleteFeedsResponse, error)
 	// PollFeeds listens for feed updates.
 	PollFeeds(Courier_PollFeedsServer) error
-	// EditEntry updates the properties of an existing feed entry.
-	EditEntry(context.Context, *EditEntryRequest) (*EditEntryResponse, error)
+	// SetEntryFields sets one or more fields of an entry.
+	SetEntryFields(context.Context, *SetEntryFieldsRequest) (*SetEntryFieldsResponse, error)
 	// ExportOPML exports feed subscriptions as an OPML document.
 	ExportOPML(context.Context, *ExportOPMLRequest) (*ExportOPMLResponse, error)
 	// ImportOPML imports an OPML document.
@@ -197,8 +197,8 @@ func (UnimplementedCourierServer) DeleteFeeds(context.Context, *DeleteFeedsReque
 func (UnimplementedCourierServer) PollFeeds(Courier_PollFeedsServer) error {
 	return status.Errorf(codes.Unimplemented, "method PollFeeds not implemented")
 }
-func (UnimplementedCourierServer) EditEntry(context.Context, *EditEntryRequest) (*EditEntryResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method EditEntry not implemented")
+func (UnimplementedCourierServer) SetEntryFields(context.Context, *SetEntryFieldsRequest) (*SetEntryFieldsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetEntryFields not implemented")
 }
 func (UnimplementedCourierServer) ExportOPML(context.Context, *ExportOPMLRequest) (*ExportOPMLResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ExportOPML not implemented")
@@ -320,20 +320,20 @@ func (x *courierPollFeedsServer) Recv() (*PollFeedsRequest, error) {
 	return m, nil
 }
 
-func _Courier_EditEntry_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(EditEntryRequest)
+func _Courier_SetEntryFields_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetEntryFieldsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CourierServer).EditEntry(ctx, in)
+		return srv.(CourierServer).SetEntryFields(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/courier.Courier/EditEntry",
+		FullMethod: "/courier.Courier/SetEntryFields",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CourierServer).EditEntry(ctx, req.(*EditEntryRequest))
+		return srv.(CourierServer).SetEntryFields(ctx, req.(*SetEntryFieldsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -416,8 +416,8 @@ var Courier_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Courier_DeleteFeeds_Handler,
 		},
 		{
-			MethodName: "EditEntry",
-			Handler:    _Courier_EditEntry_Handler,
+			MethodName: "SetEntryFields",
+			Handler:    _Courier_SetEntryFields_Handler,
 		},
 		{
 			MethodName: "ExportOPML",

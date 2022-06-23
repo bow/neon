@@ -90,11 +90,11 @@ func (r *rpc) PollFeeds(_ api.Courier_PollFeedsServer) error {
 	return status.Errorf(codes.Unimplemented, "unimplemented")
 }
 
-// EditEntry satisfies the service API.
-func (r *rpc) EditEntry(
+// SetEntryFields satisfies the service API.
+func (r *rpc) SetEntryFields(
 	_ context.Context,
-	_ *api.EditEntryRequest,
-) (*api.EditEntryResponse, error) {
+	_ *api.SetEntryFieldsRequest,
+) (*api.SetEntryFieldsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "unimplemented")
 }
 

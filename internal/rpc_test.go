@@ -161,14 +161,14 @@ func TestPollFeedsOk(t *testing.T) {
 	<-waitc
 }
 
-func TestEditEntryOk(t *testing.T) {
+func TestSetEntryFieldsOk(t *testing.T) {
 	t.Parallel()
 
 	r := require.New(t)
 	client := newTestClientBuilder(t).Build()
 
-	req := api.EditEntryRequest{}
-	rsp, err := client.EditEntry(context.Background(), &req)
+	req := api.SetEntryFieldsRequest{}
+	rsp, err := client.SetEntryFields(context.Background(), &req)
 
 	r.Nil(rsp)
 	r.EqualError(err, status.New(codes.Unimplemented, "unimplemented").String())
