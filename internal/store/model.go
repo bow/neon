@@ -66,8 +66,8 @@ type Entry struct {
 	URL         sql.NullString
 }
 
-func (e *Entry) Proto() (*api.Feed_Entry, error) {
-	proto := api.Feed_Entry{
+func (e *Entry) Proto() (*api.Entry, error) {
+	proto := api.Entry{
 		Id:          int32(e.DBID),
 		Title:       e.Title,
 		IsRead:      e.IsRead,

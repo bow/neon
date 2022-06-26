@@ -45,18 +45,18 @@ message Feed {
   optional google.protobuf.Timestamp update_time = 7;
   google.protobuf.Timestamp subscription_time = 8;
   repeated Entry entries = 9;
+}
 
-  message Entry {
-    int32 id = 1;
-    string title = 2;
-    bool is_read = 3;
-    string ext_id = 4;
-    google.protobuf.Timestamp update_time = 5;
-    google.protobuf.Timestamp publication_time = 6;
-    optional string description = 7;
-    optional string content = 8;
-    optional string url = 9;
-  }
+message Entry {
+  int32 id = 1;
+  string title = 2;
+  bool is_read = 3;
+  string ext_id = 4;
+  google.protobuf.Timestamp update_time = 5;
+  google.protobuf.Timestamp publication_time = 6;
+  optional string description = 7;
+  optional string content = 8;
+  optional string url = 9;
 }
 
 message AddFeedRequest {
