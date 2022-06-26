@@ -75,30 +75,30 @@ func (m *MockFeedStore) EXPECT() *MockFeedStoreMockRecorder {
 }
 
 // AddFeed mocks base method.
-func (m *MockFeedStore) AddFeed(arg0 context.Context, arg1 *gofeed.Feed, arg2, arg3 *string, arg4 []string) error {
+func (m *MockFeedStore) AddFeed(ctx context.Context, feed *gofeed.Feed, title, desc *string, categories []string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "AddFeed", arg0, arg1, arg2, arg3, arg4)
+	ret := m.ctrl.Call(m, "AddFeed", ctx, feed, title, desc, categories)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // AddFeed indicates an expected call of AddFeed.
-func (mr *MockFeedStoreMockRecorder) AddFeed(arg0, arg1, arg2, arg3, arg4 interface{}) *gomock.Call {
+func (mr *MockFeedStoreMockRecorder) AddFeed(ctx, feed, title, desc, categories interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddFeed", reflect.TypeOf((*MockFeedStore)(nil).AddFeed), arg0, arg1, arg2, arg3, arg4)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddFeed", reflect.TypeOf((*MockFeedStore)(nil).AddFeed), ctx, feed, title, desc, categories)
 }
 
 // ListFeeds mocks base method.
-func (m *MockFeedStore) ListFeeds(arg0 context.Context) ([]*store.Feed, error) {
+func (m *MockFeedStore) ListFeeds(ctx context.Context) ([]*store.Feed, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ListFeeds", arg0)
+	ret := m.ctrl.Call(m, "ListFeeds", ctx)
 	ret0, _ := ret[0].([]*store.Feed)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ListFeeds indicates an expected call of ListFeeds.
-func (mr *MockFeedStoreMockRecorder) ListFeeds(arg0 interface{}) *gomock.Call {
+func (mr *MockFeedStoreMockRecorder) ListFeeds(ctx interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListFeeds", reflect.TypeOf((*MockFeedStore)(nil).ListFeeds), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListFeeds", reflect.TypeOf((*MockFeedStore)(nil).ListFeeds), ctx)
 }

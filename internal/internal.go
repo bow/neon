@@ -15,6 +15,12 @@ type FeedParser interface {
 
 // FeedStore describes the persistence layer interface.
 type FeedStore interface {
-	AddFeed(context.Context, *gofeed.Feed, *string, *string, []string) error
-	ListFeeds(context.Context) ([]*st.Feed, error)
+	AddFeed(
+		ctx context.Context,
+		feed *gofeed.Feed,
+		title *string,
+		desc *string,
+		categories []string,
+	) (err error)
+	ListFeeds(ctx context.Context) (feeds []*st.Feed, err error)
 }
