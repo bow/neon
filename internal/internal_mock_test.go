@@ -104,16 +104,16 @@ func (mr *MockFeedStoreMockRecorder) ListFeeds(ctx interface{}) *gomock.Call {
 }
 
 // SetEntryFields mocks base method.
-func (m *MockFeedStore) SetEntryFields(ctx context.Context, entryID store.DBID, isRead *bool) (*store.Entry, error) {
+func (m *MockFeedStore) SetEntryFields(ctx context.Context, setOps []*store.EntrySetOp) ([]*store.Entry, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SetEntryFields", ctx, entryID, isRead)
-	ret0, _ := ret[0].(*store.Entry)
+	ret := m.ctrl.Call(m, "SetEntryFields", ctx, setOps)
+	ret0, _ := ret[0].([]*store.Entry)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // SetEntryFields indicates an expected call of SetEntryFields.
-func (mr *MockFeedStoreMockRecorder) SetEntryFields(ctx, entryID, isRead interface{}) *gomock.Call {
+func (mr *MockFeedStoreMockRecorder) SetEntryFields(ctx, setOps interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetEntryFields", reflect.TypeOf((*MockFeedStore)(nil).SetEntryFields), ctx, entryID, isRead)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetEntryFields", reflect.TypeOf((*MockFeedStore)(nil).SetEntryFields), ctx, setOps)
 }

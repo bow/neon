@@ -97,16 +97,24 @@ func (r *rpc) SetEntryFields(
 	req *api.SetEntryFieldsRequest,
 ) (*api.SetEntryFieldsResponse, error) {
 
-	entry, err := r.store.SetEntryFields(ctx, st.DBID(req.Id), req.Changes.IsRead)
+	setOps := make([]*st.EntrySetOp, len(req.SetOps))
+	for i, op := range req.GetSetOps() {
+		setOps[i] = st.NewEntrySetOp(op)
+	}
+
+	entries, err := r.store.SetEntryFields(ctx, setOps)
 	if err != nil {
 		return nil, err
 	}
 
-	if _, err = entry.Proto(); err != nil {
-		return nil, err
-	}
-
 	rsp := api.SetEntryFieldsResponse{}
+	for _, entry := range entries {
+		ep, err := entry.Proto()
+		if err != nil {
+			return nil, err
+		}
+		rsp.Entries = append(rsp.Entries, ep)
+	}
 
 	return &rsp, nil
 }

@@ -152,23 +152,50 @@ func TestSetEntryFieldsOk(t *testing.T) {
 	t.Parallel()
 
 	r := require.New(t)
+	a := assert.New(t)
 	client, _, st := setupServerTest(t)
+
+	setOps := []*store.EntrySetOp{
+		{DBID: 37, IsRead: boolp(true)},
+		{DBID: 49, IsRead: boolp(false)},
+	}
+	entries := []*store.Entry{
+		{DBID: 37, IsRead: true},
+		{DBID: 49, IsRead: false},
+	}
 
 	st.
 		EXPECT().
-		SetEntryFields(gomock.Any(), 37, func(b bool) *bool { return &b }(true)).
+		SetEntryFields(gomock.Any(), setOps).
 		MaxTimes(1).
-		Return(&store.Entry{}, nil)
+		Return(entries, nil)
 
 	req := api.SetEntryFieldsRequest{
-		Id: 37,
-		Changes: &api.SetEntryFieldsRequest_Changes{
-			IsRead: func(b bool) *bool { return &b }(true),
+		SetOps: []*api.SetEntryFieldsRequest_SetOp{
+			{
+				Id: 37,
+				Fields: &api.SetEntryFieldsRequest_SetOp_Fields{
+					IsRead: boolp(true),
+				},
+			},
+			{
+				Id: 49,
+				Fields: &api.SetEntryFieldsRequest_SetOp_Fields{
+					IsRead: boolp(false),
+				},
+			},
 		},
 	}
 	rsp, err := client.SetEntryFields(context.Background(), &req)
 	r.NoError(err)
-	r.NotNil(rsp)
+
+	r.Len(rsp.Entries, 2)
+	entry0 := rsp.Entries[0]
+	a.Equal(int32(entries[0].DBID), entry0.Id)
+	a.Equal(entries[0].IsRead, entry0.IsRead)
+	entry1 := rsp.Entries[1]
+	a.Equal(int32(entries[1].DBID), entry1.Id)
+	a.Equal(entries[1].IsRead, entry1.IsRead)
 }
 
 func TestExportOPMLOk(t *testing.T) {
@@ -229,3 +256,5 @@ func ts(t *testing.T, value string) *time.Time {
 }
 
 func stringp(value string) *string { return &value }
+
+func boolp(value bool) *bool { return &value }

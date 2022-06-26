@@ -9,31 +9,31 @@ import (
 // SetEntryFields updates fields of an entry.
 func (s *SQLite) SetEntryFields(
 	ctx context.Context,
-	entryDBID DBID,
-	isRead *bool,
-) (*Entry, error) {
+	setOps []*EntrySetOp,
+) ([]*Entry, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
 	fail := failF("sqliteStore.SetEntryFields")
 
-	var entry *Entry
+	updateFunc := func(ctx context.Context, tx *sql.Tx, op *EntrySetOp) (*Entry, error) {
+		if op.IsRead != nil {
+			if err := s.updateEntryIsRead(ctx, tx, op.DBID, *op.IsRead); err != nil {
+				return nil, err
+			}
+		}
+		return s.getEntry(ctx, tx, op.DBID)
+	}
+
+	var entries = make([]*Entry, len(setOps))
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
-
-		var err error
-
-		if isRead != nil {
-			err = s.updateEntryIsRead(ctx, tx, entryDBID, *isRead)
+		for i, op := range setOps {
+			entry, err := updateFunc(ctx, tx, op)
 			if err != nil {
 				return fail(err)
 			}
+			entries[i] = entry
 		}
-
-		entry, err = s.getEntry(ctx, tx, entryDBID)
-		if err != nil {
-			return fail(err)
-		}
-
 		return nil
 	}
 
@@ -41,7 +41,7 @@ func (s *SQLite) SetEntryFields(
 	if err != nil {
 		return nil, err
 	}
-	return entry, nil
+	return entries, nil
 }
 
 func (s *SQLite) updateEntryIsRead(

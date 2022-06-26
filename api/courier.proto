@@ -87,15 +87,21 @@ message PollFeedsRequest {}
 message PollFeedsResponse {}
 
 message SetEntryFieldsRequest {
-  int32 id = 1;
-  Changes changes = 2;
+  repeated SetOp set_ops = 1;
 
-  message Changes {
-    optional bool is_read = 2;
+  message SetOp {
+    int32 id = 1;
+    Fields fields = 2;
+
+    message Fields {
+      optional bool is_read = 2;
+    }
   }
 }
 
-message SetEntryFieldsResponse {}
+message SetEntryFieldsResponse {
+  repeated Entry entries = 1;
+}
 
 message ExportOPMLRequest {}
 

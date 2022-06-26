@@ -92,6 +92,15 @@ func (e *Entry) Proto() (*api.Entry, error) {
 	return &proto, nil
 }
 
+type EntrySetOp struct {
+	DBID   DBID
+	IsRead *bool
+}
+
+func NewEntrySetOp(proto *api.SetEntryFieldsRequest_SetOp) *EntrySetOp {
+	return &EntrySetOp{DBID: DBID(proto.Id), IsRead: proto.Fields.IsRead}
+}
+
 func resolveFeedUpdateTime(feed *gofeed.Feed) *time.Time {
 	// Use feed value if defined.
 	var latest = feed.UpdatedParsed
