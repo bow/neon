@@ -5,7 +5,7 @@ import (
 
 	"github.com/mmcdole/gofeed"
 
-	st "github.com/bow/courier/internal/store"
+	"github.com/bow/courier/internal/store"
 )
 
 // FeedParser captures the gofeed parser as a pluggable interface.
@@ -23,7 +23,10 @@ type FeedStore interface {
 		categories []string,
 	) (err error)
 
-	ListFeeds(ctx context.Context) (feeds []*st.Feed, err error)
+	ListFeeds(ctx context.Context) (feeds []*store.Feed, err error)
 
-	SetEntryFields(ctx context.Context, setOps []*st.EntrySetOp) (entries []*st.Entry, err error)
+	SetEntryFields(
+		ctx context.Context,
+		setOps []*store.EntrySetOp,
+	) (entries []*store.Entry, err error)
 }
