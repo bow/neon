@@ -26,8 +26,8 @@ func TestAddFeedOk(t *testing.T) {
 
 	req := api.AddFeedRequest{
 		Url:         "http://foo.com/feed.xml",
-		Title:       stringp("user-title"),
-		Description: stringp("user-description"),
+		Title:       pointer("user-title"),
+		Description: pointer("user-description"),
 		Categories:  []string{"cat-1", "cat-2", "cat-3"},
 	}
 	feed := gofeed.Feed{
@@ -156,8 +156,8 @@ func TestSetEntryFieldsOk(t *testing.T) {
 	client, _, st := setupServerTest(t)
 
 	setOps := []*store.EntrySetOp{
-		{DBID: 37, IsRead: boolp(true)},
-		{DBID: 49, IsRead: boolp(false)},
+		{DBID: 37, IsRead: pointer(true)},
+		{DBID: 49, IsRead: pointer(false)},
 	}
 	entries := []*store.Entry{
 		{DBID: 37, IsRead: true},
@@ -175,13 +175,13 @@ func TestSetEntryFieldsOk(t *testing.T) {
 			{
 				Id: 37,
 				Fields: &api.SetEntryFieldsRequest_SetOp_Fields{
-					IsRead: boolp(true),
+					IsRead: pointer(true),
 				},
 			},
 			{
 				Id: 49,
 				Fields: &api.SetEntryFieldsRequest_SetOp_Fields{
-					IsRead: boolp(false),
+					IsRead: pointer(false),
 				},
 			},
 		},
@@ -255,6 +255,4 @@ func ts(t *testing.T, value string) *time.Time {
 	return tv
 }
 
-func stringp(value string) *string { return &value }
-
-func boolp(value bool) *bool { return &value }
+func pointer[T any](value T) *T { return &value }
