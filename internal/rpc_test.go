@@ -71,19 +71,6 @@ func TestAddFeedOk(t *testing.T) {
 	a.True(proto.Equal(rsp, &api.AddFeedResponse{}))
 }
 
-func TestEditFeedOk(t *testing.T) {
-	t.Parallel()
-
-	r := require.New(t)
-	client := newTestClientBuilder(t).Build()
-
-	req := api.EditFeedRequest{}
-	rsp, err := client.EditFeed(context.Background(), &req)
-
-	r.Nil(rsp)
-	r.EqualError(err, status.New(codes.Unimplemented, "unimplemented").String())
-}
-
 func TestListFeedsOk(t *testing.T) {
 	t.Parallel()
 
@@ -165,13 +152,23 @@ func TestSetEntryFieldsOk(t *testing.T) {
 	t.Parallel()
 
 	r := require.New(t)
-	client := newTestClientBuilder(t).Build()
+	client, _, st := setupServerTest(t)
 
-	req := api.SetEntryFieldsRequest{}
+	st.
+		EXPECT().
+		SetEntryFields(gomock.Any(), 37, func(b bool) *bool { return &b }(true)).
+		MaxTimes(1).
+		Return(&store.Entry{}, nil)
+
+	req := api.SetEntryFieldsRequest{
+		Id: 37,
+		Changes: &api.SetEntryFieldsRequest_Changes{
+			IsRead: func(b bool) *bool { return &b }(true),
+		},
+	}
 	rsp, err := client.SetEntryFields(context.Background(), &req)
-
-	r.Nil(rsp)
-	r.EqualError(err, status.New(codes.Unimplemented, "unimplemented").String())
+	r.NoError(err)
+	r.NotNil(rsp)
 }
 
 func TestExportOPMLOk(t *testing.T) {

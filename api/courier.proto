@@ -91,7 +91,7 @@ message SetEntryFieldsRequest {
   Changes changes = 2;
 
   message Changes {
-    bool is_read = 2;
+    optional bool is_read = 2;
   }
 }
 

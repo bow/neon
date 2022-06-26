@@ -8,6 +8,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	"github.com/bow/courier/api"
+	st "github.com/bow/courier/internal/store"
 )
 
 // rpc implements the Courier rpc API.
@@ -92,10 +93,22 @@ func (r *rpc) PollFeeds(_ api.Courier_PollFeedsServer) error {
 
 // SetEntryFields satisfies the service API.
 func (r *rpc) SetEntryFields(
-	_ context.Context,
-	_ *api.SetEntryFieldsRequest,
+	ctx context.Context,
+	req *api.SetEntryFieldsRequest,
 ) (*api.SetEntryFieldsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "unimplemented")
+
+	entry, err := r.store.SetEntryFields(ctx, st.DBID(req.Id), req.Changes.IsRead)
+	if err != nil {
+		return nil, err
+	}
+
+	if _, err = entry.Proto(); err != nil {
+		return nil, err
+	}
+
+	rsp := api.SetEntryFieldsResponse{}
+
+	return &rsp, nil
 }
 
 // ExportOPML satisfies the service API.
