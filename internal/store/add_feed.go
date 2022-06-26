@@ -71,10 +71,10 @@ func (s *SQLite) insertFeedRow(
 
 	res, err := stmt1.ExecContext(
 		ctx,
-		nullIf(resolve(title, feed.Title), textEmpty),
-		nullIf(resolve(desc, feed.Description), textEmpty),
+		nullIfTextEmpty(resolve(title, feed.Title)),
+		nullIfTextEmpty(resolve(desc, feed.Description)),
 		feed.FeedLink,
-		nullIf(feed.Link, textEmpty),
+		nullIfTextEmpty(feed.Link),
 		serializeTime(resolveFeedUpdateTime(feed)),
 		serializeTime(subTime),
 	)
@@ -136,8 +136,8 @@ func (s *SQLite) upsertEntries(
 			entry.GUID,
 			entry.Link,
 			entry.Title,
-			nullIf(entry.Description, textEmpty),
-			nullIf(entry.Content, textEmpty),
+			nullIfTextEmpty(entry.Description),
+			nullIfTextEmpty(entry.Content),
 			serializeTime(resolveEntryPublishedTime(entry)),
 			updateTime,
 		)

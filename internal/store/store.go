@@ -155,8 +155,8 @@ func nullIf[T any](value T, pred func(T) bool) *T {
 	return &value
 }
 
-func textEmpty(v string) bool {
-	return v == "" || strings.TrimSpace(v) == ""
+func nullIfTextEmpty(v string) *string {
+	return nullIf(v, func(s string) bool { return s == "" || strings.TrimSpace(s) == "" })
 }
 
 // resolve returns the dereferenced pointer value if the pointer is non-nil,
