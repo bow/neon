@@ -49,14 +49,15 @@ message Feed {
 
 message Entry {
   int32 id = 1;
-  string title = 2;
-  bool is_read = 3;
-  string ext_id = 4;
-  google.protobuf.Timestamp update_time = 5;
-  google.protobuf.Timestamp publication_time = 6;
-  optional string description = 7;
-  optional string content = 8;
-  optional string url = 9;
+  int32 feed_id = 2;
+  string title = 3;
+  bool is_read = 4;
+  string ext_id = 5;
+  google.protobuf.Timestamp update_time = 6;
+  google.protobuf.Timestamp publication_time = 7;
+  optional string description = 8;
+  optional string content = 9;
+  optional string url = 10;
 }
 
 message AddFeedRequest {

@@ -100,6 +100,7 @@ func (s *SQLite) populateFeedEntries(ctx context.Context, tx *sql.Tx, feed *Feed
 	sql1 := `
 		SELECT
 			e.id AS id,
+			e.feed_id AS feed_id,
 			e.title AS title,
 			e.is_read AS is_read,
 			e.external_id AS ext_id,
@@ -119,6 +120,7 @@ func (s *SQLite) populateFeedEntries(ctx context.Context, tx *sql.Tx, feed *Feed
 		var entry Entry
 		if err := rows.Scan(
 			&entry.DBID,
+			&entry.FeedDBID,
 			&entry.Title,
 			&entry.IsRead,
 			&entry.ExtID,

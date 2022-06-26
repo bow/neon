@@ -75,6 +75,7 @@ func (s *SQLite) getEntry(ctx context.Context, tx *sql.Tx, entryDBID DBID) (*Ent
 	sql1 := `
 		SELECT
 			e.id AS id,
+			e.feed_id AS feed_id,
 			e.title AS title,
 			e.is_read AS is_read,
 			e.external_id AS ext_id,
@@ -94,6 +95,7 @@ func (s *SQLite) getEntry(ctx context.Context, tx *sql.Tx, entryDBID DBID) (*Ent
 		var entry Entry
 		if err := row.Scan(
 			&entry.DBID,
+			&entry.FeedDBID,
 			&entry.Title,
 			&entry.IsRead,
 			&entry.ExtID,
