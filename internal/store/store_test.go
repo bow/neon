@@ -11,6 +11,13 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+// feedKey is a helper struct for testing.
+type feedKey struct {
+	DBID    DBID
+	Title   string
+	Entries map[string]DBID
+}
+
 type testStore struct {
 	*SQLite
 	t *testing.T
@@ -103,18 +110,42 @@ func (ts *testStore) countFeedCategories() int {
 	return ts.countTableRows("feed_categories")
 }
 
-func (ts *testStore) addFeeds(feeds []*Feed) {
+func (ts *testStore) addFeeds(feeds []*Feed) map[string]feedKey {
 	ts.t.Helper()
 
 	tx := ts.tx()
-	stmt, err := tx.Prepare(`INSERT INTO feeds(title, feed_url, update_time) VALUES (?, ?, ?)`)
+	stmt1, err := tx.Prepare(`
+		INSERT INTO feeds(title, feed_url, update_time) VALUES (?, ?, ?)
+		RETURNING id
+	`)
+	require.NoError(ts.t, err)
+	stmt2, err := tx.Prepare(`
+		INSERT INTO entries(feed_id, external_id, title, is_read) VALUES (?, ?, ?, ?)
+		RETURNING id
+	`)
 	require.NoError(ts.t, err)
 
+	keys := make(map[string]feedKey)
 	for _, feed := range feeds {
-		_, err = stmt.Exec(ts.t.Name(), feed.FeedURL, feed.Updated)
+		var feedDBID DBID
+		err = stmt1.QueryRow(ts.t.Name(), feed.FeedURL, feed.Updated).Scan(&feedDBID)
 		require.NoError(ts.t, err)
+
+		entries := make(map[string]DBID)
+
+		for i, entry := range feed.Entries {
+			var entryDBID DBID
+			extID := fmt.Sprintf("%s-entry-%d", ts.t.Name(), i)
+			err = stmt2.QueryRow(feedDBID, extID, entry.Title, entry.IsRead).Scan(&entryDBID)
+			require.NoError(ts.t, err)
+			entries[entry.Title] = entryDBID
+		}
+
+		keys[feed.Title] = feedKey{DBID: feedDBID, Title: feed.Title, Entries: entries}
 	}
 	require.NoError(ts.t, tx.Commit())
+
+	return keys
 }
 
 func (ts *testStore) addFeedWithURL(url string) {
@@ -135,3 +166,5 @@ func ts(t *testing.T, value string) *time.Time {
 	require.NoError(t, err)
 	return tv
 }
+
+func pointer[T any](value T) *T { return &value }

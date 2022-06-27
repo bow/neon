@@ -84,7 +84,7 @@ func TestAddFeedOkExtended(t *testing.T) {
 		return st.rowExists(feedExistSQL, title, description, feed.FeedLink, feed.Link)
 	}
 	existe := func(item *gofeed.Item) bool {
-		return st.rowExists(entryExistSQL, feed.FeedLink, item.Title, item.Link)
+		return st.rowExists(feedEntryExistSQL, feed.FeedLink, item.Title, item.Link)
 	}
 
 	a.Equal(0, st.countFeeds())
@@ -144,7 +144,7 @@ func TestAddFeedOkURLExists(t *testing.T) {
 		return st.rowExists(feedExistSQL, feed.Title, feed.Description, feed.FeedLink, feed.Link)
 	}
 	existe := func(item *gofeed.Item) bool {
-		return st.rowExists(entryExistSQL, feed.FeedLink, item.Title, item.Link)
+		return st.rowExists(feedEntryExistSQL, feed.FeedLink, item.Title, item.Link)
 	}
 
 	a.Equal(1, st.countFeeds())
@@ -178,8 +178,8 @@ const feedExistSQL = `
 		AND site_url = ?
 `
 
-// Query for checking that an entry exists.
-const entryExistSQL = `
+// Query for checking that an entry linked to a given feed URL exists.
+const feedEntryExistSQL = `
 	SELECT
 		*
 	FROM
