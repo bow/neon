@@ -91,23 +91,23 @@ func (r *rpc) PollFeeds(_ api.Courier_PollFeedsServer) error {
 	return status.Errorf(codes.Unimplemented, "unimplemented")
 }
 
-// SetEntryFields satisfies the service API.
-func (r *rpc) SetEntryFields(
+// EditEntries satisfies the service API.
+func (r *rpc) EditEntries(
 	ctx context.Context,
-	req *api.SetEntryFieldsRequest,
-) (*api.SetEntryFieldsResponse, error) {
+	req *api.EditEntriesRequest,
+) (*api.EditEntriesResponse, error) {
 
-	setOps := make([]*st.EntrySetOp, len(req.SetOps))
-	for i, op := range req.GetSetOps() {
-		setOps[i] = st.NewEntrySetOp(op)
+	ops := make([]*st.EntryEditOp, len(req.Ops))
+	for i, op := range req.GetOps() {
+		ops[i] = st.NewEntryEditOp(op)
 	}
 
-	entries, err := r.store.SetEntryFields(ctx, setOps)
+	entries, err := r.store.EditEntries(ctx, ops)
 	if err != nil {
 		return nil, err
 	}
 
-	rsp := api.SetEntryFieldsResponse{}
+	rsp := api.EditEntriesResponse{}
 	for _, entry := range entries {
 		ep, err := entry.Proto()
 		if err != nil {

@@ -88,6 +88,21 @@ func (mr *MockFeedStoreMockRecorder) AddFeed(ctx, feed, title, desc, categories 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddFeed", reflect.TypeOf((*MockFeedStore)(nil).AddFeed), ctx, feed, title, desc, categories)
 }
 
+// EditEntries mocks base method.
+func (m *MockFeedStore) EditEntries(ctx context.Context, ops []*store.EntryEditOp) ([]*store.Entry, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "EditEntries", ctx, ops)
+	ret0, _ := ret[0].([]*store.Entry)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// EditEntries indicates an expected call of EditEntries.
+func (mr *MockFeedStoreMockRecorder) EditEntries(ctx, ops interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "EditEntries", reflect.TypeOf((*MockFeedStore)(nil).EditEntries), ctx, ops)
+}
+
 // ListFeeds mocks base method.
 func (m *MockFeedStore) ListFeeds(ctx context.Context) ([]*store.Feed, error) {
 	m.ctrl.T.Helper()
@@ -101,19 +116,4 @@ func (m *MockFeedStore) ListFeeds(ctx context.Context) ([]*store.Feed, error) {
 func (mr *MockFeedStoreMockRecorder) ListFeeds(ctx interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListFeeds", reflect.TypeOf((*MockFeedStore)(nil).ListFeeds), ctx)
-}
-
-// SetEntryFields mocks base method.
-func (m *MockFeedStore) SetEntryFields(ctx context.Context, setOps []*store.EntrySetOp) ([]*store.Entry, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SetEntryFields", ctx, setOps)
-	ret0, _ := ret[0].([]*store.Entry)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// SetEntryFields indicates an expected call of SetEntryFields.
-func (mr *MockFeedStoreMockRecorder) SetEntryFields(ctx, setOps interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetEntryFields", reflect.TypeOf((*MockFeedStore)(nil).SetEntryFields), ctx, setOps)
 }

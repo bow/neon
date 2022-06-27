@@ -8,20 +8,20 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestSetEntryFieldsEmpty(t *testing.T) {
+func TestEditEntriesEmpty(t *testing.T) {
 	t.Parallel()
 
 	a := assert.New(t)
 	r := require.New(t)
 	st := newTestStore(t)
 
-	entries, err := st.SetEntryFields(context.Background(), nil)
+	entries, err := st.EditEntries(context.Background(), nil)
 	r.NoError(err)
 
 	a.Empty(entries)
 }
 
-func TestSetEntryFieldsMinimal(t *testing.T) {
+func TestEditEntriesMinimal(t *testing.T) {
 	t.Parallel()
 
 	a := assert.New(t)
@@ -53,10 +53,10 @@ func TestSetEntryFieldsMinimal(t *testing.T) {
 	a.True(existe("Entry A1", true))
 	a.False(existe("Entry A1", false))
 
-	setOps := []*EntrySetOp{
+	setOps := []*EntryEditOp{
 		{DBID: keys["Feed A"].Entries["Entry A1"], IsRead: pointer(false)},
 	}
-	entries, err := st.SetEntryFields(context.Background(), setOps)
+	entries, err := st.EditEntries(context.Background(), setOps)
 	r.NoError(err)
 
 	a.Len(entries, 1)
@@ -65,7 +65,7 @@ func TestSetEntryFieldsMinimal(t *testing.T) {
 	a.False(existe("Entry A1", true))
 }
 
-func TestSetEntryFieldsExtended(t *testing.T) {
+func TestEditEntriesExtended(t *testing.T) {
 	t.Parallel()
 
 	a := assert.New(t)
@@ -112,11 +112,11 @@ func TestSetEntryFieldsExtended(t *testing.T) {
 	a.True(existe("Entry X1", false))
 	a.False(existe("Entry X1", true))
 
-	setOps := []*EntrySetOp{
+	setOps := []*EntryEditOp{
 		{DBID: keys["Feed X"].Entries["Entry X1"], IsRead: pointer(true)},
 		{DBID: keys["Feed A"].Entries["Entry A2"], IsRead: pointer(true)},
 	}
-	entries, err := st.SetEntryFields(context.Background(), setOps)
+	entries, err := st.EditEntries(context.Background(), setOps)
 	r.NoError(err)
 
 	a.Len(entries, 2)

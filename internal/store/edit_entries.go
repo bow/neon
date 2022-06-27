@@ -6,17 +6,17 @@ import (
 	"fmt"
 )
 
-// SetEntryFields updates fields of an entry.
-func (s *SQLite) SetEntryFields(
+// EditEntries updates fields of an entry.
+func (s *SQLite) EditEntries(
 	ctx context.Context,
-	setOps []*EntrySetOp,
+	ops []*EntryEditOp,
 ) ([]*Entry, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	fail := failF("sqliteStore.SetEntryFields")
+	fail := failF("sqliteStore.EditEntries")
 
-	updateFunc := func(ctx context.Context, tx *sql.Tx, op *EntrySetOp) (*Entry, error) {
+	updateFunc := func(ctx context.Context, tx *sql.Tx, op *EntryEditOp) (*Entry, error) {
 		if op.IsRead != nil {
 			if err := s.updateEntryIsRead(ctx, tx, op.DBID, *op.IsRead); err != nil {
 				return nil, err
@@ -25,9 +25,9 @@ func (s *SQLite) SetEntryFields(
 		return s.getEntry(ctx, tx, op.DBID)
 	}
 
-	var entries = make([]*Entry, len(setOps))
+	var entries = make([]*Entry, len(ops))
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
-		for i, op := range setOps {
+		for i, op := range ops {
 			entry, err := updateFunc(ctx, tx, op)
 			if err != nil {
 				return fail(err)

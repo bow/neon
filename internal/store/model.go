@@ -94,13 +94,13 @@ func (e *Entry) Proto() (*api.Entry, error) {
 	return &proto, nil
 }
 
-type EntrySetOp struct {
+type EntryEditOp struct {
 	DBID   DBID
 	IsRead *bool
 }
 
-func NewEntrySetOp(proto *api.SetEntryFieldsRequest_SetOp) *EntrySetOp {
-	return &EntrySetOp{DBID: DBID(proto.Id), IsRead: proto.Fields.IsRead}
+func NewEntryEditOp(proto *api.EditEntriesRequest_Op) *EntryEditOp {
+	return &EntryEditOp{DBID: DBID(proto.Id), IsRead: proto.Fields.IsRead}
 }
 
 func resolveFeedUpdateTime(feed *gofeed.Feed) *time.Time {

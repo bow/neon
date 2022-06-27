@@ -22,8 +22,8 @@ service Courier {
   // PollFeeds listens for feed updates.
   rpc PollFeeds (stream PollFeedsRequest) returns (stream PollFeedsResponse) {}
 
-  // SetEntryFields sets one or more fields of an entry.
-  rpc SetEntryFields (SetEntryFieldsRequest) returns (SetEntryFieldsResponse) {}
+  // EditEntries sets one or more fields of an entry.
+  rpc EditEntries (EditEntriesRequest) returns (EditEntriesResponse) {}
 
   // ExportOPML exports feed subscriptions as an OPML document.
   rpc ExportOPML (ExportOPMLRequest) returns (ExportOPMLResponse) {}
@@ -87,10 +87,10 @@ message PollFeedsRequest {}
 
 message PollFeedsResponse {}
 
-message SetEntryFieldsRequest {
-  repeated SetOp set_ops = 1;
+message EditEntriesRequest {
+  repeated Op ops = 1;
 
-  message SetOp {
+  message Op {
     int32 id = 1;
     Fields fields = 2;
 
@@ -100,7 +100,7 @@ message SetEntryFieldsRequest {
   }
 }
 
-message SetEntryFieldsResponse {
+message EditEntriesResponse {
   repeated Entry entries = 1;
 }
 

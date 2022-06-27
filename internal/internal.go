@@ -25,8 +25,5 @@ type FeedStore interface {
 
 	ListFeeds(ctx context.Context) (feeds []*store.Feed, err error)
 
-	SetEntryFields(
-		ctx context.Context,
-		setOps []*store.EntrySetOp,
-	) (entries []*store.Entry, err error)
+	EditEntries(ctx context.Context, ops []*store.EntryEditOp) (entries []*store.Entry, err error)
 }

@@ -148,14 +148,14 @@ func TestPollFeedsOk(t *testing.T) {
 	<-waitc
 }
 
-func TestSetEntryFieldsOk(t *testing.T) {
+func TestEditEntriesOk(t *testing.T) {
 	t.Parallel()
 
 	r := require.New(t)
 	a := assert.New(t)
 	client, _, st := setupServerTest(t)
 
-	setOps := []*store.EntrySetOp{
+	ops := []*store.EntryEditOp{
 		{DBID: 37, IsRead: pointer(true)},
 		{DBID: 49, IsRead: pointer(false)},
 	}
@@ -166,27 +166,27 @@ func TestSetEntryFieldsOk(t *testing.T) {
 
 	st.
 		EXPECT().
-		SetEntryFields(gomock.Any(), setOps).
+		EditEntries(gomock.Any(), ops).
 		MaxTimes(1).
 		Return(entries, nil)
 
-	req := api.SetEntryFieldsRequest{
-		SetOps: []*api.SetEntryFieldsRequest_SetOp{
+	req := api.EditEntriesRequest{
+		Ops: []*api.EditEntriesRequest_Op{
 			{
 				Id: 37,
-				Fields: &api.SetEntryFieldsRequest_SetOp_Fields{
+				Fields: &api.EditEntriesRequest_Op_Fields{
 					IsRead: pointer(true),
 				},
 			},
 			{
 				Id: 49,
-				Fields: &api.SetEntryFieldsRequest_SetOp_Fields{
+				Fields: &api.EditEntriesRequest_Op_Fields{
 					IsRead: pointer(false),
 				},
 			},
 		},
 	}
-	rsp, err := client.SetEntryFields(context.Background(), &req)
+	rsp, err := client.EditEntries(context.Background(), &req)
 	r.NoError(err)
 
 	r.Len(rsp.Entries, 2)
