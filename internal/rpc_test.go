@@ -56,13 +56,11 @@ func TestAddFeedOk(t *testing.T) {
 	parser.
 		EXPECT().
 		ParseURLWithContext(req.Url, gomock.Any()).
-		MaxTimes(1).
 		Return(&feed, nil)
 
 	st.
 		EXPECT().
 		AddFeed(gomock.Any(), &feed, req.Title, req.Description, req.Categories).
-		MaxTimes(1).
 		Return(nil)
 
 	rsp, err := client.AddFeed(context.Background(), &req)
@@ -96,7 +94,6 @@ func TestListFeedsOk(t *testing.T) {
 	st.
 		EXPECT().
 		ListFeeds(gomock.Any()).
-		MaxTimes(1).
 		Return(feeds, nil)
 
 	rsp, err := client.ListFeeds(context.Background(), &req)
@@ -167,7 +164,6 @@ func TestEditEntriesOk(t *testing.T) {
 	st.
 		EXPECT().
 		EditEntries(gomock.Any(), ops).
-		MaxTimes(1).
 		Return(entries, nil)
 
 	req := api.EditEntriesRequest{
