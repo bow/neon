@@ -70,11 +70,11 @@ func (r *rpc) ListFeeds(
 	return &rsp, nil
 }
 
-// EditFeed satisfies the service API.
-func (r *rpc) EditFeed(
+// EditFeeds satisfies the service API.
+func (r *rpc) EditFeeds(
 	_ context.Context,
-	_ *api.EditFeedRequest,
-) (*api.EditFeedResponse, error) {
+	_ *api.EditFeedsRequest,
+) (*api.EditFeedsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "unimplemented")
 }
 

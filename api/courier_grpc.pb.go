@@ -24,8 +24,8 @@ const _ = grpc.SupportPackageIsVersion7
 type CourierClient interface {
 	// AddFeeds adds a new feed source.
 	AddFeed(ctx context.Context, in *AddFeedRequest, opts ...grpc.CallOption) (*AddFeedResponse, error)
-	// EditFeed updates the properties of an existing feed.
-	EditFeed(ctx context.Context, in *EditFeedRequest, opts ...grpc.CallOption) (*EditFeedResponse, error)
+	// EditFeeds sets one or more fields of feeds.
+	EditFeeds(ctx context.Context, in *EditFeedsRequest, opts ...grpc.CallOption) (*EditFeedsResponse, error)
 	// ListFeeds lists all added feed sources.
 	ListFeeds(ctx context.Context, in *ListFeedsRequest, opts ...grpc.CallOption) (*ListFeedsResponse, error)
 	// DeleteFeeds removes one or more feed sources.
@@ -59,9 +59,9 @@ func (c *courierClient) AddFeed(ctx context.Context, in *AddFeedRequest, opts ..
 	return out, nil
 }
 
-func (c *courierClient) EditFeed(ctx context.Context, in *EditFeedRequest, opts ...grpc.CallOption) (*EditFeedResponse, error) {
-	out := new(EditFeedResponse)
-	err := c.cc.Invoke(ctx, "/courier.Courier/EditFeed", in, out, opts...)
+func (c *courierClient) EditFeeds(ctx context.Context, in *EditFeedsRequest, opts ...grpc.CallOption) (*EditFeedsResponse, error) {
+	out := new(EditFeedsResponse)
+	err := c.cc.Invoke(ctx, "/courier.Courier/EditFeeds", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -159,8 +159,8 @@ func (c *courierClient) GetInfo(ctx context.Context, in *GetInfoRequest, opts ..
 type CourierServer interface {
 	// AddFeeds adds a new feed source.
 	AddFeed(context.Context, *AddFeedRequest) (*AddFeedResponse, error)
-	// EditFeed updates the properties of an existing feed.
-	EditFeed(context.Context, *EditFeedRequest) (*EditFeedResponse, error)
+	// EditFeeds sets one or more fields of feeds.
+	EditFeeds(context.Context, *EditFeedsRequest) (*EditFeedsResponse, error)
 	// ListFeeds lists all added feed sources.
 	ListFeeds(context.Context, *ListFeedsRequest) (*ListFeedsResponse, error)
 	// DeleteFeeds removes one or more feed sources.
@@ -185,8 +185,8 @@ type UnimplementedCourierServer struct {
 func (UnimplementedCourierServer) AddFeed(context.Context, *AddFeedRequest) (*AddFeedResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddFeed not implemented")
 }
-func (UnimplementedCourierServer) EditFeed(context.Context, *EditFeedRequest) (*EditFeedResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method EditFeed not implemented")
+func (UnimplementedCourierServer) EditFeeds(context.Context, *EditFeedsRequest) (*EditFeedsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method EditFeeds not implemented")
 }
 func (UnimplementedCourierServer) ListFeeds(context.Context, *ListFeedsRequest) (*ListFeedsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListFeeds not implemented")
@@ -240,20 +240,20 @@ func _Courier_AddFeed_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Courier_EditFeed_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(EditFeedRequest)
+func _Courier_EditFeeds_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EditFeedsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CourierServer).EditFeed(ctx, in)
+		return srv.(CourierServer).EditFeeds(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/courier.Courier/EditFeed",
+		FullMethod: "/courier.Courier/EditFeeds",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CourierServer).EditFeed(ctx, req.(*EditFeedRequest))
+		return srv.(CourierServer).EditFeeds(ctx, req.(*EditFeedsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -404,8 +404,8 @@ var Courier_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Courier_AddFeed_Handler,
 		},
 		{
-			MethodName: "EditFeed",
-			Handler:    _Courier_EditFeed_Handler,
+			MethodName: "EditFeeds",
+			Handler:    _Courier_EditFeeds_Handler,
 		},
 		{
 			MethodName: "ListFeeds",

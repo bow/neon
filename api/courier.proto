@@ -10,8 +10,8 @@ service Courier {
   // AddFeeds adds a new feed source.
   rpc AddFeed (AddFeedRequest) returns (AddFeedResponse) {}
 
-  // EditFeed updates the properties of an existing feed.
-  rpc EditFeed (EditFeedRequest) returns (EditFeedResponse) {}
+  // EditFeeds sets one or more fields of feeds.
+  rpc EditFeeds (EditFeedsRequest) returns (EditFeedsResponse) {}
 
   // ListFeeds lists all added feed sources.
   rpc ListFeeds (ListFeedsRequest) returns (ListFeedsResponse) {}
@@ -69,9 +69,26 @@ message AddFeedRequest {
 
 message AddFeedResponse {}
 
-message EditFeedRequest {}
+message EditFeedsRequest {
+  repeated Op ops = 1;
 
-message EditFeedResponse {}
+  message Op {
+    int32 id = 1;
+    Fields fields = 2;
+
+    message Fields {
+      optional string title = 1;
+      optional string description = 2;
+      // NOTE: This means an empty fields message in an op request will delete
+      //       existing categories.
+      repeated string categories = 3;
+    }
+  }
+}
+
+message EditFeedsResponse {
+  repeated Feed feeds = 1;
+}
 
 message ListFeedsRequest {}
 
