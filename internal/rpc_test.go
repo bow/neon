@@ -22,7 +22,7 @@ func TestAddFeedOk(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	client, parser, st := setupServerTest(t)
+	client, pr, st := setupServerTest(t)
 
 	req := api.AddFeedRequest{
 		Url:         "http://foo.com/feed.xml",
@@ -53,13 +53,11 @@ func TestAddFeedOk(t *testing.T) {
 			},
 		},
 	}
-	parser.
-		EXPECT().
+	pr.EXPECT().
 		ParseURLWithContext(req.Url, gomock.Any()).
 		Return(&feed, nil)
 
-	st.
-		EXPECT().
+	st.EXPECT().
 		AddFeed(gomock.Any(), &feed, req.Title, req.Description, req.Categories).
 		Return(nil)
 
@@ -91,8 +89,7 @@ func TestListFeedsOk(t *testing.T) {
 			Updated:    store.WrapNullString("2022-04-20T16:32:30.760+02:00"),
 		},
 	}
-	st.
-		EXPECT().
+	st.EXPECT().
 		ListFeeds(gomock.Any()).
 		Return(feeds, nil)
 
@@ -161,8 +158,7 @@ func TestEditEntriesOk(t *testing.T) {
 		{DBID: 49, IsRead: false},
 	}
 
-	st.
-		EXPECT().
+	st.EXPECT().
 		EditEntries(gomock.Any(), ops).
 		Return(entries, nil)
 
