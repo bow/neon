@@ -72,10 +72,30 @@ func (r *rpc) ListFeeds(
 
 // EditFeeds satisfies the service API.
 func (r *rpc) EditFeeds(
-	_ context.Context,
-	_ *api.EditFeedsRequest,
+	ctx context.Context,
+	req *api.EditFeedsRequest,
 ) (*api.EditFeedsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "unimplemented")
+
+	ops := make([]*st.FeedEditOp, len(req.Ops))
+	for i, op := range req.GetOps() {
+		ops[i] = st.NewFeedEditOp(op)
+	}
+
+	feeds, err := r.store.EditFeeds(ctx, ops)
+	if err != nil {
+		return nil, err
+	}
+
+	rsp := api.EditFeedsResponse{}
+	for _, feed := range feeds {
+		fp, err := feed.Proto()
+		if err != nil {
+			return nil, err
+		}
+		rsp.Feeds = append(rsp.Feeds, fp)
+	}
+
+	return &rsp, nil
 }
 
 // DeleteFeeds satisfies the service API.

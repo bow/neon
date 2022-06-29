@@ -100,6 +100,54 @@ func TestListFeedsOk(t *testing.T) {
 	a.Len(rsp.GetFeeds(), 2)
 }
 
+func TestEditFeedsOk(t *testing.T) {
+	t.Parallel()
+
+	r := require.New(t)
+	a := assert.New(t)
+	client, _, st := setupServerTest(t)
+
+	ops := []*store.FeedEditOp{
+		{DBID: 14, Title: pointer("newer")},
+		{DBID: 58, Categories: pointer([]string{"x", "y"})},
+	}
+	feeds := []*store.Feed{
+		{DBID: 14, Title: "newer", Subscribed: "2022-06-30T00:53:50.200+02:00"},
+		{DBID: 58, Categories: []string{"x", "y"}, Subscribed: "2022-06-30T00:53:58.135+02:00"},
+	}
+
+	st.EXPECT().
+		EditFeeds(gomock.Any(), gomock.AssignableToTypeOf(ops)).
+		Return(feeds, nil)
+
+	req := api.EditFeedsRequest{
+		Ops: []*api.EditFeedsRequest_Op{
+			{
+				Id: 14,
+				Fields: &api.EditFeedsRequest_Op_Fields{
+					Title: pointer("newer"),
+				},
+			},
+			{
+				Id: 58,
+				Fields: &api.EditFeedsRequest_Op_Fields{
+					Categories: []string{"x", "y"},
+				},
+			},
+		},
+	}
+	rsp, err := client.EditFeeds(context.Background(), &req)
+	r.NoError(err)
+
+	r.Len(rsp.Feeds, 2)
+	feed0 := rsp.Feeds[0]
+	a.Equal(int32(feeds[0].DBID), feed0.Id)
+	a.Equal(feeds[0].Title, feed0.Title)
+	feed1 := rsp.Feeds[1]
+	a.Equal(int32(feeds[1].DBID), feed1.Id)
+	a.Equal([]string(feeds[1].Categories), feed1.Categories)
+}
+
 func TestDeleteFeedsOk(t *testing.T) {
 	t.Parallel()
 
