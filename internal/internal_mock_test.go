@@ -103,6 +103,21 @@ func (mr *MockFeedStoreMockRecorder) EditEntries(ctx, ops interface{}) *gomock.C
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "EditEntries", reflect.TypeOf((*MockFeedStore)(nil).EditEntries), ctx, ops)
 }
 
+// EditFeeds mocks base method.
+func (m *MockFeedStore) EditFeeds(ctx context.Context, ops []*store.FeedEditOp) ([]*store.Feed, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "EditFeeds", ctx, ops)
+	ret0, _ := ret[0].([]*store.Feed)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// EditFeeds indicates an expected call of EditFeeds.
+func (mr *MockFeedStoreMockRecorder) EditFeeds(ctx, ops interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "EditFeeds", reflect.TypeOf((*MockFeedStore)(nil).EditFeeds), ctx, ops)
+}
+
 // ListFeeds mocks base method.
 func (m *MockFeedStore) ListFeeds(ctx context.Context) ([]*store.Feed, error) {
 	m.ctrl.T.Helper()
