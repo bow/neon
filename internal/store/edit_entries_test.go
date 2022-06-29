@@ -53,10 +53,10 @@ func TestEditEntriesMinimal(t *testing.T) {
 	a.True(existe("Entry A1", true))
 	a.False(existe("Entry A1", false))
 
-	setOps := []*EntryEditOp{
+	ops := []*EntryEditOp{
 		{DBID: keys["Feed A"].Entries["Entry A1"], IsRead: pointer(false)},
 	}
-	entries, err := st.EditEntries(context.Background(), setOps)
+	entries, err := st.EditEntries(context.Background(), ops)
 	r.NoError(err)
 
 	a.Len(entries, 1)
