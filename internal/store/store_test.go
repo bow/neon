@@ -128,7 +128,7 @@ func (ts *testStore) addFeeds(feeds []*Feed) map[string]feedKey {
 	keys := make(map[string]feedKey)
 	for _, feed := range feeds {
 		var feedDBID DBID
-		err = stmt1.QueryRow(ts.t.Name(), feed.FeedURL, feed.Updated).Scan(&feedDBID)
+		err = stmt1.QueryRow(feed.Title, feed.FeedURL, feed.Updated).Scan(&feedDBID)
 		require.NoError(ts.t, err)
 
 		entries := make(map[string]DBID)
