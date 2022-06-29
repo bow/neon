@@ -54,6 +54,22 @@ func (f *Feed) Proto() (*api.Feed, error) {
 	return &proto, nil
 }
 
+type FeedEditOp struct {
+	DBID        DBID
+	Title       *string
+	Description *string
+	Categories  *[]string
+}
+
+func NewFeedEditOp(proto *api.EditFeedsRequest_Op) *FeedEditOp {
+	return &FeedEditOp{
+		DBID:        DBID(proto.Id),
+		Title:       proto.Fields.Title,
+		Description: proto.Fields.Description,
+		Categories:  &proto.Fields.Categories,
+	}
+}
+
 type Entry struct {
 	DBID        DBID
 	FeedDBID    DBID
