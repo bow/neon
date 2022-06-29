@@ -72,4 +72,6 @@ CREATE TABLE IF NOT EXISTS
   -- feed_category_id is the database ID of the linked feed category.
   , feed_category_id INTEGER NOT NULL
   , PRIMARY KEY (feed_id, feed_category_id)
+  , FOREIGN KEY(feed_id) REFERENCES feeds(id) ON DELETE CASCADE
+  , FOREIGN KEY(feed_category_id) REFERENCES feed_categories(id) ON DELETE CASCADE
 );
