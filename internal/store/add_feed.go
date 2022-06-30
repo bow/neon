@@ -19,7 +19,7 @@ func (s *SQLite) AddFeed(
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	fail := failF("sqliteStore.AddFeed")
+	fail := failF("SQLite.AddFeed")
 
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
 

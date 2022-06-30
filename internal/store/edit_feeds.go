@@ -14,7 +14,7 @@ func (s *SQLite) EditFeeds(
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	fail := failF("sqliteStore.EditFeed")
+	fail := failF("SQLite.EditFeed")
 
 	updateFunc := func(ctx context.Context, tx *sql.Tx, op *FeedEditOp) (*Feed, error) {
 		if err := updateFeedTitle(ctx, tx, op.DBID, op.Title); err != nil {

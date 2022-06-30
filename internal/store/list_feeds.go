@@ -9,7 +9,7 @@ func (s *SQLite) ListFeeds(ctx context.Context) ([]*Feed, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	fail := failF("sqliteStore.ListFeeds")
+	fail := failF("SQLite.ListFeeds")
 
 	feeds := make([]*Feed, 0)
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {

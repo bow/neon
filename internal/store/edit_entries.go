@@ -14,7 +14,7 @@ func (s *SQLite) EditEntries(
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	fail := failF("sqliteStore.EditEntries")
+	fail := failF("SQLite.EditEntries")
 
 	updateFunc := func(ctx context.Context, tx *sql.Tx, op *EntryEditOp) (*Entry, error) {
 		if op.IsRead != nil {
