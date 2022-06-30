@@ -18,11 +18,11 @@ func (s *SQLite) EditEntries(
 
 	updateFunc := func(ctx context.Context, tx *sql.Tx, op *EntryEditOp) (*Entry, error) {
 		if op.IsRead != nil {
-			if err := s.updateEntryIsRead(ctx, tx, op.DBID, *op.IsRead); err != nil {
+			if err := updateEntryIsRead(ctx, tx, op.DBID, *op.IsRead); err != nil {
 				return nil, err
 			}
 		}
-		return s.getEntry(ctx, tx, op.DBID)
+		return getEntry(ctx, tx, op.DBID)
 	}
 
 	var entries = make([]*Entry, len(ops))
@@ -44,7 +44,7 @@ func (s *SQLite) EditEntries(
 	return entries, nil
 }
 
-func (s *SQLite) updateEntryIsRead(
+func updateEntryIsRead(
 	ctx context.Context,
 	tx *sql.Tx,
 	entryDBID DBID,
@@ -70,7 +70,7 @@ func (s *SQLite) updateEntryIsRead(
 	return nil
 }
 
-func (s *SQLite) getEntry(ctx context.Context, tx *sql.Tx, entryDBID DBID) (*Entry, error) {
+func getEntry(ctx context.Context, tx *sql.Tx, entryDBID DBID) (*Entry, error) {
 
 	sql1 := `
 		SELECT

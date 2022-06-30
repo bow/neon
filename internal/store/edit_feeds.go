@@ -23,7 +23,7 @@ func (s *SQLite) EditFeeds(
 		if err := updateFeedDescription(ctx, tx, op.DBID, op.Description); err != nil {
 			return nil, err
 		}
-		if err := s.updateFeedCategories(ctx, tx, op.DBID, op.Categories); err != nil {
+		if err := updateFeedCategories(ctx, tx, op.DBID, op.Categories); err != nil {
 			return nil, err
 		}
 		return getFeed(ctx, tx, op.DBID)
@@ -130,7 +130,7 @@ var (
 	updateFeedDescription = updateFeedField[string]("description")
 )
 
-func (s *SQLite) updateFeedCategories(
+func updateFeedCategories(
 	ctx context.Context,
 	tx *sql.Tx,
 	feedDBID DBID,
@@ -152,7 +152,7 @@ func (s *SQLite) updateFeedCategories(
 		return err
 	}
 
-	if err = s.addFeedCategories(ctx, tx, feedDBID, *categories); err != nil {
+	if err = addFeedCategories(ctx, tx, feedDBID, *categories); err != nil {
 		return err
 	}
 

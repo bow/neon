@@ -14,13 +14,13 @@ func (s *SQLite) ListFeeds(ctx context.Context) ([]*Feed, error) {
 	feeds := make([]*Feed, 0)
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
 
-		ifeeds, err := s.getAllFeeds(ctx, tx)
+		ifeeds, err := getAllFeeds(ctx, tx)
 		if err != nil {
 			return fail(err)
 		}
 		for _, ifeed := range ifeeds {
 			ifeed := ifeed
-			if err := s.populateFeedEntries(ctx, tx, ifeed); err != nil {
+			if err := populateFeedEntries(ctx, tx, ifeed); err != nil {
 				return fail(err)
 			}
 		}
@@ -34,7 +34,7 @@ func (s *SQLite) ListFeeds(ctx context.Context) ([]*Feed, error) {
 	return feeds, err
 }
 
-func (s *SQLite) getAllFeeds(ctx context.Context, tx *sql.Tx) ([]*Feed, error) {
+func getAllFeeds(ctx context.Context, tx *sql.Tx) ([]*Feed, error) {
 
 	sql1 := `
 		SELECT
@@ -95,7 +95,7 @@ func (s *SQLite) getAllFeeds(ctx context.Context, tx *sql.Tx) ([]*Feed, error) {
 	return feeds, nil
 }
 
-func (s *SQLite) populateFeedEntries(ctx context.Context, tx *sql.Tx, feed *Feed) error {
+func populateFeedEntries(ctx context.Context, tx *sql.Tx, feed *Feed) error {
 
 	sql1 := `
 		SELECT

@@ -25,12 +25,12 @@ func (s *SQLite) AddFeed(
 
 		now := time.Now()
 
-		feedDBID, err := s.insertFeedRow(ctx, tx, feed, title, desc, &now)
+		feedDBID, err := insertFeedRow(ctx, tx, feed, title, desc, &now)
 		if err != nil {
 			return fail(err)
 		}
 
-		err = s.addFeedCategories(ctx, tx, feedDBID, categories)
+		err = addFeedCategories(ctx, tx, feedDBID, categories)
 		if err != nil {
 			return fail(err)
 		}
@@ -41,7 +41,7 @@ func (s *SQLite) AddFeed(
 	return s.withTx(ctx, dbFunc, nil)
 }
 
-func (s *SQLite) insertFeedRow(
+func insertFeedRow(
 	ctx context.Context,
 	tx *sql.Tx,
 	feed *gofeed.Feed,
@@ -98,14 +98,14 @@ func (s *SQLite) insertFeedRow(
 		}
 	}
 	// TODO: Add and combine with proper update call.
-	if ierr := s.upsertEntries(ctx, tx, feedDBID, feed.Items); ierr != nil {
+	if ierr := upsertEntries(ctx, tx, feedDBID, feed.Items); ierr != nil {
 		return feedDBID, ierr
 	}
 
 	return feedDBID, nil
 }
 
-func (s *SQLite) upsertEntries(
+func upsertEntries(
 	ctx context.Context,
 	tx *sql.Tx,
 	feedDBID DBID,
@@ -173,7 +173,7 @@ func (s *SQLite) upsertEntries(
 	return nil
 }
 
-func (s *SQLite) addFeedCategories(
+func addFeedCategories(
 	ctx context.Context,
 	tx *sql.Tx,
 	feedDBID DBID,
