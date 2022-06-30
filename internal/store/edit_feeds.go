@@ -3,7 +3,6 @@ package store
 import (
 	"context"
 	"database/sql"
-	"fmt"
 )
 
 // EditFeed updates fields of an feed.
@@ -17,13 +16,13 @@ func (s *SQLite) EditFeeds(
 	fail := failF("SQLite.EditFeed")
 
 	updateFunc := func(ctx context.Context, tx *sql.Tx, op *FeedEditOp) (*Feed, error) {
-		if err := updateFeedTitle(ctx, tx, op.DBID, op.Title); err != nil {
+		if err := setFeedTitle(ctx, tx, op.DBID, op.Title); err != nil {
 			return nil, err
 		}
-		if err := updateFeedDescription(ctx, tx, op.DBID, op.Description); err != nil {
+		if err := setFeedDescription(ctx, tx, op.DBID, op.Description); err != nil {
 			return nil, err
 		}
-		if err := updateFeedCategories(ctx, tx, op.DBID, op.Categories); err != nil {
+		if err := setFeedCategories(ctx, tx, op.DBID, op.Categories); err != nil {
 			return nil, err
 		}
 		return getFeed(ctx, tx, op.DBID)
@@ -97,40 +96,12 @@ func getFeed(ctx context.Context, tx *sql.Tx, feedDBID DBID) (*Feed, error) {
 	return scanRow(stmt1.QueryRowContext(ctx, feedDBID))
 }
 
-func updateFeedField[T any](columnName string) func(context.Context, *sql.Tx, DBID, *T) error {
-
-	return func(ctx context.Context, tx *sql.Tx, feedDBID DBID, fieldValue *T) error {
-
-		if fieldValue == nil {
-			return nil
-		}
-
-		sql1 := `UPDATE feeds SET ` + columnName + ` = $2 WHERE id = $1 RETURNING id`
-		stmt1, err := tx.PrepareContext(ctx, sql1)
-		if err != nil {
-			return err
-		}
-		defer stmt1.Close()
-
-		var updatedID DBID
-		err = stmt1.QueryRowContext(ctx, feedDBID, fieldValue).Scan(&updatedID)
-		if err != nil {
-			return err
-		}
-		if updatedID == 0 {
-			// TODO: Wrap in proper gRPC errors.
-			return fmt.Errorf("feed id %d does not exist", updatedID)
-		}
-		return nil
-	}
-}
-
 var (
-	updateFeedTitle       = updateFeedField[string]("title")
-	updateFeedDescription = updateFeedField[string]("description")
+	setFeedTitle       = setTableField[string]("feeds", "title")
+	setFeedDescription = setTableField[string]("feeds", "description")
 )
 
-func updateFeedCategories(
+func setFeedCategories(
 	ctx context.Context,
 	tx *sql.Tx,
 	feedDBID DBID,

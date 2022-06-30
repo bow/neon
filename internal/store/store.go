@@ -167,3 +167,34 @@ func resolve[T any](v *T, def T) T {
 	}
 	return def
 }
+
+func setTableField[T any](
+	tableName, columnName string,
+) func(context.Context, *sql.Tx, DBID, *T) error {
+
+	return func(ctx context.Context, tx *sql.Tx, feedDBID DBID, fieldValue *T) error {
+
+		// nil pointers mean no value is given and so no updates are needed.
+		if fieldValue == nil {
+			return nil
+		}
+
+		sql1 := `UPDATE ` + tableName + ` SET ` + columnName + ` = $2 WHERE id = $1 RETURNING id`
+		stmt1, err := tx.PrepareContext(ctx, sql1)
+		if err != nil {
+			return err
+		}
+		defer stmt1.Close()
+
+		var updatedID DBID
+		err = stmt1.QueryRowContext(ctx, feedDBID, fieldValue).Scan(&updatedID)
+		if err != nil {
+			return err
+		}
+		if updatedID == 0 {
+			// TODO: Wrap in proper gRPC errors.
+			return fmt.Errorf("id %d in '%s' does not exist", updatedID, tableName)
+		}
+		return nil
+	}
+}

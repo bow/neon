@@ -3,7 +3,6 @@ package store
 import (
 	"context"
 	"database/sql"
-	"fmt"
 )
 
 // EditEntries updates fields of an entry.
@@ -17,10 +16,8 @@ func (s *SQLite) EditEntries(
 	fail := failF("SQLite.EditEntries")
 
 	updateFunc := func(ctx context.Context, tx *sql.Tx, op *EntryEditOp) (*Entry, error) {
-		if op.IsRead != nil {
-			if err := updateEntryIsRead(ctx, tx, op.DBID, *op.IsRead); err != nil {
-				return nil, err
-			}
+		if err := setEntryIsRead(ctx, tx, op.DBID, op.IsRead); err != nil {
+			return nil, err
 		}
 		return getEntry(ctx, tx, op.DBID)
 	}
@@ -42,32 +39,6 @@ func (s *SQLite) EditEntries(
 		return nil, err
 	}
 	return entries, nil
-}
-
-func updateEntryIsRead(
-	ctx context.Context,
-	tx *sql.Tx,
-	entryDBID DBID,
-	isRead bool,
-) error {
-
-	sql1 := `UPDATE entries SET is_read = $2 WHERE id = $1 RETURNING id`
-	stmt1, err := tx.PrepareContext(ctx, sql1)
-	if err != nil {
-		return err
-	}
-	defer stmt1.Close()
-
-	var updatedID DBID
-	err = stmt1.QueryRowContext(ctx, entryDBID, isRead).Scan(&updatedID)
-	if err != nil {
-		return err
-	}
-	if updatedID == 0 {
-		// TODO: Wrap in proper gRPC errors.
-		return fmt.Errorf("entry id %d does not exist", updatedID)
-	}
-	return nil
 }
 
 func getEntry(ctx context.Context, tx *sql.Tx, entryDBID DBID) (*Entry, error) {
@@ -118,3 +89,5 @@ func getEntry(ctx context.Context, tx *sql.Tx, entryDBID DBID) (*Entry, error) {
 
 	return scanRow(stmt1.QueryRowContext(ctx, entryDBID))
 }
+
+var setEntryIsRead = setTableField[bool]("entries", "is_read")
