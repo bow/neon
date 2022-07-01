@@ -40,6 +40,10 @@ func NewSQLite(filename string) (*SQLite, error) {
 	if err != nil {
 		return nil, fail(err)
 	}
+	_, err = db.Exec("PRAGMA foreign_keys = ON")
+	if err != nil {
+		return nil, fail(err)
+	}
 
 	store := SQLite{db: db}
 
