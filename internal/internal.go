@@ -27,5 +27,7 @@ type FeedStore interface {
 
 	ListFeeds(ctx context.Context) (feeds []*store.Feed, err error)
 
+	DeleteFeeds(ctx context.Context, ids []store.DBID) (err error)
+
 	EditEntries(ctx context.Context, ops []*store.EntryEditOp) (entries []*store.Entry, err error)
 }

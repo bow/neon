@@ -89,6 +89,20 @@ func (mr *MockFeedStoreMockRecorder) AddFeed(ctx, feed, title, desc, categories 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddFeed", reflect.TypeOf((*MockFeedStore)(nil).AddFeed), ctx, feed, title, desc, categories)
 }
 
+// DeleteFeeds mocks base method.
+func (m *MockFeedStore) DeleteFeeds(ctx context.Context, ids []store.DBID) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteFeeds", ctx, ids)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteFeeds indicates an expected call of DeleteFeeds.
+func (mr *MockFeedStoreMockRecorder) DeleteFeeds(ctx, ids interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteFeeds", reflect.TypeOf((*MockFeedStore)(nil).DeleteFeeds), ctx, ids)
+}
+
 // EditEntries mocks base method.
 func (m *MockFeedStore) EditEntries(ctx context.Context, ops []*store.EntryEditOp) ([]*store.Entry, error) {
 	m.ctrl.T.Helper()
