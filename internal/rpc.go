@@ -36,12 +36,17 @@ func (r *rpc) AddFeed(
 		return nil, err
 	}
 
-	err = r.store.AddFeed(ctx, feed, req.Title, req.Description, req.GetCategories())
+	created, err := r.store.AddFeed(ctx, feed, req.Title, req.Description, req.GetCategories())
 	if err != nil {
 		return nil, err
 	}
 
-	rsp := api.AddFeedResponse{}
+	payload, err := created.Proto()
+	if err != nil {
+		return nil, err
+	}
+
+	rsp := api.AddFeedResponse{Feed: payload}
 
 	return &rsp, nil
 }

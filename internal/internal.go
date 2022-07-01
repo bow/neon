@@ -21,7 +21,7 @@ type FeedStore interface {
 		title *string,
 		desc *string,
 		categories []string,
-	) (err error)
+	) (addedFeed *store.Feed, err error)
 
 	EditFeeds(ctx context.Context, ops []*store.FeedEditOp) (feeds []*store.Feed, err error)
 

@@ -67,7 +67,9 @@ message AddFeedRequest {
   repeated string categories = 4;
 }
 
-message AddFeedResponse {}
+message AddFeedResponse {
+  Feed feed = 1;
+}
 
 message EditFeedsRequest {
   repeated Op ops = 1;

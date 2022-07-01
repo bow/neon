@@ -11,7 +11,6 @@ import (
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"google.golang.org/protobuf/proto"
 
 	"github.com/bow/courier/api"
 	"github.com/bow/courier/internal/store"
@@ -53,18 +52,28 @@ func TestAddFeedOk(t *testing.T) {
 			},
 		},
 	}
+	created := store.Feed{
+		Title:       feed.Title,
+		Description: store.WrapNullString(feed.Description),
+		SiteURL:     store.WrapNullString(feed.Link),
+		FeedURL:     feed.FeedLink,
+		Subscribed:  "2021-07-01T23:33:06.156+02:00",
+	}
 	pr.EXPECT().
 		ParseURLWithContext(req.Url, gomock.Any()).
 		Return(&feed, nil)
 
 	st.EXPECT().
 		AddFeed(gomock.Any(), &feed, req.Title, req.Description, req.Categories).
-		Return(nil)
+		Return(&created, nil)
 
 	rsp, err := client.AddFeed(context.Background(), &req)
 	r.NoError(err)
 
-	a.True(proto.Equal(rsp, &api.AddFeedResponse{}))
+	a.Equal(created.Title, rsp.Feed.Title)
+	a.Equal(created.Description.String, *rsp.Feed.Description)
+	a.Equal(created.SiteURL.String, *rsp.Feed.SiteUrl)
+	a.Equal(created.FeedURL, rsp.Feed.FeedUrl)
 }
 
 func TestListFeedsOk(t *testing.T) {

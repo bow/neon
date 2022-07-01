@@ -75,11 +75,12 @@ func (m *MockFeedStore) EXPECT() *MockFeedStoreMockRecorder {
 }
 
 // AddFeed mocks base method.
-func (m *MockFeedStore) AddFeed(ctx context.Context, feed *gofeed.Feed, title, desc *string, categories []string) error {
+func (m *MockFeedStore) AddFeed(ctx context.Context, feed *gofeed.Feed, title, desc *string, categories []string) (*store.Feed, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AddFeed", ctx, feed, title, desc, categories)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret0, _ := ret[0].(*store.Feed)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // AddFeed indicates an expected call of AddFeed.

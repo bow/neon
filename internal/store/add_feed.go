@@ -15,12 +15,13 @@ func (s *SQLite) AddFeed(
 	title *string,
 	desc *string,
 	categories []string,
-) error {
+) (*Feed, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
 	fail := failF("SQLite.AddFeed")
 
+	var created *Feed
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
 
 		now := time.Now()
@@ -35,10 +36,19 @@ func (s *SQLite) AddFeed(
 			return fail(err)
 		}
 
+		created, err = getFeed(ctx, tx, feedDBID)
+		if err != nil {
+			return err
+		}
+
 		return nil
 	}
 
-	return s.withTx(ctx, dbFunc, nil)
+	err := s.withTx(ctx, dbFunc, nil)
+	if err != nil {
+		return nil, err
+	}
+	return created, nil
 }
 
 func insertFeedRow(
