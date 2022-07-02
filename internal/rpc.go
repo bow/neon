@@ -43,7 +43,7 @@ func (r *rpc) AddFeed(
 
 	payload, err := created.Proto()
 	if err != nil {
-		return nil, err
+		return nil, status.Error(codes.Internal, err.Error())
 	}
 
 	rsp := api.AddFeedResponse{Feed: payload}
@@ -64,10 +64,9 @@ func (r *rpc) ListFeeds(
 
 	rsp := api.ListFeedsResponse{}
 	for _, feed := range feeds {
-		// TODO: Use gRPC INTERNAL error for this.
 		proto, err := feed.Proto()
 		if err != nil {
-			return nil, err
+			return nil, status.Error(codes.Internal, err.Error())
 		}
 		rsp.Feeds = append(rsp.Feeds, proto)
 	}
@@ -95,7 +94,7 @@ func (r *rpc) EditFeeds(
 	for _, feed := range feeds {
 		fp, err := feed.Proto()
 		if err != nil {
-			return nil, err
+			return nil, status.Error(codes.Internal, err.Error())
 		}
 		rsp.Feeds = append(rsp.Feeds, fp)
 	}
@@ -136,7 +135,7 @@ func (r *rpc) EditEntries(
 	for _, entry := range entries {
 		ep, err := entry.Proto()
 		if err != nil {
-			return nil, err
+			return nil, status.Error(codes.Internal, err.Error())
 		}
 		rsp.Entries = append(rsp.Entries, ep)
 	}
