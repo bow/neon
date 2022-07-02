@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/bow/courier/internal"
 	"github.com/spf13/cobra"
@@ -15,6 +16,8 @@ const (
 	quietKey    = "quiet"
 )
 
+var rootViper = newViper("")
+
 var rootCmd = cobra.Command{
 	Use:               internal.AppName(),
 	Short:             "Feed reader suite",
@@ -22,10 +25,11 @@ var rootCmd = cobra.Command{
 	SilenceErrors:     true,
 	CompletionOptions: cobra.CompletionOptions{DisableDefaultCmd: true},
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-		logLevel := viper.GetString(logLevelKey)
+
+		logLevel := rootViper.GetString(logLevelKey)
 
 		var ls internal.LogStyle
-		switch rls := viper.GetString(logStyleKey); rls {
+		switch rls := rootViper.GetString(logStyleKey); rls {
 		case "pretty":
 			ls = internal.PrettyLogStyle
 		case "json":
@@ -39,7 +43,7 @@ var rootCmd = cobra.Command{
 			return err
 		}
 
-		if !viper.GetBool(quietKey) {
+		if !rootViper.GetBool(quietKey) {
 			showBanner()
 		}
 
@@ -56,13 +60,13 @@ func init() {
 	pflags := rootCmd.PersistentFlags()
 
 	pflags.BoolP(quietKey, "q", false, "show banner")
-	_ = viper.BindPFlag(quietKey, pflags.Lookup(quietKey))
+	_ = rootViper.BindPFlag(quietKey, pflags.Lookup(quietKey))
 
 	pflags.StringP(logLevelKey, "l", "info", "logging level")
-	_ = viper.BindPFlag(logLevelKey, pflags.Lookup(logLevelKey))
+	_ = rootViper.BindPFlag(logLevelKey, pflags.Lookup(logLevelKey))
 
 	pflags.String(logStyleKey, "pretty", "logging style")
-	_ = viper.BindPFlag(logStyleKey, pflags.Lookup(logStyleKey))
+	_ = rootViper.BindPFlag(logStyleKey, pflags.Lookup(logStyleKey))
 }
 
 func showBanner() {
@@ -73,4 +77,17 @@ func showBanner() {
 \____/\____/\__,_/_/  /_/\___/_/
 
 `)
+}
+
+func newViper(cmdName string) *viper.Viper {
+	v := viper.New()
+	envSuffix := ""
+	if cmdName != "" {
+		envSuffix = fmt.Sprintf("_%s", strings.ReplaceAll(cmdName, "-", "_"))
+	}
+	envPrefix := strings.ToUpper(fmt.Sprintf("%s%s", internal.AppName(), envSuffix))
+	v.SetEnvPrefix(envPrefix)
+	v.AutomaticEnv()
+	v.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
+	return v
 }

@@ -150,7 +150,7 @@ scan-security-ast:  ## Perform static security analysis on the AST.
 
 .PHONY: serve
 serve: bin  ## Compile the binary and run the server in development mode.
-	$(BIN_PATH) serve --db $(DEV_DB_FILE)
+	$(BIN_PATH) serve --db-path $(DEV_DB_FILE)
 
 
 .PHONY: test .coverage.out

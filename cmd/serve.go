@@ -14,7 +14,7 @@ import (
 
 const (
 	addrKey   = "addr"
-	dbNameKey = "db"
+	dbNameKey = "db-path"
 )
 
 var (
@@ -25,17 +25,21 @@ var (
 	defaultAddr = fmt.Sprintf("$XDG_RUNTIME_DIR/%s", relUDS)
 )
 
+var serveCmdName = "serve"
+
+var serveViper = newViper(serveCmdName)
+
 var serveCmd = cobra.Command{
-	Use:   "serve",
+	Use:   serveCmdName,
 	Short: "Start the server",
 	RunE: func(cmd *cobra.Command, args []string) error {
 
-		dbPath, err := resolveDBPath()
+		dbPath, err := resolveDBPath(serveViper)
 		if err != nil {
 			return err
 		}
 
-		addr, err := resolveUDSAddr()
+		addr, err := resolveUDSAddr(serveViper)
 		if err != nil {
 			return err
 		}
@@ -60,14 +64,14 @@ func init() {
 	flags := serveCmd.Flags()
 
 	flags.StringP(addrKey, "a", defaultAddr, "listening address")
-	_ = viper.BindPFlag(addrKey, flags.Lookup(addrKey))
+	_ = serveViper.BindPFlag(addrKey, flags.Lookup(addrKey))
 
 	flags.StringP(dbNameKey, "d", defaultDBName, "data store location")
-	_ = viper.BindPFlag(dbNameKey, flags.Lookup(dbNameKey))
+	_ = serveViper.BindPFlag(dbNameKey, flags.Lookup(dbNameKey))
 }
 
-func resolveDBPath() (dbPath string, err error) {
-	dbPath = viper.GetString(dbNameKey)
+func resolveDBPath(v *viper.Viper) (dbPath string, err error) {
+	dbPath = v.GetString(dbNameKey)
 	if dbPath == defaultDBName {
 		dbPath, err = xdg.DataFile(relDBName)
 		if err != nil {
@@ -77,8 +81,8 @@ func resolveDBPath() (dbPath string, err error) {
 	return dbPath, nil
 }
 
-func resolveUDSAddr() (addr string, err error) {
-	addr = viper.GetString(addrKey)
+func resolveUDSAddr(v *viper.Viper) (addr string, err error) {
+	addr = v.GetString(addrKey)
 	// return string unchanged if tcp is requested.
 	if strings.HasPrefix(strings.ToLower(addr), "tcp") {
 		return addr, nil
