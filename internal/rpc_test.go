@@ -176,6 +176,24 @@ func TestDeleteFeedsOk(t *testing.T) {
 	a.True(proto.Equal(&api.DeleteFeedsResponse{}, rsp))
 }
 
+func TestDeleteFeedsErrNotFound(t *testing.T) {
+	t.Parallel()
+
+	a := assert.New(t)
+	r := require.New(t)
+	client, _, str := setupServerTest(t)
+
+	str.EXPECT().
+		DeleteFeeds(gomock.Any(), []store.DBID{1, 9}).
+		Return(store.FeedNotFoundError{ID: 9})
+
+	req := api.DeleteFeedsRequest{FeedIds: []int32{1, 9}}
+	rsp, err := client.DeleteFeeds(context.Background(), &req)
+
+	r.Nil(rsp)
+	a.EqualError(err, "rpc error: code = NotFound desc = feed with ID=9 not found")
+}
+
 func TestPollFeedsOk(t *testing.T) {
 	t.Parallel()
 
