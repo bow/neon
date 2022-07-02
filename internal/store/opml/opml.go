@@ -44,9 +44,6 @@ type Head struct {
 	Title        *string     `xml:"title"`
 	DateCreated  *rfc822Time `xml:"dateCreated"`
 	DateModified *rfc822Time `xml:"dateModified"`
-	OwnerName    *string     `xml:"ownerName"`
-	OwnerEmail   *string     `xml:"ownerEmail"`
-	OwnerID      *string     `xml:"ownerID"`
 }
 
 // Body is the <body> element of an OPML file.
@@ -63,9 +60,6 @@ type Outline struct {
 
 	Description *string `xml:"description,attr"`
 	HTMLURL     *string `xml:"htmlUrl,attr"`
-	Language    *string `xml:"language,attr"`
-	Title       *string `xml:"title,attr"`
-	Version     *string `xml:"version,attr"`
 }
 
 // rfc822Time wraps the time.Time struct for use in UnmarshalXML.

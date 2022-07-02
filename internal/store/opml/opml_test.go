@@ -93,14 +93,6 @@ func TestParseOkExtended(t *testing.T) {
 	a.Equal(21, head.DateModified.Hour())
 	a.Equal(42, head.DateModified.Minute())
 	a.Equal(48, head.DateModified.Second())
-	//
-	r.NotNil(head.OwnerName)
-	a.Equal("Dave Winer", *head.OwnerName)
-	//
-	r.NotNil(head.OwnerEmail)
-	a.Equal("dave@scripting.com", *head.OwnerEmail)
-	//
-	a.Nil(head.OwnerID)
 
 	r.NotNil(doc.Body)
 	body := doc.Body
@@ -121,12 +113,6 @@ func TestParseOkExtended(t *testing.T) {
 	)
 	r.NotNil(outl0.HTMLURL)
 	a.Equal("http://news.com.com/", *outl0.HTMLURL)
-	r.NotNil(outl0.Language)
-	a.Equal("unknown", *outl0.Language)
-	r.NotNil(outl0.Title)
-	a.Equal("CNET News.com", *outl0.Title)
-	r.NotNil(outl0.Version)
-	a.Equal("RSS2", *outl0.Version)
 	//
 	outl3 := outls[3]
 	a.Equal("NYT > Technology", outl3.Text)
@@ -136,12 +122,6 @@ func TestParseOkExtended(t *testing.T) {
 	a.Equal("", *outl3.Description)
 	r.NotNil(outl3.HTMLURL)
 	a.Equal("http://www.nytimes.com/pages/technology/index.html?partner=rssnyt", *outl3.HTMLURL)
-	r.NotNil(outl3.Language)
-	a.Equal("unknown", *outl3.Language)
-	r.NotNil(outl3.Title)
-	a.Equal("NYT > Technology", *outl3.Title)
-	r.NotNil(outl0.Version)
-	a.Equal("RSS2", *outl0.Version)
 }
 
 func stringp(value string) *string { return &value }
