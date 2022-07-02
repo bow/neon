@@ -98,7 +98,9 @@ message ListFeedsResponse {
   repeated Feed feeds = 1;
 }
 
-message DeleteFeedsRequest {}
+message DeleteFeedsRequest {
+  repeated int32 feed_ids = 1;
+}
 
 message DeleteFeedsResponse {}
 

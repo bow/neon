@@ -11,6 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/proto"
 
 	"github.com/bow/courier/api"
 	"github.com/bow/courier/internal/store"
@@ -160,14 +161,19 @@ func TestEditFeedsOk(t *testing.T) {
 func TestDeleteFeedsOk(t *testing.T) {
 	t.Parallel()
 
+	a := assert.New(t)
 	r := require.New(t)
-	client := newTestClientBuilder(t).Build()
+	client, _, str := setupServerTest(t)
 
-	req := api.DeleteFeedsRequest{}
+	str.EXPECT().
+		DeleteFeeds(gomock.Any(), []store.DBID{1, 9}).
+		Return(nil)
+
+	req := api.DeleteFeedsRequest{FeedIds: []int32{1, 9}}
 	rsp, err := client.DeleteFeeds(context.Background(), &req)
+	r.NoError(err)
 
-	r.Nil(rsp)
-	r.EqualError(err, status.New(codes.Unimplemented, "unimplemented").String())
+	a.True(proto.Equal(&api.DeleteFeedsResponse{}, rsp))
 }
 
 func TestPollFeedsOk(t *testing.T) {

@@ -104,10 +104,20 @@ func (r *rpc) EditFeeds(
 
 // DeleteFeeds satisfies the service API.
 func (r *rpc) DeleteFeeds(
-	_ context.Context,
-	_ *api.DeleteFeedsRequest,
+	ctx context.Context,
+	req *api.DeleteFeedsRequest,
 ) (*api.DeleteFeedsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "unimplemented")
+
+	ids := make([]store.DBID, len(req.GetFeedIds()))
+	for i, id := range req.GetFeedIds() {
+		ids[i] = store.DBID(id)
+	}
+
+	err := r.store.DeleteFeeds(ctx, ids)
+
+	rsp := api.DeleteFeedsResponse{}
+
+	return &rsp, err
 }
 
 // PollFeeds satisfies the service API.
