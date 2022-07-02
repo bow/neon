@@ -77,10 +77,41 @@ jobs:
         with:
           version: v1.46.0
 
+  scan-ast:
+    name: Scan AST security
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Run gosec
+        uses: securego/gosec@master
+        with:
+          args: '-no-fail -fmt sarif -out results.sarif ./...'
+
+  scan-deps:
+    name: Scan dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Install Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: "1.18"
+          check-latest: true
+
+      - name: Export dependencies
+        run: go list -json -deps ./... > go.list
+
+      - name: Run nancy
+        uses: sonatype-nexus-community/nancy-github-action@main
+
   pub-image:
     name: Publish Docker image
     runs-on: ubuntu-latest
-    needs: [lint, test]
+    needs: [lint, test, scan-ast, scan-deps]
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
