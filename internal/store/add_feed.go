@@ -15,6 +15,7 @@ func (s *SQLite) AddFeed(
 	title *string,
 	desc *string,
 	categories []string,
+	isStarred bool,
 ) (*Feed, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -26,7 +27,7 @@ func (s *SQLite) AddFeed(
 
 		now := time.Now()
 
-		feedDBID, err := insertFeedRow(ctx, tx, feed, title, desc, &now)
+		feedDBID, err := insertFeedRow(ctx, tx, feed, title, desc, isStarred, &now)
 		if err != nil {
 			return fail(err)
 		}
@@ -57,6 +58,7 @@ func insertFeedRow(
 	feed *gofeed.Feed,
 	title *string,
 	desc *string,
+	isStarred bool,
 	subTime *time.Time,
 ) (DBID, error) {
 
@@ -68,10 +70,11 @@ func insertFeedRow(
 				description,
 				feed_url,
 				site_url,
+				is_starred,
 				update_time,
 				subscription_time
 			)
-			VALUES (?, ?, ?, ?, ?, ?)
+			VALUES (?, ?, ?, ?, ?, ?, ?)
 `
 	stmt1, err := tx.PrepareContext(ctx, sql1)
 	if err != nil {
@@ -85,6 +88,7 @@ func insertFeedRow(
 		nullIfTextEmpty(resolve(desc, feed.Description)),
 		feed.FeedLink,
 		nullIfTextEmpty(feed.Link),
+		isStarred,
 		serializeTime(resolveFeedUpdateTime(feed)),
 		serializeTime(subTime),
 	)

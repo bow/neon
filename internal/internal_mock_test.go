@@ -75,18 +75,18 @@ func (m *MockFeedStore) EXPECT() *MockFeedStoreMockRecorder {
 }
 
 // AddFeed mocks base method.
-func (m *MockFeedStore) AddFeed(ctx context.Context, feed *gofeed.Feed, title, desc *string, categories []string) (*store.Feed, error) {
+func (m *MockFeedStore) AddFeed(ctx context.Context, feed *gofeed.Feed, title, desc *string, categories []string, isStarred bool) (*store.Feed, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "AddFeed", ctx, feed, title, desc, categories)
+	ret := m.ctrl.Call(m, "AddFeed", ctx, feed, title, desc, categories, isStarred)
 	ret0, _ := ret[0].(*store.Feed)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // AddFeed indicates an expected call of AddFeed.
-func (mr *MockFeedStoreMockRecorder) AddFeed(ctx, feed, title, desc, categories interface{}) *gomock.Call {
+func (mr *MockFeedStoreMockRecorder) AddFeed(ctx, feed, title, desc, categories, isStarred interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddFeed", reflect.TypeOf((*MockFeedStore)(nil).AddFeed), ctx, feed, title, desc, categories)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddFeed", reflect.TypeOf((*MockFeedStore)(nil).AddFeed), ctx, feed, title, desc, categories, isStarred)
 }
 
 // DeleteFeeds mocks base method.

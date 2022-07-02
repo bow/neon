@@ -24,7 +24,14 @@ func TestAddFeedOkMinimal(t *testing.T) {
 	}
 
 	existf := func() bool {
-		return st.rowExists(feedExistSQL, feed.Title, feed.Description, feed.FeedLink, feed.Link)
+		return st.rowExists(
+			feedExistSQL,
+			feed.Title,
+			feed.Description,
+			feed.FeedLink,
+			feed.Link,
+			false,
+		)
 	}
 
 	a.Equal(0, st.countFeeds())
@@ -32,7 +39,7 @@ func TestAddFeedOkMinimal(t *testing.T) {
 	a.Equal(0, st.countFeedCategories())
 	a.False(existf())
 
-	created, err := st.AddFeed(context.Background(), &feed, nil, nil, nil)
+	created, err := st.AddFeed(context.Background(), &feed, nil, nil, nil, false)
 	r.NoError(err)
 
 	a.Equal(feed.Title, created.Title)
@@ -40,6 +47,7 @@ func TestAddFeedOkMinimal(t *testing.T) {
 	a.Equal(feed.Link, created.SiteURL.String)
 	a.Equal(feed.FeedLink, created.FeedURL)
 	a.Empty([]string(created.Categories))
+	a.False(created.IsStarred)
 
 	a.Equal(1, st.countFeeds())
 	a.Equal(0, st.countEntries(feed.FeedLink))
@@ -81,13 +89,21 @@ func TestAddFeedOkExtended(t *testing.T) {
 		title       = "user-title"
 		description = "user-description"
 		categories  = []string{"cat-1", "cat-2", "cat-3"}
+		isStarred   = true
 	)
 
 	existf1 := func() bool {
-		return st.rowExists(feedExistSQL, feed.Title, feed.Description, feed.FeedLink, feed.Link)
+		return st.rowExists(
+			feedExistSQL,
+			feed.Title,
+			feed.Description,
+			feed.FeedLink,
+			feed.Link,
+			true,
+		)
 	}
 	existf2 := func() bool {
-		return st.rowExists(feedExistSQL, title, description, feed.FeedLink, feed.Link)
+		return st.rowExists(feedExistSQL, title, description, feed.FeedLink, feed.Link, true)
 	}
 	existe := func(item *gofeed.Item) bool {
 		return st.rowExists(feedEntryExistSQL, feed.FeedLink, item.Title, item.Link)
@@ -101,7 +117,14 @@ func TestAddFeedOkExtended(t *testing.T) {
 	a.False(existe(feed.Items[0]))
 	a.False(existe(feed.Items[1]))
 
-	created, err := st.AddFeed(context.Background(), &feed, &title, &description, categories)
+	created, err := st.AddFeed(
+		context.Background(),
+		&feed,
+		&title,
+		&description,
+		categories,
+		isStarred,
+	)
 	r.NoError(err)
 
 	a.Equal(title, created.Title)
@@ -109,6 +132,7 @@ func TestAddFeedOkExtended(t *testing.T) {
 	a.Equal(feed.Link, created.SiteURL.String)
 	a.Equal(feed.FeedLink, created.FeedURL)
 	a.Equal(categories, []string(created.Categories))
+	a.True(created.IsStarred)
 
 	a.Equal(1, st.countFeeds())
 	a.Equal(2, st.countEntries(feed.FeedLink))
@@ -149,11 +173,21 @@ func TestAddFeedOkURLExists(t *testing.T) {
 			},
 		},
 	}
-	var categories = []string{"cat-0"}
+	var (
+		categories = []string{"cat-0"}
+		isStarred  = true
+	)
 	st.addFeedWithURL(feed.FeedLink)
 
 	existf := func() bool {
-		return st.rowExists(feedExistSQL, feed.Title, feed.Description, feed.FeedLink, feed.Link)
+		return st.rowExists(
+			feedExistSQL,
+			feed.Title,
+			feed.Description,
+			feed.FeedLink,
+			feed.Link,
+			isStarred,
+		)
 	}
 	existe := func(item *gofeed.Item) bool {
 		return st.rowExists(feedEntryExistSQL, feed.FeedLink, item.Title, item.Link)
@@ -166,7 +200,7 @@ func TestAddFeedOkURLExists(t *testing.T) {
 	a.False(existe(feed.Items[0]))
 	a.False(existe(feed.Items[1]))
 
-	created, err := st.AddFeed(context.Background(), &feed, nil, nil, categories)
+	created, err := st.AddFeed(context.Background(), &feed, nil, nil, categories, true)
 	r.NoError(err)
 
 	a.Equal(t.Name(), created.Title)
@@ -174,6 +208,7 @@ func TestAddFeedOkURLExists(t *testing.T) {
 	a.Equal("", created.SiteURL.String)
 	a.Equal(feed.FeedLink, created.FeedURL)
 	a.Equal(categories, []string(created.Categories))
+	a.False(created.IsStarred)
 
 	a.Equal(1, st.countFeeds())
 	a.Equal(2, st.countEntries(feed.FeedLink))
@@ -194,6 +229,7 @@ const feedExistSQL = `
 		AND description = ?
 		AND feed_url = ?
 		AND site_url = ?
+		AND is_starred = ?
 `
 
 // Query for checking that an entry linked to a given feed URL exists.

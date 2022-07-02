@@ -36,7 +36,14 @@ func (r *rpc) AddFeed(
 		return nil, err
 	}
 
-	created, err := r.store.AddFeed(ctx, feed, req.Title, req.Description, req.GetCategories())
+	created, err := r.store.AddFeed(
+		ctx,
+		feed,
+		req.Title,
+		req.Description,
+		req.GetCategories(),
+		req.GetIsStarred(),
+	)
 	if err != nil {
 		return nil, err
 	}

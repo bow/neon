@@ -30,6 +30,7 @@ func TestAddFeedOk(t *testing.T) {
 		Title:       pointer("user-title"),
 		Description: pointer("user-description"),
 		Categories:  []string{"cat-1", "cat-2", "cat-3"},
+		IsStarred:   pointer(true),
 	}
 	feed := gofeed.Feed{
 		Title:       "feed-title-original",
@@ -60,13 +61,21 @@ func TestAddFeedOk(t *testing.T) {
 		SiteURL:     store.WrapNullString(feed.Link),
 		FeedURL:     feed.FeedLink,
 		Subscribed:  "2021-07-01T23:33:06.156+02:00",
+		IsStarred:   true,
 	}
 	prs.EXPECT().
 		ParseURLWithContext(req.Url, gomock.Any()).
 		Return(&feed, nil)
 
 	str.EXPECT().
-		AddFeed(gomock.Any(), &feed, req.Title, req.Description, req.Categories).
+		AddFeed(
+			gomock.Any(),
+			&feed,
+			req.Title,
+			req.Description,
+			req.Categories,
+			req.GetIsStarred(),
+		).
 		Return(&created, nil)
 
 	rsp, err := client.AddFeed(context.Background(), &req)
@@ -76,6 +85,7 @@ func TestAddFeedOk(t *testing.T) {
 	a.Equal(created.Description.String, *rsp.Feed.Description)
 	a.Equal(created.SiteURL.String, *rsp.Feed.SiteUrl)
 	a.Equal(created.FeedURL, rsp.Feed.FeedUrl)
+	a.Equal(created.IsStarred, rsp.Feed.IsStarred)
 }
 
 func TestListFeedsOk(t *testing.T) {

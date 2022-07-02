@@ -21,6 +21,7 @@ type Feed struct {
 	Subscribed  string
 	Updated     sql.NullString
 	Categories  jsonArrayString
+	IsStarred   bool
 	Entries     []*Entry
 }
 
@@ -32,6 +33,7 @@ func (f *Feed) Proto() (*api.Feed, error) {
 		SiteUrl:     unwrapNullString(f.SiteURL),
 		Categories:  []string(f.Categories),
 		Description: unwrapNullString(f.Description),
+		IsStarred:   f.IsStarred,
 	}
 
 	var err error
