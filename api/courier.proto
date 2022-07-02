@@ -44,7 +44,7 @@ message Feed {
   optional string description = 6;
   optional google.protobuf.Timestamp update_time = 7;
   google.protobuf.Timestamp subscription_time = 8;
-  repeated Entry entries = 9;
+  repeated Entry entries = 15;
 }
 
 message Entry {
