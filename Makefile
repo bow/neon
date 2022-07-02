@@ -135,9 +135,18 @@ proto: $(PROTO_FILES) ## Generate code from protobuf.
 
 
 .PHONY: scan-security
-scan-security:  ## Perform static security analysis and scan dependencies.
-	gosec ./...
+scan-security:  scan-security-ast scan-security-deps  ## Perform all security analyses.
+
+
+.PHONY: scan-security-deps
+scan-security-deps:  ## Scan dependencies for reported vulnerabilities.
 	go list -json -deps ./... | nancy sleuth
+
+
+.PHONY: scan-security-ast
+scan-security-ast:  ## Perform static security analysis on the AST.
+	gosec ./...
+
 
 .PHONY: serve
 serve: bin  ## Compile the binary and run the server in development mode.
