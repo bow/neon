@@ -182,13 +182,13 @@ func (b *Builder) Build() (*server, error) {
 
 	grpcs := grpc.NewServer(
 		middleware.WithUnaryServerChain(
-			tags.UnaryServerInterceptor(),
 			storeErrorUnaryServerInterceptor,
+			tags.UnaryServerInterceptor(),
 			logging.UnaryServerInterceptor(grpczerolog.InterceptorLogger(b.logger)),
 		),
 		middleware.WithStreamServerChain(
-			tags.StreamServerInterceptor(),
 			storeErrorStreamServerInterceptor,
+			tags.StreamServerInterceptor(),
 			logging.StreamServerInterceptor(grpczerolog.InterceptorLogger(b.logger)),
 		),
 	)
