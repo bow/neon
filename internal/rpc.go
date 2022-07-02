@@ -8,7 +8,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	"github.com/bow/courier/api"
-	st "github.com/bow/courier/internal/store"
+	"github.com/bow/courier/internal/store"
 )
 
 // rpc implements the Courier rpc API.
@@ -19,8 +19,8 @@ type rpc struct {
 	parser FeedParser
 }
 
-func newRPC(grpcs *grpc.Server, store FeedStore, parser FeedParser) *rpc {
-	svc := rpc{store: store, parser: parser}
+func newRPC(grpcs *grpc.Server, str FeedStore, prs FeedParser) *rpc {
+	svc := rpc{store: str, parser: prs}
 	api.RegisterCourierServer(grpcs, &svc)
 	return &svc
 }
@@ -80,9 +80,9 @@ func (r *rpc) EditFeeds(
 	req *api.EditFeedsRequest,
 ) (*api.EditFeedsResponse, error) {
 
-	ops := make([]*st.FeedEditOp, len(req.Ops))
+	ops := make([]*store.FeedEditOp, len(req.Ops))
 	for i, op := range req.GetOps() {
-		ops[i] = st.NewFeedEditOp(op)
+		ops[i] = store.NewFeedEditOp(op)
 	}
 
 	feeds, err := r.store.EditFeeds(ctx, ops)
@@ -121,9 +121,9 @@ func (r *rpc) EditEntries(
 	req *api.EditEntriesRequest,
 ) (*api.EditEntriesResponse, error) {
 
-	ops := make([]*st.EntryEditOp, len(req.Ops))
+	ops := make([]*store.EntryEditOp, len(req.Ops))
 	for i, op := range req.GetOps() {
-		ops[i] = st.NewEntryEditOp(op)
+		ops[i] = store.NewEntryEditOp(op)
 	}
 
 	entries, err := r.store.EditEntries(ctx, ops)

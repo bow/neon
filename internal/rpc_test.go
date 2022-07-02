@@ -21,7 +21,7 @@ func TestAddFeedOk(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	client, pr, st := setupServerTest(t)
+	client, prs, str := setupServerTest(t)
 
 	req := api.AddFeedRequest{
 		Url:         "http://foo.com/feed.xml",
@@ -59,11 +59,11 @@ func TestAddFeedOk(t *testing.T) {
 		FeedURL:     feed.FeedLink,
 		Subscribed:  "2021-07-01T23:33:06.156+02:00",
 	}
-	pr.EXPECT().
+	prs.EXPECT().
 		ParseURLWithContext(req.Url, gomock.Any()).
 		Return(&feed, nil)
 
-	st.EXPECT().
+	str.EXPECT().
 		AddFeed(gomock.Any(), &feed, req.Title, req.Description, req.Categories).
 		Return(&created, nil)
 
@@ -81,7 +81,7 @@ func TestListFeedsOk(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	client, _, st := setupServerTest(t)
+	client, _, str := setupServerTest(t)
 
 	req := api.ListFeedsRequest{}
 	feeds := []*store.Feed{
@@ -98,7 +98,7 @@ func TestListFeedsOk(t *testing.T) {
 			Updated:    store.WrapNullString("2022-04-20T16:32:30.760+02:00"),
 		},
 	}
-	st.EXPECT().
+	str.EXPECT().
 		ListFeeds(gomock.Any()).
 		Return(feeds, nil)
 
@@ -114,7 +114,7 @@ func TestEditFeedsOk(t *testing.T) {
 
 	r := require.New(t)
 	a := assert.New(t)
-	client, _, st := setupServerTest(t)
+	client, _, str := setupServerTest(t)
 
 	ops := []*store.FeedEditOp{
 		{DBID: 14, Title: pointer("newer")},
@@ -125,7 +125,7 @@ func TestEditFeedsOk(t *testing.T) {
 		{DBID: 58, Categories: []string{"x", "y"}, Subscribed: "2022-06-30T00:53:58.135+02:00"},
 	}
 
-	st.EXPECT().
+	str.EXPECT().
 		EditFeeds(gomock.Any(), gomock.AssignableToTypeOf(ops)).
 		Return(feeds, nil)
 
@@ -204,7 +204,7 @@ func TestEditEntriesOk(t *testing.T) {
 
 	r := require.New(t)
 	a := assert.New(t)
-	client, _, st := setupServerTest(t)
+	client, _, str := setupServerTest(t)
 
 	ops := []*store.EntryEditOp{
 		{DBID: 37, IsRead: pointer(true)},
@@ -215,7 +215,7 @@ func TestEditEntriesOk(t *testing.T) {
 		{DBID: 49, IsRead: false},
 	}
 
-	st.EXPECT().
+	str.EXPECT().
 		EditEntries(gomock.Any(), ops).
 		Return(entries, nil)
 

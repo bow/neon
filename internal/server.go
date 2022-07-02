@@ -22,7 +22,7 @@ import (
 	"google.golang.org/grpc/reflection"
 
 	"github.com/bow/courier/api"
-	st "github.com/bow/courier/internal/store"
+	"github.com/bow/courier/internal/store"
 )
 
 const (
@@ -132,8 +132,8 @@ func (b *ServerBuilder) StorePath(path string) *ServerBuilder {
 	return b
 }
 
-func (b *ServerBuilder) Store(store FeedStore) *ServerBuilder {
-	b.store = store
+func (b *ServerBuilder) Store(str FeedStore) *ServerBuilder {
+	b.store = str
 	b.storePath = ""
 	return b
 }
@@ -167,9 +167,9 @@ func (b *ServerBuilder) Build() (*server, error) {
 		return nil, err
 	}
 
-	store := b.store
+	str := b.store
 	if sp := b.storePath; sp != "" {
-		if store, err = st.NewSQLite(sp); err != nil {
+		if str, err = store.NewSQLite(sp); err != nil {
 			return nil, fmt.Errorf("server build: %w", err)
 		}
 	}
@@ -189,7 +189,7 @@ func (b *ServerBuilder) Build() (*server, error) {
 			logging.StreamServerInterceptor(grpczerolog.InterceptorLogger(b.logger)),
 		),
 	)
-	_ = newRPC(grpcs, store, parser)
+	_ = newRPC(grpcs, str, parser)
 
 	s := newServer(lis, grpcs)
 
