@@ -64,8 +64,8 @@ func TestDeleteFeedsOkSingle(t *testing.T) {
 	}
 	keys := st.addFeeds(dbFeeds)
 	r.Equal(2, st.countFeeds())
-	r.Equal(2, st.countEntries(dbFeeds[0].FeedURL))
-	r.Equal(1, st.countEntries(dbFeeds[1].FeedURL))
+	a.Equal(2, st.countEntries(dbFeeds[0].FeedURL))
+	a.Equal(1, st.countEntries(dbFeeds[1].FeedURL))
 
 	existf := func(title string) bool {
 		return st.rowExists(`SELECT * FROM feeds WHERE title = ?`, title)
@@ -122,9 +122,9 @@ func TestDeleteFeedsOkMultiple(t *testing.T) {
 	}
 	keys := st.addFeeds(dbFeeds)
 	r.Equal(3, st.countFeeds())
-	r.Equal(2, st.countEntries(dbFeeds[0].FeedURL))
-	r.Equal(3, st.countEntries(dbFeeds[1].FeedURL))
-	r.Equal(1, st.countEntries(dbFeeds[2].FeedURL))
+	a.Equal(2, st.countEntries(dbFeeds[0].FeedURL))
+	a.Equal(3, st.countEntries(dbFeeds[1].FeedURL))
+	a.Equal(1, st.countEntries(dbFeeds[2].FeedURL))
 
 	existf := func(title string) bool {
 		return st.rowExists(`SELECT * FROM feeds WHERE title = ?`, title)
@@ -136,10 +136,10 @@ func TestDeleteFeedsOkMultiple(t *testing.T) {
 
 	err := st.DeleteFeeds(context.Background(), []DBID{keys["Feed A"].DBID, keys["Feed P"].DBID})
 	r.NoError(err)
-	r.Equal(1, st.countFeeds())
-	r.Equal(0, st.countEntries(dbFeeds[0].FeedURL))
-	r.Equal(0, st.countEntries(dbFeeds[1].FeedURL))
-	r.Equal(1, st.countEntries(dbFeeds[2].FeedURL))
+	a.Equal(1, st.countFeeds())
+	a.Equal(0, st.countEntries(dbFeeds[0].FeedURL))
+	a.Equal(0, st.countEntries(dbFeeds[1].FeedURL))
+	a.Equal(1, st.countEntries(dbFeeds[2].FeedURL))
 
 	a.False(existf("Feed A"))
 	a.False(existf("Feed P"))
