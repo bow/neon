@@ -1,4 +1,4 @@
-package internal
+package server
 
 import (
 	"errors"
@@ -22,6 +22,7 @@ import (
 	"google.golang.org/grpc/reflection"
 
 	"github.com/bow/courier/api"
+	"github.com/bow/courier/internal"
 	"github.com/bow/courier/internal/store"
 )
 
@@ -108,47 +109,47 @@ func (s *server) start() <-chan error {
 	return ch
 }
 
-type ServerBuilder struct {
+type Builder struct {
 	addr      string
-	store     FeedStore
+	store     internal.FeedStore
 	storePath string
-	parser    FeedParser
+	parser    internal.FeedParser
 	logger    zerolog.Logger
 }
 
-func NewServerBuilder() *ServerBuilder {
-	builder := ServerBuilder{logger: zerolog.Nop()}
+func NewBuilder() *Builder {
+	builder := Builder{logger: zerolog.Nop()}
 	return &builder
 }
 
-func (b *ServerBuilder) Address(addr string) *ServerBuilder {
+func (b *Builder) Address(addr string) *Builder {
 	b.addr = addr
 	return b
 }
 
-func (b *ServerBuilder) StorePath(path string) *ServerBuilder {
+func (b *Builder) StorePath(path string) *Builder {
 	b.storePath = path
 	b.store = nil
 	return b
 }
 
-func (b *ServerBuilder) Store(str FeedStore) *ServerBuilder {
+func (b *Builder) Store(str internal.FeedStore) *Builder {
 	b.store = str
 	b.storePath = ""
 	return b
 }
 
-func (b *ServerBuilder) Parser(parser FeedParser) *ServerBuilder {
+func (b *Builder) Parser(parser internal.FeedParser) *Builder {
 	b.parser = parser
 	return b
 }
 
-func (b *ServerBuilder) Logger(logger zerolog.Logger) *ServerBuilder {
+func (b *Builder) Logger(logger zerolog.Logger) *Builder {
 	b.logger = logger
 	return b
 }
 
-func (b *ServerBuilder) Build() (*server, error) {
+func (b *Builder) Build() (*server, error) {
 
 	var netw string
 	switch addr := b.addr; {

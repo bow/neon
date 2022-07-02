@@ -1,4 +1,4 @@
-package internal
+package server
 
 import (
 	"context"
@@ -15,6 +15,7 @@ import (
 	"google.golang.org/protobuf/proto"
 
 	"github.com/bow/courier/api"
+	"github.com/bow/courier/internal"
 	"github.com/bow/courier/internal/store"
 )
 
@@ -332,10 +333,10 @@ func TestGetInfoOk(t *testing.T) {
 	r.NotNil(rsp)
 
 	want := &api.GetInfoResponse{
-		Name:      AppName(),
-		Version:   Version(),
-		GitCommit: GitCommit(),
-		BuildTime: BuildTime(),
+		Name:      internal.AppName(),
+		Version:   internal.Version(),
+		GitCommit: internal.GitCommit(),
+		BuildTime: internal.BuildTime(),
 	}
 	a.Equal(want.Name, rsp.Name)
 	a.Equal(want.Version, rsp.Version)

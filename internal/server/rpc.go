@@ -1,4 +1,4 @@
-package internal
+package server
 
 import (
 	"context"
@@ -8,6 +8,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	"github.com/bow/courier/api"
+	"github.com/bow/courier/internal"
 	"github.com/bow/courier/internal/store"
 )
 
@@ -15,11 +16,11 @@ import (
 type rpc struct {
 	api.UnimplementedCourierServer
 
-	store  FeedStore
-	parser FeedParser
+	store  internal.FeedStore
+	parser internal.FeedParser
 }
 
-func newRPC(grpcs *grpc.Server, str FeedStore, prs FeedParser) *rpc {
+func newRPC(grpcs *grpc.Server, str internal.FeedStore, prs internal.FeedParser) *rpc {
 	svc := rpc{store: str, parser: prs}
 	api.RegisterCourierServer(grpcs, &svc)
 	return &svc
@@ -183,10 +184,10 @@ func (r *rpc) GetInfo(
 ) (*api.GetInfoResponse, error) {
 
 	rsp := api.GetInfoResponse{
-		Name:      AppName(),
-		Version:   Version(),
-		GitCommit: GitCommit(),
-		BuildTime: BuildTime(),
+		Name:      internal.AppName(),
+		Version:   internal.Version(),
+		GitCommit: internal.GitCommit(),
+		BuildTime: internal.BuildTime(),
 	}
 
 	return &rsp, nil

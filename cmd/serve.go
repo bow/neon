@@ -9,7 +9,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	"github.com/bow/courier/internal"
+	"github.com/bow/courier/internal/server"
 )
 
 const (
@@ -44,7 +44,7 @@ var serveCmd = cobra.Command{
 			return err
 		}
 
-		server, err := internal.NewServerBuilder().
+		server, err := server.NewBuilder().
 			Address(addr).
 			StorePath(dbPath).
 			Logger(zlog.Logger.With().Logger()).

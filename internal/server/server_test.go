@@ -1,4 +1,4 @@
-package internal
+package server
 
 import (
 	"context"
@@ -15,21 +15,22 @@ import (
 	"google.golang.org/grpc/health/grpc_health_v1"
 
 	"github.com/bow/courier/api"
+	"github.com/bow/courier/internal"
 )
 
-func defaultTestServerBuilder(t *testing.T) *ServerBuilder {
+func defaultTestServerBuilder(t *testing.T) *Builder {
 	t.Helper()
 
-	return NewServerBuilder().
+	return NewBuilder().
 		Address("file://" + t.TempDir() + "/courier.socket").
-		Store(NewMockFeedStore(gomock.NewController(t))).
-		Parser(NewMockFeedParser(gomock.NewController(t))).
+		Store(internal.NewMockFeedStore(gomock.NewController(t))).
+		Parser(internal.NewMockFeedParser(gomock.NewController(t))).
 		Logger(zerolog.Nop())
 }
 
 type testClientBuilder struct {
 	t             *testing.T
-	serverBuilder *ServerBuilder
+	serverBuilder *Builder
 	dialOpts      []grpc.DialOption
 }
 
@@ -43,12 +44,12 @@ func (tcb *testClientBuilder) DialOpts(opts ...grpc.DialOption) *testClientBuild
 	return tcb
 }
 
-func (tcb *testClientBuilder) ServerParser(parser FeedParser) *testClientBuilder {
+func (tcb *testClientBuilder) ServerParser(parser internal.FeedParser) *testClientBuilder {
 	tcb.serverBuilder = tcb.serverBuilder.Parser(parser)
 	return tcb
 }
 
-func (tcb *testClientBuilder) ServerStore(store FeedStore) *testClientBuilder {
+func (tcb *testClientBuilder) ServerStore(store internal.FeedStore) *testClientBuilder {
 	tcb.serverBuilder = tcb.serverBuilder.Store(store)
 	return tcb
 }
@@ -81,7 +82,7 @@ func (tcb *testClientBuilder) Build() api.CourierClient {
 	return client
 }
 
-func newTestServer(t *testing.T, b *ServerBuilder) (*server, net.Addr) {
+func newTestServer(t *testing.T, b *Builder) (*server, net.Addr) {
 	t.Helper()
 
 	r := require.New(t)
@@ -141,11 +142,17 @@ func newTestClient(
 }
 
 // setupServerTest is a shortcut method for creating server tests through a client.
-func setupServerTest(t *testing.T) (api.CourierClient, *MockFeedParser, *MockFeedStore) {
+func setupServerTest(
+	t *testing.T,
+) (
+	api.CourierClient,
+	*internal.MockFeedParser,
+	*internal.MockFeedStore,
+) {
 	t.Helper()
 
-	parser := NewMockFeedParser(gomock.NewController(t))
-	store := NewMockFeedStore(gomock.NewController(t))
+	parser := internal.NewMockFeedParser(gomock.NewController(t))
+	store := internal.NewMockFeedStore(gomock.NewController(t))
 
 	clb := newTestClientBuilder(t).ServerParser(parser).ServerStore(store)
 
@@ -153,7 +160,7 @@ func setupServerTest(t *testing.T) (api.CourierClient, *MockFeedParser, *MockFee
 }
 
 func TestServerBuilderErrInvalidAddr(t *testing.T) {
-	b := NewServerBuilder().Address("invalid")
+	b := NewBuilder().Address("invalid")
 	srv, err := b.Build()
 	assert.Nil(t, srv)
 	assert.EqualError(t, err, "unexpected address type: invalid")
