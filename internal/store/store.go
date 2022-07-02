@@ -22,9 +22,11 @@ type SQLite struct {
 
 func NewSQLite(filename string) (*SQLite, error) {
 
-	log.Debug().Msgf("preparing '%s' as data store", filename)
+	log.Info().Msgf("setting %s as the data store", filename)
+
 	fail := failF("NewSQLiteStore")
 
+	log.Debug().Msgf("migrating data store to latest")
 	m, err := migration.New(filename)
 	if err != nil {
 		return nil, fail(err)
