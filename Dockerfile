@@ -25,5 +25,8 @@ LABEL org.opencontainers.image.licenses="BSD-3-Clause"
 
 COPY --from=builder /src/bin/courier /bin/courier
 
+RUN mkdir -p /var/data/
+ENV COURIER_SERVE_DB_PATH=/var/data/courier.db
+
 WORKDIR /runtime
 ENTRYPOINT ["courier"]
