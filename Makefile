@@ -135,7 +135,7 @@ proto: $(PROTO_FILES) ## Generate code from protobuf.
 
 
 .PHONY: scan-security
-scan-security:  ## Perform static security analysis.
+scan-security:  ## Perform static security analysis and scan dependencies.
 	gosec ./...
 	go list -json -deps ./... | nancy sleuth
 
