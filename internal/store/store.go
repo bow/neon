@@ -13,8 +13,6 @@ import (
 	"github.com/bow/courier/internal/migration"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/rs/zerolog/log"
-	"modernc.org/sqlite"
-	sqlite3 "modernc.org/sqlite/lib"
 )
 
 type DBID = int
@@ -85,20 +83,6 @@ func (s *SQLite) withTx(
 	return err
 }
 
-// isUniqueErr returns true if the given error represents or wraps an SQLite unique constraint
-// violation.
-func isUniqueErr(err error, txtMatch string) bool {
-	serr, matches := err.(*sqlite.Error)
-	if matches {
-		return serr.Code() == sqlite3.SQLITE_CONSTRAINT_UNIQUE &&
-			(txtMatch == "" || strings.Contains(serr.Error(), txtMatch))
-	}
-	if ierr := errors.Unwrap(err); ierr != nil {
-		return isUniqueErr(ierr, txtMatch)
-	}
-	return false
-}
-
 // WrapNullString wraps the given string into an sql.NullString value. An empty string input is
 // considered a database NULL value.
 func WrapNullString(v string) sql.NullString {
@@ -141,13 +125,6 @@ func (arr *jsonArrayString) Scan(value any) error {
 	}
 
 	return json.Unmarshal(bv, arr)
-}
-
-// failF creates a function for wrapping other error functions.
-func failF(funcName string) func(error) error {
-	return func(err error) error {
-		return fmt.Errorf("%s: %w", funcName, err)
-	}
 }
 
 // nullIf returns nil if the given string is empty or only contains whitespaces, otherwise
