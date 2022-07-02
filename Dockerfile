@@ -27,6 +27,7 @@ COPY --from=builder /src/bin/courier /bin/courier
 
 RUN mkdir -p /var/data/
 ENV COURIER_SERVE_DB_PATH=/var/data/courier.db
+ENV COURIER_SERVE_ADDR=tcp://0.0.0.0:7000
 
 WORKDIR /runtime
 ENTRYPOINT ["courier"]
