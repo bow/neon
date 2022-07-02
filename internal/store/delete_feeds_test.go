@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestDeleteFeedsEmpty(t *testing.T) {
+func TestDeleteFeedsOkEmpty(t *testing.T) {
 	t.Parallel()
 
 	a := assert.New(t)
@@ -36,7 +36,7 @@ func TestDeleteFeedsEmpty(t *testing.T) {
 	a.Equal(2, st.countFeeds())
 }
 
-func TestDeleteFeedsSingle(t *testing.T) {
+func TestDeleteFeedsOkSingle(t *testing.T) {
 	t.Parallel()
 
 	a := assert.New(t)
@@ -76,15 +76,15 @@ func TestDeleteFeedsSingle(t *testing.T) {
 
 	err := st.DeleteFeeds(context.Background(), []DBID{keys["Feed X"].DBID})
 	r.NoError(err)
-	r.Equal(1, st.countFeeds())
-	r.Equal(2, st.countEntries(dbFeeds[0].FeedURL))
-	r.Equal(0, st.countEntries(dbFeeds[1].FeedURL))
+	a.Equal(1, st.countFeeds())
+	a.Equal(2, st.countEntries(dbFeeds[0].FeedURL))
+	a.Equal(0, st.countEntries(dbFeeds[1].FeedURL))
 
 	a.True(existf("Feed A"))
 	a.False(existf("Feed X"))
 }
 
-func TestDeleteFeedsMultiple(t *testing.T) {
+func TestDeleteFeedsOkMultiple(t *testing.T) {
 	t.Parallel()
 
 	a := assert.New(t)
