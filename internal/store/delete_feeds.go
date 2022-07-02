@@ -3,7 +3,6 @@ package store
 import (
 	"context"
 	"database/sql"
-	"fmt"
 )
 
 func (s *SQLite) DeleteFeeds(ctx context.Context, ids []DBID) error {
@@ -30,8 +29,7 @@ func (s *SQLite) DeleteFeeds(ctx context.Context, ids []DBID) error {
 				return fail(err)
 			}
 			if n != int64(1) {
-				// TODO: Use gRPC status code.
-				return fmt.Errorf("feed with ID=%d not found", id)
+				return FeedNotFoundError{id}
 			}
 			return nil
 		}

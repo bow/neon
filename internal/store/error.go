@@ -9,6 +9,18 @@ import (
 	sqlite3 "modernc.org/sqlite/lib"
 )
 
+type FeedNotFoundError struct{ ID DBID }
+
+func (e FeedNotFoundError) Error() string {
+	return fmt.Sprintf("feed with ID=%d not found", e.ID)
+}
+
+type EntryNotFoundError struct{ ID DBID }
+
+func (e EntryNotFoundError) Error() string {
+	return fmt.Sprintf("entry with ID=%d not found", e.ID)
+}
+
 // isUniqueErr returns true if the given error represents or wraps an SQLite unique constraint
 // violation.
 func isUniqueErr(err error, txtMatch string) bool {

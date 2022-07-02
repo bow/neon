@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 	"strings"
 	"sync"
 
@@ -107,7 +106,11 @@ func setTableField[T any](
 	tableName, columnName string,
 ) func(context.Context, *sql.Tx, DBID, *T) error {
 
-	return func(ctx context.Context, tx *sql.Tx, feedDBID DBID, fieldValue *T) error {
+	if tableName != "feeds" && tableName != "entries" {
+		panic("unexpected tableName: " + tableName)
+	}
+
+	return func(ctx context.Context, tx *sql.Tx, id DBID, fieldValue *T) error {
 
 		// nil pointers mean no value is given and so no updates are needed.
 		if fieldValue == nil {
@@ -122,13 +125,18 @@ func setTableField[T any](
 		defer stmt1.Close()
 
 		var updatedID DBID
-		err = stmt1.QueryRowContext(ctx, feedDBID, fieldValue).Scan(&updatedID)
+		err = stmt1.QueryRowContext(ctx, id, fieldValue).Scan(&updatedID)
 		if err != nil {
 			return err
 		}
 		if updatedID == 0 {
-			// TODO: Wrap in proper gRPC errors.
-			return fmt.Errorf("id %d in '%s' does not exist", updatedID, tableName)
+			switch tableName {
+			case "feeds":
+				return FeedNotFoundError{id}
+			case "entries":
+				return EntryNotFoundError{id}
+			}
+			panic("unexpected tableName: " + tableName)
 		}
 		return nil
 	}
