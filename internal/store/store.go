@@ -7,9 +7,10 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/bow/courier/internal/migration"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/rs/zerolog/log"
+
+	"github.com/bow/courier/internal/store/migration"
 )
 
 type DBID = int
