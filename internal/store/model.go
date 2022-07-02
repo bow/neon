@@ -64,6 +64,7 @@ type FeedEditOp struct {
 	Title       *string
 	Description *string
 	Categories  *[]string
+	IsStarred   *bool
 }
 
 func NewFeedEditOp(proto *api.EditFeedsRequest_Op) *FeedEditOp {
@@ -72,6 +73,7 @@ func NewFeedEditOp(proto *api.EditFeedsRequest_Op) *FeedEditOp {
 		Title:       proto.Fields.Title,
 		Description: proto.Fields.Description,
 		Categories:  &proto.Fields.Categories,
+		IsStarred:   proto.Fields.IsStarred,
 	}
 }
 

@@ -21,7 +21,7 @@ func TestEditFeedsEmpty(t *testing.T) {
 	a.Empty(feeds)
 }
 
-func TestEditFeedsMinimal(t *testing.T) {
+func TestEditFeedsExtended(t *testing.T) {
 	t.Parallel()
 
 	a := assert.New(t)
@@ -30,30 +30,35 @@ func TestEditFeedsMinimal(t *testing.T) {
 
 	dbFeeds := []*Feed{
 		{
-			Title:   "Feed A",
-			FeedURL: "http://a.com/feed.xml",
-			Updated: WrapNullString("2022-03-19T16:23:18.600+02:00"),
+			Title:     "Feed A",
+			FeedURL:   "http://a.com/feed.xml",
+			Updated:   WrapNullString("2022-03-19T16:23:18.600+02:00"),
+			IsStarred: false,
 		},
 	}
 	keys := st.addFeeds(dbFeeds)
 
 	r.Equal(1, st.countFeeds())
 
-	existf := func(title string) bool {
-		return st.rowExists(`SELECT * FROM feeds WHERE title = ?`, title)
+	existf := func(title string, isStarred bool) bool {
+		return st.rowExists(
+			`SELECT * FROM feeds WHERE title = ? AND is_starred = ?`,
+			title,
+			isStarred,
+		)
 	}
 
-	a.True(existf("Feed A"))
-	a.False(existf("Feed X"))
+	a.True(existf("Feed A", false))
+	a.False(existf("Feed X", true))
 
 	ops := []*FeedEditOp{
-		{DBID: keys["Feed A"].DBID, Title: pointer("Feed X")},
+		{DBID: keys["Feed A"].DBID, Title: pointer("Feed X"), IsStarred: pointer(true)},
 	}
 	feeds, err := st.EditFeeds(context.Background(), ops)
 	r.NoError(err)
 
 	a.Len(feeds, 1)
 
-	a.False(existf("Feed A"))
-	a.True(existf("Feed X"))
+	a.False(existf("Feed A", false))
+	a.True(existf("Feed X", true))
 }

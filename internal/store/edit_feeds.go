@@ -25,6 +25,9 @@ func (s *SQLite) EditFeeds(
 		if err := setFeedCategories(ctx, tx, op.DBID, op.Categories); err != nil {
 			return nil, err
 		}
+		if err := setFeedIsStarred(ctx, tx, op.DBID, op.IsStarred); err != nil {
+			return nil, err
+		}
 		return getFeed(ctx, tx, op.DBID)
 	}
 
@@ -101,6 +104,7 @@ func getFeed(ctx context.Context, tx *sql.Tx, feedDBID DBID) (*Feed, error) {
 var (
 	setFeedTitle       = setTableField[string]("feeds", "title")
 	setFeedDescription = setTableField[string]("feeds", "description")
+	setFeedIsStarred   = setTableField[bool]("feeds", "is_starred")
 )
 
 func setFeedCategories(

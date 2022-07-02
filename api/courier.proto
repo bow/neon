@@ -86,6 +86,7 @@ message EditFeedsRequest {
       // NOTE: This means an empty fields message in an op request will delete
       //       existing categories.
       repeated string categories = 3;
+      optional bool is_starred = 4;
     }
   }
 }

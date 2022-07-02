@@ -131,10 +131,12 @@ func TestEditFeedsOk(t *testing.T) {
 	ops := []*store.FeedEditOp{
 		{DBID: 14, Title: pointer("newer")},
 		{DBID: 58, Categories: pointer([]string{"x", "y"})},
+		{DBID: 77, IsStarred: pointer(true)},
 	}
 	feeds := []*store.Feed{
 		{DBID: 14, Title: "newer", Subscribed: "2022-06-30T00:53:50.200+02:00"},
 		{DBID: 58, Categories: []string{"x", "y"}, Subscribed: "2022-06-30T00:53:58.135+02:00"},
+		{DBID: 77, IsStarred: true, Subscribed: "2022-06-30T00:53:59.812+02:00"},
 	}
 
 	str.EXPECT().
@@ -155,18 +157,27 @@ func TestEditFeedsOk(t *testing.T) {
 					Categories: []string{"x", "y"},
 				},
 			},
+			{
+				Id: 77,
+				Fields: &api.EditFeedsRequest_Op_Fields{
+					IsStarred: pointer(true),
+				},
+			},
 		},
 	}
 	rsp, err := client.EditFeeds(context.Background(), &req)
 	r.NoError(err)
 
-	r.Len(rsp.Feeds, 2)
+	r.Len(rsp.Feeds, 3)
 	feed0 := rsp.Feeds[0]
 	a.Equal(int32(feeds[0].DBID), feed0.Id)
 	a.Equal(feeds[0].Title, feed0.Title)
 	feed1 := rsp.Feeds[1]
 	a.Equal(int32(feeds[1].DBID), feed1.Id)
 	a.Equal([]string(feeds[1].Categories), feed1.Categories)
+	feed2 := rsp.Feeds[2]
+	a.Equal(int32(feeds[2].DBID), feed2.Id)
+	a.Equal(feeds[2].IsStarred, feed2.IsStarred)
 }
 
 func TestDeleteFeedsOk(t *testing.T) {
