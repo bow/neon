@@ -130,7 +130,9 @@ message EditEntriesResponse {
 
 message ExportOPMLRequest {}
 
-message ExportOPMLResponse {}
+message ExportOPMLResponse {
+  bytes payload = 1;
+}
 
 message ImportOPMLRequest {}
 

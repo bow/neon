@@ -298,13 +298,18 @@ func TestExportOPMLOk(t *testing.T) {
 	t.Parallel()
 
 	r := require.New(t)
-	client := newTestClientBuilder(t).Build()
+	a := assert.New(t)
+	client, _, str := setupServerTest(t)
+
+	str.EXPECT().
+		ExportOPML(gomock.Any()).
+		Return([]byte("payload"), nil)
 
 	req := api.ExportOPMLRequest{}
 	rsp, err := client.ExportOPML(context.Background(), &req)
+	r.NoError(err)
 
-	r.Nil(rsp)
-	r.EqualError(err, status.New(codes.Unimplemented, "unimplemented").String())
+	a.Equal([]byte("payload"), rsp.GetPayload())
 }
 
 func TestImportOPMLOk(t *testing.T) {

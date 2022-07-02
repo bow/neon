@@ -163,10 +163,18 @@ func (r *rpc) EditEntries(
 
 // ExportOPML satisfies the service API.
 func (r *rpc) ExportOPML(
-	_ context.Context,
+	ctx context.Context,
 	_ *api.ExportOPMLRequest,
 ) (*api.ExportOPMLResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "unimplemented")
+
+	payload, err := r.store.ExportOPML(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	rsp := api.ExportOPMLResponse{Payload: payload}
+
+	return &rsp, nil
 }
 
 // ImportOPML satisfies the service API.

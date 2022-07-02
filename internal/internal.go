@@ -36,4 +36,6 @@ type FeedStore interface {
 	DeleteFeeds(ctx context.Context, ids []store.DBID) (err error)
 
 	EditEntries(ctx context.Context, ops []*store.EntryEditOp) (entries []*store.Entry, err error)
+
+	ExportOPML(ctx context.Context) (payload []byte, err error)
 }
