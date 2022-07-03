@@ -14,6 +14,7 @@ const (
 	logLevelKey = "log-level"
 	logStyleKey = "log-style"
 	quietKey    = "quiet"
+	inDockerKey = "in-docker"
 )
 
 var rootViper = newViper("")
@@ -42,6 +43,9 @@ var rootCmd = cobra.Command{
 		if err != nil {
 			return err
 		}
+		if !rootViper.GetBool(inDockerKey) {
+			internal.SetLogPID()
+		}
 
 		if !rootViper.GetBool(quietKey) {
 			showBanner()
@@ -67,6 +71,9 @@ func init() {
 
 	pflags.String(logStyleKey, "pretty", "logging style")
 	_ = rootViper.BindPFlag(logStyleKey, pflags.Lookup(logStyleKey))
+
+	pflags.BoolP(inDockerKey, "", false, "indicate if execution is inside docker")
+	_ = rootViper.BindPFlag(inDockerKey, pflags.Lookup(inDockerKey))
 }
 
 func showBanner() {

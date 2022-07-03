@@ -18,6 +18,10 @@ const (
 	JSONLogStyle
 )
 
+func SetLogPID() {
+	zlog.Logger = zlog.Logger.With().Int("pid", os.Getpid()).Logger()
+}
+
 func InitGlobalLog(
 	logLevel string,
 	style LogStyle,
@@ -55,7 +59,6 @@ func InitGlobalLog(
 			Timestamp().
 			Str("app", AppName()).
 			Str("version", Version()).
-			Int("pid", os.Getpid()).
 			Logger(),
 	}
 	defer func() {
