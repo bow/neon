@@ -59,7 +59,7 @@ func Execute() error {
 func init() {
 	pflags := rootCmd.PersistentFlags()
 
-	pflags.BoolP(quietKey, "q", false, "show banner")
+	pflags.BoolP(quietKey, "q", false, "hide startup banner")
 	_ = rootViper.BindPFlag(quietKey, pflags.Lookup(quietKey))
 
 	pflags.StringP(logLevelKey, "l", "info", "logging level")
