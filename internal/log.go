@@ -55,7 +55,7 @@ func InitGlobalLog(
 			With().
 			Timestamp().
 			Str("app", AppName()).
-			Str("app_version", Version()).
+			Str("version", Version()).
 			Str("grpc.version", grpc.Version).
 			Int("pid", os.Getpid()).
 			Logger(),
