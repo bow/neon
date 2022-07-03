@@ -9,7 +9,6 @@ import (
 
 	"github.com/rs/zerolog"
 	zlog "github.com/rs/zerolog/log"
-	"google.golang.org/grpc"
 )
 
 type LogStyle uint8
@@ -56,7 +55,6 @@ func InitGlobalLog(
 			Timestamp().
 			Str("app", AppName()).
 			Str("version", Version()).
-			Str("grpc.version", grpc.Version).
 			Int("pid", os.Getpid()).
 			Logger(),
 	}

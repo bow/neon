@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"github.com/adrg/xdg"
-	zlog "github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
@@ -47,7 +46,6 @@ var serveCmd = cobra.Command{
 		server, err := server.NewBuilder().
 			Address(addr).
 			StorePath(dbPath).
-			Logger(zlog.Logger.With().Logger()).
 			Build()
 
 		if err != nil {

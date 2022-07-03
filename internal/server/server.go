@@ -118,7 +118,7 @@ type Builder struct {
 }
 
 func NewBuilder() *Builder {
-	builder := Builder{logger: zerolog.Nop()}
+	builder := Builder{logger: log.With().Logger()}
 	return &builder
 }
 
@@ -180,16 +180,20 @@ func (b *Builder) Build() (*server, error) {
 		parser = gofeed.NewParser()
 	}
 
+	logger := b.logger.With().
+		Str("grpc.version", grpc.Version).
+		Logger()
+
 	grpcs := grpc.NewServer(
 		middleware.WithUnaryServerChain(
 			storeErrorUnaryServerInterceptor,
 			tags.UnaryServerInterceptor(),
-			logging.UnaryServerInterceptor(grpczerolog.InterceptorLogger(b.logger)),
+			logging.UnaryServerInterceptor(grpczerolog.InterceptorLogger(logger)),
 		),
 		middleware.WithStreamServerChain(
 			storeErrorStreamServerInterceptor,
 			tags.StreamServerInterceptor(),
-			logging.StreamServerInterceptor(grpczerolog.InterceptorLogger(b.logger)),
+			logging.StreamServerInterceptor(grpczerolog.InterceptorLogger(logger)),
 		),
 	)
 	_ = newRPC(grpcs, str, parser)
