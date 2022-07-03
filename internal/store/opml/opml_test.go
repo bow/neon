@@ -86,13 +86,6 @@ func TestParseOkExtended(t *testing.T) {
 	a.Equal(12, head.DateCreated.Hour())
 	a.Equal(11, head.DateCreated.Minute())
 	a.Equal(52, head.DateCreated.Second())
-	//
-	a.Equal(2005, head.DateModified.Year())
-	a.Equal(time.August, head.DateModified.Month())
-	a.Equal(2, head.DateModified.Day())
-	a.Equal(21, head.DateModified.Hour())
-	a.Equal(42, head.DateModified.Minute())
-	a.Equal(48, head.DateModified.Second())
 
 	r.NotNil(doc.Body)
 	body := doc.Body

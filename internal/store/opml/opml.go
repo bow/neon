@@ -41,9 +41,8 @@ type OPML struct {
 
 // Head is the <head> element of an OPML file.
 type Head struct {
-	Title        *string     `xml:"title"`
-	DateCreated  *rfc822Time `xml:"dateCreated"`
-	DateModified *rfc822Time `xml:"dateModified"`
+	Title       *string     `xml:"title"`
+	DateCreated *rfc822Time `xml:"dateCreated"`
 }
 
 // Body is the <body> element of an OPML file.
