@@ -30,7 +30,7 @@ func TestAddFeedOk(t *testing.T) {
 		Url:         "http://foo.com/feed.xml",
 		Title:       pointer("user-title"),
 		Description: pointer("user-description"),
-		Categories:  []string{"cat-1", "cat-2", "cat-3"},
+		Tags:        []string{"tag-1", "tag-2", "tag-3"},
 		IsStarred:   pointer(true),
 	}
 	feed := gofeed.Feed{
@@ -74,7 +74,7 @@ func TestAddFeedOk(t *testing.T) {
 			&feed,
 			req.Title,
 			req.Description,
-			req.Categories,
+			req.Tags,
 			req.GetIsStarred(),
 		).
 		Return(&created, nil)
@@ -131,12 +131,12 @@ func TestEditFeedsOk(t *testing.T) {
 
 	ops := []*store.FeedEditOp{
 		{DBID: 14, Title: pointer("newer")},
-		{DBID: 58, Categories: pointer([]string{"x", "y"})},
+		{DBID: 58, Tags: pointer([]string{"x", "y"})},
 		{DBID: 77, IsStarred: pointer(true)},
 	}
 	feeds := []*store.Feed{
 		{DBID: 14, Title: "newer", Subscribed: "2022-06-30T00:53:50.200+02:00"},
-		{DBID: 58, Categories: []string{"x", "y"}, Subscribed: "2022-06-30T00:53:58.135+02:00"},
+		{DBID: 58, Tags: []string{"x", "y"}, Subscribed: "2022-06-30T00:53:58.135+02:00"},
 		{DBID: 77, IsStarred: true, Subscribed: "2022-06-30T00:53:59.812+02:00"},
 	}
 
@@ -155,7 +155,7 @@ func TestEditFeedsOk(t *testing.T) {
 			{
 				Id: 58,
 				Fields: &api.EditFeedsRequest_Op_Fields{
-					Categories: []string{"x", "y"},
+					Tags: []string{"x", "y"},
 				},
 			},
 			{
@@ -175,7 +175,7 @@ func TestEditFeedsOk(t *testing.T) {
 	a.Equal(feeds[0].Title, feed0.Title)
 	feed1 := rsp.Feeds[1]
 	a.Equal(int32(feeds[1].DBID), feed1.Id)
-	a.Equal([]string(feeds[1].Categories), feed1.Categories)
+	a.Equal([]string(feeds[1].Tags), feed1.Tags)
 	feed2 := rsp.Feeds[2]
 	a.Equal(int32(feeds[2].DBID), feed2.Id)
 	a.Equal(feeds[2].IsStarred, feed2.IsStarred)

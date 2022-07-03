@@ -106,8 +106,8 @@ func (ts *testStore) countEntries(xmlURL string) int {
 	return count
 }
 
-func (ts *testStore) countFeedCategories() int {
-	return ts.countTableRows("feed_categories")
+func (ts *testStore) countFeedTags() int {
+	return ts.countTableRows("feed_tags")
 }
 
 func (ts *testStore) addFeeds(feeds []*Feed) map[string]feedKey {

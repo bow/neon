@@ -20,7 +20,7 @@ type Feed struct {
 	SiteURL     sql.NullString
 	Subscribed  string
 	Updated     sql.NullString
-	Categories  jsonArrayString
+	Tags        jsonArrayString
 	IsStarred   bool
 	Entries     []*Entry
 }
@@ -31,7 +31,7 @@ func (f *Feed) Proto() (*api.Feed, error) {
 		Title:       f.Title,
 		FeedUrl:     f.FeedURL,
 		SiteUrl:     unwrapNullString(f.SiteURL),
-		Categories:  []string(f.Categories),
+		Tags:        []string(f.Tags),
 		Description: unwrapNullString(f.Description),
 		IsStarred:   f.IsStarred,
 	}
@@ -63,7 +63,7 @@ type FeedEditOp struct {
 	DBID        DBID
 	Title       *string
 	Description *string
-	Categories  *[]string
+	Tags        *[]string
 	IsStarred   *bool
 }
 
@@ -72,7 +72,7 @@ func NewFeedEditOp(proto *api.EditFeedsRequest_Op) *FeedEditOp {
 		DBID:        DBID(proto.Id),
 		Title:       proto.Fields.Title,
 		Description: proto.Fields.Description,
-		Categories:  &proto.Fields.Categories,
+		Tags:        &proto.Fields.Tags,
 		IsStarred:   proto.Fields.IsStarred,
 	}
 }

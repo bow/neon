@@ -14,7 +14,7 @@ func (s *SQLite) AddFeed(
 	feed *gofeed.Feed,
 	title *string,
 	desc *string,
-	categories []string,
+	tags []string,
 	isStarred bool,
 ) (*Feed, error) {
 	s.mu.Lock()
@@ -32,7 +32,7 @@ func (s *SQLite) AddFeed(
 			return fail(err)
 		}
 
-		err = addFeedCategories(ctx, tx, feedDBID, categories)
+		err = addFeedTags(ctx, tx, feedDBID, tags)
 		if err != nil {
 			return fail(err)
 		}
@@ -187,46 +187,46 @@ func upsertEntries(
 	return nil
 }
 
-func addFeedCategories(
+func addFeedTags(
 	ctx context.Context,
 	tx *sql.Tx,
 	feedDBID DBID,
-	cats []string,
+	tags []string,
 ) error {
 
-	sql1 := `INSERT OR IGNORE INTO feed_categories(name) VALUES (?)`
+	sql1 := `INSERT OR IGNORE INTO feed_tags(name) VALUES (?)`
 	stmt1, err := tx.PrepareContext(ctx, sql1)
 	if err != nil {
 		return err
 	}
 	defer stmt1.Close()
-	for _, cat := range cats {
-		_, err = stmt1.ExecContext(ctx, cat)
+	for _, tag := range tags {
+		_, err = stmt1.ExecContext(ctx, tag)
 		if err != nil {
 			return err
 		}
 	}
 
-	sql2 := `SELECT id FROM feed_categories WHERE name = ?`
+	sql2 := `SELECT id FROM feed_tags WHERE name = ?`
 	stmt2, err := tx.PrepareContext(ctx, sql2)
 	if err != nil {
 		return err
 	}
 	defer stmt2.Close()
 	ids := make(map[string]DBID)
-	for _, cat := range cats {
-		if _, exists := ids[cat]; exists {
+	for _, tag := range tags {
+		if _, exists := ids[tag]; exists {
 			continue
 		}
 		var id DBID
-		row := stmt2.QueryRowContext(ctx, cat)
+		row := stmt2.QueryRowContext(ctx, tag)
 		if err = row.Scan(&id); err != nil {
 			return err
 		}
-		ids[cat] = id
+		ids[tag] = id
 	}
 
-	sql3 := `INSERT OR IGNORE INTO feeds_x_feed_categories(feed_id, feed_category_id) VALUES (?, ?)`
+	sql3 := `INSERT OR IGNORE INTO feeds_x_feed_tags(feed_id, feed_tag_id) VALUES (?, ?)`
 	stmt3, err := tx.PrepareContext(ctx, sql3)
 	if err != nil {
 		return err

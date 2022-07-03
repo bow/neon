@@ -39,7 +39,7 @@ message Feed {
   int32 id = 1;
   string title = 2;
   string feed_url = 3;
-  repeated string categories = 4;
+  repeated string tags = 4;
   optional string site_url = 5;
   optional string description = 6;
   optional google.protobuf.Timestamp update_time = 7;
@@ -65,7 +65,7 @@ message AddFeedRequest {
   string url = 1;
   optional string title = 2;
   optional string description = 3;
-  repeated string categories = 4;
+  repeated string tags = 4;
   optional bool is_starred = 5;
 }
 
@@ -84,8 +84,8 @@ message EditFeedsRequest {
       optional string title = 1;
       optional string description = 2;
       // NOTE: This means an empty fields message in an op request will delete
-      //       existing categories.
-      repeated string categories = 3;
+      //       existing tags.
+      repeated string tags = 3;
       optional bool is_starred = 4;
     }
   }

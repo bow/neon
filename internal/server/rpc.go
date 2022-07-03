@@ -42,7 +42,7 @@ func (r *rpc) AddFeed(
 		feed,
 		req.Title,
 		req.Description,
-		req.GetCategories(),
+		req.GetTags(),
 		req.GetIsStarred(),
 	)
 	if err != nil {

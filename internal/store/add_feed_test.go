@@ -36,7 +36,7 @@ func TestAddFeedOkMinimal(t *testing.T) {
 
 	a.Equal(0, st.countFeeds())
 	a.Equal(0, st.countEntries(feed.FeedLink))
-	a.Equal(0, st.countFeedCategories())
+	a.Equal(0, st.countFeedTags())
 	a.False(existf())
 
 	created, err := st.AddFeed(context.Background(), &feed, nil, nil, nil, false)
@@ -46,12 +46,12 @@ func TestAddFeedOkMinimal(t *testing.T) {
 	a.Equal(feed.Description, created.Description.String)
 	a.Equal(feed.Link, created.SiteURL.String)
 	a.Equal(feed.FeedLink, created.FeedURL)
-	a.Empty([]string(created.Categories))
+	a.Empty([]string(created.Tags))
 	a.False(created.IsStarred)
 
 	a.Equal(1, st.countFeeds())
 	a.Equal(0, st.countEntries(feed.FeedLink))
-	a.Equal(0, st.countFeedCategories())
+	a.Equal(0, st.countFeedTags())
 	a.True(existf())
 }
 
@@ -88,7 +88,7 @@ func TestAddFeedOkExtended(t *testing.T) {
 	var (
 		title       = "user-title"
 		description = "user-description"
-		categories  = []string{"cat-1", "cat-2", "cat-3"}
+		tags        = []string{"tag-1", "tag-2", "tag-3"}
 		isStarred   = true
 	)
 
@@ -111,7 +111,7 @@ func TestAddFeedOkExtended(t *testing.T) {
 
 	a.Equal(0, st.countFeeds())
 	a.Equal(0, st.countEntries(feed.FeedLink))
-	a.Equal(0, st.countFeedCategories())
+	a.Equal(0, st.countFeedTags())
 	a.False(existf1())
 	a.False(existf2())
 	a.False(existe(feed.Items[0]))
@@ -122,7 +122,7 @@ func TestAddFeedOkExtended(t *testing.T) {
 		&feed,
 		&title,
 		&description,
-		categories,
+		tags,
 		isStarred,
 	)
 	r.NoError(err)
@@ -131,12 +131,12 @@ func TestAddFeedOkExtended(t *testing.T) {
 	a.Equal(description, created.Description.String)
 	a.Equal(feed.Link, created.SiteURL.String)
 	a.Equal(feed.FeedLink, created.FeedURL)
-	a.Equal(categories, []string(created.Categories))
+	a.Equal(tags, []string(created.Tags))
 	a.True(created.IsStarred)
 
 	a.Equal(1, st.countFeeds())
 	a.Equal(2, st.countEntries(feed.FeedLink))
-	a.Equal(3, st.countFeedCategories())
+	a.Equal(3, st.countFeedTags())
 	a.False(existf1())
 	a.True(existf2())
 	a.True(existe(feed.Items[0]))
@@ -174,8 +174,8 @@ func TestAddFeedOkURLExists(t *testing.T) {
 		},
 	}
 	var (
-		categories = []string{"cat-0"}
-		isStarred  = true
+		tags      = []string{"tag-0"}
+		isStarred = true
 	)
 	st.addFeedWithURL(feed.FeedLink)
 
@@ -195,24 +195,24 @@ func TestAddFeedOkURLExists(t *testing.T) {
 
 	a.Equal(1, st.countFeeds())
 	a.Equal(0, st.countEntries(feed.FeedLink))
-	a.Equal(0, st.countFeedCategories())
+	a.Equal(0, st.countFeedTags())
 	a.False(existf())
 	a.False(existe(feed.Items[0]))
 	a.False(existe(feed.Items[1]))
 
-	created, err := st.AddFeed(context.Background(), &feed, nil, nil, categories, true)
+	created, err := st.AddFeed(context.Background(), &feed, nil, nil, tags, true)
 	r.NoError(err)
 
 	a.Equal(t.Name(), created.Title)
 	a.Equal("", created.Description.String)
 	a.Equal("", created.SiteURL.String)
 	a.Equal(feed.FeedLink, created.FeedURL)
-	a.Equal(categories, []string(created.Categories))
+	a.Equal(tags, []string(created.Tags))
 	a.False(created.IsStarred)
 
 	a.Equal(1, st.countFeeds())
 	a.Equal(2, st.countEntries(feed.FeedLink))
-	a.Equal(1, st.countFeedCategories())
+	a.Equal(1, st.countFeedTags())
 	a.False(existf())
 	a.True(existe(feed.Items[0]))
 	a.True(existe(feed.Items[1]))

@@ -25,7 +25,7 @@ type FeedStore interface {
 		feed *gofeed.Feed,
 		title *string,
 		desc *string,
-		categories []string,
+		tags []string,
 		isStarred bool,
 	) (addedFeed *store.Feed, err error)
 

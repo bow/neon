@@ -45,11 +45,11 @@ func getAllFeeds(ctx context.Context, tx *sql.Tx) ([]*Feed, error) {
 			f.site_url AS site_url,
 			f.subscription_time AS subscription_time,
 			f.update_time AS update_time,
-			json_group_array(fc.name) FILTER (WHERE fc.name IS NOT NULL) AS categories
+			json_group_array(fc.name) FILTER (WHERE fc.name IS NOT NULL) AS tags
 		FROM
 			feeds f
-			LEFT JOIN feeds_x_feed_categories fxfc ON fxfc.feed_id = f.id
-			LEFT JOIN feed_categories fc ON fxfc.feed_category_id = fc.id
+			LEFT JOIN feeds_x_feed_tags fxfc ON fxfc.feed_id = f.id
+			LEFT JOIN feed_tags fc ON fxfc.feed_tag_id = fc.id
 		GROUP BY
 			f.id
 		ORDER BY
@@ -65,7 +65,7 @@ func getAllFeeds(ctx context.Context, tx *sql.Tx) ([]*Feed, error) {
 			&feed.SiteURL,
 			&feed.Subscribed,
 			&feed.Updated,
-			&feed.Categories,
+			&feed.Tags,
 		); err != nil {
 			return nil, err
 		}

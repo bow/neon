@@ -22,13 +22,13 @@ CREATE TABLE IF NOT EXISTS
 );
 
 CREATE TABLE IF NOT EXISTS
-  -- feed_categories lists all user-defined feed categories.
-  feed_categories
-  -- id is the internal ID of the feed category.
+  -- feed_tags lists all user-defined feed tags.
+  feed_tags
+  -- id is the internal ID of the feed tag.
   ( id INTEGER PRIMARY KEY AUTOINCREMENT
-  -- name is the string value of the category.
+  -- name is the string value of the tag.
   , name TEXT NOT NULL CHECK(length(name) > 0)
-  -- feed category must be unique by value, which is case-sensitive.
+  -- feed tag must be unique by value, which is case-sensitive.
   , UNIQUE(name)
 );
 
@@ -51,8 +51,8 @@ CREATE TABLE IF NOT EXISTS
   , content TEXT NULL CHECK(content IS NULL or length(content) > 0)
   -- authors lists the authors and contributors of the entry.
   , authors JSON NOT NULL DEFAULT '[]'
-  -- categories contains categories linked to the entry.
-  , categories JSON NOT NULL DEFAULT '[]'
+  -- tags contains tags linked to the entry.
+  , tags JSON NOT NULL DEFAULT '[]'
   -- publication_time is when the entry was published.
   , publication_time TIMESTAMP NULL
   -- update_time is when the entry was last updated; may be the same as publication_time.
@@ -67,13 +67,13 @@ CREATE INDEX IF NOT EXISTS entries_feed_id ON entries(feed_id);
 CREATE INDEX IF NOT EXISTS entries_external_id ON entries(external_id);
 
 CREATE TABLE IF NOT EXISTS
-  -- feeds_x_feed_categories is a many-to-many table which associates feeds and feed categories.
-  feeds_x_feed_categories
+  -- feeds_x_feed_tags is a many-to-many table which associates feeds and feed tags.
+  feeds_x_feed_tags
   -- feed_id is the database ID of the linked feed.
   ( feed_id INTEGER NOT NULL
-  -- feed_category_id is the database ID of the linked feed category.
-  , feed_category_id INTEGER NOT NULL
-  , PRIMARY KEY (feed_id, feed_category_id)
+  -- feed_tag_id is the database ID of the linked feed tag.
+  , feed_tag_id INTEGER NOT NULL
+  , PRIMARY KEY (feed_id, feed_tag_id)
   , FOREIGN KEY(feed_id) REFERENCES feeds(id) ON DELETE CASCADE
-  , FOREIGN KEY(feed_category_id) REFERENCES feed_categories(id) ON DELETE CASCADE
+  , FOREIGN KEY(feed_tag_id) REFERENCES feed_tags(id) ON DELETE CASCADE
 );

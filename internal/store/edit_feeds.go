@@ -22,7 +22,7 @@ func (s *SQLite) EditFeeds(
 		if err := setFeedDescription(ctx, tx, op.DBID, op.Description); err != nil {
 			return nil, err
 		}
-		if err := setFeedCategories(ctx, tx, op.DBID, op.Categories); err != nil {
+		if err := setFeedTags(ctx, tx, op.DBID, op.Tags); err != nil {
 			return nil, err
 		}
 		if err := setFeedIsStarred(ctx, tx, op.DBID, op.IsStarred); err != nil {
@@ -62,11 +62,11 @@ func getFeed(ctx context.Context, tx *sql.Tx, feedDBID DBID) (*Feed, error) {
 			f.is_starred AS is_starred,
 			f.subscription_time AS subscription_time,
 			f.update_time AS update_time,
-			json_group_array(fc.name) FILTER (WHERE fc.name IS NOT NULL) AS categories
+			json_group_array(fc.name) FILTER (WHERE fc.name IS NOT NULL) AS tags
 		FROM
 			feeds f
-			LEFT JOIN feeds_x_feed_categories fxfc ON fxfc.feed_id = f.id
-			LEFT JOIN feed_categories fc ON fxfc.feed_category_id = fc.id
+			LEFT JOIN feeds_x_feed_tags fxfc ON fxfc.feed_id = f.id
+			LEFT JOIN feed_tags fc ON fxfc.feed_tag_id = fc.id
 		WHERE
 			f.id = ?
 		GROUP BY
@@ -85,7 +85,7 @@ func getFeed(ctx context.Context, tx *sql.Tx, feedDBID DBID) (*Feed, error) {
 			&feed.IsStarred,
 			&feed.Subscribed,
 			&feed.Updated,
-			&feed.Categories,
+			&feed.Tags,
 		); err != nil {
 			return nil, err
 		}
@@ -107,18 +107,18 @@ var (
 	setFeedIsStarred   = setTableField[bool]("feeds", "is_starred")
 )
 
-func setFeedCategories(
+func setFeedTags(
 	ctx context.Context,
 	tx *sql.Tx,
 	feedDBID DBID,
-	categories *[]string,
+	tags *[]string,
 ) error {
 
-	if categories == nil {
+	if tags == nil {
 		return nil
 	}
 
-	sql1 := `DELETE FROM feeds_x_feed_categories WHERE feed_id = ?`
+	sql1 := `DELETE FROM feeds_x_feed_tags WHERE feed_id = ?`
 	stmt1, err := tx.PrepareContext(ctx, sql1)
 	if err != nil {
 		return err
@@ -129,20 +129,20 @@ func setFeedCategories(
 		return err
 	}
 
-	if err = addFeedCategories(ctx, tx, feedDBID, *categories); err != nil {
+	if err = addFeedTags(ctx, tx, feedDBID, *tags); err != nil {
 		return err
 	}
 
 	sql2 := `
 		DELETE
-			feed_categories
+			feed_tags
 		WHERE
 			id IN (
 				SELECT
 					fc.id
 				FROM
-					feed_categories fc
-					LEFT JOIN feeds_x_feed_categories fxfc ON fxfc.feed_category_id = fc.id
+					feed_tags fc
+					LEFT JOIN feeds_x_feed_tags fxfc ON fxfc.feed_tag_id = fc.id
 				WHERE
 					fxfc.feed_id IS NULL
 			)
