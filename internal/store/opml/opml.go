@@ -55,8 +55,14 @@ func New(title string, created time.Time) *OPML {
 	return &opml
 }
 
-func (doc *OPML) AddOutline(outl Outliner) {
-	doc.Body.Outlines = append(doc.Body.Outlines, outl.Outline())
+func (doc *OPML) AddOutline(outl Outliner) error {
+	item, err := outl.Outline()
+	if err != nil {
+		return err
+	}
+	doc.Body.Outlines = append(doc.Body.Outlines, item)
+
+	return nil
 }
 
 func (doc *OPML) Empty() bool {
@@ -106,7 +112,7 @@ type Outline struct {
 }
 
 type Outliner interface {
-	Outline() *Outline
+	Outline() (*Outline, error)
 }
 
 type Timestamp time.Time

@@ -19,7 +19,9 @@ type Subscription []*Feed
 func (sub Subscription) Export() ([]byte, error) {
 	doc := opml.New("Courier export", time.Now())
 	for _, feed := range sub {
-		doc.AddOutline(feed)
+		if err := doc.AddOutline(feed); err != nil {
+			return nil, err
+		}
 	}
 	return doc.XML()
 }
@@ -71,7 +73,7 @@ func (f *Feed) Proto() (*api.Feed, error) {
 	return &proto, nil
 }
 
-func (f *Feed) Outline() *opml.Outline {
+func (f *Feed) Outline() (*opml.Outline, error) {
 	outl := opml.Outline{
 		Text:   f.Title,
 		Type:   "rss",
@@ -83,7 +85,7 @@ func (f *Feed) Outline() *opml.Outline {
 	if f.Description.Valid {
 		outl.Description = pointer(f.Description.String)
 	}
-	return &outl
+	return &outl, nil
 }
 
 type FeedEditOp struct {
