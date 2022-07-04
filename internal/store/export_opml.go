@@ -2,7 +2,7 @@ package store
 
 import (
 	"context"
-	"fmt"
+	"database/sql"
 )
 
 func (s *SQLite) ExportOPML(ctx context.Context) ([]byte, error) {
@@ -11,5 +11,21 @@ func (s *SQLite) ExportOPML(ctx context.Context) ([]byte, error) {
 
 	fail := failF("SQLite.ExportOPML")
 
-	return nil, fail(fmt.Errorf("unimplemented"))
+	var payload []byte
+	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
+		feeds, err := getAllFeeds(ctx, tx)
+		if err != nil {
+			return fail(err)
+		}
+		if payload, err = Subscription(feeds).Export(); err != nil {
+			return fail(err)
+		}
+		return nil
+	}
+
+	err := s.withTx(ctx, dbFunc, nil)
+	if err != nil {
+		return nil, err
+	}
+	return payload, nil
 }

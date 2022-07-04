@@ -10,6 +10,7 @@ package opml
 import (
 	"bytes"
 	"encoding/xml"
+	"errors"
 	"fmt"
 	"time"
 
@@ -40,6 +41,48 @@ type OPML struct {
 	Body    Body     `xml:"body"`
 }
 
+func New(title string, created time.Time) *OPML {
+	ts := Timestamp(created)
+	t := &title
+	if title == "" {
+		t = nil
+	}
+	opml := OPML{
+		Version: "2.0",
+		Head:    Head{Title: t, DateCreated: &ts},
+		Body:    Body{},
+	}
+	return &opml
+}
+
+func (doc *OPML) AddOutline(outl Outliner) {
+	doc.Body.Outlines = append(doc.Body.Outlines, outl.Outline())
+}
+
+func (doc *OPML) Empty() bool {
+	return len(doc.Body.Outlines) == 0
+}
+
+func (doc *OPML) XML() ([]byte, error) {
+	if doc.Empty() {
+		return nil, ErrEmpty
+	}
+
+	var buf bytes.Buffer
+	if _, err := buf.WriteString(xml.Header); err != nil {
+		return nil, err
+	}
+
+	enc := xml.NewEncoder(&buf)
+	enc.Indent("", "  ")
+
+	if err := enc.Encode(doc); err != nil {
+		return nil, err
+	}
+
+	return buf.Bytes(), nil
+}
+
 // Head is the <head> element of an OPML file.
 type Head struct {
 	Title       *string    `xml:"title"`
@@ -60,6 +103,10 @@ type Outline struct {
 
 	Description *string `xml:"description,attr"`
 	HTMLURL     *string `xml:"htmlUrl,attr"`
+}
+
+type Outliner interface {
+	Outline() *Outline
 }
 
 type Timestamp time.Time
@@ -95,6 +142,8 @@ func (t *Timestamp) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 	ts := tv.Format(time.RFC822)
 	return e.EncodeElement(ts, start)
 }
+
+var ErrEmpty = errors.New("OPML is empty")
 
 // tsFormats is an array of possible time formats that can be found in an OPML file. These are
 // roughly based on RFC822, with variations in number of digits for day and year, and

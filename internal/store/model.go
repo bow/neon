@@ -7,10 +7,22 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/bow/courier/api"
 	"github.com/mmcdole/gofeed"
 	"google.golang.org/protobuf/types/known/timestamppb"
+
+	"github.com/bow/courier/api"
+	"github.com/bow/courier/internal/store/opml"
 )
+
+type Subscription []*Feed
+
+func (sub Subscription) Export() ([]byte, error) {
+	doc := opml.New("Courier export", time.Now())
+	for _, feed := range sub {
+		doc.AddOutline(feed)
+	}
+	return doc.XML()
+}
 
 type Feed struct {
 	DBID        DBID
@@ -57,6 +69,21 @@ func (f *Feed) Proto() (*api.Feed, error) {
 	}
 
 	return &proto, nil
+}
+
+func (f *Feed) Outline() *opml.Outline {
+	outl := opml.Outline{
+		Text:   f.Title,
+		Type:   "rss",
+		XMLURL: f.FeedURL,
+	}
+	if f.SiteURL.Valid {
+		outl.HTMLURL = pointer(f.SiteURL.String)
+	}
+	if f.Description.Valid {
+		outl.Description = pointer(f.Description.String)
+	}
+	return &outl
 }
 
 type FeedEditOp struct {
@@ -239,3 +266,5 @@ func (arr *jsonArrayString) Scan(value any) error {
 
 	return json.Unmarshal(bv, arr)
 }
+
+func pointer[T any](value T) *T { return &value }

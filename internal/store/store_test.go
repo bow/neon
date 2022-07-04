@@ -167,5 +167,3 @@ func ts(t *testing.T, value string) *time.Time {
 	require.NoError(t, err)
 	return tv
 }
-
-func pointer[T any](value T) *T { return &value }
