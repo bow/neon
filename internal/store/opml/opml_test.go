@@ -23,7 +23,7 @@ func TestParseOkExtended(t *testing.T) {
     <windowLeft>304</windowLeft>
     <windowBottom>562</windowBottom>
     <windowRight>842</windowRight>
-    </head>
+  </head>
   <body>
     <outline
         text="CNET News.com"

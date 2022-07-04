@@ -34,9 +34,10 @@ func Parse(raw []byte) (*OPML, error) {
 
 // OPML represents the minimal contents of an OPML file required to for storing a subscription list.
 type OPML struct {
-	Body    Body   `xml:"body"`
-	Head    Head   `xml:"head"`
-	Version string `xml:"version,attr"`
+	XMLName xml.Name `xml:"opml"`
+	Version string   `xml:"version,attr"`
+	Head    Head     `xml:"head"`
+	Body    Body     `xml:"body"`
 }
 
 // Head is the <head> element of an OPML file.
@@ -102,4 +103,9 @@ func (t *rfc822Time) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error 
 	*t = rfc822Time{ts}
 
 	return nil
+}
+
+func (t *rfc822Time) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+	ts := t.Time.Format(time.RFC822Z)
+	return e.EncodeElement(ts, start)
 }
