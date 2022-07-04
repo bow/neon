@@ -42,8 +42,8 @@ type OPML struct {
 
 // Head is the <head> element of an OPML file.
 type Head struct {
-	Title       *string     `xml:"title"`
-	DateCreated *rfc822Time `xml:"dateCreated"`
+	Title       *string    `xml:"title"`
+	DateCreated *Timestamp `xml:"dateCreated"`
 }
 
 // Body is the <body> element of an OPML file.
@@ -62,26 +62,11 @@ type Outline struct {
 	HTMLURL     *string `xml:"htmlUrl,attr"`
 }
 
-// rfc822Time wraps the time.Time struct for use in UnmarshalXML.
-type rfc822Time struct {
-	time.Time
-}
+type Timestamp time.Time
 
-// tsFormats is an array of possible time formats that can be found in an OPML file. These are
-// roughly based on RFC822, with variations in number of digits for day and year, and
-// presence/absence of minutes. When parsing, they are iterated over in-order.
-var tsFormats = []string{
-	"Mon, 02 Jan 2006 15:04:05 MST",
-	"Mon, 02 Jan 2006 15:04 MST",
-	"Mon, 02 Jan 06 15:04:05 MST",
-	"Mon, 02 Jan 06 15:04 MST",
-	"Mon, 2 Jan 2006 15:04:05 MST",
-	"Mon, 2 Jan 2006 15:04 MST",
-	"Mon, 2 Jan 06 15:04:05 MST",
-	"Mon, 2 Jan 06 15:04 MST",
-}
+func (t *Timestamp) Time() time.Time { return time.Time(*t) }
 
-func (t *rfc822Time) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+func (t *Timestamp) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 
 	var raw string
 	_ = d.DecodeElement(&raw, &start)
@@ -100,12 +85,27 @@ func (t *rfc822Time) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error 
 		return fmt.Errorf("opml: invalid time: %s", raw)
 	}
 
-	*t = rfc822Time{ts}
+	*t = Timestamp(ts)
 
 	return nil
 }
 
-func (t *rfc822Time) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
-	ts := t.Time.Format(time.RFC822Z)
+func (t *Timestamp) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+	tv := time.Time(*t)
+	ts := tv.Format(time.RFC822)
 	return e.EncodeElement(ts, start)
+}
+
+// tsFormats is an array of possible time formats that can be found in an OPML file. These are
+// roughly based on RFC822, with variations in number of digits for day and year, and
+// presence/absence of minutes. When parsing, they are iterated over in-order.
+var tsFormats = []string{
+	"Mon, 02 Jan 2006 15:04:05 MST",
+	"Mon, 02 Jan 2006 15:04 MST",
+	"Mon, 02 Jan 06 15:04:05 MST",
+	"Mon, 02 Jan 06 15:04 MST",
+	"Mon, 2 Jan 2006 15:04:05 MST",
+	"Mon, 2 Jan 2006 15:04 MST",
+	"Mon, 2 Jan 06 15:04:05 MST",
+	"Mon, 2 Jan 06 15:04 MST",
 }

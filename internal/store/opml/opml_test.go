@@ -80,12 +80,12 @@ func TestParseOkExtended(t *testing.T) {
 	//
 	a.Equal(stringp("mySubscriptions.opml"), head.Title)
 	//
-	a.Equal(2005, head.DateCreated.Year())
-	a.Equal(time.June, head.DateCreated.Month())
-	a.Equal(18, head.DateCreated.Day())
-	a.Equal(12, head.DateCreated.Hour())
-	a.Equal(11, head.DateCreated.Minute())
-	a.Equal(52, head.DateCreated.Second())
+	a.Equal(2005, head.DateCreated.Time().Year())
+	a.Equal(time.June, head.DateCreated.Time().Month())
+	a.Equal(18, head.DateCreated.Time().Day())
+	a.Equal(12, head.DateCreated.Time().Hour())
+	a.Equal(11, head.DateCreated.Time().Minute())
+	a.Equal(52, head.DateCreated.Time().Second())
 
 	r.NotNil(doc.Body)
 	body := doc.Body
