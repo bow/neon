@@ -1,6 +1,7 @@
 package store
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"path/filepath"
@@ -143,6 +144,10 @@ func (ts *testStore) addFeeds(feeds []*Feed) map[string]feedKey {
 		}
 
 		keys[feed.Title] = feedKey{DBID: feedDBID, Title: feed.Title, Entries: entries}
+
+		if len(feed.Tags) > 0 {
+			require.NoError(ts.t, addFeedTags(context.Background(), tx, feedDBID, feed.Tags))
+		}
 	}
 	require.NoError(ts.t, tx.Commit())
 

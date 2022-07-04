@@ -85,6 +85,9 @@ func (f *Feed) Outline() (*opml.Outline, error) {
 	if f.Description.Valid {
 		outl.Description = pointer(f.Description.String)
 	}
+	if len(f.Tags) > 0 {
+		outl.Categories = opml.Categories(f.Tags)
+	}
 	return &outl, nil
 }
 

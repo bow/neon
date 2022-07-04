@@ -50,6 +50,7 @@ func TestExportOPMLExtended(t *testing.T) {
 			Entries: []*Entry{
 				{Title: "Entry X1", IsRead: false},
 			},
+			Tags: []string{"foo", "baz"},
 		},
 	}
 	st.addFeeds(dbFeeds)
@@ -65,7 +66,7 @@ func TestExportOPMLExtended(t *testing.T) {
     <dateCreated>\d+ [A-Z][a-z]+ \d+ \d+:\d+ .+</dateCreated>
   </head>
   <body>
-    <outline text="Feed X" type="rss" xmlUrl="http://x.com/feed.xml"></outline>
+    <outline text="Feed X" type="rss" xmlUrl="http://x.com/feed.xml" category="foo,baz"></outline>
     <outline text="Feed A" type="rss" xmlUrl="http://a.com/feed.xml"></outline>
   </body>
 </opml>`),

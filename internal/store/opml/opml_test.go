@@ -34,6 +34,7 @@ func TestParseOkExtended(t *testing.T) {
         type="rss"
         version="RSS2"
         xmlUrl="http://news.com.com/2547-1_3-0-5.xml"
+		category="news,tech"
     />
     <outline
         text="NYT &gt; Business"
@@ -44,6 +45,7 @@ func TestParseOkExtended(t *testing.T) {
         type="rss"
         version="RSS2"
         xmlUrl="http://www.nytimes.com/services/xml/rss/nyt/Business.xml"
+		category="news,paper"
     />
     <outline
         text="Wired News"
@@ -54,6 +56,7 @@ func TestParseOkExtended(t *testing.T) {
         type="rss"
         version="RSS"
         xmlUrl="http://www.wired.com/news_drop/netcenter/netcenter.rdf"
+		category="news,tech"
     />
     <outline
         text="NYT &gt; Technology"
@@ -64,6 +67,7 @@ func TestParseOkExtended(t *testing.T) {
         type="rss"
         version="RSS2"
         xmlUrl="http://www.nytimes.com/services/xml/rss/nyt/Technology.xml"
+		category="news,tech,paper"
     />
   </body>
 </opml>
@@ -106,6 +110,7 @@ func TestParseOkExtended(t *testing.T) {
 	)
 	r.NotNil(outl0.HTMLURL)
 	a.Equal("http://news.com.com/", *outl0.HTMLURL)
+	a.ElementsMatch([]string{"tech", "news"}, outl0.Categories)
 	//
 	outl3 := outls[3]
 	a.Equal("NYT > Technology", outl3.Text)
@@ -115,6 +120,7 @@ func TestParseOkExtended(t *testing.T) {
 	a.Equal("", *outl3.Description)
 	r.NotNil(outl3.HTMLURL)
 	a.Equal("http://www.nytimes.com/pages/technology/index.html?partner=rssnyt", *outl3.HTMLURL)
+	a.ElementsMatch([]string{"tech", "news", "paper"}, outl3.Categories)
 }
 
 func stringp(value string) *string { return &value }

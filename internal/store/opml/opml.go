@@ -12,6 +12,7 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	"golang.org/x/net/html/charset"
@@ -107,12 +108,40 @@ type Outline struct {
 	Type   string `xml:"type,attr"`
 	XMLURL string `xml:"xmlUrl,attr"`
 
-	Description *string `xml:"description,attr"`
-	HTMLURL     *string `xml:"htmlUrl,attr"`
+	Categories  Categories `xml:"category,attr"`
+	Description *string    `xml:"description,attr"`
+	HTMLURL     *string    `xml:"htmlUrl,attr"`
 }
 
 type Outliner interface {
 	Outline() (*Outline, error)
+}
+
+type Categories []string
+
+const categorySep = ","
+
+func (c *Categories) UnmarshalXMLAttr(attr xml.Attr) error {
+
+	toks := make([]string, 0)
+	for _, rt := range strings.Split(attr.Value, categorySep) {
+		tok := strings.TrimSpace(rt)
+		if tok != "" {
+			toks = append(toks, tok)
+		}
+	}
+
+	*c = Categories(toks)
+
+	return nil
+}
+
+func (c *Categories) MarshalXMLAttr(name xml.Name) (xml.Attr, error) {
+	cats := []string(*c)
+	if len(cats) == 0 {
+		return xml.Attr{}, nil
+	}
+	return xml.Attr{Name: name, Value: strings.Join(cats, categorySep)}, nil
 }
 
 type Timestamp time.Time
