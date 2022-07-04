@@ -23,7 +23,7 @@ func TestExportOPMLEmpty(t *testing.T) {
 	payload, err := st.ExportOPML(context.Background())
 	r.Nil(payload)
 
-	a.ErrorIs(err, opml.ErrEmpty)
+	a.ErrorIs(err, opml.ErrEmptyDocument)
 }
 
 func TestExportOPMLExtended(t *testing.T) {

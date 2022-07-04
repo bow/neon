@@ -65,7 +65,7 @@ func (doc *OPML) Empty() bool {
 
 func (doc *OPML) XML() ([]byte, error) {
 	if doc.Empty() {
-		return nil, ErrEmpty
+		return nil, ErrEmptyDocument
 	}
 
 	var buf bytes.Buffer
@@ -143,7 +143,7 @@ func (t *Timestamp) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 	return e.EncodeElement(ts, start)
 }
 
-var ErrEmpty = errors.New("OPML is empty")
+var ErrEmptyDocument = errors.New("OPML document is empty")
 
 // tsFormats is an array of possible time formats that can be found in an OPML file. These are
 // roughly based on RFC822, with variations in number of digits for day and year, and
