@@ -157,7 +157,7 @@ serve: bin  ## Compile the binary and run the server in development mode.
 test: internal/mock.go .coverage.out  ## Run the test suite.
 
 .coverage.out:
-	gotestsum --format dots-v2 --junitfile .junit.xml -- ./... -parallel=$(shell nproc) -coverprofile=$@ -covermode=atomic \
+	gotestsum --format dots-v2 --junitfile .junit.xml -- ./... -parallel=$(shell nproc) -coverprofile=$@ -covermode=atomic -coverpkg ./internal/...,./cmd/...,./. \
 		&& go tool cover -func=$@
 
 internal/mock.go: internal/internal.go
