@@ -128,7 +128,9 @@ message EditEntriesResponse {
   repeated Entry entries = 1;
 }
 
-message ExportOPMLRequest {}
+message ExportOPMLRequest {
+  optional string title = 1;
+}
 
 message ExportOPMLResponse {
   bytes payload = 1;
