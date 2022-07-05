@@ -302,7 +302,7 @@ func TestExportOPMLOk(t *testing.T) {
 	client, _, str := setupServerTest(t)
 
 	str.EXPECT().
-		ExportOPML(gomock.Any()).
+		ExportOPML(gomock.Any(), nil).
 		Return([]byte("payload"), nil)
 
 	req := api.ExportOPMLRequest{}

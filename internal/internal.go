@@ -37,5 +37,5 @@ type FeedStore interface {
 
 	EditEntries(ctx context.Context, ops []*store.EntryEditOp) (entries []*store.Entry, err error)
 
-	ExportOPML(ctx context.Context) (payload []byte, err error)
+	ExportOPML(ctx context.Context, title *string) (payload []byte, err error)
 }

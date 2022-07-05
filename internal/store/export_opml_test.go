@@ -20,7 +20,7 @@ func TestExportOPMLEmpty(t *testing.T) {
 
 	r.Equal(0, st.countFeeds())
 
-	payload, err := st.ExportOPML(context.Background())
+	payload, err := st.ExportOPML(context.Background(), nil)
 	r.Nil(payload)
 
 	a.ErrorIs(err, opml.ErrEmptyDocument)
@@ -55,14 +55,14 @@ func TestExportOPMLExtended(t *testing.T) {
 	}
 	st.addFeeds(dbFeeds)
 
-	payload, err := st.ExportOPML(context.Background())
+	payload, err := st.ExportOPML(context.Background(), pointer("Test Export"))
 	r.NoError(err)
 
 	a.Regexp(
 		regexp.MustCompile(`<\?xml version="1.0" encoding="UTF-8"\?>
 <opml version="2.0">
   <head>
-    <title>Courier export</title>
+    <title>Test Export</title>
     <dateCreated>\d+ [A-Z][a-z]+ \d+ \d+:\d+ .+</dateCreated>
   </head>
   <body>

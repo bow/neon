@@ -14,10 +14,16 @@ import (
 	"github.com/bow/courier/internal/store/opml"
 )
 
+const defaultExportTitle = "Courier export"
+
 type Subscription []*Feed
 
-func (sub Subscription) Export() ([]byte, error) {
-	doc := opml.New("Courier export", time.Now())
+func (sub Subscription) Export(title *string) ([]byte, error) {
+	et := defaultExportTitle
+	if title != nil {
+		et = *title
+	}
+	doc := opml.New(et, time.Now())
 	for _, feed := range sub {
 		if err := doc.AddOutline(feed); err != nil {
 			return nil, err

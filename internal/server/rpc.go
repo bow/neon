@@ -164,10 +164,10 @@ func (r *rpc) EditEntries(
 // ExportOPML satisfies the service API.
 func (r *rpc) ExportOPML(
 	ctx context.Context,
-	_ *api.ExportOPMLRequest,
+	req *api.ExportOPMLRequest,
 ) (*api.ExportOPMLResponse, error) {
 
-	payload, err := r.store.ExportOPML(ctx)
+	payload, err := r.store.ExportOPML(ctx, req.Title)
 	if err != nil {
 		return nil, err
 	}

@@ -5,7 +5,7 @@ import (
 	"database/sql"
 )
 
-func (s *SQLite) ExportOPML(ctx context.Context) ([]byte, error) {
+func (s *SQLite) ExportOPML(ctx context.Context, title *string) ([]byte, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -17,7 +17,7 @@ func (s *SQLite) ExportOPML(ctx context.Context) ([]byte, error) {
 		if err != nil {
 			return fail(err)
 		}
-		if payload, err = Subscription(feeds).Export(); err != nil {
+		if payload, err = Subscription(feeds).Export(title); err != nil {
 			return fail(err)
 		}
 		return nil

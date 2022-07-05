@@ -134,18 +134,18 @@ func (mr *MockFeedStoreMockRecorder) EditFeeds(ctx, ops interface{}) *gomock.Cal
 }
 
 // ExportOPML mocks base method.
-func (m *MockFeedStore) ExportOPML(ctx context.Context) ([]byte, error) {
+func (m *MockFeedStore) ExportOPML(ctx context.Context, title *string) ([]byte, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ExportOPML", ctx)
+	ret := m.ctrl.Call(m, "ExportOPML", ctx, title)
 	ret0, _ := ret[0].([]byte)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ExportOPML indicates an expected call of ExportOPML.
-func (mr *MockFeedStoreMockRecorder) ExportOPML(ctx interface{}) *gomock.Call {
+func (mr *MockFeedStoreMockRecorder) ExportOPML(ctx, title interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ExportOPML", reflect.TypeOf((*MockFeedStore)(nil).ExportOPML), ctx)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ExportOPML", reflect.TypeOf((*MockFeedStore)(nil).ExportOPML), ctx, title)
 }
 
 // ListFeeds mocks base method.
