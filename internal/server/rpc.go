@@ -16,11 +16,11 @@ import (
 type rpc struct {
 	api.UnimplementedCourierServer
 
-	store  internal.FeedStore
+	store  store.FeedStore
 	parser internal.FeedParser
 }
 
-func newRPC(grpcs *grpc.Server, str internal.FeedStore, prs internal.FeedParser) *rpc {
+func newRPC(grpcs *grpc.Server, str store.FeedStore, prs internal.FeedParser) *rpc {
 	svc := rpc{store: str, parser: prs}
 	api.RegisterCourierServer(grpcs, &svc)
 	return &svc

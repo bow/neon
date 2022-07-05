@@ -16,6 +16,8 @@ import (
 
 	"github.com/bow/courier/api"
 	"github.com/bow/courier/internal"
+	"github.com/bow/courier/internal/store"
+	"github.com/bow/courier/test"
 )
 
 func defaultTestServerBuilder(t *testing.T) *Builder {
@@ -23,8 +25,8 @@ func defaultTestServerBuilder(t *testing.T) *Builder {
 
 	return NewBuilder().
 		Address("file://" + t.TempDir() + "/courier.socket").
-		Store(internal.NewMockFeedStore(gomock.NewController(t))).
-		Parser(internal.NewMockFeedParser(gomock.NewController(t))).
+		Store(test.NewMockFeedStore(gomock.NewController(t))).
+		Parser(test.NewMockFeedParser(gomock.NewController(t))).
 		Logger(zerolog.Nop())
 }
 
@@ -44,13 +46,13 @@ func (tcb *testClientBuilder) DialOpts(opts ...grpc.DialOption) *testClientBuild
 	return tcb
 }
 
-func (tcb *testClientBuilder) ServerParser(parser internal.FeedParser) *testClientBuilder {
-	tcb.serverBuilder = tcb.serverBuilder.Parser(parser)
+func (tcb *testClientBuilder) ServerParser(prs internal.FeedParser) *testClientBuilder {
+	tcb.serverBuilder = tcb.serverBuilder.Parser(prs)
 	return tcb
 }
 
-func (tcb *testClientBuilder) ServerStore(store internal.FeedStore) *testClientBuilder {
-	tcb.serverBuilder = tcb.serverBuilder.Store(store)
+func (tcb *testClientBuilder) ServerStore(str store.FeedStore) *testClientBuilder {
+	tcb.serverBuilder = tcb.serverBuilder.Store(str)
 	return tcb
 }
 
@@ -146,17 +148,17 @@ func setupServerTest(
 	t *testing.T,
 ) (
 	api.CourierClient,
-	*internal.MockFeedParser,
-	*internal.MockFeedStore,
+	*test.MockFeedParser,
+	*test.MockFeedStore,
 ) {
 	t.Helper()
 
-	parser := internal.NewMockFeedParser(gomock.NewController(t))
-	store := internal.NewMockFeedStore(gomock.NewController(t))
+	prs := test.NewMockFeedParser(gomock.NewController(t))
+	str := test.NewMockFeedStore(gomock.NewController(t))
 
-	clb := newTestClientBuilder(t).ServerParser(parser).ServerStore(store)
+	clb := newTestClientBuilder(t).ServerParser(prs).ServerStore(str)
 
-	return clb.Build(), parser, store
+	return clb.Build(), prs, str
 }
 
 func TestServerBuilderErrInvalidAddr(t *testing.T) {

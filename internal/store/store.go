@@ -8,12 +8,30 @@ import (
 	"sync"
 
 	"github.com/golang-migrate/migrate/v4"
+	"github.com/mmcdole/gofeed"
 	"github.com/rs/zerolog/log"
 
 	"github.com/bow/courier/internal/store/migration"
 )
 
 type DBID = int
+
+// FeedStore describes the persistence layer interface.
+type FeedStore interface {
+	AddFeed(
+		ctx context.Context,
+		feed *gofeed.Feed,
+		title *string,
+		desc *string,
+		tags []string,
+		isStarred bool,
+	) (addedFeed *Feed, err error)
+	EditFeeds(ctx context.Context, ops []*FeedEditOp) (feeds []*Feed, err error)
+	ListFeeds(ctx context.Context) (feeds []*Feed, err error)
+	DeleteFeeds(ctx context.Context, ids []DBID) (err error)
+	EditEntries(ctx context.Context, ops []*EntryEditOp) (entries []*Entry, err error)
+	ExportOPML(ctx context.Context, title *string) (payload []byte, err error)
+}
 
 type SQLite struct {
 	db *sql.DB

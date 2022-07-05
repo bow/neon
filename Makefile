@@ -123,6 +123,16 @@ lint:  ## Lint the code.
 	golangci-lint run
 
 
+.PHONY: mocks
+mocks: test/FeedParser_mock.go test/FeedStore_mock.go  ## Generate mocks from interfaces.
+
+test/FeedParser_mock.go: internal/internal.go
+	mockgen -source=$< -package=test FeedParser > $@
+
+test/FeedStore_mock.go: internal/store/store.go
+	mockgen -source=$< -package=test FeedStore > $@
+
+
 .PHONY: proto
 proto: $(PROTO_FILES) ## Generate code from protobuf.
 	@protoc \
@@ -154,14 +164,11 @@ serve: bin  ## Compile the binary and run the server in development mode.
 
 
 .PHONY: test .coverage.out
-test: internal/mock.go .coverage.out  ## Run the test suite.
+test: mocks .coverage.out  ## Run the test suite.
 
 .coverage.out:
 	gotestsum --format dots-v2 --junitfile .junit.xml -- ./... -parallel=$(shell nproc) -coverprofile=$@ -covermode=atomic -coverpkg ./internal/...,./cmd/...,./. \
 		&& go tool cover -func=$@
-
-internal/mock.go: internal/internal.go
-	mockgen -source=$< -package=internal FeedParser,FeedStore > $@
 
 
 .PHONY: test-cov-xml

@@ -111,7 +111,7 @@ func (s *server) start() <-chan error {
 
 type Builder struct {
 	addr      string
-	store     internal.FeedStore
+	store     store.FeedStore
 	storePath string
 	parser    internal.FeedParser
 	logger    zerolog.Logger
@@ -133,7 +133,7 @@ func (b *Builder) StorePath(path string) *Builder {
 	return b
 }
 
-func (b *Builder) Store(str internal.FeedStore) *Builder {
+func (b *Builder) Store(str store.FeedStore) *Builder {
 	b.store = str
 	b.storePath = ""
 	return b
