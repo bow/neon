@@ -301,15 +301,25 @@ func TestExportOPMLOk(t *testing.T) {
 	a := assert.New(t)
 	client, _, str := setupServerTest(t)
 
+	payload := `<\?xml version="1.0" encoding="UTF-8"\?>
+<opml version="2.0">
+  <head>
+    <title>Courier export</title>
+	<dateCreated>Thu, 17 Feb 2022 16:37:19 CET</dateCreated>
+  </head>
+  <body>
+    <outline text="Feed X" type="rss" xmlUrl="http://x.com/feed.xml" category="foo,baz"></outline>
+  </body>
+</opml>`
 	str.EXPECT().
 		ExportOPML(gomock.Any(), nil).
-		Return([]byte("payload"), nil)
+		Return([]byte(payload), nil)
 
 	req := api.ExportOPMLRequest{}
 	rsp, err := client.ExportOPML(context.Background(), &req)
 	r.NoError(err)
 
-	a.Equal([]byte("payload"), rsp.GetPayload())
+	a.Equal([]byte(payload), rsp.GetPayload())
 }
 
 func TestImportOPMLOk(t *testing.T) {
