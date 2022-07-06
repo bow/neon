@@ -117,7 +117,7 @@ type Builder struct {
 }
 
 func NewBuilder() *Builder {
-	builder := Builder{logger: log.With().Logger()}
+	builder := Builder{logger: log.With().Logger(), parser: gofeed.NewParser()}
 	return &builder
 }
 
