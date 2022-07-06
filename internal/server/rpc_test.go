@@ -4,10 +4,8 @@ import (
 	"context"
 	"fmt"
 	"testing"
-	"time"
 
 	gomock "github.com/golang/mock/gomock"
-	"github.com/mmcdole/gofeed"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc/codes"
@@ -24,7 +22,7 @@ func TestAddFeedOk(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	client, prs, str := setupServerTest(t)
+	client, str := setupServerTest(t)
 
 	req := api.AddFeedRequest{
 		Url:         "http://foo.com/feed.xml",
@@ -33,45 +31,19 @@ func TestAddFeedOk(t *testing.T) {
 		Tags:        []string{"tag-1", "tag-2", "tag-3"},
 		IsStarred:   pointer(true),
 	}
-	feed := gofeed.Feed{
-		Title:       "feed-title-original",
-		Description: "feed-description-original",
-		Link:        "https://foo.com",
-		FeedLink:    "https://foo.com/feed.xml",
-		Items: []*gofeed.Item{
-			{
-				GUID:            "entry1",
-				Link:            "https://bar.com/entry1.html",
-				Title:           "First Entry",
-				Content:         "This is the first entry.",
-				PublishedParsed: ts(t, "2021-06-18T21:45:26.794+02:00"),
-			},
-			{
-				GUID:            "entry2",
-				Link:            "https://bar.com/entry2.html",
-				Title:           "Second Entry",
-				Content:         "This is the second entry.",
-				PublishedParsed: ts(t, "2021-06-18T22:08:16.526+02:00"),
-				UpdatedParsed:   ts(t, "2021-06-18T22:11:49.094+02:00"),
-			},
-		},
-	}
 	created := store.Feed{
-		Title:       feed.Title,
-		Description: store.WrapNullString(feed.Description),
-		SiteURL:     store.WrapNullString(feed.Link),
-		FeedURL:     feed.FeedLink,
+		Title:       "feed-title-original",
+		Description: store.WrapNullString("feed-description-original"),
+		SiteURL:     store.WrapNullString("https://foo.com"),
+		FeedURL:     "https://foo.com/feed.xml",
 		Subscribed:  "2021-07-01T23:33:06.156+02:00",
 		IsStarred:   true,
 	}
-	prs.EXPECT().
-		ParseURLWithContext(req.Url, gomock.Any()).
-		Return(&feed, nil)
 
 	str.EXPECT().
 		AddFeed(
 			gomock.Any(),
-			&feed,
+			req.GetUrl(),
 			req.Title,
 			req.Description,
 			req.Tags,
@@ -94,7 +66,7 @@ func TestListFeedsOk(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	client, _, str := setupServerTest(t)
+	client, str := setupServerTest(t)
 
 	req := api.ListFeedsRequest{}
 	feeds := []*store.Feed{
@@ -127,7 +99,7 @@ func TestEditFeedsOk(t *testing.T) {
 
 	r := require.New(t)
 	a := assert.New(t)
-	client, _, str := setupServerTest(t)
+	client, str := setupServerTest(t)
 
 	ops := []*store.FeedEditOp{
 		{DBID: 14, Title: pointer("newer")},
@@ -186,7 +158,7 @@ func TestDeleteFeedsOk(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	client, _, str := setupServerTest(t)
+	client, str := setupServerTest(t)
 
 	str.EXPECT().
 		DeleteFeeds(gomock.Any(), []store.DBID{1, 9}).
@@ -204,7 +176,7 @@ func TestDeleteFeedsErrNotFound(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	client, _, str := setupServerTest(t)
+	client, str := setupServerTest(t)
 
 	str.EXPECT().
 		DeleteFeeds(gomock.Any(), []store.DBID{1, 9}).
@@ -251,7 +223,7 @@ func TestEditEntriesOk(t *testing.T) {
 
 	r := require.New(t)
 	a := assert.New(t)
-	client, _, str := setupServerTest(t)
+	client, str := setupServerTest(t)
 
 	ops := []*store.EntryEditOp{
 		{DBID: 37, IsRead: pointer(true)},
@@ -299,7 +271,7 @@ func TestExportOPMLOk(t *testing.T) {
 
 	r := require.New(t)
 	a := assert.New(t)
-	client, _, str := setupServerTest(t)
+	client, str := setupServerTest(t)
 
 	payload := `<\?xml version="1.0" encoding="UTF-8"\?>
 <opml version="2.0">
@@ -357,13 +329,6 @@ func TestGetInfoOk(t *testing.T) {
 	a.Equal(want.Version, rsp.Version)
 	a.Equal(want.GitCommit, rsp.GitCommit)
 	a.Equal(want.BuildTime, rsp.BuildTime)
-}
-
-func ts(t *testing.T, value string) *time.Time {
-	t.Helper()
-	tv, err := store.DeserializeTime(&value)
-	require.NoError(t, err)
-	return tv
 }
 
 func pointer[T any](value T) *T { return &value }

@@ -4,6 +4,7 @@ import (
 	"context"
 	"testing"
 
+	gomock "github.com/golang/mock/gomock"
 	"github.com/mmcdole/gofeed"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -23,6 +24,10 @@ func TestAddFeedOkMinimal(t *testing.T) {
 		FeedLink:    "https://bar.com/feed.xml",
 	}
 
+	st.parser.EXPECT().
+		ParseURLWithContext(feed.Link, gomock.Any()).
+		Return(&feed, nil)
+
 	existf := func() bool {
 		return st.rowExists(
 			feedExistSQL,
@@ -39,7 +44,7 @@ func TestAddFeedOkMinimal(t *testing.T) {
 	a.Equal(0, st.countFeedTags())
 	a.False(existf())
 
-	created, err := st.AddFeed(context.Background(), &feed, nil, nil, nil, false)
+	created, err := st.AddFeed(context.Background(), feed.Link, nil, nil, nil, false)
 	r.NoError(err)
 
 	a.Equal(feed.Title, created.Title)
@@ -92,6 +97,10 @@ func TestAddFeedOkExtended(t *testing.T) {
 		isStarred   = true
 	)
 
+	st.parser.EXPECT().
+		ParseURLWithContext(feed.Link, gomock.Any()).
+		Return(&feed, nil)
+
 	existf1 := func() bool {
 		return st.rowExists(
 			feedExistSQL,
@@ -119,7 +128,7 @@ func TestAddFeedOkExtended(t *testing.T) {
 
 	created, err := st.AddFeed(
 		context.Background(),
-		&feed,
+		feed.Link,
 		&title,
 		&description,
 		tags,
@@ -177,6 +186,11 @@ func TestAddFeedOkURLExists(t *testing.T) {
 		tags      = []string{"tag-0"}
 		isStarred = true
 	)
+
+	st.parser.EXPECT().
+		ParseURLWithContext(feed.Link, gomock.Any()).
+		Return(&feed, nil)
+
 	st.addFeedWithURL(feed.FeedLink)
 
 	existf := func() bool {
@@ -200,7 +214,7 @@ func TestAddFeedOkURLExists(t *testing.T) {
 	a.False(existe(feed.Items[0]))
 	a.False(existe(feed.Items[1]))
 
-	created, err := st.AddFeed(context.Background(), &feed, nil, nil, tags, true)
+	created, err := st.AddFeed(context.Background(), feed.Link, nil, nil, tags, true)
 	r.NoError(err)
 
 	a.Equal(feed.Title, created.Title)

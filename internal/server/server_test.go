@@ -15,9 +15,7 @@ import (
 	"google.golang.org/grpc/health/grpc_health_v1"
 
 	"github.com/bow/courier/api"
-	"github.com/bow/courier/internal"
 	"github.com/bow/courier/internal/store"
-	"github.com/bow/courier/test"
 )
 
 func defaultTestServerBuilder(t *testing.T) *Builder {
@@ -25,8 +23,7 @@ func defaultTestServerBuilder(t *testing.T) *Builder {
 
 	return NewBuilder().
 		Address("file://" + t.TempDir() + "/courier.socket").
-		Store(test.NewMockFeedStore(gomock.NewController(t))).
-		Parser(test.NewMockFeedParser(gomock.NewController(t))).
+		Store(store.NewMockFeedStore(gomock.NewController(t))).
 		Logger(zerolog.Nop())
 }
 
@@ -43,11 +40,6 @@ func newTestClientBuilder(t *testing.T) *testClientBuilder {
 
 func (tcb *testClientBuilder) DialOpts(opts ...grpc.DialOption) *testClientBuilder {
 	tcb.dialOpts = opts
-	return tcb
-}
-
-func (tcb *testClientBuilder) ServerParser(prs internal.FeedParser) *testClientBuilder {
-	tcb.serverBuilder = tcb.serverBuilder.Parser(prs)
 	return tcb
 }
 
@@ -144,21 +136,13 @@ func newTestClient(
 }
 
 // setupServerTest is a shortcut method for creating server tests through a client.
-func setupServerTest(
-	t *testing.T,
-) (
-	api.CourierClient,
-	*test.MockFeedParser,
-	*test.MockFeedStore,
-) {
+func setupServerTest(t *testing.T) (api.CourierClient, *store.MockFeedStore) {
 	t.Helper()
 
-	prs := test.NewMockFeedParser(gomock.NewController(t))
-	str := test.NewMockFeedStore(gomock.NewController(t))
+	str := store.NewMockFeedStore(gomock.NewController(t))
+	clb := newTestClientBuilder(t).ServerStore(str)
 
-	clb := newTestClientBuilder(t).ServerParser(prs).ServerStore(str)
-
-	return clb.Build(), prs, str
+	return clb.Build(), str
 }
 
 func TestServerBuilderErrInvalidAddr(t *testing.T) {

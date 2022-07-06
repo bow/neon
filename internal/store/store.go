@@ -8,7 +8,6 @@ import (
 	"sync"
 
 	"github.com/golang-migrate/migrate/v4"
-	"github.com/mmcdole/gofeed"
 	"github.com/rs/zerolog/log"
 
 	"github.com/bow/courier/internal/store/migration"
@@ -20,7 +19,7 @@ type DBID = int
 type FeedStore interface {
 	AddFeed(
 		ctx context.Context,
-		feed *gofeed.Feed,
+		feedURL string,
 		title *string,
 		desc *string,
 		tags []string,
@@ -34,11 +33,12 @@ type FeedStore interface {
 }
 
 type SQLite struct {
-	db *sql.DB
-	mu sync.RWMutex
+	db     *sql.DB
+	mu     sync.RWMutex
+	parser FeedParser
 }
 
-func NewSQLite(filename string) (*SQLite, error) {
+func NewSQLite(filename string, parser FeedParser) (*SQLite, error) {
 
 	log.Info().Msgf("setting %s as the data store", filename)
 
@@ -61,7 +61,7 @@ func NewSQLite(filename string) (*SQLite, error) {
 		return nil, fail(err)
 	}
 
-	store := SQLite{db: db}
+	store := SQLite{db: db, parser: parser}
 
 	return &store, nil
 }

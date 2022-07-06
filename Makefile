@@ -124,13 +124,13 @@ lint:  ## Lint the code.
 
 
 .PHONY: mocks
-mocks: test/FeedParser_mock.go test/FeedStore_mock.go  ## Generate mocks from interfaces.
+mocks: internal/store/store_mock.go internal/store/parser_mock.go  ## Generate mocks from interfaces.
 
-test/FeedParser_mock.go: internal/internal.go
-	mockgen -source=$< -package=test FeedParser > $@
+internal/store/parser_mock.go: internal/store/parser.go
+	mockgen -source=$< -package=store FeedParser > $@
 
-test/FeedStore_mock.go: internal/store/store.go
-	mockgen -source=$< -package=test FeedStore > $@
+internal/store/store_mock.go: internal/store/store.go
+	mockgen -source=$< -self_package=github.com/bow/courier/internal/store -package=store FeedStore > $@
 
 
 .PHONY: proto

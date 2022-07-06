@@ -22,7 +22,6 @@ import (
 	"google.golang.org/grpc/reflection"
 
 	"github.com/bow/courier/api"
-	"github.com/bow/courier/internal"
 	"github.com/bow/courier/internal/store"
 )
 
@@ -113,7 +112,7 @@ type Builder struct {
 	addr      string
 	store     store.FeedStore
 	storePath string
-	parser    internal.FeedParser
+	parser    store.FeedParser
 	logger    zerolog.Logger
 }
 
@@ -139,7 +138,7 @@ func (b *Builder) Store(str store.FeedStore) *Builder {
 	return b
 }
 
-func (b *Builder) Parser(parser internal.FeedParser) *Builder {
+func (b *Builder) Parser(parser store.FeedParser) *Builder {
 	b.parser = parser
 	return b
 }
@@ -170,14 +169,13 @@ func (b *Builder) Build() (*server, error) {
 
 	str := b.store
 	if sp := b.storePath; sp != "" {
-		if str, err = store.NewSQLite(sp); err != nil {
+		if str, err = store.NewSQLite(sp, b.parser); err != nil {
 			return nil, fmt.Errorf("server build: %w", err)
 		}
 	}
 
-	parser := b.parser
-	if parser == nil {
-		parser = gofeed.NewParser()
+	if b.parser == nil {
+		b.parser = gofeed.NewParser()
 	}
 
 	logger := b.logger.With().
@@ -196,7 +194,7 @@ func (b *Builder) Build() (*server, error) {
 			logging.StreamServerInterceptor(grpczerolog.InterceptorLogger(logger)),
 		),
 	)
-	_ = newRPC(grpcs, str, parser)
+	_ = newRPC(grpcs, str)
 
 	s := newServer(lis, grpcs)
 

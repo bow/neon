@@ -8,6 +8,7 @@ import (
 	"testing"
 	"time"
 
+	gomock "github.com/golang/mock/gomock"
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/require"
 )
@@ -21,7 +22,8 @@ type feedKey struct {
 
 type testStore struct {
 	*SQLite
-	t *testing.T
+	t      *testing.T
+	parser *MockFeedParser
 }
 
 func newTestStore(t *testing.T) testStore {
@@ -31,10 +33,11 @@ func newTestStore(t *testing.T) testStore {
 	zerolog.SetGlobalLevel(zerolog.Disabled)
 
 	dbPath := filepath.Join(t.TempDir(), t.Name()+".db")
-	s, err := NewSQLite(dbPath)
+	prs := NewMockFeedParser(gomock.NewController(t))
+	s, err := NewSQLite(dbPath, prs)
 	require.NoError(t, err)
 
-	return testStore{s, t}
+	return testStore{s, t, prs}
 }
 
 func (ts *testStore) tx() *sql.Tx {

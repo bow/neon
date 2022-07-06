@@ -11,7 +11,7 @@ import (
 // AddFeed adds the given feed into the database.
 func (s *SQLite) AddFeed(
 	ctx context.Context,
-	feed *gofeed.Feed,
+	feedURL string,
 	title *string,
 	desc *string,
 	tags []string,
@@ -20,32 +20,37 @@ func (s *SQLite) AddFeed(
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
+	fail := failF("SQLite.AddFeed")
+
+	feed, err := s.parser.ParseURLWithContext(feedURL, ctx)
+	if err != nil {
+		return nil, fail(err)
+	}
+
 	var created *Feed
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
 
 		now := time.Now()
 
-		feedDBID, err := upsertFeed(ctx, tx, feed, title, desc, isStarred, &now)
-		if err != nil {
-			return err
+		feedDBID, ierr := upsertFeed(ctx, tx, feed, title, desc, isStarred, &now)
+		if ierr != nil {
+			return ierr
 		}
 
-		err = addFeedTags(ctx, tx, feedDBID, tags)
-		if err != nil {
-			return err
+		ierr = addFeedTags(ctx, tx, feedDBID, tags)
+		if ierr != nil {
+			return ierr
 		}
 
-		created, err = getFeed(ctx, tx, feedDBID)
-		if err != nil {
-			return err
+		created, ierr = getFeed(ctx, tx, feedDBID)
+		if ierr != nil {
+			return ierr
 		}
 
 		return nil
 	}
 
-	fail := failF("SQLite.AddFeed")
-
-	err := s.withTx(ctx, dbFunc, nil)
+	err = s.withTx(ctx, dbFunc, nil)
 	if err != nil {
 		return nil, fail(err)
 	}

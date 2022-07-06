@@ -16,12 +16,11 @@ import (
 type rpc struct {
 	api.UnimplementedCourierServer
 
-	store  store.FeedStore
-	parser internal.FeedParser
+	store store.FeedStore
 }
 
-func newRPC(grpcs *grpc.Server, str store.FeedStore, prs internal.FeedParser) *rpc {
-	svc := rpc{store: str, parser: prs}
+func newRPC(grpcs *grpc.Server, str store.FeedStore) *rpc {
+	svc := rpc{store: str}
 	api.RegisterCourierServer(grpcs, &svc)
 	return &svc
 }
@@ -32,14 +31,9 @@ func (r *rpc) AddFeed(
 	req *api.AddFeedRequest,
 ) (*api.AddFeedResponse, error) {
 
-	feed, err := r.parser.ParseURLWithContext(req.GetUrl(), ctx)
-	if err != nil {
-		return nil, err
-	}
-
 	created, err := r.store.AddFeed(
 		ctx,
-		feed,
+		req.GetUrl(),
 		req.Title,
 		req.Description,
 		req.GetTags(),
