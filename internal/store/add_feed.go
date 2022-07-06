@@ -26,6 +26,10 @@ func (s *SQLite) AddFeed(
 	if err != nil {
 		return nil, fail(err)
 	}
+	// Handle possible specs deviations.
+	if feed.FeedLink == "" {
+		feed.FeedLink = feedURL
+	}
 
 	var created *Feed
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
