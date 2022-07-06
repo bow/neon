@@ -20,8 +20,6 @@ func (s *SQLite) AddFeed(
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	fail := failF("SQLite.AddFeed")
-
 	var created *Feed
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
 
@@ -29,12 +27,12 @@ func (s *SQLite) AddFeed(
 
 		feedDBID, err := insertFeedRow(ctx, tx, feed, title, desc, isStarred, &now)
 		if err != nil {
-			return fail(err)
+			return err
 		}
 
 		err = addFeedTags(ctx, tx, feedDBID, tags)
 		if err != nil {
-			return fail(err)
+			return err
 		}
 
 		created, err = getFeed(ctx, tx, feedDBID)
@@ -45,9 +43,11 @@ func (s *SQLite) AddFeed(
 		return nil
 	}
 
+	fail := failF("SQLite.AddFeed")
+
 	err := s.withTx(ctx, dbFunc, nil)
 	if err != nil {
-		return nil, err
+		return nil, fail(err)
 	}
 	return created, nil
 }

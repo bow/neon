@@ -9,19 +9,17 @@ func (s *SQLite) ListFeeds(ctx context.Context) ([]*Feed, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	fail := failF("SQLite.ListFeeds")
-
 	feeds := make([]*Feed, 0)
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
 
 		ifeeds, err := getAllFeeds(ctx, tx)
 		if err != nil {
-			return fail(err)
+			return err
 		}
 		for _, ifeed := range ifeeds {
 			ifeed := ifeed
 			if err := populateFeedEntries(ctx, tx, ifeed); err != nil {
-				return fail(err)
+				return err
 			}
 		}
 		feeds = ifeeds
@@ -29,9 +27,13 @@ func (s *SQLite) ListFeeds(ctx context.Context) ([]*Feed, error) {
 		return nil
 	}
 
-	err := s.withTx(ctx, dbFunc, nil)
+	fail := failF("SQLite.ListFeeds")
 
-	return feeds, err
+	err := s.withTx(ctx, dbFunc, nil)
+	if err != nil {
+		return nil, fail(err)
+	}
+	return feeds, nil
 }
 
 func getAllFeeds(ctx context.Context, tx *sql.Tx) ([]*Feed, error) {

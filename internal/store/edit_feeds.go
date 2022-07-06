@@ -13,8 +13,6 @@ func (s *SQLite) EditFeeds(
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	fail := failF("SQLite.EditFeed")
-
 	updateFunc := func(ctx context.Context, tx *sql.Tx, op *FeedEditOp) (*Feed, error) {
 		if err := setFeedTitle(ctx, tx, op.DBID, op.Title); err != nil {
 			return nil, err
@@ -36,16 +34,18 @@ func (s *SQLite) EditFeeds(
 		for i, op := range ops {
 			feed, err := updateFunc(ctx, tx, op)
 			if err != nil {
-				return fail(err)
+				return err
 			}
 			entries[i] = feed
 		}
 		return nil
 	}
 
+	fail := failF("SQLite.EditFeed")
+
 	err := s.withTx(ctx, dbFunc, nil)
 	if err != nil {
-		return nil, err
+		return nil, fail(err)
 	}
 	return entries, nil
 }

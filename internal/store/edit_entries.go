@@ -13,8 +13,6 @@ func (s *SQLite) EditEntries(
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	fail := failF("SQLite.EditEntries")
-
 	updateFunc := func(ctx context.Context, tx *sql.Tx, op *EntryEditOp) (*Entry, error) {
 		if err := setEntryIsRead(ctx, tx, op.DBID, op.IsRead); err != nil {
 			return nil, err
@@ -27,16 +25,18 @@ func (s *SQLite) EditEntries(
 		for i, op := range ops {
 			entry, err := updateFunc(ctx, tx, op)
 			if err != nil {
-				return fail(err)
+				return err
 			}
 			entries[i] = entry
 		}
 		return nil
 	}
 
+	fail := failF("SQLite.EditEntries")
+
 	err := s.withTx(ctx, dbFunc, nil)
 	if err != nil {
-		return nil, err
+		return nil, fail(err)
 	}
 	return entries, nil
 }

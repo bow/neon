@@ -9,8 +9,6 @@ func (s *SQLite) DeleteFeeds(ctx context.Context, ids []DBID) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	fail := failF("SQLite.DeleteFeeds")
-
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
 
 		sql1 := `DELETE FROM feeds WHERE id = ?`
@@ -22,11 +20,11 @@ func (s *SQLite) DeleteFeeds(ctx context.Context, ids []DBID) error {
 		deleteFunc := func(ctx context.Context, tx *sql.Tx, id DBID) error {
 			res, err := stmt1.ExecContext(ctx, id)
 			if err != nil {
-				return fail(err)
+				return err
 			}
 			n, err := res.RowsAffected()
 			if err != nil {
-				return fail(err)
+				return err
 			}
 			if n != int64(1) {
 				return FeedNotFoundError{id}
@@ -36,12 +34,18 @@ func (s *SQLite) DeleteFeeds(ctx context.Context, ids []DBID) error {
 
 		for _, id := range ids {
 			if err := deleteFunc(ctx, tx, id); err != nil {
-				return fail(err)
+				return err
 			}
 		}
 
 		return nil
 	}
 
-	return s.withTx(ctx, dbFunc, nil)
+	fail := failF("SQLite.DeleteFeeds")
+
+	err := s.withTx(ctx, dbFunc, nil)
+	if err != nil {
+		return fail(err)
+	}
+	return nil
 }
