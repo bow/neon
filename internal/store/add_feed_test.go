@@ -203,12 +203,13 @@ func TestAddFeedOkURLExists(t *testing.T) {
 	created, err := st.AddFeed(context.Background(), &feed, nil, nil, tags, true)
 	r.NoError(err)
 
-	a.Equal(t.Name(), created.Title)
-	a.Equal("", created.Description.String)
+	a.Equal(feed.Title, created.Title)
+	a.Equal(feed.Description, created.Description.String)
+	// TODO: Also update feed HTML URL.
 	a.Equal("", created.SiteURL.String)
 	a.Equal(feed.FeedLink, created.FeedURL)
 	a.Equal(tags, []string(created.Tags))
-	a.False(created.IsStarred)
+	a.True(created.IsStarred)
 
 	a.Equal(1, st.countFeeds())
 	a.Equal(2, st.countEntries(feed.FeedLink))

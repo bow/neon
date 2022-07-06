@@ -25,7 +25,7 @@ func (s *SQLite) AddFeed(
 
 		now := time.Now()
 
-		feedDBID, err := insertFeedRow(ctx, tx, feed, title, desc, isStarred, &now)
+		feedDBID, err := upsertFeed(ctx, tx, feed, title, desc, isStarred, &now)
 		if err != nil {
 			return err
 		}
@@ -52,7 +52,7 @@ func (s *SQLite) AddFeed(
 	return created, nil
 }
 
-func insertFeedRow(
+func upsertFeed(
 	ctx context.Context,
 	tx *sql.Tx,
 	feed *gofeed.Feed,
@@ -82,12 +82,18 @@ func insertFeedRow(
 	}
 	defer stmt1.Close()
 
+	var (
+		dbTitle = nullIfTextEmpty(resolve(title, feed.Title))
+		dbDesc  = nullIfTextEmpty(resolve(desc, feed.Description))
+		dbLink  = nullIfTextEmpty(feed.Link)
+	)
+
 	res, err := stmt1.ExecContext(
 		ctx,
-		nullIfTextEmpty(resolve(title, feed.Title)),
-		nullIfTextEmpty(resolve(desc, feed.Description)),
+		dbTitle,
+		dbDesc,
 		feed.FeedLink,
-		nullIfTextEmpty(feed.Link),
+		dbLink,
 		isStarred,
 		serializeTime(resolveFeedUpdateTime(feed)),
 		serializeTime(subTime),
@@ -103,19 +109,56 @@ func insertFeedRow(
 		if !isUniqueErr(err, "UNIQUE constraint failed: feeds.feed_url") {
 			return feedDBID, err
 		}
-		if ierr := tx.QueryRowContext(
+		var ierr error
+		if feedDBID, ierr = updateFeedWithURL(
 			ctx,
-			`SELECT id FROM feeds WHERE feed_url = ?`,
+			tx,
 			feed.FeedLink,
-		).Scan(&feedDBID); ierr != nil {
+			dbTitle,
+			dbDesc,
+			dbLink,
+			isStarred,
+		); ierr != nil {
 			return feedDBID, ierr
 		}
 	}
-	// TODO: Add and combine with proper update call.
 	if ierr := upsertEntries(ctx, tx, feedDBID, feed.Items); ierr != nil {
 		return feedDBID, ierr
 	}
 
+	return feedDBID, nil
+}
+
+func updateFeedWithURL(
+	ctx context.Context,
+	tx *sql.Tx,
+	feedURL string,
+	title *string,
+	desc *string,
+	_ *string,
+	isStarred bool,
+) (DBID, error) {
+
+	var feedDBID DBID
+
+	sql1 := `SELECT id FROM feeds WHERE feed_url = ?`
+	stmt1, err := tx.PrepareContext(ctx, sql1)
+	if err != nil {
+		return 0, err
+	}
+
+	if err := stmt1.QueryRowContext(ctx, feedURL).Scan(&feedDBID); err != nil {
+		return 0, err
+	}
+	if err := setFeedTitle(ctx, tx, feedDBID, title); err != nil {
+		return 0, err
+	}
+	if err := setFeedDescription(ctx, tx, feedDBID, desc); err != nil {
+		return 0, err
+	}
+	if err := setFeedIsStarred(ctx, tx, feedDBID, &isStarred); err != nil {
+		return 0, err
+	}
 	return feedDBID, nil
 }
 
