@@ -105,6 +105,7 @@ var (
 	setFeedTitle       = setTableField[string]("feeds", "title")
 	setFeedDescription = setTableField[string]("feeds", "description")
 	setFeedIsStarred   = setTableField[bool]("feeds", "is_starred")
+	setFeedSiteURL     = setTableField[string]("feeds", "site_url")
 )
 
 func setFeedTags(

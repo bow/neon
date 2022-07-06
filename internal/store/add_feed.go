@@ -110,7 +110,7 @@ func upsertFeed(
 			return feedDBID, err
 		}
 		var ierr error
-		if feedDBID, ierr = updateFeedWithURL(
+		if feedDBID, ierr = updateFeedWithFeedURL(
 			ctx,
 			tx,
 			feed.FeedLink,
@@ -129,13 +129,13 @@ func upsertFeed(
 	return feedDBID, nil
 }
 
-func updateFeedWithURL(
+func updateFeedWithFeedURL(
 	ctx context.Context,
 	tx *sql.Tx,
 	feedURL string,
 	title *string,
 	desc *string,
-	_ *string,
+	siteURL *string,
 	isStarred bool,
 ) (DBID, error) {
 
@@ -157,6 +157,9 @@ func updateFeedWithURL(
 		return 0, err
 	}
 	if err := setFeedIsStarred(ctx, tx, feedDBID, &isStarred); err != nil {
+		return 0, err
+	}
+	if err := setFeedSiteURL(ctx, tx, feedDBID, siteURL); err != nil {
 		return 0, err
 	}
 	return feedDBID, nil
