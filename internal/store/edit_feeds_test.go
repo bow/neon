@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestEditFeedsEmpty(t *testing.T) {
+func TestEditFeedsOkEmpty(t *testing.T) {
 	t.Parallel()
 
 	a := assert.New(t)
@@ -21,7 +21,7 @@ func TestEditFeedsEmpty(t *testing.T) {
 	a.Empty(feeds)
 }
 
-func TestEditFeedsExtended(t *testing.T) {
+func TestEditFeedsOkExtended(t *testing.T) {
 	t.Parallel()
 
 	a := assert.New(t)

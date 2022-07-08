@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestEditEntriesEmpty(t *testing.T) {
+func TestEditEntriesOkEmpty(t *testing.T) {
 	t.Parallel()
 
 	a := assert.New(t)
@@ -21,7 +21,7 @@ func TestEditEntriesEmpty(t *testing.T) {
 	a.Empty(entries)
 }
 
-func TestEditEntriesMinimal(t *testing.T) {
+func TestEditEntriesOkMinimal(t *testing.T) {
 	t.Parallel()
 
 	a := assert.New(t)
@@ -65,7 +65,7 @@ func TestEditEntriesMinimal(t *testing.T) {
 	a.False(existe("Entry A1", true))
 }
 
-func TestEditEntriesExtended(t *testing.T) {
+func TestEditEntriesOkExtended(t *testing.T) {
 	t.Parallel()
 
 	a := assert.New(t)

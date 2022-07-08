@@ -11,7 +11,7 @@ import (
 	"github.com/bow/courier/internal/store/opml"
 )
 
-func TestExportOPMLEmpty(t *testing.T) {
+func TestExportOPMLOkEmpty(t *testing.T) {
 	t.Parallel()
 
 	a := assert.New(t)
@@ -26,7 +26,7 @@ func TestExportOPMLEmpty(t *testing.T) {
 	a.ErrorIs(err, opml.ErrEmptyDocument)
 }
 
-func TestExportOPMLExtended(t *testing.T) {
+func TestExportOPMLOkExtended(t *testing.T) {
 	t.Parallel()
 
 	a := assert.New(t)
