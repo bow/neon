@@ -36,18 +36,30 @@ func (s *SQLite) AddFeed(
 
 		now := time.Now()
 
-		feedDBID, ierr := upsertFeed(ctx, tx, feed, title, desc, isStarred, &now)
+		feedDBID, ierr := upsertFeed(
+			ctx,
+			tx,
+			feed.FeedLink,
+			nullIfTextEmpty(resolve(title, feed.Title)),
+			nullIfTextEmpty(resolve(desc, feed.Description)),
+			nullIfTextEmpty(feed.Link),
+			isStarred,
+			resolveFeedUpdateTime(feed),
+			&now,
+		)
 		if ierr != nil {
 			return ierr
 		}
 
-		ierr = addFeedTags(ctx, tx, feedDBID, tags)
-		if ierr != nil {
+		if ierr = upsertEntries(ctx, tx, feedDBID, feed.Items); ierr != nil {
 			return ierr
 		}
 
-		created, ierr = getFeed(ctx, tx, feedDBID)
-		if ierr != nil {
+		if ierr = addFeedTags(ctx, tx, feedDBID, tags); ierr != nil {
+			return ierr
+		}
+
+		if created, ierr = getFeed(ctx, tx, feedDBID); ierr != nil {
 			return ierr
 		}
 
@@ -64,10 +76,12 @@ func (s *SQLite) AddFeed(
 func upsertFeed(
 	ctx context.Context,
 	tx *sql.Tx,
-	feed *gofeed.Feed,
+	feedURL string,
 	title *string,
 	desc *string,
+	siteURL *string,
 	isStarred *bool,
+	updateTime *time.Time,
 	subTime *time.Time,
 ) (DBID, error) {
 
@@ -75,9 +89,9 @@ func upsertFeed(
 	sql1 := `
 		INSERT INTO
 			feeds(
+				feed_url,
 				title,
 				description,
-				feed_url,
 				site_url,
 				is_starred,
 				update_time,
@@ -91,21 +105,14 @@ func upsertFeed(
 	}
 	defer stmt1.Close()
 
-	var (
-		dbTitle     = nullIfTextEmpty(resolve(title, feed.Title))
-		dbDesc      = nullIfTextEmpty(resolve(desc, feed.Description))
-		dbLink      = nullIfTextEmpty(feed.Link)
-		dbIsStarred = resolve(isStarred, false)
-	)
-
 	res, err := stmt1.ExecContext(
 		ctx,
-		dbTitle,
-		dbDesc,
-		feed.FeedLink,
-		dbLink,
-		dbIsStarred,
-		serializeTime(resolveFeedUpdateTime(feed)),
+		feedURL,
+		title,
+		desc,
+		siteURL,
+		resolve(isStarred, false),
+		serializeTime(updateTime),
 		serializeTime(subTime),
 	)
 
@@ -123,17 +130,14 @@ func upsertFeed(
 		if feedDBID, ierr = updateFeedWithFeedURL(
 			ctx,
 			tx,
-			feed.FeedLink,
-			dbTitle,
-			dbDesc,
-			dbLink,
+			feedURL,
+			title,
+			desc,
+			siteURL,
 			isStarred,
 		); ierr != nil {
 			return feedDBID, ierr
 		}
-	}
-	if ierr := upsertEntries(ctx, tx, feedDBID, feed.Items); ierr != nil {
-		return feedDBID, ierr
 	}
 
 	return feedDBID, nil
