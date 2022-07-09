@@ -66,6 +66,10 @@ func (doc *OPML) AddOutline(outl Outliner) error {
 	return nil
 }
 
+func (doc *OPML) Length() int {
+	return len(doc.Body.Outlines)
+}
+
 func (doc *OPML) Empty() bool {
 	return len(doc.Body.Outlines) == 0
 }
