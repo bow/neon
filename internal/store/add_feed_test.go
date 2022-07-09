@@ -44,7 +44,7 @@ func TestAddFeedOkMinimal(t *testing.T) {
 	a.Equal(0, st.countFeedTags())
 	a.False(existf())
 
-	created, err := st.AddFeed(context.Background(), feed.Link, nil, nil, nil, false)
+	created, err := st.AddFeed(context.Background(), feed.Link, nil, nil, nil, nil)
 	r.NoError(err)
 
 	a.Equal(feed.Title, created.Title)
@@ -132,7 +132,7 @@ func TestAddFeedOkExtended(t *testing.T) {
 		&title,
 		&description,
 		tags,
-		isStarred,
+		&isStarred,
 	)
 	r.NoError(err)
 
@@ -214,7 +214,7 @@ func TestAddFeedOkURLExists(t *testing.T) {
 	a.False(existe(feed.Items[0]))
 	a.False(existe(feed.Items[1]))
 
-	created, err := st.AddFeed(context.Background(), feed.Link, nil, nil, tags, true)
+	created, err := st.AddFeed(context.Background(), feed.Link, nil, nil, tags, pointer(true))
 	r.NoError(err)
 
 	a.Equal(feed.Title, created.Title)

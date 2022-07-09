@@ -47,7 +47,7 @@ func TestAddFeedOk(t *testing.T) {
 			req.Title,
 			req.Description,
 			req.Tags,
-			req.GetIsStarred(),
+			req.IsStarred,
 		).
 		Return(&created, nil)
 

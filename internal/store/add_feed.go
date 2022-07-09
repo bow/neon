@@ -15,7 +15,7 @@ func (s *SQLite) AddFeed(
 	title *string,
 	desc *string,
 	tags []string,
-	isStarred bool,
+	isStarred *bool,
 ) (*Feed, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -67,7 +67,7 @@ func upsertFeed(
 	feed *gofeed.Feed,
 	title *string,
 	desc *string,
-	isStarred bool,
+	isStarred *bool,
 	subTime *time.Time,
 ) (DBID, error) {
 
@@ -92,9 +92,10 @@ func upsertFeed(
 	defer stmt1.Close()
 
 	var (
-		dbTitle = nullIfTextEmpty(resolve(title, feed.Title))
-		dbDesc  = nullIfTextEmpty(resolve(desc, feed.Description))
-		dbLink  = nullIfTextEmpty(feed.Link)
+		dbTitle     = nullIfTextEmpty(resolve(title, feed.Title))
+		dbDesc      = nullIfTextEmpty(resolve(desc, feed.Description))
+		dbLink      = nullIfTextEmpty(feed.Link)
+		dbIsStarred = resolve(isStarred, false)
 	)
 
 	res, err := stmt1.ExecContext(
@@ -103,7 +104,7 @@ func upsertFeed(
 		dbDesc,
 		feed.FeedLink,
 		dbLink,
-		isStarred,
+		dbIsStarred,
 		serializeTime(resolveFeedUpdateTime(feed)),
 		serializeTime(subTime),
 	)
@@ -145,7 +146,7 @@ func updateFeedWithFeedURL(
 	title *string,
 	desc *string,
 	siteURL *string,
-	isStarred bool,
+	isStarred *bool,
 ) (DBID, error) {
 
 	var feedDBID DBID
@@ -165,7 +166,7 @@ func updateFeedWithFeedURL(
 	if err := setFeedDescription(ctx, tx, feedDBID, desc); err != nil {
 		return 0, err
 	}
-	if err := setFeedIsStarred(ctx, tx, feedDBID, &isStarred); err != nil {
+	if err := setFeedIsStarred(ctx, tx, feedDBID, isStarred); err != nil {
 		return 0, err
 	}
 	if err := setFeedSiteURL(ctx, tx, feedDBID, siteURL); err != nil {

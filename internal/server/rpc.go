@@ -37,7 +37,7 @@ func (r *rpc) AddFeed(
 		req.Title,
 		req.Description,
 		req.GetTags(),
-		req.GetIsStarred(),
+		req.IsStarred,
 	)
 	if err != nil {
 		return nil, err

@@ -23,7 +23,7 @@ type FeedStore interface {
 		title *string,
 		desc *string,
 		tags []string,
-		isStarred bool,
+		isStarred *bool,
 	) (addedFeed *Feed, err error)
 	EditFeeds(ctx context.Context, ops []*FeedEditOp) (feeds []*Feed, err error)
 	ListFeeds(ctx context.Context) (feeds []*Feed, err error)
