@@ -173,10 +173,18 @@ func (r *rpc) ExportOPML(
 
 // ImportOPML satisfies the service API.
 func (r *rpc) ImportOPML(
-	_ context.Context,
-	_ *api.ImportOPMLRequest,
+	ctx context.Context,
+	req *api.ImportOPMLRequest,
 ) (*api.ImportOPMLResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "unimplemented")
+
+	n, err := r.store.ImportOPML(ctx, req.Payload)
+	if err != nil {
+		return nil, err
+	}
+
+	rsp := api.ImportOPMLResponse{NumImported: int32(n)}
+
+	return &rsp, nil
 }
 
 // GetInfo satisfies the service API.
