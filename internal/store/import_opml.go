@@ -12,6 +12,10 @@ func (s *SQLite) ImportOPML(ctx context.Context, payload []byte) (int, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
+	if len(payload) == 0 {
+		return 0, ErrEmptyPayload
+	}
+
 	fail := failF("SQLite.ImportOPML")
 
 	doc, err := opml.Parse(payload)

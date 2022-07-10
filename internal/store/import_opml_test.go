@@ -8,6 +8,22 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func TestImportOPMLErrEmptyPayload(t *testing.T) {
+	t.Parallel()
+
+	a := assert.New(t)
+	r := require.New(t)
+	st := newTestStore(t)
+
+	r.Equal(0, st.countFeeds())
+
+	n, err := st.ImportOPML(context.Background(), []byte{})
+	r.Equal(0, n)
+	a.EqualError(err, "payload is empty")
+
+	a.Equal(0, st.countFeeds())
+}
+
 func TestImportOPMLOkEmptyOPMLBody(t *testing.T) {
 	t.Parallel()
 

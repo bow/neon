@@ -81,9 +81,9 @@ func (f *Feed) Proto() (*api.Feed, error) {
 
 func (f *Feed) Outline() (*opml.Outline, error) {
 	outl := opml.Outline{
-		Text:      f.Title,
-		Type:      "rss",
-		XMLURL:    f.FeedURL,
+		Text:   f.Title,
+		Type:   "rss",
+		XMLURL: f.FeedURL,
 	}
 	if f.SiteURL.Valid {
 		outl.HTMLURL = pointer(f.SiteURL.String)

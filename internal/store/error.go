@@ -9,6 +9,8 @@ import (
 	sqlite3 "modernc.org/sqlite/lib"
 )
 
+var ErrEmptyPayload = errors.New("payload is empty")
+
 type FeedNotFoundError struct{ ID DBID }
 
 func (e FeedNotFoundError) Error() string {
