@@ -27,6 +27,7 @@ func (s *SQLite) ImportOPML(ctx context.Context, payload []byte) (int, error) {
 		return 0, nil
 	}
 
+	var n int
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
 		now := time.Now()
 
@@ -49,6 +50,7 @@ func (s *SQLite) ImportOPML(ctx context.Context, payload []byte) (int, error) {
 			if ierr = addFeedTags(ctx, tx, feedDBID, outl.Categories); ierr != nil {
 				return ierr
 			}
+			n++
 		}
 
 		return nil
@@ -58,5 +60,5 @@ func (s *SQLite) ImportOPML(ctx context.Context, payload []byte) (int, error) {
 	if err != nil {
 		return 0, fail(err)
 	}
-	return doc.Length(), nil
+	return n, nil
 }
