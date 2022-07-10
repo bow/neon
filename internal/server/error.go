@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"encoding/xml"
 	"errors"
 
 	"google.golang.org/grpc"
@@ -37,7 +38,12 @@ func unwrapStoreErr(err error) (codes.Code, error) {
 	switch cerr := err.(type) {
 	case store.FeedNotFoundError, store.EntryNotFoundError:
 		return codes.NotFound, cerr
+	case xml.UnmarshalError, *xml.SyntaxError:
+		return codes.InvalidArgument, cerr
 	default:
+		if err == store.ErrEmptyPayload {
+			return codes.InvalidArgument, err
+		}
 		var (
 			ierr  error
 			icode codes.Code
