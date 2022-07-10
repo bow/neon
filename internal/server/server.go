@@ -138,11 +138,6 @@ func (b *Builder) Store(str store.FeedStore) *Builder {
 	return b
 }
 
-func (b *Builder) Parser(parser store.FeedParser) *Builder {
-	b.parser = parser
-	return b
-}
-
 func (b *Builder) Logger(logger zerolog.Logger) *Builder {
 	b.logger = logger
 	return b
