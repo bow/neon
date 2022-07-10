@@ -60,20 +60,11 @@ func TestImportOPMLOkMinimal(t *testing.T) {
 
 	existf := func() bool {
 		return st.rowExists(
-			`
-				SELECT
-					*
-				FROM
-					feeds
-				WHERE
-					title = ?
-					AND description IS NULL
-					AND feed_url = ?
-					AND site_url IS NULL
-					AND is_starred = ?
-			`,
+			feedExistSQL,
 			"Feed A",
+			nil,
 			"http://a.com/feed.xml",
+			nil,
 			false,
 		)
 	}

@@ -239,11 +239,11 @@ const feedExistSQL = `
 	FROM
 		feeds
 	WHERE
-		title = ?
-		AND description = ?
-		AND feed_url = ?
-		AND site_url = ?
-		AND is_starred = ?
+		coalesce(title = $1, title IS NULL AND $1 IS NULL)
+		AND coalesce(description = $2, description IS NULL AND $2 IS NULL)
+		AND coalesce(feed_url = $3, feed_url IS NULL AND $3 IS NULL)
+		AND coalesce(site_url = $4, site_url IS NULL AND $4 IS NULL)
+		AND coalesce(is_starred = $5, is_starred IS NULL AND $5 IS NULL)
 `
 
 // Query for checking that an entry linked to a given feed URL exists.
