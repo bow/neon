@@ -45,6 +45,7 @@ func getAllFeeds(ctx context.Context, tx *sql.Tx) ([]*Feed, error) {
 			f.description AS description,
 			f.feed_url AS feed_url,
 			f.site_url AS site_url,
+			f.is_starred AS is_starred,
 			f.subscription_time AS subscription_time,
 			f.update_time AS update_time,
 			json_group_array(fc.name) FILTER (WHERE fc.name IS NOT NULL) AS tags
@@ -65,6 +66,7 @@ func getAllFeeds(ctx context.Context, tx *sql.Tx) ([]*Feed, error) {
 			&feed.Description,
 			&feed.FeedURL,
 			&feed.SiteURL,
+			&feed.IsStarred,
 			&feed.Subscribed,
 			&feed.Updated,
 			&feed.Tags,

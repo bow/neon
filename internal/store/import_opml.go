@@ -34,7 +34,7 @@ func (s *SQLite) ImportOPML(ctx context.Context, payload []byte) (int, error) {
 				nullIfTextEmpty(outl.Text),
 				outl.Description,
 				outl.HTMLURL,
-				nil, // TODO: Set isStarred.
+				outl.IsStarred,
 				nil,
 				&now,
 			)

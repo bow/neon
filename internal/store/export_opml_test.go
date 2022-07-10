@@ -52,8 +52,18 @@ func TestExportOPMLOkExtended(t *testing.T) {
 			},
 			Tags: []string{"foo", "baz"},
 		},
+		{
+			Title:     "Feed Q",
+			FeedURL:   "http://q.com/feed.xml",
+			Updated:   WrapNullString("2022-05-02T11:47:33.683+02:00"),
+			IsStarred: true,
+			Entries: []*Entry{
+				{Title: "Entry Q1", IsRead: false},
+			},
+		},
 	}
 	st.addFeeds(dbFeeds)
+	r.Equal(3, st.countFeeds())
 
 	payload, err := st.ExportOPML(context.Background(), pointer("Test Export"))
 	r.NoError(err)
@@ -66,6 +76,7 @@ func TestExportOPMLOkExtended(t *testing.T) {
     <dateCreated>\d+ [A-Z][a-z]+ \d+ \d+:\d+ .+</dateCreated>
   </head>
   <body>
+    <outline text="Feed Q" type="rss" xmlUrl="http://q.com/feed.xml" xmlns:courier="https://github.com/bow/courier" courier:isStarred="true"></outline>
     <outline text="Feed X" type="rss" xmlUrl="http://x.com/feed.xml" category="foo,baz"></outline>
     <outline text="Feed A" type="rss" xmlUrl="http://a.com/feed.xml"></outline>
   </body>

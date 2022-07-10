@@ -35,6 +35,8 @@ func TestParseOkExtended(t *testing.T) {
         version="RSS2"
         xmlUrl="http://news.com.com/2547-1_3-0-5.xml"
 		category="news,tech"
+		xmlns:courier="https://github.com/bow/courier"
+		courier:isStarred="true"
     />
     <outline
         text="NYT &gt; Business"
@@ -46,6 +48,8 @@ func TestParseOkExtended(t *testing.T) {
         version="RSS2"
         xmlUrl="http://www.nytimes.com/services/xml/rss/nyt/Business.xml"
 		category="news,paper"
+		xmlns:courier="https://github.com/bow/courier"
+		courier:isStarred="true"
     />
     <outline
         text="Wired News"
@@ -111,6 +115,8 @@ func TestParseOkExtended(t *testing.T) {
 	r.NotNil(outl0.HTMLURL)
 	a.Equal("http://news.com.com/", *outl0.HTMLURL)
 	a.ElementsMatch([]string{"tech", "news"}, outl0.Categories)
+	r.NotNil(outl0.IsStarred)
+	a.True(*outl0.IsStarred)
 	//
 	outl3 := outls[3]
 	a.Equal("NYT > Technology", outl3.Text)
@@ -121,6 +127,7 @@ func TestParseOkExtended(t *testing.T) {
 	r.NotNil(outl3.HTMLURL)
 	a.Equal("http://www.nytimes.com/pages/technology/index.html?partner=rssnyt", *outl3.HTMLURL)
 	a.ElementsMatch([]string{"tech", "news", "paper"}, outl3.Categories)
+	a.Nil(outl3.IsStarred)
 }
 
 func stringp(value string) *string { return &value }
