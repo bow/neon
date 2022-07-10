@@ -19,8 +19,8 @@ service Courier {
   // DeleteFeeds removes one or more feed sources.
   rpc DeleteFeeds (DeleteFeedsRequest) returns (DeleteFeedsResponse) {}
 
-  // PollFeeds listens for feed updates.
-  rpc PollFeeds (stream PollFeedsRequest) returns (stream PollFeedsResponse) {}
+  // UpdateFeeds updates all feeds and returns ones with new entries.
+  rpc UpdateFeeds (UpdateFeedsRequest) returns (stream UpdateFeedsResponse) {}
 
   // EditEntries sets one or more fields of an entry.
   rpc EditEntries (EditEntriesRequest) returns (EditEntriesResponse) {}
@@ -107,9 +107,9 @@ message DeleteFeedsRequest {
 
 message DeleteFeedsResponse {}
 
-message PollFeedsRequest {}
+message UpdateFeedsRequest {}
 
-message PollFeedsResponse {}
+message UpdateFeedsResponse {}
 
 message EditEntriesRequest {
   repeated Op ops = 1;

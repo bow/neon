@@ -189,13 +189,14 @@ func TestDeleteFeedsErrNotFound(t *testing.T) {
 	a.EqualError(err, "rpc error: code = NotFound desc = feed with ID=9 not found")
 }
 
-func TestPollFeedsOk(t *testing.T) {
+func TestUpdateFeedsOk(t *testing.T) {
 	t.Parallel()
 
 	r := require.New(t)
-	client := newTestClientBuilder(t).Build()
+	client, _ := setupServerTest(t)
 
-	stream, err := client.PollFeeds(context.Background())
+	req := api.UpdateFeedsRequest{}
+	stream, err := client.UpdateFeeds(context.Background(), &req)
 	r.NoError(err)
 	waitc := make(chan struct{})
 
@@ -209,12 +210,6 @@ func TestPollFeedsOk(t *testing.T) {
 		}
 	}()
 
-	req := api.PollFeedsRequest{}
-	err = stream.Send(&req)
-	r.NoError(err)
-
-	err = stream.CloseSend()
-	r.NoError(err)
 	<-waitc
 }
 

@@ -122,8 +122,11 @@ func (r *rpc) DeleteFeeds(
 	return &rsp, err
 }
 
-// PollFeeds satisfies the service API.
-func (r *rpc) PollFeeds(_ api.Courier_PollFeedsServer) error {
+// UpdateFeeds satisfies the service API.
+func (r *rpc) UpdateFeeds(
+	_ *api.UpdateFeedsRequest,
+	_ api.Courier_UpdateFeedsServer,
+) error {
 	return status.Errorf(codes.Unimplemented, "unimplemented")
 }
 
