@@ -168,7 +168,7 @@ test: mocks .coverage.out  ## Run the test suite.
 
 .coverage.out:
 	gotestsum --format dots-v2 --junitfile .junit.xml -- ./... -parallel=$(shell nproc) -coverprofile=$@ -covermode=atomic -coverpkg ./internal/...,./cmd/...,./. \
-		&& go tool cover -func=$@
+		&& $(GREP_EXE) -v "_mock.go" $@ | go tool cover -func=/dev/stdin
 
 
 .PHONY: test-cov-xml
