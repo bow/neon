@@ -122,10 +122,10 @@ func (r *rpc) DeleteFeeds(
 	return &rsp, err
 }
 
-// UpdateFeeds satisfies the service API.
-func (r *rpc) UpdateFeeds(
-	_ *api.UpdateFeedsRequest,
-	_ api.Courier_UpdateFeedsServer,
+// PullFeeds satisfies the service API.
+func (r *rpc) PullFeeds(
+	_ *api.PullFeedsRequest,
+	_ api.Courier_PullFeedsServer,
 ) error {
 	return status.Errorf(codes.Unimplemented, "unimplemented")
 }

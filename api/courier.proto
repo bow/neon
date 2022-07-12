@@ -16,11 +16,11 @@ service Courier {
   // ListFeeds lists all added feed sources.
   rpc ListFeeds (ListFeedsRequest) returns (ListFeedsResponse) {}
 
+  // PullFeeds checks all feeds for updates and returns all unread entries.
+  rpc PullFeeds (PullFeedsRequest) returns (stream PullFeedsResponse) {}
+
   // DeleteFeeds removes one or more feed sources.
   rpc DeleteFeeds (DeleteFeedsRequest) returns (DeleteFeedsResponse) {}
-
-  // UpdateFeeds updates all feeds and returns ones with new entries.
-  rpc UpdateFeeds (UpdateFeedsRequest) returns (stream UpdateFeedsResponse) {}
 
   // EditEntries sets one or more fields of an entry.
   rpc EditEntries (EditEntriesRequest) returns (EditEntriesResponse) {}
@@ -101,15 +101,17 @@ message ListFeedsResponse {
   repeated Feed feeds = 1;
 }
 
+message PullFeedsRequest {}
+
+message PullFeedsResponse {
+  repeated Feed updated_feeds = 1;
+}
+
 message DeleteFeedsRequest {
   repeated int32 feed_ids = 1;
 }
 
 message DeleteFeedsResponse {}
-
-message UpdateFeedsRequest {}
-
-message UpdateFeedsResponse {}
 
 message EditEntriesRequest {
   repeated Op ops = 1;
