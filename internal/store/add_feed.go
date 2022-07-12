@@ -51,7 +51,7 @@ func (s *SQLite) AddFeed(
 			return ierr
 		}
 
-		if _, ierr = upsertEntries(ctx, tx, feedDBID, feed.Items); ierr != nil {
+		if ierr = upsertEntries(ctx, tx, feedDBID, feed.Items); ierr != nil {
 			return ierr
 		}
 
@@ -184,7 +184,7 @@ func upsertEntries(
 	tx *sql.Tx,
 	feedDBID DBID,
 	entries []*gofeed.Item,
-) ([]DBID, error) {
+) error {
 
 	sql1 := `
 		INSERT INTO
@@ -202,25 +202,18 @@ func upsertEntries(
 `
 	stmt1, err := tx.PrepareContext(ctx, sql1)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer stmt1.Close()
 
 	sql2 := `UPDATE entries SET is_read = (update_time = ?)`
 	stmt2, err := tx.PrepareContext(ctx, sql2)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer stmt2.Close()
 
-	sql3 := `SELECT id, is_read FROM entries WHERE feed_id = ? AND external_id = ?`
-	stmt3, err := tx.PrepareContext(ctx, sql3)
-	if err != nil {
-		return nil, err
-	}
-	defer stmt3.Close()
-
-	upsert := func(entry *gofeed.Item, insertStmt, updateStmt, getStmt *sql.Stmt) (DBID, error) {
+	upsert := func(entry *gofeed.Item, insertStmt, updateStmt *sql.Stmt) error {
 		updateTime := serializeTime(resolveEntryUpdateTime(entry))
 		_, err := insertStmt.Exec(
 			feedDBID,
@@ -234,35 +227,21 @@ func upsertEntries(
 		)
 		if err != nil {
 			if !isUniqueErr(err, "UNIQUE constraint failed: entries.feed_id, entries.external_id") {
-				return 0, err
+				return err
 			}
 			if _, ierr := updateStmt.Exec(ctx, updateTime); ierr != nil {
-				return 0, ierr
+				return ierr
 			}
 		}
-		var (
-			isRead    bool
-			entryDBID DBID
-		)
-		if err = getStmt.QueryRow(feedDBID, entry.GUID).Scan(&entryDBID, &isRead); err != nil {
-			return 0, err
-		}
-		if isRead {
-			return 0, nil
-		}
-		return entryDBID, nil
+		return nil
 	}
 
-	ids := make([]DBID, 0)
 	for _, entry := range entries {
-		entryDBID, err := upsert(entry, stmt1, stmt2, stmt3)
-		if err != nil {
-			return nil, err
+		if err := upsert(entry, stmt1, stmt2); err != nil {
+			return err
 		}
-		ids = append(ids, entryDBID)
 	}
-
-	return ids, nil
+	return nil
 }
 
 func addFeedTags(
