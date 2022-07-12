@@ -127,7 +127,7 @@ func upsertFeed(
 			return feedDBID, err
 		}
 		var ierr error
-		if feedDBID, ierr = updateFeedWithFeedURL(
+		if feedDBID, ierr = editFeedWithFeedURL(
 			ctx,
 			tx,
 			feedURL,
@@ -143,7 +143,7 @@ func upsertFeed(
 	return feedDBID, nil
 }
 
-func updateFeedWithFeedURL(
+func editFeedWithFeedURL(
 	ctx context.Context,
 	tx *sql.Tx,
 	feedURL string,
