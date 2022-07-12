@@ -18,9 +18,11 @@ func (s *SQLite) ListFeeds(ctx context.Context) ([]*Feed, error) {
 		}
 		for _, ifeed := range ifeeds {
 			ifeed := ifeed
-			if err := populateFeedEntries(ctx, tx, ifeed); err != nil {
+			entries, err := getAllFeedEntries(ctx, tx, ifeed.DBID)
+			if err != nil {
 				return err
 			}
+			ifeed.Entries = entries
 		}
 		feeds = ifeeds
 
@@ -99,7 +101,7 @@ func getAllFeeds(ctx context.Context, tx *sql.Tx) ([]*Feed, error) {
 	return feeds, nil
 }
 
-func populateFeedEntries(ctx context.Context, tx *sql.Tx, feed *Feed) error {
+func getAllFeedEntries(ctx context.Context, tx *sql.Tx, feedDBID DBID) ([]*Entry, error) {
 
 	sql1 := `
 		SELECT
@@ -141,24 +143,22 @@ func populateFeedEntries(ctx context.Context, tx *sql.Tx, feed *Feed) error {
 
 	stmt1, err := tx.PrepareContext(ctx, sql1)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	defer stmt1.Close()
 
-	rows, err := stmt1.QueryContext(ctx, feed.DBID)
+	rows, err := stmt1.QueryContext(ctx, feedDBID)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	entries := make([]*Entry, 0)
 	for rows.Next() {
 		entry, err := scanRow(rows)
 		if err != nil {
-			return err
+			return nil, err
 		}
 		entries = append(entries, entry)
 	}
-	feed.Entries = entries
-
-	return nil
+	return entries, nil
 }
