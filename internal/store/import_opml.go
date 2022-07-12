@@ -36,7 +36,7 @@ func (s *SQLite) ImportOPML(ctx context.Context, payload []byte) (int, error) {
 				ctx,
 				tx,
 				outl.XMLURL,
-				nullIfTextEmpty(outl.Text),
+				pointerOrNil(outl.Text),
 				outl.Description,
 				outl.HTMLURL,
 				outl.IsStarred,

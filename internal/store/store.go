@@ -102,22 +102,16 @@ func (s *SQLite) withTx(
 	return err
 }
 
-// nullIf returns nil if the given string is empty or only contains whitespaces, otherwise
-// it returns a pointer to the string value.
-func nullIf[T any](value T, pred func(T) bool) *T {
-	if pred(value) {
+func pointerOrNil(v string) *string {
+	if v == "" || strings.TrimSpace(v) == "" {
 		return nil
 	}
-	return &value
+	return &v
 }
 
-func nullIfTextEmpty(v string) *string {
-	return nullIf(v, func(s string) bool { return s == "" || strings.TrimSpace(s) == "" })
-}
-
-// resolve returns the dereferenced pointer value if the pointer is non-nil,
+// deref returns the dereferenced pointer value if the pointer is non-nil,
 // otherwise it returns the given default.
-func resolve[T any](v *T, def T) T {
+func deref[T any](v *T, def T) T {
 	if v != nil {
 		return *v
 	}
