@@ -200,9 +200,25 @@ func upsertEntries(
 			)
 			VALUES(?, ?, ?, ?, ?, ?, ?, ?)
 `
+	stmt1, err := tx.PrepareContext(ctx, sql1)
+	if err != nil {
+		return nil, err
+	}
+	defer stmt1.Close()
+
 	sql2 := `UPDATE entries SET is_read = (update_time = ?)`
+	stmt2, err := tx.PrepareContext(ctx, sql2)
+	if err != nil {
+		return nil, err
+	}
+	defer stmt2.Close()
 
 	sql3 := `SELECT id, is_read FROM entries WHERE feed_id = ? AND external_id = ?`
+	stmt3, err := tx.PrepareContext(ctx, sql3)
+	if err != nil {
+		return nil, err
+	}
+	defer stmt3.Close()
 
 	upsert := func(entry *gofeed.Item, insertStmt, updateStmt, getStmt *sql.Stmt) (DBID, error) {
 		updateTime := serializeTime(resolveEntryUpdateTime(entry))
@@ -236,24 +252,6 @@ func upsertEntries(
 		}
 		return entryDBID, nil
 	}
-
-	stmt1, err := tx.PrepareContext(ctx, sql1)
-	if err != nil {
-		return nil, err
-	}
-	defer stmt1.Close()
-
-	stmt2, err := tx.PrepareContext(ctx, sql2)
-	if err != nil {
-		return nil, err
-	}
-	defer stmt2.Close()
-
-	stmt3, err := tx.PrepareContext(ctx, sql3)
-	if err != nil {
-		return nil, err
-	}
-	defer stmt3.Close()
 
 	ids := make([]DBID, 0)
 	for _, entry := range entries {
