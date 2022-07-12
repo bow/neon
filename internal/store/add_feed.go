@@ -206,8 +206,7 @@ func upsertEntries(
 
 	upsert := func(entry *gofeed.Item, insertStmt, updateStmt, getStmt *sql.Stmt) (DBID, error) {
 		updateTime := serializeTime(resolveEntryUpdateTime(entry))
-		_, err := insertStmt.ExecContext(
-			ctx,
+		_, err := insertStmt.Exec(
 			feedDBID,
 			entry.GUID,
 			entry.Link,
@@ -221,7 +220,7 @@ func upsertEntries(
 			if !isUniqueErr(err, "UNIQUE constraint failed: entries.feed_id, entries.external_id") {
 				return 0, err
 			}
-			if _, ierr := updateStmt.ExecContext(ctx, updateTime); ierr != nil {
+			if _, ierr := updateStmt.Exec(ctx, updateTime); ierr != nil {
 				return 0, ierr
 			}
 		}
