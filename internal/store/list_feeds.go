@@ -18,7 +18,7 @@ func (s *SQLite) ListFeeds(ctx context.Context) ([]*Feed, error) {
 		}
 		for _, ifeed := range ifeeds {
 			ifeed := ifeed
-			entries, err := getAllFeedEntries(ctx, tx, ifeed.DBID)
+			entries, err := getAllFeedEntries(ctx, tx, ifeed.DBID, nil)
 			if err != nil {
 				return err
 			}
@@ -101,7 +101,12 @@ func getAllFeeds(ctx context.Context, tx *sql.Tx) ([]*Feed, error) {
 	return feeds, nil
 }
 
-func getAllFeedEntries(ctx context.Context, tx *sql.Tx, feedDBID DBID) ([]*Entry, error) {
+func getAllFeedEntries(
+	ctx context.Context,
+	tx *sql.Tx,
+	feedDBID DBID,
+	isRead *bool,
+) ([]*Entry, error) {
 
 	sql1 := `
 		SELECT
@@ -118,7 +123,8 @@ func getAllFeedEntries(ctx context.Context, tx *sql.Tx, feedDBID DBID) ([]*Entry
 		FROM
 			entries e
 		WHERE
-			e.feed_id = ?
+			e.feed_id = $1
+			AND COALESCE(e.is_read = $2, true)
 		ORDER BY
 			COALESCE(e.update_time, e.publication_time) DESC
 `
@@ -147,7 +153,7 @@ func getAllFeedEntries(ctx context.Context, tx *sql.Tx, feedDBID DBID) ([]*Entry
 	}
 	defer stmt1.Close()
 
-	rows, err := stmt1.QueryContext(ctx, feedDBID)
+	rows, err := stmt1.QueryContext(ctx, feedDBID, isRead)
 	if err != nil {
 		return nil, err
 	}
