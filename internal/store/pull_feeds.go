@@ -83,6 +83,8 @@ func (pk pullKey) err(e error) PullResult {
 	return PullResult{pk: pk, status: pullFail, ok: nil, err: e}
 }
 
+var setFeedUpdateTime = setTableField[string]("feeds", "update_time")
+
 func getAllPullKeys(ctx context.Context, tx *sql.Tx) ([]pullKey, error) {
 
 	sql1 := `SELECT id, feed_url FROM feeds`
@@ -126,6 +128,11 @@ func pullNewFeedEntries(
 
 		gfeed, err := parser.ParseURLWithContext(pk.feedURL, ctx)
 		if err != nil {
+			return pk.err(err)
+		}
+
+		updateTime := serializeTime(resolveFeedUpdateTime(gfeed))
+		if err = setFeedUpdateTime(ctx, tx, pk.feedDBID, updateTime); err != nil {
 			return pk.err(err)
 		}
 
