@@ -137,3 +137,18 @@ func (mr *MockFeedStoreMockRecorder) ListFeeds(ctx interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListFeeds", reflect.TypeOf((*MockFeedStore)(nil).ListFeeds), ctx)
 }
+
+// PullFeeds mocks base method.
+func (m *MockFeedStore) PullFeeds(ctx context.Context) (<-chan PullResult, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "PullFeeds", ctx)
+	ret0, _ := ret[0].(<-chan PullResult)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// PullFeeds indicates an expected call of PullFeeds.
+func (mr *MockFeedStoreMockRecorder) PullFeeds(ctx interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PullFeeds", reflect.TypeOf((*MockFeedStore)(nil).PullFeeds), ctx)
+}

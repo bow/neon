@@ -27,6 +27,7 @@ type FeedStore interface {
 	) (addedFeed *Feed, err error)
 	EditFeeds(ctx context.Context, ops []*FeedEditOp) (feeds []*Feed, err error)
 	ListFeeds(ctx context.Context) (feeds []*Feed, err error)
+	PullFeeds(ctx context.Context) (results <-chan PullResult, err error)
 	DeleteFeeds(ctx context.Context, ids []DBID) (err error)
 	EditEntries(ctx context.Context, ops []*EntryEditOp) (entries []*Entry, err error)
 	ExportOPML(ctx context.Context, title *string) (payload []byte, err error)
