@@ -20,12 +20,9 @@ func (s *SQLite) PullFeeds(ctx context.Context) (<-chan PullResult, error) {
 			return nil
 		}
 
-		pullCtx, cancel := context.WithCancel(ctx)
-		defer cancel()
-
 		chs := make([]<-chan PullResult, len(pks))
 		for i, pk := range pks {
-			chs[i] = pullNewFeedEntries(pullCtx, tx, pk, s.parser)
+			chs[i] = pullNewFeedEntries(ctx, tx, pk, s.parser)
 		}
 
 		c = merge(chs)
