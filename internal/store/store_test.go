@@ -131,10 +131,11 @@ func (s *testStore) addFeeds(feeds []*Feed) map[string]feedKey {
 			feed_id,
 			external_id,
 			title,
+			url,
 			is_read,
 			update_time
 		)
-		VALUES (?, ?, ?, ?, ?)
+		VALUES (?, ?, ?, ?, ?, ?)
 		RETURNING id
 	`)
 	require.NoError(s.t, err)
