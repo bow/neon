@@ -139,12 +139,11 @@ func (mr *MockFeedStoreMockRecorder) ListFeeds(ctx interface{}) *gomock.Call {
 }
 
 // PullFeeds mocks base method.
-func (m *MockFeedStore) PullFeeds(ctx context.Context) (<-chan PullResult, error) {
+func (m *MockFeedStore) PullFeeds(ctx context.Context) <-chan PullResult {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "PullFeeds", ctx)
 	ret0, _ := ret[0].(<-chan PullResult)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	return ret0
 }
 
 // PullFeeds indicates an expected call of PullFeeds.

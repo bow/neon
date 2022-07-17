@@ -23,8 +23,7 @@ func TestPullFeedsOkEmptyDB(t *testing.T) {
 		ParseURLWithContext(gomock.Any(), gomock.Any()).
 		MaxTimes(0)
 
-	c, err := st.PullFeeds(context.Background())
-	r.NoError(err)
+	c := st.PullFeeds(context.Background())
 	a.Empty(c)
 }
 
@@ -63,8 +62,7 @@ func TestPullFeedsOkEmptyEntries(t *testing.T) {
 		MaxTimes(1).
 		Return(toGFeed(t, dbFeeds[1]), nil)
 
-	c, err := st.PullFeeds(context.Background())
-	r.NoError(err)
+	c := st.PullFeeds(context.Background())
 
 	got := make([]PullResult, 0)
 	for res := range c {

@@ -4,20 +4,52 @@ import (
 	"context"
 	"database/sql"
 	"sync"
+
+	"github.com/rs/zerolog/log"
 )
 
-func (s *SQLite) PullFeeds(ctx context.Context) (<-chan PullResult, error) {
+func (s *SQLite) PullFeeds(ctx context.Context) <-chan PullResult {
 
 	fail := failF("SQLite.PullFeeds")
+	c := make(chan PullResult)
 
-	var c <-chan PullResult
-	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
+	go func() {
+		defer close(c)
+
+		tx, err := s.db.BeginTx(ctx, nil)
+		if err != nil {
+			c <- newPullResultFromErr(fail(err))
+			return
+		}
+
+		rb := func(tx *sql.Tx) {
+			if rerr := tx.Rollback(); rerr != nil {
+				log.Error().Err(rerr).Msg("failed to roll back transaction")
+			}
+		}
+
+		defer func() {
+			if p := recover(); p != nil {
+				rb(tx)
+				panic(p)
+			}
+			if err != nil {
+				rb(tx)
+			} else {
+				if err = tx.Commit(); err != nil {
+					c <- newPullResultFromErr(fail(err))
+				}
+			}
+		}()
+
 		pks, err := getAllPullKeys(ctx, tx)
 		if err != nil {
-			return err
+			c <- newPullResultFromErr(fail(err))
+			return
 		}
 		if len(pks) == 0 {
-			return nil
+			c <- PullResult{status: pullSuccess}
+			return
 		}
 
 		chs := make([]<-chan PullResult, len(pks))
@@ -25,17 +57,16 @@ func (s *SQLite) PullFeeds(ctx context.Context) (<-chan PullResult, error) {
 			chs[i] = pullNewFeedEntries(ctx, tx, pk, s.parser)
 		}
 
-		c = merge(chs)
+		for pr := range merge(chs) {
+			pr := pr
+			if pr.Error() != nil {
+				pr.err = fail(pr.err)
+			}
+			c <- pr
+		}
+	}()
 
-		return nil
-	}
-
-	err := s.withTx(ctx, dbFunc, nil)
-	if err != nil {
-		return nil, fail(err)
-	}
-
-	return c, nil
+	return c
 }
 
 // PullResult is a container for a pull operation.
@@ -58,6 +89,10 @@ func (msg PullResult) Error() error {
 		return msg.err
 	}
 	return nil
+}
+
+func newPullResultFromErr(err error) PullResult {
+	return PullResult{status: pullFail, err: err}
 }
 
 type pullStatus int
@@ -119,7 +154,7 @@ func pullNewFeedEntries(
 	tx *sql.Tx,
 	pk pullKey,
 	parser FeedParser,
-) <-chan PullResult {
+) chan PullResult {
 
 	pullf := func() PullResult {
 
@@ -176,7 +211,7 @@ func pullNewFeedEntries(
 	return oc
 }
 
-func merge[T any](chs []<-chan T) <-chan T {
+func merge[T any](chs []<-chan T) chan T {
 	var (
 		wg     sync.WaitGroup
 		merged = make(chan T, len(chs))
