@@ -40,56 +40,56 @@ func newTestStore(t *testing.T) testStore {
 	return testStore{s, t, prs}
 }
 
-func (ts *testStore) tx() *sql.Tx {
-	ts.t.Helper()
+func (s *testStore) tx() *sql.Tx {
+	s.t.Helper()
 
-	tx, err := ts.db.Begin()
-	require.NoError(ts.t, err)
+	tx, err := s.db.Begin()
+	require.NoError(s.t, err)
 
 	return tx
 }
 
-func (ts *testStore) countTableRows(tableName string) int {
-	ts.t.Helper()
+func (s *testStore) countTableRows(tableName string) int {
+	s.t.Helper()
 
-	tx := ts.tx()
+	tx := s.tx()
 	stmt, err := tx.Prepare(fmt.Sprintf(`SELECT count(id) FROM %s`, tableName))
-	require.NoError(ts.t, err)
+	require.NoError(s.t, err)
 
 	var count int
 	row := stmt.QueryRow()
-	require.NoError(ts.t, row.Scan(&count))
-	require.NoError(ts.t, tx.Rollback())
+	require.NoError(s.t, row.Scan(&count))
+	require.NoError(s.t, tx.Rollback())
 
 	return count
 }
 
-func (ts *testStore) rowExists(
+func (s *testStore) rowExists(
 	query string,
 	args ...any,
 ) bool {
-	ts.t.Helper()
+	s.t.Helper()
 
-	tx := ts.tx()
+	tx := s.tx()
 	stmt, err := tx.Prepare(fmt.Sprintf("SELECT EXISTS (%s)", query))
-	require.NoError(ts.t, err)
+	require.NoError(s.t, err)
 
 	var exists bool
 	row := stmt.QueryRow(args...)
-	require.NoError(ts.t, row.Scan(&exists))
-	require.NoError(ts.t, tx.Rollback())
+	require.NoError(s.t, row.Scan(&exists))
+	require.NoError(s.t, tx.Rollback())
 
 	return exists
 }
 
-func (ts *testStore) countFeeds() int {
-	return ts.countTableRows("feeds")
+func (s *testStore) countFeeds() int {
+	return s.countTableRows("feeds")
 }
 
-func (ts *testStore) countEntries(xmlURL string) int {
-	ts.t.Helper()
+func (s *testStore) countEntries(xmlURL string) int {
+	s.t.Helper()
 
-	tx := ts.tx()
+	tx := s.tx()
 	stmt, err := tx.Prepare(`
 	SELECT
 		count(e.id)
@@ -100,24 +100,24 @@ func (ts *testStore) countEntries(xmlURL string) int {
 		f.feed_url = ?
 `,
 	)
-	require.NoError(ts.t, err)
+	require.NoError(s.t, err)
 
 	var count int
 	row := stmt.QueryRow(xmlURL)
-	require.NoError(ts.t, row.Scan(&count))
-	require.NoError(ts.t, tx.Rollback())
+	require.NoError(s.t, row.Scan(&count))
+	require.NoError(s.t, tx.Rollback())
 
 	return count
 }
 
-func (ts *testStore) countFeedTags() int {
-	return ts.countTableRows("feed_tags")
+func (s *testStore) countFeedTags() int {
+	return s.countTableRows("feed_tags")
 }
 
-func (ts *testStore) addFeeds(feeds []*Feed) map[string]feedKey {
-	ts.t.Helper()
+func (s *testStore) addFeeds(feeds []*Feed) map[string]feedKey {
+	s.t.Helper()
 
-	tx := ts.tx()
+	tx := s.tx()
 	stmt1, err := tx.Prepare(`
 		INSERT INTO
 			feeds(title, feed_url, site_url, description, is_starred, update_time)
@@ -125,7 +125,7 @@ func (ts *testStore) addFeeds(feeds []*Feed) map[string]feedKey {
 		RETURNING
 			id
 	`)
-	require.NoError(ts.t, err)
+	require.NoError(s.t, err)
 	stmt2, err := tx.Prepare(`
 		INSERT INTO entries(
 			feed_id,
@@ -137,7 +137,7 @@ func (ts *testStore) addFeeds(feeds []*Feed) map[string]feedKey {
 		VALUES (?, ?, ?, ?, ?)
 		RETURNING id
 	`)
-	require.NoError(ts.t, err)
+	require.NoError(s.t, err)
 
 	keys := make(map[string]feedKey)
 	for _, feed := range feeds {
@@ -150,7 +150,7 @@ func (ts *testStore) addFeeds(feeds []*Feed) map[string]feedKey {
 			feed.IsStarred,
 			feed.Updated).
 			Scan(&feedDBID)
-		require.NoError(ts.t, err)
+		require.NoError(s.t, err)
 
 		entries := make(map[string]DBID)
 
@@ -161,44 +161,45 @@ func (ts *testStore) addFeeds(feeds []*Feed) map[string]feedKey {
 				updateTime = entry.Updated
 			)
 			if extID == "" {
-				extID = fmt.Sprintf("%s-entry-%d", ts.t.Name(), i)
+				extID = fmt.Sprintf("%s-entry-%d", s.t.Name(), i)
 			}
 			if updateTime.String == "" && !updateTime.Valid {
-				updateTime.String = time.Now().Format(time.RFC822)
+				updateTime.String = time.Now().UTC().Format(time.RFC822)
 				updateTime.Valid = true
 			}
 			err = stmt2.QueryRow(
 				feedDBID,
 				extID,
 				entry.Title,
+				entry.URL,
 				entry.IsRead,
 				updateTime,
 			).Scan(&entryDBID)
-			require.NoError(ts.t, err)
+			require.NoError(s.t, err)
 			entries[entry.Title] = entryDBID
 		}
 
 		keys[feed.Title] = feedKey{DBID: feedDBID, Title: feed.Title, Entries: entries}
 
 		if len(feed.Tags) > 0 {
-			require.NoError(ts.t, addFeedTags(context.Background(), tx, feedDBID, feed.Tags))
+			require.NoError(s.t, addFeedTags(context.Background(), tx, feedDBID, feed.Tags))
 		}
 	}
-	require.NoError(ts.t, tx.Commit())
+	require.NoError(s.t, tx.Commit())
 
 	return keys
 }
 
-func (ts *testStore) addFeedWithURL(url string) {
-	ts.t.Helper()
+func (s *testStore) addFeedWithURL(url string) {
+	s.t.Helper()
 
-	tx := ts.tx()
+	tx := s.tx()
 	stmt, err := tx.Prepare(`INSERT INTO feeds(title, feed_url) VALUES (?, ?)`)
-	require.NoError(ts.t, err)
+	require.NoError(s.t, err)
 
-	_, err = stmt.Exec(ts.t.Name(), url)
-	require.NoError(ts.t, err)
-	require.NoError(ts.t, tx.Commit())
+	_, err = stmt.Exec(s.t.Name(), url)
+	require.NoError(s.t, err)
+	require.NoError(s.t, tx.Commit())
 }
 
 func ts(t *testing.T, value string) *time.Time {
