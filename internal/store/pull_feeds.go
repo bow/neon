@@ -8,6 +8,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+// nolint: revive
 func (s *SQLite) PullFeeds(ctx context.Context) <-chan PullResult {
 
 	fail := failF("SQLite.PullFeeds")
@@ -176,9 +177,12 @@ func pullNewFeedEntries(
 			return pk.err(err)
 		}
 
-		entries, err := getAllFeedEntries(ctx, tx, pk.feedDBID, pointer(false))
+		unreadEntries, err := getAllFeedEntries(ctx, tx, pk.feedDBID, pointer(false))
 		if err != nil {
 			return pk.err(err)
+		}
+		if len(unreadEntries) == 0 {
+			return pk.ok(nil)
 		}
 
 		feed, err := getFeed(ctx, tx, pk.feedDBID)
@@ -186,7 +190,7 @@ func pullNewFeedEntries(
 			return pk.err(err)
 		}
 
-		feed.Entries = entries
+		feed.Entries = unreadEntries
 
 		return pk.ok(feed)
 	}
