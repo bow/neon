@@ -4,53 +4,28 @@ import (
 	"context"
 	"database/sql"
 	"sync"
-
-	"github.com/rs/zerolog/log"
 )
 
-// nolint: revive
 func (s *SQLite) PullFeeds(ctx context.Context) <-chan PullResult {
 
-	fail := failF("SQLite.PullFeeds")
-	c := make(chan PullResult)
+	var (
+		fail = failF("SQLite.PullFeeds")
+		c    = make(chan PullResult)
+		wg   sync.WaitGroup
+	)
 
-	go func() {
-		defer close(c)
+	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
 
-		tx, err := s.db.BeginTx(ctx, nil)
-		if err != nil {
-			c <- newPullResultFromErr(fail(err))
-			return
-		}
-
-		rb := func(tx *sql.Tx) {
-			if rerr := tx.Rollback(); rerr != nil {
-				log.Error().Err(rerr).Msg("failed to roll back transaction")
-			}
-		}
-
-		defer func() {
-			if p := recover(); p != nil {
-				rb(tx)
-				panic(p)
-			}
-			if err != nil {
-				rb(tx)
-			} else {
-				if err = tx.Commit(); err != nil {
-					c <- newPullResultFromErr(fail(err))
-				}
-			}
-		}()
+		defer wg.Done()
 
 		pks, err := getAllPullKeys(ctx, tx)
 		if err != nil {
 			c <- newPullResultFromErr(fail(err))
-			return
+			return nil
 		}
 		if len(pks) == 0 {
 			c <- PullResult{status: pullSuccess}
-			return
+			return nil
 		}
 
 		chs := make([]<-chan PullResult, len(pks))
@@ -64,6 +39,20 @@ func (s *SQLite) PullFeeds(ctx context.Context) <-chan PullResult {
 				pr.err = fail(pr.err)
 			}
 			c <- pr
+		}
+
+		return nil
+	}
+
+	go func() {
+		defer func() {
+			wg.Wait()
+			close(c)
+		}()
+		wg.Add(1)
+		err := s.withTx(ctx, dbFunc, nil)
+		if err != nil {
+			c <- newPullResultFromErr(fail(err))
 		}
 	}()
 
