@@ -206,7 +206,14 @@ func upsertEntries(
 	}
 	defer stmt1.Close()
 
-	sql2 := `UPDATE entries SET is_read = (update_time = ?)`
+	sql2 := `
+		UPDATE
+			entries
+		SET
+			is_read = (update_time = $1)
+		WHERE
+			feed_id = $2 AND external_id = $3
+`
 	stmt2, err := tx.PrepareContext(ctx, sql2)
 	if err != nil {
 		return err
@@ -229,7 +236,7 @@ func upsertEntries(
 			if !isUniqueErr(err, "UNIQUE constraint failed: entries.feed_id, entries.external_id") {
 				return err
 			}
-			if _, ierr := updateStmt.Exec(ctx, updateTime); ierr != nil {
+			if _, ierr := updateStmt.Exec(ctx, updateTime, feedDBID, entry.GUID); ierr != nil {
 				return ierr
 			}
 		}
