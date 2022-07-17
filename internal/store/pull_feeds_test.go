@@ -92,16 +92,25 @@ func toGFeed(t *testing.T, feed *Feed) *gofeed.Feed {
 	gfeed := gofeed.Feed{
 		Title:    feed.Title,
 		FeedLink: feed.FeedURL,
-		Updated:  feed.Updated.String,
+	}
+	if feed.Updated.String != "" {
+		gfeed.Updated = feed.Updated.String
+		gfeed.UpdatedParsed = ts(t, feed.Updated.String)
 	}
 	for _, entry := range feed.Entries {
 		item := gofeed.Item{
-			GUID:      entry.ExtID,
-			Link:      entry.URL.String,
-			Title:     entry.Title,
-			Content:   entry.Content.String,
-			Published: entry.Published.String,
-			Updated:   entry.Updated.String,
+			GUID:    entry.ExtID,
+			Link:    entry.URL.String,
+			Title:   entry.Title,
+			Content: entry.Content.String,
+		}
+		if entry.Published.String != "" {
+			item.Published = entry.Published.String
+			item.PublishedParsed = ts(t, entry.Published.String)
+		}
+		if entry.Updated.String != "" {
+			item.Updated = entry.Updated.String
+			item.UpdatedParsed = ts(t, entry.Updated.String)
 		}
 		gfeed.Items = append(gfeed.Items, &item)
 	}
