@@ -114,6 +114,103 @@ func (s *testStore) countFeedTags() int {
 	return s.countTableRows("feed_tags")
 }
 
+func (s *testStore) getFeedUpdateTime(feedURL string) sql.NullString {
+	s.t.Helper()
+
+	tx := s.tx()
+	stmt1, err := tx.Prepare(`SELECT update_time FROM feeds WHERE feed_url = ?`)
+	require.NoError(s.t, err)
+
+	var updateTime string
+	err = stmt1.QueryRow(feedURL, feedURL).Scan(&updateTime)
+	require.NoError(s.t, err)
+
+	return sql.NullString{String: updateTime, Valid: true}
+}
+
+func (s *testStore) getFeedSubscriptionTime(feedURL string) string {
+	s.t.Helper()
+
+	tx := s.tx()
+	stmt1, err := tx.Prepare(`SELECT subscription_time FROM feeds WHERE feed_url = ?`)
+	require.NoError(s.t, err)
+
+	var subscriptionTime string
+	err = stmt1.QueryRow(feedURL, feedURL).Scan(&subscriptionTime)
+	require.NoError(s.t, err)
+
+	return subscriptionTime
+}
+
+func (s *testStore) getEntryDBID(feedURL string, entryExtID string) DBID {
+	s.t.Helper()
+
+	tx := s.tx()
+	stmt1, err := tx.Prepare(`
+		SELECT
+			e.id
+		FROM
+			entries e
+			INNER JOIN feeds f ON e.feed_id = f.id
+		WHERE
+			f.feed_url = ?
+			AND e.external_id = ?
+	`)
+	require.NoError(s.t, err)
+
+	var entryDBID DBID
+	err = stmt1.QueryRow(feedURL, entryExtID).Scan(&entryDBID)
+	require.NoError(s.t, err)
+
+	return entryDBID
+}
+
+func (s *testStore) getEntryUpdateTime(feedURL string, entryExtID string) sql.NullString {
+	s.t.Helper()
+
+	tx := s.tx()
+	stmt1, err := tx.Prepare(`
+		SELECT
+			e.update_time
+		FROM
+			entries e
+			INNER JOIN feeds f ON e.feed_id = f.id
+		WHERE
+			f.feed_url = ?
+			AND e.external_id = ?
+	`)
+	require.NoError(s.t, err)
+
+	var entryUpdateTime sql.NullString
+	err = stmt1.QueryRow(feedURL, entryExtID).Scan(&entryUpdateTime)
+	require.NoError(s.t, err)
+
+	return entryUpdateTime
+}
+
+func (s *testStore) getEntryPublicationTime(feedURL string, entryExtID string) sql.NullString {
+	s.t.Helper()
+
+	tx := s.tx()
+	stmt1, err := tx.Prepare(`
+		SELECT
+			e.publication_time
+		FROM
+			entries e
+			INNER JOIN feeds f ON e.feed_id = f.id
+		WHERE
+			f.feed_url = ?
+			AND e.external_id = ?
+	`)
+	require.NoError(s.t, err)
+
+	var entryPublicationTime sql.NullString
+	err = stmt1.QueryRow(feedURL, entryExtID).Scan(&entryPublicationTime)
+	require.NoError(s.t, err)
+
+	return entryPublicationTime
+}
+
 func (s *testStore) addFeeds(feeds []*Feed) map[string]feedKey {
 	s.t.Helper()
 
