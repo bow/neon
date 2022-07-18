@@ -217,8 +217,16 @@ func (s *testStore) addFeeds(feeds []*Feed) map[string]feedKey {
 	tx := s.tx()
 	stmt1, err := tx.Prepare(`
 		INSERT INTO
-			feeds(title, feed_url, site_url, description, is_starred, update_time)
-			VALUES (?, ?, ?, ?, ?, ?)
+			feeds(
+				title,
+				feed_url,
+				site_url,
+				description,
+				is_starred,
+				subscription_time,
+				update_time
+			)
+			VALUES (?, ?, ?, ?, ?, ?, ?)
 		RETURNING
 			id
 	`)
@@ -240,14 +248,19 @@ func (s *testStore) addFeeds(feeds []*Feed) map[string]feedKey {
 	keys := make(map[string]feedKey)
 	for _, feed := range feeds {
 		var feedDBID DBID
+		subscriptionTime := feed.Subscribed
+		if subscriptionTime == "" {
+			subscriptionTime = time.Now().UTC().Format(time.RFC3339)
+		}
 		err = stmt1.QueryRow(
 			feed.Title,
 			feed.FeedURL,
 			feed.SiteURL,
 			feed.Description,
 			feed.IsStarred,
-			feed.Updated).
-			Scan(&feedDBID)
+			subscriptionTime,
+			feed.Updated,
+		).Scan(&feedDBID)
 		require.NoError(s.t, err)
 
 		entries := make(map[string]DBID)
