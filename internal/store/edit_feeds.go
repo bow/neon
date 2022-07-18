@@ -89,6 +89,9 @@ func getFeed(ctx context.Context, tx *sql.Tx, feedDBID DBID) (*Feed, error) {
 		); err != nil {
 			return nil, err
 		}
+		if len(feed.Tags) == 0 {
+			feed.Tags = nil
+		}
 		return &feed, nil
 	}
 
