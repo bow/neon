@@ -277,6 +277,11 @@ func (s *testStore) addFeeds(feeds []*Feed) map[string]feedKey {
 			if updateTime.String == "" && !updateTime.Valid {
 				updateTime.String = time.Now().UTC().Format(time.RFC822)
 				updateTime.Valid = true
+			} else {
+				tv, ierr := DeserializeTime(&updateTime.String)
+				require.NoError(s.t, ierr)
+				updateTime.String = *serializeTime(tv)
+				updateTime.Valid = true
 			}
 			err = stmt2.QueryRow(
 				feedDBID,
