@@ -135,15 +135,50 @@ func TestPullFeedsOkNoNewEntries(t *testing.T) {
 	keys := st.addFeeds(dbFeeds)
 	r.Equal(2, st.countFeeds())
 
+	pulledFeeds := []*Feed{
+		{
+			Title:   dbFeeds[0].Title,
+			FeedURL: dbFeeds[0].FeedURL,
+			Updated: dbFeeds[0].Updated,
+			Entries: []*Entry{
+				{
+					Title:   dbFeeds[0].Entries[0].Title,
+					ExtID:   dbFeeds[0].Entries[0].ExtID,
+					Updated: dbFeeds[0].Entries[0].Updated,
+					URL:     dbFeeds[0].Entries[0].URL,
+				},
+				{
+					Title:   dbFeeds[0].Entries[1].Title,
+					ExtID:   dbFeeds[0].Entries[1].ExtID,
+					Updated: dbFeeds[0].Entries[1].Updated,
+					URL:     dbFeeds[0].Entries[1].URL,
+				},
+			},
+		},
+		{
+			Title:   dbFeeds[1].Title,
+			FeedURL: dbFeeds[1].FeedURL,
+			Updated: dbFeeds[1].Updated,
+			Entries: []*Entry{
+				{
+					Title:   dbFeeds[1].Entries[0].Title,
+					ExtID:   dbFeeds[1].Entries[0].ExtID,
+					Updated: dbFeeds[1].Entries[0].Updated,
+					URL:     dbFeeds[1].Entries[0].URL,
+				},
+			},
+		},
+	}
+
 	st.parser.EXPECT().
 		ParseURLWithContext(dbFeeds[0].FeedURL, gomock.Any()).
 		MaxTimes(1).
-		Return(toGFeed(t, dbFeeds[0]), nil)
+		Return(toGFeed(t, pulledFeeds[0]), nil)
 
 	st.parser.EXPECT().
 		ParseURLWithContext(dbFeeds[1].FeedURL, gomock.Any()).
 		MaxTimes(1).
-		Return(toGFeed(t, dbFeeds[1]), nil)
+		Return(toGFeed(t, pulledFeeds[1]), nil)
 
 	c := st.PullFeeds(context.Background())
 
@@ -154,16 +189,16 @@ func TestPullFeedsOkNoNewEntries(t *testing.T) {
 
 	want := []PullResult{
 		{
-			pk:     pullKey{feedDBID: keys["Feed A"].DBID, feedURL: dbFeeds[0].FeedURL},
+			pk:     pullKey{feedDBID: keys["Feed A"].DBID, feedURL: pulledFeeds[0].FeedURL},
 			status: pullSuccess,
-			ok:     nil,
 			err:    nil,
+			ok:     nil,
 		},
 		{
-			pk:     pullKey{feedDBID: keys["Feed X"].DBID, feedURL: dbFeeds[1].FeedURL},
+			pk:     pullKey{feedDBID: keys["Feed X"].DBID, feedURL: pulledFeeds[1].FeedURL},
 			status: pullSuccess,
-			ok:     nil,
 			err:    nil,
+			ok:     nil,
 		},
 	}
 
