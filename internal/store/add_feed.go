@@ -206,13 +206,21 @@ func upsertEntries(
 	}
 	defer stmt1.Close()
 
+	// TODO: Also update other entry columns.
 	sql2 := `
 		UPDATE
 			entries
 		SET
-			is_read = (update_time = $1)
+			is_read = false,
+			update_time = $1
 		WHERE
-			feed_id = $2 AND external_id = $3
+			feed_id = $2
+			AND external_id = $3
+			AND (
+				update_time IS NULL AND $1 IS NOT NULL
+				OR update_time IS NOT NULL AND $1 IS NULL
+				OR update_time != $1
+			)
 `
 	stmt2, err := tx.PrepareContext(ctx, sql2)
 	if err != nil {
