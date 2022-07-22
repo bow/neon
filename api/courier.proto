@@ -104,7 +104,7 @@ message ListFeedsResponse {
 message PullFeedsRequest {}
 
 message PullFeedsResponse {
-  repeated Feed updated_feeds = 1;
+  Feed updated_feed = 1;
 }
 
 message DeleteFeedsRequest {
