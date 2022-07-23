@@ -61,7 +61,7 @@ func (s *SQLite) PullFeeds(ctx context.Context) <-chan PullResult {
 
 // PullResult is a container for a pull operation.
 type PullResult struct {
-	pk     pullKey
+	url    *string
 	status pullStatus
 	feed   *Feed
 	err    error
@@ -102,11 +102,11 @@ type pullKey struct {
 }
 
 func (pk pullKey) ok(feed *Feed) PullResult {
-	return PullResult{pk: pk, status: pullSuccess, feed: feed, err: nil}
+	return PullResult{url: &pk.feedURL, status: pullSuccess, feed: feed, err: nil}
 }
 
 func (pk pullKey) err(e error) PullResult {
-	return PullResult{pk: pk, status: pullFail, feed: nil, err: e}
+	return PullResult{url: &pk.feedURL, status: pullFail, feed: nil, err: e}
 }
 
 var setFeedUpdateTime = setTableField[string]("feeds", "update_time")

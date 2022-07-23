@@ -50,7 +50,7 @@ func TestPullFeedsOkEmptyEntries(t *testing.T) {
 		},
 	}
 
-	keys := st.addFeeds(dbFeeds)
+	st.addFeeds(dbFeeds)
 	r.Equal(2, st.countFeeds())
 
 	st.parser.EXPECT().
@@ -72,13 +72,13 @@ func TestPullFeedsOkEmptyEntries(t *testing.T) {
 
 	want := []PullResult{
 		{
-			pk:     pullKey{feedDBID: keys["Feed A"].DBID, feedURL: dbFeeds[0].FeedURL},
+			url:    &dbFeeds[0].FeedURL,
 			status: pullSuccess,
 			feed:   nil,
 			err:    nil,
 		},
 		{
-			pk:     pullKey{feedDBID: keys["Feed X"].DBID, feedURL: dbFeeds[1].FeedURL},
+			url:    &dbFeeds[1].FeedURL,
 			status: pullSuccess,
 			feed:   nil,
 			err:    nil,
@@ -133,7 +133,7 @@ func TestPullFeedsOkNoNewEntries(t *testing.T) {
 		},
 	}
 
-	keys := st.addFeeds(dbFeeds)
+	st.addFeeds(dbFeeds)
 	r.Equal(2, st.countFeeds())
 
 	pulledFeeds := []*Feed{
@@ -190,13 +190,13 @@ func TestPullFeedsOkNoNewEntries(t *testing.T) {
 
 	want := []PullResult{
 		{
-			pk:     pullKey{feedDBID: keys["Feed A"].DBID, feedURL: pulledFeeds[0].FeedURL},
+			url:    &pulledFeeds[0].FeedURL,
 			status: pullSuccess,
 			err:    nil,
 			feed:   nil,
 		},
 		{
-			pk:     pullKey{feedDBID: keys["Feed X"].DBID, feedURL: pulledFeeds[1].FeedURL},
+			url:    &pulledFeeds[1].FeedURL,
 			status: pullSuccess,
 			err:    nil,
 			feed:   nil,
@@ -336,7 +336,7 @@ func TestPullFeedsOkSomeNewEntries(t *testing.T) {
 
 	want := []PullResult{
 		{
-			pk:     pullKey{feedDBID: keys["Feed A"].DBID, feedURL: dbFeeds[0].FeedURL},
+			url:    &dbFeeds[0].FeedURL,
 			status: pullSuccess,
 			err:    nil,
 			feed: &Feed{
@@ -370,7 +370,7 @@ func TestPullFeedsOkSomeNewEntries(t *testing.T) {
 			},
 		},
 		{
-			pk:     pullKey{feedDBID: keys["Feed X"].DBID, feedURL: dbFeeds[1].FeedURL},
+			url:    &dbFeeds[1].FeedURL,
 			status: pullSuccess,
 			err:    nil,
 			feed: &Feed{
