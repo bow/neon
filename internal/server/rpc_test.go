@@ -226,16 +226,18 @@ func TestPullFeedsOk(t *testing.T) {
 			},
 		),
 	}
-	// Randomize ordering, to simulate actual URL pulls.
-	shufres := make([]store.PullResult, len(prs))
-	copy(shufres, prs)
-	rand.Seed(time.Now().UnixNano())
-	shf := func(i, j int) { shufres[i], shufres[j] = shufres[j], shufres[i] }
-	rand.Shuffle(len(shufres), shf)
 
 	ch := make(chan store.PullResult)
 	go func() {
 		defer close(ch)
+
+		// Randomize ordering, to simulate actual URL pulls.
+		shufres := make([]store.PullResult, len(prs))
+		copy(shufres, prs)
+		rand.Seed(time.Now().UnixNano())
+		shf := func(i, j int) { shufres[i], shufres[j] = shufres[j], shufres[i] }
+		rand.Shuffle(len(shufres), shf)
+
 		for i := 0; i < len(shufres); i++ {
 			ch <- shufres[i]
 		}
