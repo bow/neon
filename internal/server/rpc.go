@@ -130,6 +130,11 @@ func (r *rpc) PullFeeds(
 
 	convert := func(pr store.PullResult) (*api.PullFeedsResponse, error) {
 		if err := pr.Error(); err != nil {
+			if url := pr.URL(); url != "" {
+				rspErr := err.Error()
+				rsp := api.PullFeedsResponse{Url: url, Error: &rspErr}
+				return &rsp, nil
+			}
 			return nil, err
 		}
 		feed := pr.Feed()
@@ -140,7 +145,7 @@ func (r *rpc) PullFeeds(
 		if err != nil {
 			return nil, err
 		}
-		rsp := api.PullFeedsResponse{UpdatedFeed: fp}
+		rsp := api.PullFeedsResponse{Url: pr.URL(), Feed: fp}
 
 		return &rsp, nil
 	}

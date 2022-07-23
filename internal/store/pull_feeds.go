@@ -89,6 +89,13 @@ func (msg PullResult) Error() error {
 	return nil
 }
 
+func (msg PullResult) URL() string {
+	if msg.url != nil {
+		return *msg.url
+	}
+	return ""
+}
+
 type pullStatus int
 
 const (

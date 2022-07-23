@@ -274,14 +274,14 @@ func TestPullFeedsOk(t *testing.T) {
 	r.Len(rsps, 2)
 
 	// Sort responses so tests are insensitive to input order.
-	sof := func(i, j int) bool { return rsps[i].UpdatedFeed.FeedUrl < rsps[j].UpdatedFeed.FeedUrl }
+	sof := func(i, j int) bool { return rsps[i].GetFeed().FeedUrl < rsps[j].GetFeed().FeedUrl }
 	sort.SliceStable(rsps, sof)
 
-	feed0 := rsps[0].GetUpdatedFeed()
+	feed0 := rsps[0].GetFeed()
 	r.Equal(prs[0].Feed().FeedURL, feed0.GetFeedUrl())
 	a.Len(feed0.GetEntries(), 2)
 
-	feed1 := rsps[1].GetUpdatedFeed()
+	feed1 := rsps[1].GetFeed()
 	r.Equal(prs[2].Feed().FeedURL, feed1.GetFeedUrl())
 	a.Len(feed1.GetEntries(), 1)
 }

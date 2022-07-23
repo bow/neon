@@ -104,7 +104,9 @@ message ListFeedsResponse {
 message PullFeedsRequest {}
 
 message PullFeedsResponse {
-  Feed updated_feed = 1;
+  string url = 1;
+  optional Feed feed = 2;
+  optional string error = 3;
 }
 
 message DeleteFeedsRequest {
