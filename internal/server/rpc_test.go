@@ -3,13 +3,15 @@ package server
 import (
 	"context"
 	"fmt"
+	"io"
+	"math/rand"
+	"sort"
 	"testing"
+	"time"
 
 	gomock "github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"
 
 	"github.com/bow/courier/api"
@@ -192,25 +194,94 @@ func TestDeleteFeedsErrNotFound(t *testing.T) {
 func TestPullFeedsOk(t *testing.T) {
 	t.Parallel()
 
+	a := assert.New(t)
 	r := require.New(t)
-	client, _ := setupServerTest(t)
+	client, str := setupServerTest(t)
+
+	prs := []store.PullResult{
+		store.NewPullResultFromFeed(
+			pointer("http://a.com/feed.xml"),
+			&store.Feed{
+				Title:      "feed-A",
+				FeedURL:    "https://a.com/feed.xml",
+				Subscribed: "2021-07-23T17:20:29.499+02:00",
+				IsStarred:  true,
+				Entries: []*store.Entry{
+					{Title: "Entry A1", IsRead: false},
+					{Title: "Entry A2", IsRead: false},
+				},
+			},
+		),
+		store.NewPullResultFromFeed(pointer("http://z.com/feed.xml"), nil),
+		store.NewPullResultFromFeed(
+			pointer("http://c.com/feed.xml"),
+			&store.Feed{
+				Title:      "feed-C",
+				FeedURL:    "https://c.com/feed.xml",
+				Subscribed: "2021-07-23T17:21:11.489+02:00",
+				IsStarred:  false,
+				Entries: []*store.Entry{
+					{Title: "Entry C3", IsRead: false},
+				},
+			},
+		),
+	}
+	// Randomize ordering, to simulate actual URL pulls.
+	shufres := make([]store.PullResult, len(prs))
+	copy(shufres, prs)
+	rand.Seed(time.Now().UnixNano())
+	shf := func(i, j int) { shufres[i], shufres[j] = shufres[j], shufres[i] }
+	rand.Shuffle(len(shufres), shf)
+
+	ch := make(chan store.PullResult)
+	go func() {
+		defer close(ch)
+		for i := 0; i < len(shufres); i++ {
+			ch <- shufres[i]
+		}
+	}()
+
+	str.EXPECT().
+		PullFeeds(gomock.Any()).
+		Return(ch)
 
 	req := api.PullFeedsRequest{}
 	stream, err := client.PullFeeds(context.Background(), &req)
 	r.NoError(err)
-	waitc := make(chan struct{})
 
-	go func() {
-		for {
-			rsp, errStream := stream.Recv()
-			r.Nil(rsp)
-			r.EqualError(errStream, status.New(codes.Unimplemented, "unimplemented").String())
-			close(waitc)
-			return
-		}
-	}()
+	var (
+		rsp       *api.PullFeedsResponse
+		errStream error
+		rsps      = make([]*api.PullFeedsResponse, 0)
+	)
 
-	<-waitc
+	rsp, errStream = stream.Recv()
+	a.NoError(errStream)
+	a.NotNil(rsp)
+	rsps = append(rsps, rsp)
+
+	rsp, errStream = stream.Recv()
+	a.NoError(errStream)
+	a.NotNil(rsp)
+	rsps = append(rsps, rsp)
+
+	rsp, errStream = stream.Recv()
+	a.ErrorIs(errStream, io.EOF)
+	a.Nil(rsp)
+
+	r.Len(rsps, 2)
+
+	// Sort responses so tests are insensitive to input order.
+	sof := func(i, j int) bool { return rsps[i].UpdatedFeed.FeedUrl < rsps[j].UpdatedFeed.FeedUrl }
+	sort.SliceStable(rsps, sof)
+
+	feed0 := rsps[0].GetUpdatedFeed()
+	r.Equal(prs[0].Feed().FeedURL, feed0.GetFeedUrl())
+	a.Len(feed0.GetEntries(), 2)
+
+	feed1 := rsps[1].GetUpdatedFeed()
+	r.Equal(prs[2].Feed().FeedURL, feed1.GetFeedUrl())
+	a.Len(feed1.GetEntries(), 1)
 }
 
 func TestEditEntriesOk(t *testing.T) {

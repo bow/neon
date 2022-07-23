@@ -125,9 +125,42 @@ func (r *rpc) DeleteFeeds(
 // PullFeeds satisfies the service API.
 func (r *rpc) PullFeeds(
 	_ *api.PullFeedsRequest,
-	_ api.Courier_PullFeedsServer,
+	stream api.Courier_PullFeedsServer,
 ) error {
-	return status.Errorf(codes.Unimplemented, "unimplemented")
+
+	convert := func(pr store.PullResult) (*api.PullFeedsResponse, error) {
+		if err := pr.Error(); err != nil {
+			return nil, err
+		}
+		feed := pr.Feed()
+		if feed == nil {
+			return nil, nil
+		}
+		fp, err := feed.Proto()
+		if err != nil {
+			return nil, err
+		}
+		rsp := api.PullFeedsResponse{UpdatedFeed: fp}
+
+		return &rsp, nil
+	}
+
+	ch := r.store.PullFeeds(stream.Context())
+
+	for pr := range ch {
+		payload, err := convert(pr)
+		if err != nil {
+			return err
+		}
+		if payload == nil {
+			continue
+		}
+		if err := stream.Send(payload); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 // EditEntries satisfies the service API.
