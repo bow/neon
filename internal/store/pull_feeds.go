@@ -63,17 +63,21 @@ func (s *SQLite) PullFeeds(ctx context.Context) <-chan PullResult {
 type PullResult struct {
 	pk     pullKey
 	status pullStatus
-	ok     *Feed
+	feed   *Feed
 	err    error
+}
+
+func NewPullResultFromFeed(feed *Feed) PullResult {
+	return PullResult{status: pullSuccess, feed: feed}
 }
 
 func NewPullResultFromError(err error) PullResult {
 	return PullResult{status: pullFail, err: err}
 }
 
-func (msg PullResult) Result() *Feed {
+func (msg PullResult) Feed() *Feed {
 	if msg.status == pullSuccess {
-		return msg.ok
+		return msg.feed
 	}
 	return nil
 }
@@ -98,11 +102,11 @@ type pullKey struct {
 }
 
 func (pk pullKey) ok(feed *Feed) PullResult {
-	return PullResult{pk: pk, status: pullSuccess, ok: feed, err: nil}
+	return PullResult{pk: pk, status: pullSuccess, feed: feed, err: nil}
 }
 
 func (pk pullKey) err(e error) PullResult {
-	return PullResult{pk: pk, status: pullFail, ok: nil, err: e}
+	return PullResult{pk: pk, status: pullFail, feed: nil, err: e}
 }
 
 var setFeedUpdateTime = setTableField[string]("feeds", "update_time")

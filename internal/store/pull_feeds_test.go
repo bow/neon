@@ -74,13 +74,13 @@ func TestPullFeedsOkEmptyEntries(t *testing.T) {
 		{
 			pk:     pullKey{feedDBID: keys["Feed A"].DBID, feedURL: dbFeeds[0].FeedURL},
 			status: pullSuccess,
-			ok:     nil,
+			feed:   nil,
 			err:    nil,
 		},
 		{
 			pk:     pullKey{feedDBID: keys["Feed X"].DBID, feedURL: dbFeeds[1].FeedURL},
 			status: pullSuccess,
-			ok:     nil,
+			feed:   nil,
 			err:    nil,
 		},
 	}
@@ -193,13 +193,13 @@ func TestPullFeedsOkNoNewEntries(t *testing.T) {
 			pk:     pullKey{feedDBID: keys["Feed A"].DBID, feedURL: pulledFeeds[0].FeedURL},
 			status: pullSuccess,
 			err:    nil,
-			ok:     nil,
+			feed:   nil,
 		},
 		{
 			pk:     pullKey{feedDBID: keys["Feed X"].DBID, feedURL: pulledFeeds[1].FeedURL},
 			status: pullSuccess,
 			err:    nil,
-			ok:     nil,
+			feed:   nil,
 		},
 	}
 
@@ -339,7 +339,7 @@ func TestPullFeedsOkSomeNewEntries(t *testing.T) {
 			pk:     pullKey{feedDBID: keys["Feed A"].DBID, feedURL: dbFeeds[0].FeedURL},
 			status: pullSuccess,
 			err:    nil,
-			ok: &Feed{
+			feed: &Feed{
 				DBID:       keys[pulledFeeds[0].Title].DBID,
 				Title:      pulledFeeds[0].Title,
 				FeedURL:    pulledFeeds[0].FeedURL,
@@ -373,7 +373,7 @@ func TestPullFeedsOkSomeNewEntries(t *testing.T) {
 			pk:     pullKey{feedDBID: keys["Feed X"].DBID, feedURL: dbFeeds[1].FeedURL},
 			status: pullSuccess,
 			err:    nil,
-			ok: &Feed{
+			feed: &Feed{
 				DBID:       keys[pulledFeeds[1].Title].DBID,
 				Title:      pulledFeeds[1].Title,
 				FeedURL:    pulledFeeds[1].FeedURL,
@@ -405,9 +405,9 @@ func TestPullFeedsOkSomeNewEntries(t *testing.T) {
 func sortPullResultEntries(arr []PullResult) {
 	for _, item := range arr {
 		sort.SliceStable(
-			item.ok.Entries,
+			item.feed.Entries,
 			func(i, j int) bool {
-				return item.ok.Entries[i].ExtID < item.ok.Entries[j].ExtID
+				return item.feed.Entries[i].ExtID < item.feed.Entries[j].ExtID
 			},
 		)
 	}
