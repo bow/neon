@@ -20,11 +20,11 @@ func (s *SQLite) PullFeeds(ctx context.Context) <-chan PullResult {
 
 		pks, err := getAllPullKeys(ctx, tx)
 		if err != nil {
-			c <- NewPullResultFromError(fail(err))
+			c <- NewPullResultFromError(nil, fail(err))
 			return nil
 		}
 		if len(pks) == 0 {
-			c <- PullResult{status: pullSuccess}
+			c <- NewPullResultFromFeed(nil, nil)
 			return nil
 		}
 
@@ -52,7 +52,7 @@ func (s *SQLite) PullFeeds(ctx context.Context) <-chan PullResult {
 		wg.Add(1)
 		err := s.withTx(ctx, dbFunc, nil)
 		if err != nil {
-			c <- NewPullResultFromError(fail(err))
+			c <- NewPullResultFromError(nil, fail(err))
 		}
 	}()
 
@@ -67,12 +67,12 @@ type PullResult struct {
 	err    error
 }
 
-func NewPullResultFromFeed(feed *Feed) PullResult {
-	return PullResult{status: pullSuccess, feed: feed}
+func NewPullResultFromFeed(url *string, feed *Feed) PullResult {
+	return PullResult{status: pullSuccess, url: url, feed: feed}
 }
 
-func NewPullResultFromError(err error) PullResult {
-	return PullResult{status: pullFail, err: err}
+func NewPullResultFromError(url *string, err error) PullResult {
+	return PullResult{status: pullFail, url: url, err: err}
 }
 
 func (msg PullResult) Feed() *Feed {
