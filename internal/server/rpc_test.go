@@ -380,6 +380,89 @@ func TestPullFeedsErrSomeFeed(t *testing.T) {
 	a.Equal("timed out", rsp2.GetError())
 }
 
+func TestPullFeedsErrNonFeed(t *testing.T) {
+	t.Parallel()
+
+	a := assert.New(t)
+	r := require.New(t)
+	client, str := setupServerTest(t)
+
+	prs := []store.PullResult{
+		store.NewPullResultFromFeed(
+			pointer("https://a.com/feed.xml"),
+			&store.Feed{
+				Title:      "feed-A",
+				FeedURL:    "https://a.com/feed.xml",
+				Subscribed: "2021-07-23T17:20:29.499+02:00",
+				IsStarred:  true,
+				Entries: []*store.Entry{
+					{Title: "Entry A1", IsRead: false},
+					{Title: "Entry A2", IsRead: false},
+				},
+			},
+		),
+		store.NewPullResultFromFeed(pointer("https://z.com/feed.xml"), nil),
+		store.NewPullResultFromFeed(
+			pointer("https://c.com/feed.xml"),
+			&store.Feed{
+				Title:      "feed-C",
+				FeedURL:    "https://c.com/feed.xml",
+				Subscribed: "2021-07-23T17:21:11.489+02:00",
+				IsStarred:  false,
+				Entries: []*store.Entry{
+					{Title: "Entry C3", IsRead: false},
+				},
+			},
+		),
+		store.NewPullResultFromError(nil, fmt.Errorf("tx error")),
+	}
+
+	ch := make(chan store.PullResult)
+	go func() {
+		defer close(ch)
+
+		// Randomize ordering, to simulate actual URL pulls.
+		shufres := make([]store.PullResult, len(prs))
+		copy(shufres, prs)
+		rand.Seed(time.Now().UnixNano())
+		shf := func(i, j int) { shufres[i], shufres[j] = shufres[j], shufres[i] }
+		rand.Shuffle(len(shufres), shf)
+
+		for i := 0; i < len(shufres); i++ {
+			ch <- shufres[i]
+		}
+	}()
+
+	str.EXPECT().
+		PullFeeds(gomock.Any()).
+		Return(ch)
+
+	req := api.PullFeedsRequest{}
+	stream, err := client.PullFeeds(context.Background(), &req)
+	r.NoError(err)
+
+	var (
+		rsp       *api.PullFeedsResponse
+		errStream error
+		rsps      = make([]*api.PullFeedsResponse, 0)
+	)
+
+	for {
+		rsp, errStream = stream.Recv()
+		if errStream != nil {
+			err = errStream
+			break
+		}
+		if errStream == io.EOF {
+			break
+		}
+		rsps = append(rsps, rsp)
+	}
+
+	a.LessOrEqual(len(rsps), 3)
+	a.EqualError(err, "rpc error: code = Unknown desc = tx error")
+}
+
 func TestEditEntriesOk(t *testing.T) {
 	t.Parallel()
 
