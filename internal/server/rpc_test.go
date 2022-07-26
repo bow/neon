@@ -254,36 +254,34 @@ func TestPullFeedsOk(t *testing.T) {
 	var (
 		rsp       *api.PullFeedsResponse
 		errStream error
-		rsps      = make([]*api.PullFeedsResponse, 0)
+		rsps      = make([]*api.PullFeedsResponse, 2)
 	)
 
-	rsp, errStream = stream.Recv()
-	a.NoError(errStream)
-	a.NotNil(rsp)
-	rsps = append(rsps, rsp)
-
-	rsp, errStream = stream.Recv()
-	a.NoError(errStream)
-	a.NotNil(rsp)
-	rsps = append(rsps, rsp)
+	for i := 0; i < len(rsps); i++ {
+		rsp, errStream = stream.Recv()
+		a.NoError(errStream)
+		a.NotNil(rsp)
+		rsps[i] = rsp
+	}
 
 	rsp, errStream = stream.Recv()
 	a.ErrorIs(errStream, io.EOF)
 	a.Nil(rsp)
 
-	r.Len(rsps, 2)
-
 	// Sort responses so tests are insensitive to input order.
-	sof := func(i, j int) bool { return rsps[i].GetFeed().FeedUrl < rsps[j].GetFeed().FeedUrl }
-	sort.SliceStable(rsps, sof)
+	sort.SliceStable(rsps, func(i, j int) bool { return rsps[i].GetUrl() < rsps[j].GetUrl() })
 
-	feed0 := rsps[0].GetFeed()
-	r.Equal(prs[0].Feed().FeedURL, feed0.GetFeedUrl())
-	a.Len(feed0.GetEntries(), 2)
+	rsp0 := rsps[0]
+	r.Equal(prs[0].URL(), rsp0.GetUrl())
+	r.Nil(rsp0.Error)
+	r.NotNil(rsp0.Feed)
+	a.Len(rsp0.GetFeed().GetEntries(), 2)
 
-	feed1 := rsps[1].GetFeed()
-	r.Equal(prs[2].Feed().FeedURL, feed1.GetFeedUrl())
-	a.Len(feed1.GetEntries(), 1)
+	rsp1 := rsps[1]
+	r.Equal(prs[2].URL(), rsp1.GetUrl())
+	r.Nil(rsp1.Error)
+	r.NotNil(rsp0.Feed)
+	a.Len(rsp1.GetFeed().GetEntries(), 1)
 }
 
 func TestEditEntriesOk(t *testing.T) {
