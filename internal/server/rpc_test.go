@@ -191,7 +191,7 @@ func TestDeleteFeedsErrNotFound(t *testing.T) {
 	a.EqualError(err, "rpc error: code = NotFound desc = feed with ID=9 not found")
 }
 
-func TestPullFeedsOk(t *testing.T) {
+func TestPullFeedsAllOk(t *testing.T) {
 	t.Parallel()
 
 	a := assert.New(t)
@@ -282,6 +282,102 @@ func TestPullFeedsOk(t *testing.T) {
 	r.Nil(rsp1.Error)
 	r.NotNil(rsp0.Feed)
 	a.Len(rsp1.GetFeed().GetEntries(), 1)
+}
+
+func TestPullFeedsErrSomeFeed(t *testing.T) {
+	t.Parallel()
+
+	a := assert.New(t)
+	r := require.New(t)
+	client, str := setupServerTest(t)
+
+	prs := []store.PullResult{
+		store.NewPullResultFromFeed(
+			pointer("https://a.com/feed.xml"),
+			&store.Feed{
+				Title:      "feed-A",
+				FeedURL:    "https://a.com/feed.xml",
+				Subscribed: "2021-07-23T17:20:29.499+02:00",
+				IsStarred:  true,
+				Entries: []*store.Entry{
+					{Title: "Entry A1", IsRead: false},
+					{Title: "Entry A2", IsRead: false},
+				},
+			},
+		),
+		store.NewPullResultFromError(pointer("https://x.com/feed.xml"), fmt.Errorf("timed out")),
+		store.NewPullResultFromFeed(pointer("https://z.com/feed.xml"), nil),
+		store.NewPullResultFromFeed(
+			pointer("https://c.com/feed.xml"),
+			&store.Feed{
+				Title:      "feed-C",
+				FeedURL:    "https://c.com/feed.xml",
+				Subscribed: "2021-07-23T17:21:11.489+02:00",
+				IsStarred:  false,
+				Entries: []*store.Entry{
+					{Title: "Entry C3", IsRead: false},
+				},
+			},
+		),
+	}
+
+	ch := make(chan store.PullResult)
+	go func() {
+		defer close(ch)
+
+		// Randomize ordering, to simulate actual URL pulls.
+		shufres := make([]store.PullResult, len(prs))
+		copy(shufres, prs)
+		rand.Seed(time.Now().UnixNano())
+		shf := func(i, j int) { shufres[i], shufres[j] = shufres[j], shufres[i] }
+		rand.Shuffle(len(shufres), shf)
+
+		for i := 0; i < len(shufres); i++ {
+			ch <- shufres[i]
+		}
+	}()
+
+	str.EXPECT().
+		PullFeeds(gomock.Any()).
+		Return(ch)
+
+	req := api.PullFeedsRequest{}
+	stream, err := client.PullFeeds(context.Background(), &req)
+	r.NoError(err)
+
+	var (
+		rsp       *api.PullFeedsResponse
+		errStream error
+		rsps      = make([]*api.PullFeedsResponse, 3)
+	)
+
+	for i := 0; i < len(rsps); i++ {
+		rsp, errStream = stream.Recv()
+		a.NoError(errStream)
+		a.NotNil(rsp)
+		rsps[i] = rsp
+	}
+
+	rsp, errStream = stream.Recv()
+	a.ErrorIs(errStream, io.EOF)
+	a.Nil(rsp)
+
+	// Sort responses so tests are insensitive to input order.
+	sort.SliceStable(rsps, func(i, j int) bool { return rsps[i].GetUrl() < rsps[j].GetUrl() })
+
+	rsp0 := rsps[0]
+	r.Equal(prs[0].URL(), rsp0.GetUrl())
+	r.NotNil(rsp0.Feed)
+	a.Len(rsp0.GetFeed().GetEntries(), 2)
+
+	rsp1 := rsps[1]
+	r.Equal(prs[3].URL(), rsp1.GetUrl())
+	a.Len(rsp1.GetFeed().GetEntries(), 1)
+
+	rsp2 := rsps[2]
+	r.Equal(prs[1].URL(), rsp2.GetUrl())
+	a.Nil(rsp2.GetFeed())
+	a.Equal("timed out", rsp2.GetError())
 }
 
 func TestEditEntriesOk(t *testing.T) {
