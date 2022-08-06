@@ -4,8 +4,8 @@ linters:
   # commented linters are not yet supported in Go 1.18.
   enable:
     - bidichk
-    # - bodyclose
-    # - contextcheck
+    - bodyclose
+    # - contextcheck  # waiting for generics support
     - dupl
     - errchkjson
     - errname
@@ -16,19 +16,18 @@ linters:
     - gofmt
     - goimports
     - gosec
-    - ifshort
     - nakedret
-    # - nilerr
+    - nilerr
     - prealloc
     - revive
     - staticcheck
     - stylecheck
     - thelper
-    # - tparallel
+    - tparallel
     - unconvert
-    # - unparam
+    - unparam
     - unused
-    # - wastedassign
+    # - wastedassign  # waiting for generics support
   disable:
     - deadcode
     - structcheck
@@ -62,7 +61,7 @@ linters-settings:
       - name: confusing-naming
       - name: confusing-results
       - name: constant-logical-expr
-      - name: context-keys-type
+      # - name: context-keys-type
       - name: cyclomatic
         arguments: [20]
       - name: deep-exit
@@ -74,7 +73,7 @@ linters-settings:
       - name: error-naming
       - name: error-return
       - name: error-strings
-      - name: errorf
+      # - name: errorf
       - name: exported
       - name: get-return
       - name: identical-branches
@@ -91,17 +90,17 @@ linters-settings:
       - name: package-comments
       - name: range
       - name: range-val-in-closure
-      - name: range-val-address
+      # - name: range-val-address
       - name: receiver-naming
       - name: redefines-builtin-id
         severity: error
-      - name: string-of-int
+      # - name: string-of-int
       - name: struct-tag
       - name: superfluous-else
-      - name: time-naming
+      # - name: time-naming
       - name: var-naming
         arguments: [["ID"]]
-      - name: var-declaration
+      # - name: var-declaration
       - name: unconditional-recursion
       - name: unnecessary-stmt
       - name: unreachable-code
