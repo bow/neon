@@ -1,4 +1,4 @@
-FROM golang:1.18-alpine AS builder
+FROM golang:1.19-alpine AS builder
 
 WORKDIR /src
 
@@ -10,7 +10,7 @@ RUN git checkout -- . && make bin
 
 # -- #
 
-FROM golang:1.18-alpine
+FROM golang:1.19-alpine
 
 ARG REVISION
 ARG BUILD_TIME
