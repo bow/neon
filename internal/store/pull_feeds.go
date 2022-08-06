@@ -14,6 +14,7 @@ func (s *SQLite) PullFeeds(ctx context.Context) <-chan PullResult {
 		wg   sync.WaitGroup
 	)
 
+	// nolint: unparam
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
 
 		defer wg.Done()
@@ -50,7 +51,7 @@ func (s *SQLite) PullFeeds(ctx context.Context) <-chan PullResult {
 			close(c)
 		}()
 		wg.Add(1)
-		err := s.withTx(ctx, dbFunc, nil)
+		err := s.withTx(ctx, dbFunc)
 		if err != nil {
 			c <- NewPullResultFromError(nil, fail(err))
 		}

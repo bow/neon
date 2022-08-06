@@ -31,7 +31,7 @@ func (s *SQLite) ListFeeds(ctx context.Context) ([]*Feed, error) {
 
 	fail := failF("SQLite.ListFeeds")
 
-	err := s.withTx(ctx, dbFunc, nil)
+	err := s.withTx(ctx, dbFunc)
 	if err != nil {
 		return nil, fail(err)
 	}

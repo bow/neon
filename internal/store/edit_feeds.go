@@ -43,7 +43,7 @@ func (s *SQLite) EditFeeds(
 
 	fail := failF("SQLite.EditFeed")
 
-	err := s.withTx(ctx, dbFunc, nil)
+	err := s.withTx(ctx, dbFunc)
 	if err != nil {
 		return nil, fail(err)
 	}

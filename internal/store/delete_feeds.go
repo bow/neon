@@ -17,7 +17,7 @@ func (s *SQLite) DeleteFeeds(ctx context.Context, ids []DBID) error {
 			return err
 		}
 
-		deleteFunc := func(ctx context.Context, tx *sql.Tx, id DBID) error {
+		deleteFunc := func(ctx context.Context, id DBID) error {
 			res, err := stmt1.ExecContext(ctx, id)
 			if err != nil {
 				return err
@@ -33,7 +33,7 @@ func (s *SQLite) DeleteFeeds(ctx context.Context, ids []DBID) error {
 		}
 
 		for _, id := range ids {
-			if err := deleteFunc(ctx, tx, id); err != nil {
+			if err := deleteFunc(ctx, id); err != nil {
 				return err
 			}
 		}
@@ -43,7 +43,7 @@ func (s *SQLite) DeleteFeeds(ctx context.Context, ids []DBID) error {
 
 	fail := failF("SQLite.DeleteFeeds")
 
-	err := s.withTx(ctx, dbFunc, nil)
+	err := s.withTx(ctx, dbFunc)
 	if err != nil {
 		return fail(err)
 	}

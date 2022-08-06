@@ -71,9 +71,8 @@ func NewSQLite(filename string, parser FeedParser) (*SQLite, error) {
 func (s *SQLite) withTx(
 	ctx context.Context,
 	dbFunc func(context.Context, *sql.Tx) error,
-	txOpts *sql.TxOptions,
 ) (err error) {
-	tx, err := s.db.BeginTx(ctx, txOpts)
+	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
 		return err
 	}

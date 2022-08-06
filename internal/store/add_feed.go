@@ -66,7 +66,7 @@ func (s *SQLite) AddFeed(
 		return nil
 	}
 
-	err = s.withTx(ctx, dbFunc, nil)
+	err = s.withTx(ctx, dbFunc)
 	if err != nil {
 		return nil, fail(err)
 	}

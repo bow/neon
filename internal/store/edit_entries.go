@@ -34,7 +34,7 @@ func (s *SQLite) EditEntries(
 
 	fail := failF("SQLite.EditEntries")
 
-	err := s.withTx(ctx, dbFunc, nil)
+	err := s.withTx(ctx, dbFunc)
 	if err != nil {
 		return nil, fail(err)
 	}

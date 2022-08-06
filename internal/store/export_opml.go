@@ -23,7 +23,7 @@ func (s *SQLite) ExportOPML(ctx context.Context, title *string) ([]byte, error) 
 
 	fail := failF("SQLite.ExportOPML")
 
-	err := s.withTx(ctx, dbFunc, nil)
+	err := s.withTx(ctx, dbFunc)
 	if err != nil {
 		return nil, fail(err)
 	}

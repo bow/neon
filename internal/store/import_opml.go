@@ -56,7 +56,7 @@ func (s *SQLite) ImportOPML(ctx context.Context, payload []byte) (int, error) {
 		return nil
 	}
 
-	err = s.withTx(ctx, dbFunc, nil)
+	err = s.withTx(ctx, dbFunc)
 	if err != nil {
 		return 0, fail(err)
 	}
