@@ -10,7 +10,7 @@ import (
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/rs/zerolog/log"
 
-	"github.com/bow/courier/internal/store/migration"
+	"github.com/bow/iris/internal/store/migration"
 )
 
 type DBID = int

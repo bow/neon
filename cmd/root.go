@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/bow/courier/internal"
+	"github.com/bow/iris/internal"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -77,11 +77,11 @@ func init() {
 }
 
 func showBanner() {
-	fmt.Printf(`   ______                 _
-  / ____/___  __  _______(_)__  _____
- / /   / __ \/ / / / ___/ / _ \/ ___/
-/ /___/ /_/ / /_/ / /  / /  __/ /
-\____/\____/\__,_/_/  /_/\___/_/
+	fmt.Printf(`    ____       _
+   /  _/_____ (_)_____
+   / / / ___// // ___/
+ _/ / / /   / /(__  )
+/___//_/   /_//____/
 
 `)
 }

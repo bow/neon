@@ -8,7 +8,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	"github.com/bow/courier/internal/server"
+	"github.com/bow/iris/internal/server"
 )
 
 const (
@@ -17,10 +17,10 @@ const (
 )
 
 var (
-	relDBName     = "courier/courier.db"
+	relDBName     = "iris/iris.db"
 	defaultDBName = fmt.Sprintf("$XDG_DATA_HOME/%s", relDBName)
 
-	relUDS      = "courier/courier.socket"
+	relUDS      = "iris/iris.socket"
 	defaultAddr = fmt.Sprintf("$XDG_RUNTIME_DIR/%s", relUDS)
 )
 

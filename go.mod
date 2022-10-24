@@ -1,4 +1,4 @@
-module github.com/bow/courier
+module github.com/bow/iris
 
 go 1.19
 

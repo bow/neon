@@ -14,7 +14,7 @@ else
 $(error error: unsupported development platform)
 endif
 
-APP_NAME   := courier
+APP_NAME   := iris
 GO_VERSION := $(shell (head -n 3 go.mod | $(SED_EXE) 's/^go//g' | tail -n 1))
 REPO_NAME  := $(shell (head -n 1 go.mod | $(SED_EXE) 's/^module //g'))
 
@@ -130,15 +130,15 @@ internal/store/parser_mock.go: internal/store/parser.go
 	mockgen -source=$< -package=store FeedParser > $@
 
 internal/store/store_mock.go: internal/store/store.go
-	mockgen -source=$< -self_package=github.com/bow/courier/internal/store -package=store FeedStore > $@
+	mockgen -source=$< -self_package=github.com/bow/iris/internal/store -package=store FeedStore > $@
 
 
 .PHONY: proto
 proto: $(PROTO_FILES) ## Generate code from protobuf.
 	@protoc \
 		-I=$(PROTO_DIR) \
-		--go_opt=Mcourier.proto="$(REPO_NAME)/api;api" \
-		--go-grpc_opt=Mcourier.proto="$(REPO_NAME)/api;api" \
+		--go_opt=Miris.proto="$(REPO_NAME)/api;api" \
+		--go-grpc_opt=Miris.proto="$(REPO_NAME)/api;api" \
 		--go_out=$(PROTO_DIR) --go_opt=paths=source_relative \
 		--go-grpc_out=$(PROTO_DIR) --go-grpc_opt=paths=source_relative \
 		$(PROTO_FILES)

@@ -21,8 +21,8 @@ import (
 	healthapi "google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/reflection"
 
-	"github.com/bow/courier/api"
-	"github.com/bow/courier/internal/store"
+	"github.com/bow/iris/api"
+	"github.com/bow/iris/internal/store"
 )
 
 const (
@@ -77,7 +77,7 @@ func newServer(lis net.Listener, grpcServer *grpc.Server) *server {
 }
 
 func (s *server) ServiceName() string {
-	return api.Courier_ServiceDesc.ServiceName
+	return api.Iris_ServiceDesc.ServiceName
 }
 
 func (s *server) Serve() error {

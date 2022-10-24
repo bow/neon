@@ -5,7 +5,7 @@ import (
 
 	"github.com/rs/zerolog/log"
 
-	"github.com/bow/courier/cmd"
+	"github.com/bow/iris/cmd"
 )
 
 func main() {

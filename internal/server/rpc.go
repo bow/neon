@@ -7,21 +7,21 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/bow/courier/api"
-	"github.com/bow/courier/internal"
-	"github.com/bow/courier/internal/store"
+	"github.com/bow/iris/api"
+	"github.com/bow/iris/internal"
+	"github.com/bow/iris/internal/store"
 )
 
-// rpc implements the Courier rpc API.
+// rpc implements the Iris rpc API.
 type rpc struct {
-	api.UnimplementedCourierServer
+	api.UnimplementedIrisServer
 
 	store store.FeedStore
 }
 
 func newRPC(grpcs *grpc.Server, str store.FeedStore) *rpc {
 	svc := rpc{store: str}
-	api.RegisterCourierServer(grpcs, &svc)
+	api.RegisterIrisServer(grpcs, &svc)
 	return &svc
 }
 
@@ -125,7 +125,7 @@ func (r *rpc) DeleteFeeds(
 // PullFeeds satisfies the service API.
 func (r *rpc) PullFeeds(
 	_ *api.PullFeedsRequest,
-	stream api.Courier_PullFeedsServer,
+	stream api.Iris_PullFeedsServer,
 ) error {
 
 	convert := func(pr store.PullResult) (*api.PullFeedsResponse, error) {

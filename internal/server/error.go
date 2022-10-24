@@ -9,7 +9,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/bow/courier/internal/store"
+	"github.com/bow/iris/internal/store"
 )
 
 func storeErrorUnaryServerInterceptor(

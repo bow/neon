@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"time"
 
-	"github.com/bow/courier/internal/store/opml"
+	"github.com/bow/iris/internal/store/opml"
 )
 
 func (s *SQLite) ImportOPML(ctx context.Context, payload []byte) (int, error) {

@@ -163,8 +163,8 @@ func TestImportOPMLOkExtended(t *testing.T) {
 		type="rss"
 		xmlUrl="http://bc.com/feed.xml"
 		description="Updated feed"
-		xmlns:courier="https://github.com/bow/courier"
-		courier:isStarred="true"
+		xmlns:iris="https://github.com/bow/iris"
+		iris:isStarred="true"
 	></outline>
   </body>
 </opml>

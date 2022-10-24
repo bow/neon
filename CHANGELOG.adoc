@@ -1,8 +1,8 @@
 = Changelog
 
-:repo_url: https://github.com/bow/courier
+:repo_url: https://github.com/bow/iris
 
-This is a changelog for the `courier` project.
+This is a changelog for the `iris` project.
 All notable changes to this project will be documented in this file.
 
 The format is based on https://keepachangelog.com/en/1.0.0/[Keep a Changelog] and this

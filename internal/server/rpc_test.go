@@ -14,9 +14,9 @@ import (
 	"github.com/stretchr/testify/require"
 	"google.golang.org/protobuf/proto"
 
-	"github.com/bow/courier/api"
-	"github.com/bow/courier/internal"
-	"github.com/bow/courier/internal/store"
+	"github.com/bow/iris/api"
+	"github.com/bow/iris/internal"
+	"github.com/bow/iris/internal/store"
 )
 
 func TestAddFeedOk(t *testing.T) {
@@ -521,7 +521,7 @@ func TestExportOPMLOk(t *testing.T) {
 	payload := `<\?xml version="1.0" encoding="UTF-8"\?>
 <opml version="2.0">
   <head>
-    <title>Courier export</title>
+    <title>Iris export</title>
 	<dateCreated>Thu, 17 Feb 2022 16:37:19 CET</dateCreated>
   </head>
   <body>

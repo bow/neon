@@ -10,8 +10,8 @@ import (
 	"github.com/mmcdole/gofeed"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
-	"github.com/bow/courier/api"
-	"github.com/bow/courier/internal/store/opml"
+	"github.com/bow/iris/api"
+	"github.com/bow/iris/internal/store/opml"
 )
 
 const defaultExportTitle = "Courier export"

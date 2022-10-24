@@ -1,12 +1,12 @@
 syntax = "proto3";
 
-package courier;
+package iris;
 
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/bow/courier/api";
+option go_package = "github.com/bow/iris/api";
 
-service Courier {
+service Iris {
   // AddFeeds adds a new feed source.
   rpc AddFeed (AddFeedRequest) returns (AddFeedResponse) {}
 

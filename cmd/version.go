@@ -6,7 +6,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/bow/courier/internal"
+	"github.com/bow/iris/internal"
 )
 
 var versionCmd = cobra.Command{
