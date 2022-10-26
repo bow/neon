@@ -1,3 +1,6 @@
+// Copyright (c) 2022 Wibowo Arindrarto <contact@arindrarto.dev>
+// SPDX-License-Identifier: BSD-3-Clause
+
 // package opml provides functionalities for parsing and writing OPML files.
 //
 // It follows the OPML 2.0 specifications [1], but keeps only tags relevant to processing

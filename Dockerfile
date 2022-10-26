@@ -1,3 +1,10 @@
+# Dockerfile for packaging releases.
+#
+# Copyright (c) 2022 Wibowo Arindrarto <contact@arindrarto.dev>
+# SPDX-License-Identifier: BSD-3-Clause
+#
+# This file is part of Iris <https://github.com/bow/iris>.
+
 FROM golang:1.19-alpine AS builder
 
 WORKDIR /src

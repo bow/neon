@@ -1,3 +1,6 @@
+// Copyright (c) 2022 Wibowo Arindrarto <contact@arindrarto.dev>
+// SPDX-License-Identifier: BSD-3-Clause
+
 package internal
 
 // All values declared here are meant to be overwritten at compile time.
