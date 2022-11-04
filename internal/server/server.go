@@ -13,9 +13,7 @@ import (
 	"syscall"
 
 	grpczerolog "github.com/grpc-ecosystem/go-grpc-middleware/providers/zerolog/v2"
-	middleware "github.com/grpc-ecosystem/go-grpc-middleware/v2"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
-	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/tags"
 	"github.com/mmcdole/gofeed"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -181,14 +179,12 @@ func (b *Builder) Build() (*server, error) {
 		Logger()
 
 	grpcs := grpc.NewServer(
-		middleware.WithUnaryServerChain(
+		grpc.ChainUnaryInterceptor(
 			storeErrorUnaryServerInterceptor,
-			tags.UnaryServerInterceptor(),
 			logging.UnaryServerInterceptor(grpczerolog.InterceptorLogger(logger)),
 		),
-		middleware.WithStreamServerChain(
+		grpc.ChainStreamInterceptor(
 			storeErrorStreamServerInterceptor,
-			tags.StreamServerInterceptor(),
 			logging.StreamServerInterceptor(grpczerolog.InterceptorLogger(logger)),
 		),
 	)
