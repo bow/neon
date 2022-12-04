@@ -113,6 +113,11 @@ install-dev:  ## Install dependencies for local development.
 	fi
 
 
+.PHONY: fmt
+fmt:  ## Apply gofmt.
+	go fmt ./...
+
+
 .PHONY: help
 help:  ## Show this help.
 	$(eval PADLEN=$(shell $(GREP_EXE) -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
