@@ -4,6 +4,7 @@
 package main
 
 import (
+	"context"
 	"os"
 
 	"github.com/rs/zerolog/log"
@@ -12,7 +13,10 @@ import (
 )
 
 func main() {
-	if err := cmd.New().Execute(); err != nil {
+	ctx := context.Background()
+	command := cmd.New()
+
+	if err := command.ExecuteContext(ctx); err != nil {
 		log.Logger.Error().Err(err).Msg("command failed")
 		os.Exit(1)
 	}
