@@ -4,6 +4,7 @@
 package server
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"net"
@@ -81,16 +82,20 @@ func (s *server) ServiceName() string {
 	return api.Iris_ServiceDesc.ServiceName
 }
 
-func (s *server) Serve() error {
+func (s *server) Serve(ctx context.Context) error {
 	log.Info().Msg("starting server")
 
 	s.healthSvc.SetServingStatus(s.ServiceName(), healthapi.HealthCheckResponse_NOT_SERVING)
 
-	err := <-s.start()
-	if errors.Is(err, grpc.ErrServerStopped) {
-		return nil
+	select {
+	case <-ctx.Done():
+		return ctx.Err()
+	case err := <-s.start():
+		if errors.Is(err, grpc.ErrServerStopped) {
+			return nil
+		}
+		return err
 	}
-	return err
 }
 
 func (s *server) Stop() {

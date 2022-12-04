@@ -88,7 +88,7 @@ func newTestServer(t *testing.T, b *Builder) (*server, net.Addr) {
 	r.NoError(err)
 
 	go func() {
-		r.NoError(srv.Serve())
+		r.NoError(srv.Serve(context.Background()))
 	}()
 
 	var (

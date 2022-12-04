@@ -6,7 +6,6 @@ package cmd
 import (
 	"fmt"
 	"io"
-	"os"
 
 	"github.com/spf13/cobra"
 
@@ -45,7 +44,7 @@ func New() *cobra.Command {
 				return fmt.Errorf("invalid %s value: '%s'", logStyleKey, rls)
 			}
 
-			err := internal.InitGlobalLog(logLevel, ls, os.Stderr)
+			err := internal.InitGlobalLog(logLevel, ls, cmd.ErrOrStderr())
 			if err != nil {
 				return err
 			}

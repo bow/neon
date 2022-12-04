@@ -59,7 +59,7 @@ func newServeCmd() *cobra.Command {
 				return err
 			}
 
-			return server.Serve()
+			return server.Serve(cmd.Context())
 		},
 	}
 
