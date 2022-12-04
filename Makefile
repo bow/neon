@@ -52,6 +52,8 @@ BASE_LD_FLAGS += -X ${REPO_NAME}/internal.gitCommit=$(GIT_COMMIT)$(GIT_DIRTY)
 # Allow for optional LD flags from env, appended to base flags, stripping trailing whitespaces.
 LD_FLAGS := $(strip $(BASE_LD_FLAGS) $(LD_FLAGS))
 
+CGO_ENABLED ?= 0
+
 # Protobuf settings.
 PROTOC_VERSION := 3.20.1
 PROTOC_GEN_GO_GRPC_VERSION := v1.2.0
@@ -70,7 +72,7 @@ all: help
 bin: $(BIN_PATH)  ## Compile an executable binary.
 
 $(BIN_PATH): $(shell find . -type f -name '*.go' -print) go.mod
-	go mod tidy && go build -trimpath -ldflags '$(LD_FLAGS)' -o $@
+	go mod tidy && CGO_ENABLED=$(CGO_ENABLED) go build -trimpath -ldflags '$(LD_FLAGS)' -o $@
 
 
 .PHONY: clean
