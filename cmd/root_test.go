@@ -11,7 +11,7 @@ import (
 )
 
 func TestNoArgs(t *testing.T) {
-	err, stdout, stderr := execCommand(nil)
+	stdout, stderr, err := execCommand(nil)
 	require.NoError(t, err)
 
 	assert.Empty(t, stderr)

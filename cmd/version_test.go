@@ -13,7 +13,7 @@ import (
 )
 
 func TestVersionOk(t *testing.T) {
-	err, stdout, stderr := execCommand([]string{"version"})
+	stdout, stderr, err := execCommand([]string{"version"})
 	require.NoError(t, err)
 
 	assert.Empty(t, stderr)
