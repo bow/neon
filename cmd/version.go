@@ -12,38 +12,39 @@ import (
 	"github.com/bow/iris/internal"
 )
 
-var versionCmd = cobra.Command{
-	Use:   "version",
-	Short: "Show the version",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		bi, ok := debug.ReadBuildInfo()
-		if !ok {
-			return fmt.Errorf("could not read build info")
-		}
+func newVersionCmd() *cobra.Command {
 
-		var os, arch = "?", "?"
-		for _, setting := range bi.Settings {
-			switch setting.Key {
-			case "GOOS":
-				os = setting.Value
-			case "GOARCH":
-				arch = setting.Value
+	versionCmd := cobra.Command{
+		Use:   "version",
+		Short: "Show the version",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			bi, ok := debug.ReadBuildInfo()
+			if !ok {
+				return fmt.Errorf("could not read build info")
 			}
-		}
 
-		show("App", internal.AppName())
-		show("Version", internal.Version())
-		show("Git commit", internal.GitCommit())
-		show("Build time", internal.BuildTime())
-		show("OS/Arch", fmt.Sprintf("%s/%s", os, arch))
-		show("Go version", bi.GoVersion)
+			var os, arch = "?", "?"
+			for _, setting := range bi.Settings {
+				switch setting.Key {
+				case "GOOS":
+					os = setting.Value
+				case "GOARCH":
+					arch = setting.Value
+				}
+			}
 
-		return nil
-	},
-}
+			show("App", internal.AppName())
+			show("Version", internal.Version())
+			show("Git commit", internal.GitCommit())
+			show("Build time", internal.BuildTime())
+			show("OS/Arch", fmt.Sprintf("%s/%s", os, arch))
+			show("Go version", bi.GoVersion)
 
-func init() {
-	rootCmd.AddCommand(&versionCmd)
+			return nil
+		},
+	}
+
+	return &versionCmd
 }
 
 func show(key, value string) {

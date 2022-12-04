@@ -27,48 +27,50 @@ var (
 	defaultAddr = fmt.Sprintf("$XDG_RUNTIME_DIR/%s", relUDS)
 )
 
-var serveCmdName = "serve"
+func newServeCmd() *cobra.Command {
 
-var serveViper = newViper(serveCmdName)
+	var (
+		name     = "serve"
+		cmdViper = newViper(name)
+	)
 
-var serveCmd = cobra.Command{
-	Use:   serveCmdName,
-	Short: "Start the server",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	serveCmd := cobra.Command{
+		Use:   name,
+		Short: "Start the server",
+		RunE: func(cmd *cobra.Command, args []string) error {
 
-		dbPath, err := resolveDBPath(serveViper)
-		if err != nil {
-			return err
-		}
+			dbPath, err := resolveDBPath(cmdViper)
+			if err != nil {
+				return err
+			}
 
-		addr, err := resolveUDSAddr(serveViper)
-		if err != nil {
-			return err
-		}
+			addr, err := resolveUDSAddr(cmdViper)
+			if err != nil {
+				return err
+			}
 
-		server, err := server.NewBuilder().
-			Address(addr).
-			StorePath(dbPath).
-			Build()
+			server, err := server.NewBuilder().
+				Address(addr).
+				StorePath(dbPath).
+				Build()
 
-		if err != nil {
-			return err
-		}
+			if err != nil {
+				return err
+			}
 
-		return server.Serve()
-	},
-}
-
-func init() {
-	rootCmd.AddCommand(&serveCmd)
+			return server.Serve()
+		},
+	}
 
 	flags := serveCmd.Flags()
 
 	flags.StringP(addrKey, "a", defaultAddr, "listening address")
-	_ = serveViper.BindPFlag(addrKey, flags.Lookup(addrKey))
+	_ = cmdViper.BindPFlag(addrKey, flags.Lookup(addrKey))
 
 	flags.StringP(dbNameKey, "d", defaultDBName, "data store location")
-	_ = serveViper.BindPFlag(dbNameKey, flags.Lookup(dbNameKey))
+	_ = cmdViper.BindPFlag(dbNameKey, flags.Lookup(dbNameKey))
+
+	return &serveCmd
 }
 
 func resolveDBPath(v *viper.Viper) (dbPath string, err error) {
