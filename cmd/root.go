@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"fmt"
+	"io"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -53,7 +54,7 @@ func New() *cobra.Command {
 			}
 
 			if !cmdViper.GetBool(quietKey) {
-				showBanner()
+				showBanner(cmd.OutOrStdout())
 			}
 
 			return nil
@@ -80,9 +81,11 @@ func New() *cobra.Command {
 	return &root
 }
 
-// showBanner prints the application banner to stdout.
-func showBanner() {
-	fmt.Printf(`    ____       _
+// showBanner prints the application banner to the given writer.
+func showBanner(w io.Writer) {
+	fmt.Fprintf(
+		w,
+		`    ____       _
    /  _/_____ (_)_____
    / / / ___// // ___/
  _/ / / /   / /(__  )

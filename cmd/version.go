@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"fmt"
+	"io"
 	"runtime/debug"
 
 	"github.com/spf13/cobra"
@@ -34,12 +35,13 @@ func newVersionCmd() *cobra.Command {
 				}
 			}
 
-			showVersionAttr("App", internal.AppName())
-			showVersionAttr("Version", internal.Version())
-			showVersionAttr("Git commit", internal.GitCommit())
-			showVersionAttr("Build time", internal.BuildTime())
-			showVersionAttr("OS/Arch", fmt.Sprintf("%s/%s", os, arch))
-			showVersionAttr("Go version", bi.GoVersion)
+			out := cmd.OutOrStdout()
+			showVersionAttr(out, "App", internal.AppName())
+			showVersionAttr(out, "Version", internal.Version())
+			showVersionAttr(out, "Git commit", internal.GitCommit())
+			showVersionAttr(out, "Build time", internal.BuildTime())
+			showVersionAttr(out, "OS/Arch", fmt.Sprintf("%s/%s", os, arch))
+			showVersionAttr(out, "Go version", bi.GoVersion)
 
 			return nil
 		},
@@ -48,7 +50,7 @@ func newVersionCmd() *cobra.Command {
 	return &versionCmd
 }
 
-// showVersionAttr prints a version-related key-value pair to stdout.
-func showVersionAttr(key, value string) {
-	fmt.Printf("%-11s: %s\n", key, value)
+// showVersionAttr prints a version-related key-value pair to the given writer.
+func showVersionAttr(w io.Writer, key, value string) {
+	fmt.Fprintf(w, "%-11s: %s\n", key, value)
 }
