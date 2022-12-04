@@ -35,13 +35,17 @@ func newVersionCmd() *cobra.Command {
 				}
 			}
 
-			out := cmd.OutOrStdout()
-			showVersionAttr(out, "App", internal.AppName())
-			showVersionAttr(out, "Version", internal.Version())
-			showVersionAttr(out, "Git commit", internal.GitCommit())
-			showVersionAttr(out, "Build time", internal.BuildTime())
-			showVersionAttr(out, "OS/Arch", fmt.Sprintf("%s/%s", os, arch))
-			showVersionAttr(out, "Go version", bi.GoVersion)
+			showVersion(
+				cmd.OutOrStdout(),
+				map[string]string{
+					"App":        internal.AppName(),
+					"Version":    internal.Version(),
+					"Git commit": internal.GitCommit(),
+					"Build time": internal.BuildTime(),
+					"OS/Arch":    fmt.Sprintf("%s/%s", os, arch),
+					"Go version": bi.GoVersion,
+				},
+			)
 
 			return nil
 		},
@@ -50,7 +54,9 @@ func newVersionCmd() *cobra.Command {
 	return &versionCmd
 }
 
-// showVersionAttr prints a version-related key-value pair to the given writer.
-func showVersionAttr(w io.Writer, key, value string) {
-	fmt.Fprintf(w, "%-11s: %s\n", key, value)
+// showVersion prints version-related information to the given writer.
+func showVersion(w io.Writer, info map[string]string) {
+	for k, v := range info {
+		fmt.Fprintf(w, "%-11s: %s\n", k, v)
+	}
 }
