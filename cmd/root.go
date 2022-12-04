@@ -24,7 +24,7 @@ func Execute() error {
 	return newCmd().Execute()
 }
 
-// newCmd creates a new root command and sets up its command-line flags.
+// newCmd creates a new root command along with its command-line flags.
 func newCmd() *cobra.Command {
 
 	var cmdViper = newViper("")
@@ -85,6 +85,7 @@ func newCmd() *cobra.Command {
 	return &root
 }
 
+// showBanner prints the application banner to stdout.
 func showBanner() {
 	fmt.Printf(`    ____       _
    /  _/_____ (_)_____

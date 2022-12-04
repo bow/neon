@@ -27,6 +27,7 @@ var (
 	defaultAddr = fmt.Sprintf("$XDG_RUNTIME_DIR/%s", relUDS)
 )
 
+// newServeCmd creates a new 'serve' subcommand along with its command-line flags.
 func newServeCmd() *cobra.Command {
 
 	var (
@@ -73,6 +74,7 @@ func newServeCmd() *cobra.Command {
 	return &serveCmd
 }
 
+// resolveDBPath attempts to resolve the filesystem path to the database.
 func resolveDBPath(v *viper.Viper) (dbPath string, err error) {
 	dbPath = v.GetString(dbNameKey)
 	if dbPath == defaultDBName {
@@ -84,6 +86,8 @@ func resolveDBPath(v *viper.Viper) (dbPath string, err error) {
 	return dbPath, nil
 }
 
+// resolveUDSAddr attempts to resolve the filesystem path to a Unix domain socket exposing
+// the running application.
 func resolveUDSAddr(v *viper.Viper) (addr string, err error) {
 	addr = v.GetString(addrKey)
 	// return string unchanged if tcp is requested.

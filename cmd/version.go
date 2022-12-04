@@ -12,6 +12,7 @@ import (
 	"github.com/bow/iris/internal"
 )
 
+// newVersionCmd creates a new 'version' subcommand.
 func newVersionCmd() *cobra.Command {
 
 	versionCmd := cobra.Command{
@@ -33,12 +34,12 @@ func newVersionCmd() *cobra.Command {
 				}
 			}
 
-			show("App", internal.AppName())
-			show("Version", internal.Version())
-			show("Git commit", internal.GitCommit())
-			show("Build time", internal.BuildTime())
-			show("OS/Arch", fmt.Sprintf("%s/%s", os, arch))
-			show("Go version", bi.GoVersion)
+			showVersionAttr("App", internal.AppName())
+			showVersionAttr("Version", internal.Version())
+			showVersionAttr("Git commit", internal.GitCommit())
+			showVersionAttr("Build time", internal.BuildTime())
+			showVersionAttr("OS/Arch", fmt.Sprintf("%s/%s", os, arch))
+			showVersionAttr("Go version", bi.GoVersion)
 
 			return nil
 		},
@@ -47,6 +48,7 @@ func newVersionCmd() *cobra.Command {
 	return &versionCmd
 }
 
-func show(key, value string) {
+// showVersionAttr prints a version-related key-value pair to stdout.
+func showVersionAttr(key, value string) {
 	fmt.Printf("%-11s: %s\n", key, value)
 }
