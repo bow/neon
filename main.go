@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	if err := cmd.Execute(); err != nil {
+	if err := cmd.New().Execute(); err != nil {
 		log.Logger.Error().Err(err).Msg("command failed")
 		os.Exit(1)
 	}

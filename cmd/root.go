@@ -19,13 +19,8 @@ const (
 	inDockerKey = "in-docker"
 )
 
-// Execute runs the root command.
-func Execute() error {
-	return newCmd().Execute()
-}
-
-// newCmd creates a new root command along with its command-line flags.
-func newCmd() *cobra.Command {
+// New creates a new command along with its command-line flags.
+func New() *cobra.Command {
 
 	var cmdViper = newViper("")
 
