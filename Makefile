@@ -157,17 +157,17 @@ proto: $(PROTO_FILES) ## Generate code from protobuf.
 		$(PROTO_FILES)
 
 
-.PHONY: scan-security
-scan-security:  scan-security-ast scan-security-deps  ## Perform all security analyses.
+.PHONY: scan-sec
+scan-sec:  scan-sec-ast scan-sec-deps  ## Perform all security analyses.
 
 
-.PHONY: scan-security-deps
-scan-security-deps:  ## Scan dependencies for reported vulnerabilities.
+.PHONY: scan-sec-deps
+scan-sec-deps:  ## Scan dependencies for reported vulnerabilities.
 	go list -json -deps ./... | nancy sleuth
 
 
-.PHONY: scan-security-ast
-scan-security-ast:  ## Perform static security analysis on the AST.
+.PHONY: scan-sec-ast
+scan-sec-ast:  ## Perform static security analysis on the AST.
 	gosec ./...
 
 
