@@ -17,3 +17,5 @@ checks:
       threshold: 18
 exclude_patterns:
   - "api/*.go"
+  - "**/*_test.go"
+  - "**/*_mock.go"
