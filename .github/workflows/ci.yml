@@ -42,7 +42,7 @@ jobs:
 
       - name: Run tests
         run: |
-          make test-cov-xml
+          make test
 
       - name: Upload test report
         if: always()
@@ -57,7 +57,7 @@ jobs:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
         with:
           coverageLocations: |
-            ${{ github.workspace }}/.coverage.xml:cobertura
+            ${{ github.workspace }}/.coverage.out:gocov
 
   lint:
     name: Lint
