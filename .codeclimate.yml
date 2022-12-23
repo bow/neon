@@ -7,11 +7,13 @@ checks:
     enabled: false
   method-count:
     enabled: false
+  return-statements:
+    enabled: false
   method-lines:
     config:
-      threshold: 50
+      threshold: 100
   method-complexity:
     config:
-      threshold: 13
+      threshold: 18
 exclude_patterns:
   - "api/*.go"
