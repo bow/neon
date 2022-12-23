@@ -107,6 +107,8 @@ jobs:
 
       - name: Run nancy
         uses: sonatype-nexus-community/nancy-github-action@main
+        with:
+          version: "v1.0.41"
 
   pub-image:
     name: Publish Docker image
