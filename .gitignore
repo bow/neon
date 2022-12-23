@@ -8,6 +8,7 @@ bin/
 # Outputs of test-related tools
 *.out
 .coverage.out
+.coverage.out.all
 .coverage.xml
 .junit.xml
 coverage.html

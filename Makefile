@@ -180,8 +180,9 @@ serve: bin  ## Compile the binary and run the server in development mode.
 test: mocks .coverage.out  ## Run the test suite.
 
 .coverage.out:
-	gotestsum --format dots-v2 --junitfile .junit.xml -- ./... -parallel=$(shell nproc) -coverprofile=$@ -covermode=atomic -coverpkg ./internal/...,./cmd/...,./. \
-		&& $(GREP_EXE) -v "_mock.go" $@ | go tool cover -func=/dev/stdin
+	gotestsum --format dots-v2 --junitfile .junit.xml -- ./... -parallel=$(shell nproc) -coverprofile=$@.all -covermode=atomic -coverpkg ./internal/...,./cmd/...,./. \
+		&& $(GREP_EXE) -v "_mock.go" $@.all > $@ \
+		&& go tool cover -func=$@
 
 
 .PHONY: test-cov-xml
