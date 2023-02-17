@@ -33,8 +33,7 @@ LABEL org.opencontainers.image.title="iris" \
 COPY --from=builder /src/bin/iris /bin/iris
 
 RUN mkdir -p /var/data/
-ENV IRIS_IN_DOCKER=1 \
-    IRIS_SERVE_ADDR=tcp://0.0.0.0:7000 \
+ENV IRIS_SERVE_ADDR=tcp://0.0.0.0:7000 \
     IRIS_SERVE_DB_PATH=/var/data/iris.db
 
 WORKDIR /runtime

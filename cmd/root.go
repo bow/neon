@@ -16,7 +16,6 @@ const (
 	logLevelKey = "log-level"
 	logStyleKey = "log-style"
 	quietKey    = "quiet"
-	inDockerKey = "in-docker"
 )
 
 // New creates a new command along with its command-line flags.
@@ -48,9 +47,6 @@ func New() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			if !cmdViper.GetBool(inDockerKey) {
-				internal.SetLogPID()
-			}
 
 			if !cmdViper.GetBool(quietKey) {
 				showBanner(cmd.OutOrStdout())
@@ -70,9 +66,6 @@ func New() *cobra.Command {
 
 	pflags.String(logStyleKey, "pretty", "logging style")
 	_ = cmdViper.BindPFlag(logStyleKey, pflags.Lookup(logStyleKey))
-
-	pflags.BoolP(inDockerKey, "", false, "indicate if execution is inside docker")
-	_ = cmdViper.BindPFlag(inDockerKey, pflags.Lookup(inDockerKey))
 
 	root.AddCommand(newVersionCmd())
 	root.AddCommand(newServeCmd())

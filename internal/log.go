@@ -21,10 +21,6 @@ const (
 	JSONLogStyle
 )
 
-func SetLogPID() {
-	zlog.Logger = zlog.Logger.With().Int("pid", os.Getpid()).Logger()
-}
-
 func InitGlobalLog(
 	logLevel string,
 	style LogStyle,
@@ -52,17 +48,21 @@ func InitGlobalLog(
 		}
 	}
 
+	logb := zerolog.New(cw).
+		With().
+		Timestamp().
+		Str("app", AppName()).
+		Str("version", Version())
+	if inDocker() {
+		logb = logb.Int("pid", os.Getpid())
+	}
+
 	lcs := logConfigState{
 		logLevel:          ll,
 		timestampFunc:     func() time.Time { return time.Now().UTC() },
 		timeFieldFormat:   tf,
 		durationFieldUnit: time.Millisecond,
-		logger: zerolog.New(cw).
-			With().
-			Timestamp().
-			Str("app", AppName()).
-			Str("version", Version()).
-			Logger(),
+		logger:            logb.Logger(),
 	}
 	defer func() {
 		if err != nil {
@@ -96,4 +96,9 @@ func (s *logConfigState) apply() {
 	zerolog.DurationFieldUnit = s.durationFieldUnit
 	zerolog.SetGlobalLevel(s.logLevel)
 	zlog.Logger = s.logger
+}
+
+func inDocker() bool {
+	_, errStat := os.Stat("/.dockerenv")
+	return errStat != nil
 }
