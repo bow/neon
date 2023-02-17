@@ -5,7 +5,7 @@
 #
 # This file is part of Iris <https://github.com/bow/iris>.
 
-FROM golang:1.19-alpine AS builder
+FROM golang:1.20-alpine AS builder
 
 WORKDIR /src
 
@@ -17,7 +17,7 @@ RUN git checkout -- . && make bin
 
 # -- #
 
-FROM golang:1.19-alpine
+FROM golang:1.20-alpine
 
 ARG REVISION
 ARG BUILD_TIME

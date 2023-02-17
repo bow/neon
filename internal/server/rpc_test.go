@@ -237,9 +237,9 @@ func TestPullFeedsAllOk(t *testing.T) {
 		// Randomize ordering, to simulate actual URL pulls.
 		shufres := make([]store.PullResult, len(prs))
 		copy(shufres, prs)
-		rand.Seed(time.Now().UnixNano())
+		r := rand.New(rand.NewSource(time.Now().UnixNano())) // #nosec: G404
 		shf := func(i, j int) { shufres[i], shufres[j] = shufres[j], shufres[i] }
-		rand.Shuffle(len(shufres), shf)
+		r.Shuffle(len(shufres), shf)
 
 		for i := 0; i < len(shufres); i++ {
 			ch <- shufres[i]
@@ -331,9 +331,9 @@ func TestPullFeedsErrSomeFeed(t *testing.T) {
 		// Randomize ordering, to simulate actual URL pulls.
 		shufres := make([]store.PullResult, len(prs))
 		copy(shufres, prs)
-		rand.Seed(time.Now().UnixNano())
+		r := rand.New(rand.NewSource(time.Now().UnixNano())) // #nosec: G404
 		shf := func(i, j int) { shufres[i], shufres[j] = shufres[j], shufres[i] }
-		rand.Shuffle(len(shufres), shf)
+		r.Shuffle(len(shufres), shf)
 
 		for i := 0; i < len(shufres); i++ {
 			ch <- shufres[i]
@@ -427,9 +427,9 @@ func TestPullFeedsErrNonFeed(t *testing.T) {
 		// Randomize ordering, to simulate actual URL pulls.
 		shufres := make([]store.PullResult, len(prs))
 		copy(shufres, prs)
-		rand.Seed(time.Now().UnixNano())
+		r := rand.New(rand.NewSource(time.Now().UnixNano())) // #nosec: G404
 		shf := func(i, j int) { shufres[i], shufres[j] = shufres[j], shufres[i] }
-		rand.Shuffle(len(shufres), shf)
+		r.Shuffle(len(shufres), shf)
 
 		for i := 0; i < len(shufres); i++ {
 			ch <- shufres[i]
