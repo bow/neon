@@ -37,7 +37,7 @@ func newServeCmd() *cobra.Command {
 
 	serveCmd := cobra.Command{
 		Use:   name,
-		Short: "Start the server",
+		Short: "Start a gRPC server",
 		RunE: func(cmd *cobra.Command, args []string) error {
 
 			dbPath, err := resolveDBPath(cmdViper)
