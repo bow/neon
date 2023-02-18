@@ -45,7 +45,7 @@ type SQLite struct {
 
 func NewSQLite(filename string, parser FeedParser) (*SQLite, error) {
 
-	log.Info().Msgf("using %s as the data store", filename)
+	log.Info().Str("path", filename).Msgf("initializing data store")
 
 	fail := failF("NewSQLiteStore")
 

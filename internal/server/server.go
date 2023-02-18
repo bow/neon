@@ -109,7 +109,7 @@ func (s *server) start() <-chan error {
 		s.healthSvc.Resume()
 		ch <- s.grpcServer.Serve(s.lis)
 	}()
-	log.Info().Msgf("server listening at %s", s.lis.Addr().String())
+	log.Info().Str("addr", s.lis.Addr().String()).Msgf("server listening")
 
 	return ch
 }
