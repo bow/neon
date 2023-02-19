@@ -6,7 +6,6 @@ package internal
 import (
 	"fmt"
 	"io"
-	"os"
 	"strings"
 	"time"
 	"unicode"
@@ -59,14 +58,7 @@ func InitGlobalLog(
 		}
 	}
 
-	logb := zerolog.New(cw).
-		With().
-		Timestamp().
-		Str("app", AppName()).
-		Str("version", Version())
-	if inDocker() {
-		logb = logb.Int("pid", os.Getpid())
-	}
+	logb := zerolog.New(cw).With().Timestamp()
 
 	lcs := logConfigState{
 		logLevel:          ll,
@@ -221,8 +213,3 @@ const (
 	colorBold     = 1
 	colorDarkGray = 90
 )
-
-func inDocker() bool {
-	_, errStat := os.Stat("/.dockerenv")
-	return errStat != nil
-}

@@ -52,15 +52,17 @@ func newServer(lis net.Listener, grpcServer *grpc.Server) *server {
 		defer close(funcCh)
 		defer close(sigCh)
 
+		reason := "unknown"
 		select {
 		case sig := <-sigCh:
-			log.Info().Msgf("stopping server (%s)", sig)
+			reason = sig.String()
 		case <-funcCh:
-			log.Info().Msgf("stopping server (function called)")
+			reason = "function called"
 		}
 
+		log.Debug().Msg("stopping server")
 		grpcServer.GracefulStop()
-		log.Info().Msg("server stopped")
+		log.Info().Msgf("server stopped (%s)", reason)
 	}()
 
 	healthSvc := health.NewServer()
@@ -83,7 +85,9 @@ func (s *server) ServiceName() string {
 }
 
 func (s *server) Serve(ctx context.Context) error {
-	log.Info().Msg("starting server")
+	log.Debug().
+		Str("addr", s.lis.Addr().String()).
+		Msg("starting server")
 
 	s.healthSvc.SetServingStatus(s.ServiceName(), healthapi.HealthCheckResponse_NOT_SERVING)
 

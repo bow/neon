@@ -7,6 +7,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"strings"
 	"sync"
 
@@ -49,7 +50,7 @@ func NewSQLite(filename string, parser FeedParser) (*SQLite, error) {
 
 	fail := failF("NewSQLiteStore")
 
-	log.Debug().Msgf("migrating data store to latest")
+	log.Debug().Msgf("migrating data store")
 	m, err := migration.New(filename)
 	if err != nil {
 		return nil, fail(err)
@@ -57,6 +58,19 @@ func NewSQLite(filename string, parser FeedParser) (*SQLite, error) {
 	if err = m.Up(); err != nil && !errors.Is(err, migrate.ErrNoChange) {
 		return nil, fail(err)
 	}
+	dsv, dsd, dserr := m.Version()
+	if dserr != nil {
+		return nil, fail(err)
+	}
+	dsvt := fmt.Sprintf("%d", dsv)
+	if dsd {
+		dsvt = fmt.Sprintf("%s*", dsvt)
+	}
+
+	log.Debug().
+		Str("data_store_version", dsvt).
+		Msg("migrated data store")
+
 	db, err := sql.Open("sqlite", filename)
 	if err != nil {
 		return nil, fail(err)

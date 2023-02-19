@@ -6,8 +6,12 @@ package cmd
 import (
 	"fmt"
 	"io"
+	"os"
 
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 
 	"github.com/bow/iris/internal"
 )
@@ -52,6 +56,14 @@ func New() *cobra.Command {
 				showBanner(cmd.OutOrStdout())
 			}
 
+			caser := cases.Title(language.English)
+
+			log.Debug().
+				Str("version", internal.Version()).
+				Int("pid", os.Getpid()).
+				Bool("in_docker", inDocker()).
+				Msgf("starting %s", caser.String(internal.AppName()))
+
 			return nil
 		},
 	}
@@ -84,4 +96,9 @@ func showBanner(w io.Writer) {
 /___//_/   /_//____/
 
 `)
+}
+
+func inDocker() bool {
+	_, errStat := os.Stat("/.dockerenv")
+	return errStat == nil
 }
