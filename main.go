@@ -5,9 +5,8 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"os"
-
-	"github.com/rs/zerolog/log"
 
 	"github.com/bow/iris/cmd"
 )
@@ -17,7 +16,7 @@ func main() {
 	command := cmd.New()
 
 	if err := command.ExecuteContext(ctx); err != nil {
-		log.Logger.Error().Err(err).Msg("command failed")
+		fmt.Fprintf(command.ErrOrStderr(), "%s\n", err)
 		os.Exit(1)
 	}
 }
