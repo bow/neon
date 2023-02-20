@@ -80,7 +80,7 @@ func New() *cobra.Command {
 	_ = cmdViper.BindPFlag(logStyleKey, pflags.Lookup(logStyleKey))
 
 	root.AddCommand(newVersionCmd())
-	root.AddCommand(newServeCmd())
+	root.AddCommand(newServerCmd())
 
 	return &root
 }

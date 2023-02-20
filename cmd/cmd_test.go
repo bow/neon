@@ -30,7 +30,7 @@ func TestNoArgs(t *testing.T) {
 	assert.Contains(t, stdout, `Use "iris [command] --help" for more information`)
 }
 
-func TestServe(t *testing.T) {
+func TestServer(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -53,7 +53,7 @@ func TestServe(t *testing.T) {
 
 	go func() {
 		cmd, _, _ := newCommand()
-		cmd.SetArgs([]string{"serve", "-a", "tcp://:0", "-d", dbPath})
+		cmd.SetArgs([]string{"server", "-a", "tcp://:0", "-d", dbPath})
 
 		err = cmd.ExecuteContext(ctx)
 		if err != nil && err != context.Canceled {

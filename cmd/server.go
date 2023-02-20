@@ -27,15 +27,15 @@ var (
 	defaultAddr = fmt.Sprintf("$XDG_RUNTIME_DIR/%s", relUDS)
 )
 
-// newServeCmd creates a new 'serve' subcommand along with its command-line flags.
-func newServeCmd() *cobra.Command {
+// newServerCmd creates a new 'server' subcommand along with its command-line flags.
+func newServerCmd() *cobra.Command {
 
 	var (
-		name     = "serve"
+		name     = "server"
 		cmdViper = newViper(name)
 	)
 
-	serveCmd := cobra.Command{
+	serverCmd := cobra.Command{
 		Use:   name,
 		Short: "Start a gRPC server",
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -63,7 +63,7 @@ func newServeCmd() *cobra.Command {
 		},
 	}
 
-	flags := serveCmd.Flags()
+	flags := serverCmd.Flags()
 
 	flags.StringP(addrKey, "a", defaultAddr, "listening address")
 	_ = cmdViper.BindPFlag(addrKey, flags.Lookup(addrKey))
@@ -71,7 +71,7 @@ func newServeCmd() *cobra.Command {
 	flags.StringP(dbNameKey, "d", defaultDBName, "data store location")
 	_ = cmdViper.BindPFlag(dbNameKey, flags.Lookup(dbNameKey))
 
-	return &serveCmd
+	return &serverCmd
 }
 
 // resolveDBPath attempts to resolve the filesystem path to the database.
