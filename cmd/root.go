@@ -36,20 +36,6 @@ func New() *cobra.Command {
 		CompletionOptions:  cobra.CompletionOptions{DisableDefaultCmd: true},
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 
-			rll := cmdViper.GetString(logLevelKey)
-			ll, err := internal.ParseLogLevel(rll)
-			if err != nil {
-				return err
-			}
-
-			rls := cmdViper.GetString(logStyleKey)
-			ls, err := internal.ParseLogStyle(rls)
-			if err != nil {
-				return err
-			}
-
-			internal.InitGlobalLog(ll, ls, cmd.ErrOrStderr())
-
 			if !cmdViper.GetBool(quietKey) {
 				showBanner(cmd.OutOrStdout())
 			}

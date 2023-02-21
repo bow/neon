@@ -14,17 +14,23 @@ import (
 	zlog "github.com/rs/zerolog/log"
 )
 
-type LogStyle uint8
+type logStyle uint8
 
 const (
-	NoLogStyle LogStyle = iota
-	PrettyLogStyle
-	JSONLogStyle
+	noLogStyle logStyle = iota
+	prettyLogStyle
+	jsonLogStyle
 )
 
-func InitGlobalLog(
+func MustSetupLogging(writer io.Writer) {
+	level := getOrExit("log-level", parseLogLevel, zerolog.InfoLevel)
+	style := getOrExit("log-style", parseLogStyle, prettyLogStyle)
+	setupLogging(level, style, writer)
+}
+
+func setupLogging(
 	level zerolog.Level,
-	style LogStyle,
+	style logStyle,
 	writer io.Writer,
 ) {
 
@@ -34,7 +40,7 @@ func InitGlobalLog(
 	)
 
 	switch style {
-	case PrettyLogStyle:
+	case prettyLogStyle:
 		cw = zerolog.ConsoleWriter{
 			Out:                 writer,
 			TimeFormat:          tf,
@@ -46,9 +52,9 @@ func InitGlobalLog(
 			FormatErrFieldName:  prettyErrFieldNameFormatter(),
 			FormatErrFieldValue: prettyErrFieldValueFormatter(),
 		}
-	case JSONLogStyle:
+	case jsonLogStyle:
 		cw = writer
-	case NoLogStyle:
+	case noLogStyle:
 		cw = io.Discard
 	}
 
@@ -67,7 +73,7 @@ func InitGlobalLog(
 	lcs.apply()
 }
 
-func ParseLogLevel(raw string) (zerolog.Level, error) {
+func parseLogLevel(raw string) (zerolog.Level, error) {
 	level, err := zerolog.ParseLevel(strings.ToLower(raw))
 	if err != nil {
 		return zerolog.NoLevel, fmt.Errorf("invalid log level '%s'", raw)
@@ -75,14 +81,14 @@ func ParseLogLevel(raw string) (zerolog.Level, error) {
 	return level, err
 }
 
-func ParseLogStyle(raw string) (LogStyle, error) {
+func parseLogStyle(raw string) (logStyle, error) {
 	switch raw {
 	case "pretty":
-		return PrettyLogStyle, nil
+		return prettyLogStyle, nil
 	case "json":
-		return JSONLogStyle, nil
+		return jsonLogStyle, nil
 	default:
-		return NoLogStyle, fmt.Errorf("invalid log style value: '%s'", raw)
+		return noLogStyle, fmt.Errorf("invalid log style value: '%s'", raw)
 	}
 }
 

@@ -5,18 +5,21 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"os"
 
+	"github.com/rs/zerolog/log"
+
 	"github.com/bow/iris/cmd"
+	"github.com/bow/iris/internal"
 )
 
 func main() {
 	ctx := context.Background()
 	command := cmd.New()
+	internal.MustSetupLogging(command.ErrOrStderr())
 
 	if err := command.ExecuteContext(ctx); err != nil {
-		fmt.Fprintf(command.ErrOrStderr(), "%s\n", err)
+		log.Logger.Error().Msgf("%s", err)
 		os.Exit(1)
 	}
 }
