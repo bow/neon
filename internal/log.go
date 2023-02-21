@@ -17,7 +17,8 @@ import (
 type LogStyle uint8
 
 const (
-	PrettyLogStyle LogStyle = iota
+	NoLogStyle LogStyle = iota
+	PrettyLogStyle
 	JSONLogStyle
 )
 
@@ -47,6 +48,8 @@ func InitGlobalLog(
 		}
 	case JSONLogStyle:
 		cw = writer
+	case NoLogStyle:
+		cw = io.Discard
 	}
 
 	logb := zerolog.New(cw).With().Timestamp()
@@ -70,6 +73,17 @@ func ParseLogLevel(raw string) (zerolog.Level, error) {
 		return zerolog.NoLevel, fmt.Errorf("invalid log level '%s'", raw)
 	}
 	return level, err
+}
+
+func ParseLogStyle(raw string) (LogStyle, error) {
+	switch raw {
+	case "pretty":
+		return PrettyLogStyle, nil
+	case "json":
+		return JSONLogStyle, nil
+	default:
+		return NoLogStyle, fmt.Errorf("invalid log style value: '%s'", raw)
+	}
 }
 
 type logConfigState struct {

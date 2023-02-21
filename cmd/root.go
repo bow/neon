@@ -7,9 +7,7 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"strings"
 
-	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"golang.org/x/text/cases"
@@ -43,14 +41,10 @@ func New() *cobra.Command {
 				return err
 			}
 
-			var ls internal.LogStyle
-			switch rls := cmdViper.GetString(logStyleKey); rls {
-			case "pretty":
-				ls = internal.PrettyLogStyle
-			case "json":
-				ls = internal.JSONLogStyle
-			default:
-				return fmt.Errorf("invalid %s value: '%s'", logStyleKey, rls)
+			rls := cmdViper.GetString(logStyleKey)
+			ls, err := internal.ParseLogStyle(rls)
+			if err != nil {
+				return err
 			}
 
 			internal.InitGlobalLog(ll, ls, cmd.ErrOrStderr())
