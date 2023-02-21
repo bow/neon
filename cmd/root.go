@@ -28,11 +28,12 @@ func New() *cobra.Command {
 	var cmdViper = newViper("")
 
 	root := cobra.Command{
-		Use:               internal.AppName(),
-		Short:             "Feed reader suite",
-		SilenceUsage:      true,
-		SilenceErrors:     true,
-		CompletionOptions: cobra.CompletionOptions{DisableDefaultCmd: true},
+		Use:                internal.AppName(),
+		Short:              "Feed reader suite",
+		SilenceUsage:       true,
+		SilenceErrors:      true,
+		DisableSuggestions: true,
+		CompletionOptions:  cobra.CompletionOptions{DisableDefaultCmd: true},
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 
 			rll := cmdViper.GetString(logLevelKey)
