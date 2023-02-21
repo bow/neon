@@ -40,6 +40,10 @@ func newServerCmd() *cobra.Command {
 		Short: "Start a gRPC server",
 		RunE: func(cmd *cobra.Command, args []string) error {
 
+			if !cmdViper.GetBool(quietKey) {
+				showBanner(cmd.OutOrStdout())
+			}
+
 			dbPath, err := resolveDBPath(cmdViper)
 			if err != nil {
 				return err
@@ -64,6 +68,9 @@ func newServerCmd() *cobra.Command {
 	}
 
 	flags := serverCmd.Flags()
+
+	flags.BoolP(quietKey, "q", false, "hide startup banner")
+	_ = cmdViper.BindPFlag(quietKey, flags.Lookup(quietKey))
 
 	flags.StringP(addrKey, "a", defaultAddr, "listening address")
 	_ = cmdViper.BindPFlag(addrKey, flags.Lookup(addrKey))

@@ -35,6 +35,7 @@ func newVersionCmd() *cobra.Command {
 				}
 			}
 
+			showBanner(cmd.OutOrStdout())
 			showVersion(
 				cmd.OutOrStdout(),
 				map[string]string{
