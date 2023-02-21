@@ -7,7 +7,9 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 
+	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"golang.org/x/text/cases"
@@ -35,7 +37,11 @@ func New() *cobra.Command {
 		CompletionOptions: cobra.CompletionOptions{DisableDefaultCmd: true},
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 
-			logLevel := cmdViper.GetString(logLevelKey)
+			rll := cmdViper.GetString(logLevelKey)
+			ll, err := internal.ParseLogLevel(rll)
+			if err != nil {
+				return err
+			}
 
 			var ls internal.LogStyle
 			switch rls := cmdViper.GetString(logStyleKey); rls {
@@ -47,10 +53,7 @@ func New() *cobra.Command {
 				return fmt.Errorf("invalid %s value: '%s'", logStyleKey, rls)
 			}
 
-			err := internal.InitGlobalLog(logLevel, ls, cmd.ErrOrStderr())
-			if err != nil {
-				return err
-			}
+			internal.InitGlobalLog(ll, ls, cmd.ErrOrStderr())
 
 			if !cmdViper.GetBool(quietKey) {
 				showBanner(cmd.OutOrStdout())

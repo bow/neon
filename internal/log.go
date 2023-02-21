@@ -22,16 +22,14 @@ const (
 )
 
 func InitGlobalLog(
-	logLevel string,
+	level zerolog.Level,
 	style LogStyle,
 	writer io.Writer,
-) error {
+) {
 
 	var (
-		err error
-		cw  io.Writer
-		ll  = zerolog.InfoLevel
-		tf  = time.RFC3339
+		cw io.Writer
+		tf = time.RFC3339
 	)
 
 	switch style {
@@ -51,30 +49,27 @@ func InitGlobalLog(
 		cw = writer
 	}
 
-	if logLevel != "" {
-		ll, err = zerolog.ParseLevel(strings.ToLower(logLevel))
-		if err != nil {
-			return fmt.Errorf("invalid log level '%s'", logLevel)
-		}
-	}
-
 	logb := zerolog.New(cw).With().Timestamp()
 
 	lcs := logConfigState{
-		logLevel:          ll,
+		logLevel:          level,
 		timestampFunc:     func() time.Time { return time.Now().UTC() },
 		timeFieldFormat:   tf,
 		durationFieldUnit: time.Millisecond,
 		logger:            logb.Logger(),
 	}
 	defer func() {
-		if err != nil {
-			defaultLogConfigState.apply()
-		}
+		defaultLogConfigState.apply()
 	}()
 	lcs.apply()
+}
 
-	return nil
+func ParseLogLevel(raw string) (zerolog.Level, error) {
+	level, err := zerolog.ParseLevel(strings.ToLower(raw))
+	if err != nil {
+		return zerolog.NoLevel, fmt.Errorf("invalid log level '%s'", raw)
+	}
+	return level, err
 }
 
 type logConfigState struct {
