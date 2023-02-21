@@ -58,19 +58,11 @@ func setupLogging(
 		cw = io.Discard
 	}
 
-	logb := zerolog.New(cw).With().Timestamp()
-
-	lcs := logConfigState{
-		logLevel:          level,
-		timestampFunc:     func() time.Time { return time.Now().UTC() },
-		timeFieldFormat:   tf,
-		durationFieldUnit: time.Millisecond,
-		logger:            logb.Logger(),
-	}
-	defer func() {
-		defaultLogConfigState.apply()
-	}()
-	lcs.apply()
+	zerolog.TimestampFunc = func() time.Time { return time.Now().UTC() }
+	zerolog.TimeFieldFormat = tf
+	zerolog.DurationFieldUnit = time.Millisecond
+	zerolog.SetGlobalLevel(level)
+	zlog.Logger = zerolog.New(cw).With().Timestamp().Logger()
 }
 
 func parseLogLevel(raw string) (zerolog.Level, error) {
@@ -90,30 +82,6 @@ func parseLogStyle(raw string) (logStyle, error) {
 	default:
 		return noLogStyle, fmt.Errorf("invalid log style value: '%s'", raw)
 	}
-}
-
-type logConfigState struct {
-	logger            zerolog.Logger
-	logLevel          zerolog.Level
-	timestampFunc     func() time.Time
-	timeFieldFormat   string
-	durationFieldUnit time.Duration
-}
-
-var defaultLogConfigState = &logConfigState{
-	logger:            zlog.Logger,
-	logLevel:          zerolog.GlobalLevel(),
-	timestampFunc:     zerolog.TimestampFunc,
-	timeFieldFormat:   zerolog.TimeFieldFormat,
-	durationFieldUnit: zerolog.DurationFieldUnit,
-}
-
-func (s *logConfigState) apply() {
-	zerolog.TimestampFunc = s.timestampFunc
-	zerolog.TimeFieldFormat = s.timeFieldFormat
-	zerolog.DurationFieldUnit = s.durationFieldUnit
-	zerolog.SetGlobalLevel(s.logLevel)
-	zlog.Logger = s.logger
 }
 
 // Adapted from:
