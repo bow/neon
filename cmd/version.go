@@ -39,7 +39,6 @@ func newVersionCmd() *cobra.Command {
 			showVersion(
 				cmd.OutOrStdout(),
 				map[string]string{
-					"App":        internal.AppName(),
 					"Version":    internal.Version(),
 					"Git commit": internal.GitCommit(),
 					"Build time": internal.BuildTime(),

@@ -71,7 +71,6 @@ func TestVersionOk(t *testing.T) {
 	require.NoError(t, err)
 
 	assert.Empty(t, stderr)
-	assert.Contains(t, stdout, "App        : iris")
 	assert.Contains(t, stdout, fmt.Sprintf("Version    : %s", internal.Version()))
 }
 
