@@ -31,8 +31,8 @@ var (
 func newServerCmd() *cobra.Command {
 
 	var (
-		name     = "server"
-		cmdViper = newViper(name)
+		name        = "server"
+		serverViper = newViper(name)
 	)
 
 	serverCmd := cobra.Command{
@@ -40,16 +40,16 @@ func newServerCmd() *cobra.Command {
 		Short: "Start a gRPC server",
 		RunE: func(cmd *cobra.Command, args []string) error {
 
-			if !cmdViper.GetBool(quietKey) {
+			if !serverViper.GetBool(quietKey) {
 				showBanner(cmd.OutOrStdout())
 			}
 
-			dbPath, err := resolveDBPath(cmdViper)
+			dbPath, err := resolveDBPath(serverViper)
 			if err != nil {
 				return err
 			}
 
-			addr, err := resolveUDSAddr(cmdViper)
+			addr, err := resolveUDSAddr(serverViper)
 			if err != nil {
 				return err
 			}
@@ -70,13 +70,13 @@ func newServerCmd() *cobra.Command {
 	flags := serverCmd.Flags()
 
 	flags.BoolP(quietKey, "q", false, "hide startup banner")
-	_ = cmdViper.BindPFlag(quietKey, flags.Lookup(quietKey))
+	_ = serverViper.BindPFlag(quietKey, flags.Lookup(quietKey))
 
 	flags.StringP(addrKey, "a", defaultAddr, "listening address")
-	_ = cmdViper.BindPFlag(addrKey, flags.Lookup(addrKey))
+	_ = serverViper.BindPFlag(addrKey, flags.Lookup(addrKey))
 
 	flags.StringP(dbNameKey, "d", defaultDBName, "data store location")
-	_ = cmdViper.BindPFlag(dbNameKey, flags.Lookup(dbNameKey))
+	_ = serverViper.BindPFlag(dbNameKey, flags.Lookup(dbNameKey))
 
 	return &serverCmd
 }

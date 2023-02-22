@@ -19,7 +19,7 @@ const quietKey = "quiet"
 // New creates a new command along with its command-line flags.
 func New() *cobra.Command {
 
-	root := cobra.Command{
+	rootCmd := cobra.Command{
 		Use:                internal.AppName(),
 		Short:              "Feed reader suite",
 		SilenceUsage:       true,
@@ -40,10 +40,11 @@ func New() *cobra.Command {
 		},
 	}
 
-	root.AddCommand(newVersionCmd())
-	root.AddCommand(newServerCmd())
+	rootCmd.AddCommand(newVersionCmd())
+	rootCmd.AddCommand(newFeedCmd())
+	rootCmd.AddCommand(newServerCmd())
 
-	return &root
+	return &rootCmd
 }
 
 func inDocker() bool {
