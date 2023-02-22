@@ -16,7 +16,7 @@ func newFeedCmd() *cobra.Command {
 		Use:   name,
 		Short: "View or modify feeds",
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-			dbPath, err := resolveDBPath(feedViper)
+			dbPath, err := resolveDBPath(feedViper.GetString(dbPathKey))
 			if err != nil {
 				return err
 			}

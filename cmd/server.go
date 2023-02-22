@@ -9,7 +9,6 @@ import (
 
 	"github.com/adrg/xdg"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	"github.com/bow/iris/internal/server"
 )
@@ -45,12 +44,12 @@ func newServerCmd() *cobra.Command {
 				showBanner(cmd.OutOrStdout())
 			}
 
-			dbPath, err := resolveDBPath(serverViper)
+			dbPath, err := resolveDBPath(serverViper.GetString(dbPathKey))
 			if err != nil {
 				return err
 			}
 
-			addr, err := resolveUDSAddr(serverViper)
+			addr, err := resolveUDSAddr(serverViper.GetString(addrKey))
 			if err != nil {
 				return err
 			}
@@ -83,8 +82,8 @@ func newServerCmd() *cobra.Command {
 }
 
 // resolveDBPath attempts to resolve the filesystem path to the database.
-func resolveDBPath(v *viper.Viper) (dbPath string, err error) {
-	dbPath = v.GetString(dbPathKey)
+func resolveDBPath(dbPath string) (string, error) {
+	var err error
 	if dbPath == defaultDBPath {
 		dbPath, err = xdg.DataFile(relDBPath)
 		if err != nil {
@@ -96,8 +95,8 @@ func resolveDBPath(v *viper.Viper) (dbPath string, err error) {
 
 // resolveUDSAddr attempts to resolve the filesystem path to a Unix domain socket exposing
 // the running application.
-func resolveUDSAddr(v *viper.Viper) (addr string, err error) {
-	addr = v.GetString(addrKey)
+func resolveUDSAddr(addr string) (string, error) {
+	var err error
 	// return string unchanged if tcp is requested.
 	if strings.HasPrefix(strings.ToLower(addr), "tcp") {
 		return addr, nil
