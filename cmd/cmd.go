@@ -21,6 +21,8 @@ func newViper(cmdName string) *viper.Viper {
 	return v
 }
 
+type ctxKey string
+
 // showBanner prints the application banner to the given writer.
 func showBanner(w io.Writer) {
 	fmt.Fprintf(
