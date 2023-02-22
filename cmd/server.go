@@ -16,12 +16,13 @@ import (
 
 const (
 	addrKey   = "addr"
-	dbNameKey = "db-path"
+	dbPathKey = "db-path"
+	quietKey  = "quiet"
 )
 
 var (
-	relDBName     = "iris/iris.db"
-	defaultDBName = fmt.Sprintf("$XDG_DATA_HOME/%s", relDBName)
+	relDBPath     = "iris/iris.db"
+	defaultDBPath = fmt.Sprintf("$XDG_DATA_HOME/%s", relDBPath)
 
 	relUDS      = "iris/iris.socket"
 	defaultAddr = fmt.Sprintf("$XDG_RUNTIME_DIR/%s", relUDS)
@@ -75,17 +76,17 @@ func newServerCmd() *cobra.Command {
 	flags.StringP(addrKey, "a", defaultAddr, "listening address")
 	_ = serverViper.BindPFlag(addrKey, flags.Lookup(addrKey))
 
-	flags.StringP(dbNameKey, "d", defaultDBName, "data store location")
-	_ = serverViper.BindPFlag(dbNameKey, flags.Lookup(dbNameKey))
+	flags.StringP(dbPathKey, "d", defaultDBPath, "data store location")
+	_ = serverViper.BindPFlag(dbPathKey, flags.Lookup(dbPathKey))
 
 	return &serverCmd
 }
 
 // resolveDBPath attempts to resolve the filesystem path to the database.
 func resolveDBPath(v *viper.Viper) (dbPath string, err error) {
-	dbPath = v.GetString(dbNameKey)
-	if dbPath == defaultDBName {
-		dbPath, err = xdg.DataFile(relDBName)
+	dbPath = v.GetString(dbPathKey)
+	if dbPath == defaultDBPath {
+		dbPath, err = xdg.DataFile(relDBPath)
 		if err != nil {
 			return "", err
 		}

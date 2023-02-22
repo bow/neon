@@ -16,7 +16,7 @@ func newFeedListCmd() *cobra.Command {
 		Short: "List feeds",
 		RunE: func(cmd *cobra.Command, args []string) error {
 
-			dbPath := cmd.Context().Value(ctxKey(dbNameKey))
+			dbPath := cmd.Context().Value(ctxKey(dbPathKey))
 			fmt.Printf("DB path is: %s\n", dbPath)
 
 			return nil

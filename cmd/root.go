@@ -14,8 +14,6 @@ import (
 	"github.com/bow/iris/internal"
 )
 
-const quietKey = "quiet"
-
 // New creates a new command along with its command-line flags.
 func New() *cobra.Command {
 

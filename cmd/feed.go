@@ -20,7 +20,7 @@ func newFeedCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			ctx := context.WithValue(cmd.Context(), ctxKey(dbNameKey), dbPath)
+			ctx := context.WithValue(cmd.Context(), ctxKey(dbPathKey), dbPath)
 			cmd.SetContext(ctx)
 
 			return nil
@@ -29,8 +29,8 @@ func newFeedCmd() *cobra.Command {
 
 	pflags := feed.PersistentFlags()
 
-	pflags.StringP(dbNameKey, "d", defaultDBName, "data store location")
-	_ = feedViper.BindPFlag(dbNameKey, pflags.Lookup(dbNameKey))
+	pflags.StringP(dbPathKey, "d", defaultDBPath, "data store location")
+	_ = feedViper.BindPFlag(dbPathKey, pflags.Lookup(dbPathKey))
 
 	feed.AddCommand(newFeedListCmd())
 
