@@ -1,8 +1,7 @@
 package cmd
 
 import (
-	"context"
-
+	"github.com/bow/iris/internal/store"
 	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 )
@@ -32,8 +31,7 @@ func newFeedCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			ctx := context.WithValue(cmd.Context(), ctxKey(dbPathKey), dbPath)
-			cmd.SetContext(ctx)
+			inCmdContext(cmd, dbPathKey, dbPath)
 
 			return nil
 		},
@@ -47,4 +45,16 @@ func newFeedCmd() *cobra.Command {
 	feed.AddCommand(newFeedListCmd())
 
 	return &feed
+}
+
+func storeFromCtx(cmd *cobra.Command) (*store.SQLite, error) {
+	dbPath, err := fromCmdContext[string](cmd, dbPathKey)
+	if err != nil {
+		return nil, err
+	}
+	str, err := store.NewSQLite(dbPath)
+	if err != nil {
+		return nil, err
+	}
+	return str, nil
 }

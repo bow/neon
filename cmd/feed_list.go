@@ -19,12 +19,7 @@ func newFeedListCmd() *cobra.Command {
 		Short: "List feeds",
 		RunE: func(cmd *cobra.Command, args []string) error {
 
-			dbPath, ok := cmd.Context().Value(ctxKey(dbPathKey)).(string)
-			if !ok {
-				return fmt.Errorf("error retrieving db-path from parent context")
-			}
-
-			str, err := store.NewSQLite(dbPath)
+			str, err := storeFromCtx(cmd)
 			if err != nil {
 				return err
 			}
