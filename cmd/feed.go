@@ -7,6 +7,12 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	displayWidth = 80
+	indentWidth  = 4
+	ellipsis     = "..."
+)
+
 func newFeedCmd() *cobra.Command {
 	var (
 		name      = "feed"
