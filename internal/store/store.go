@@ -12,6 +12,7 @@ import (
 	"sync"
 
 	"github.com/golang-migrate/migrate/v4"
+	"github.com/mmcdole/gofeed"
 	"github.com/rs/zerolog/log"
 
 	"github.com/bow/iris/internal/store/migration"
@@ -44,7 +45,11 @@ type SQLite struct {
 	parser FeedParser
 }
 
-func NewSQLite(filename string, parser FeedParser) (*SQLite, error) {
+func NewSQLite(filename string) (*SQLite, error) {
+	return NewSQLiteWithParser(filename, gofeed.NewParser())
+}
+
+func NewSQLiteWithParser(filename string, parser FeedParser) (*SQLite, error) {
 
 	log.Info().Str("path", filename).Msgf("initializing data store")
 

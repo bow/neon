@@ -174,7 +174,7 @@ func (b *Builder) Build() (*server, error) {
 
 	str := b.store
 	if sp := b.storePath; sp != "" {
-		if str, err = store.NewSQLite(sp, b.parser); err != nil {
+		if str, err = store.NewSQLiteWithParser(sp, b.parser); err != nil {
 			return nil, fmt.Errorf("server build: %w", err)
 		}
 	}

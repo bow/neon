@@ -37,7 +37,7 @@ func newTestStore(t *testing.T) testStore {
 
 	dbPath := filepath.Join(t.TempDir(), t.Name()+".db")
 	prs := NewMockFeedParser(gomock.NewController(t))
-	s, err := NewSQLite(dbPath, prs)
+	s, err := NewSQLiteWithParser(dbPath, prs)
 	require.NoError(t, err)
 
 	return testStore{s, t, prs}

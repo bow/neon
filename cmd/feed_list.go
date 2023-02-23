@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/mmcdole/gofeed"
 	"github.com/spf13/cobra"
 
 	"github.com/bow/iris/internal/store"
@@ -25,7 +24,7 @@ func newFeedListCmd() *cobra.Command {
 				return fmt.Errorf("error retrieving db-path from parent context")
 			}
 
-			str, err := store.NewSQLite(dbPath, gofeed.NewParser())
+			str, err := store.NewSQLite(dbPath)
 			if err != nil {
 				return err
 			}
