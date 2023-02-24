@@ -18,7 +18,7 @@ func newFeedCmd() *cobra.Command {
 		feedViper = newViper(name)
 	)
 
-	feed := cobra.Command{
+	feedCmd := cobra.Command{
 		Use:     name,
 		Aliases: makeAlias(name),
 		Short:   "View or modify feeds",
@@ -38,14 +38,15 @@ func newFeedCmd() *cobra.Command {
 		},
 	}
 
-	pflags := feed.PersistentFlags()
+	pflags := feedCmd.PersistentFlags()
 
 	pflags.StringP(dbPathKey, "d", defaultDBPath, "data store location")
 	_ = feedViper.BindPFlag(dbPathKey, pflags.Lookup(dbPathKey))
 
-	feed.AddCommand(newFeedListCmd())
+	feedCmd.AddCommand(newFeedListCmd())
+	feedCmd.AddCommand(newFeedExportCmd())
 
-	return &feed
+	return &feedCmd
 }
 
 func storeFromCtx(cmd *cobra.Command) (*store.SQLite, error) {

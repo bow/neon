@@ -12,7 +12,7 @@ import (
 func newFeedListCmd() *cobra.Command {
 	var name = "list"
 
-	list := cobra.Command{
+	listCmd := cobra.Command{
 		Use:     name,
 		Aliases: makeAlias(name),
 		Short:   "List feeds",
@@ -35,7 +35,7 @@ func newFeedListCmd() *cobra.Command {
 		},
 	}
 
-	return &list
+	return &listCmd
 }
 
 func fmtFeed(feed *store.Feed) string {
