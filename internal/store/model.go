@@ -17,7 +17,7 @@ import (
 	"github.com/bow/iris/internal/store/opml"
 )
 
-const defaultExportTitle = "Courier export"
+const defaultExportTitle = "Iris export"
 
 type Subscription []*Feed
 
