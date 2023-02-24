@@ -13,20 +13,6 @@ import (
 	"github.com/bow/iris/internal/server"
 )
 
-const (
-	addrKey   = "addr"
-	dbPathKey = "db-path"
-	quietKey  = "quiet"
-)
-
-var (
-	relDBPath     = "iris/iris.db"
-	defaultDBPath = fmt.Sprintf("$XDG_DATA_HOME/%s", relDBPath)
-
-	relUDS      = "iris/iris.socket"
-	defaultAddr = fmt.Sprintf("$XDG_RUNTIME_DIR/%s", relUDS)
-)
-
 // newServerCmd creates a new 'server' subcommand along with its command-line flags.
 func newServerCmd() *cobra.Command {
 

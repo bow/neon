@@ -7,10 +7,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const (
-	exportOutKey = "export-out"
-)
-
 func newFeedExportCmd() *cobra.Command {
 	var (
 		name        = "export"

@@ -15,6 +15,25 @@ import (
 	"github.com/bow/iris/internal"
 )
 
+const (
+	addrKey      = "addr"
+	dbPathKey    = "db-path"
+	quietKey     = "quiet"
+	exportOutKey = "export-out"
+
+	displayWidth = 80
+	indentWidth  = 4
+	ellipsis     = "..."
+)
+
+var (
+	relDBPath     = "iris/iris.db"
+	defaultDBPath = fmt.Sprintf("$XDG_DATA_HOME/%s", relDBPath)
+
+	relUDS      = "iris/iris.socket"
+	defaultAddr = fmt.Sprintf("$XDG_RUNTIME_DIR/%s", relUDS)
+)
+
 func newViper(cmdName string) *viper.Viper {
 	v := viper.New()
 	v.SetEnvPrefix(internal.EnvKey(cmdName))
