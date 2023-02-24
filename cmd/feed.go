@@ -19,8 +19,9 @@ func newFeedCmd() *cobra.Command {
 	)
 
 	feed := cobra.Command{
-		Use:   name,
-		Short: "View or modify feeds",
+		Use:     name,
+		Aliases: makeAlias(name),
+		Short:   "View or modify feeds",
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 
 			if zerolog.GlobalLevel() == zerolog.InfoLevel {

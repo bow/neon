@@ -10,13 +10,12 @@ import (
 )
 
 func newFeedListCmd() *cobra.Command {
-	var (
-		name = "list"
-	)
+	var name = "list"
 
 	list := cobra.Command{
-		Use:   name,
-		Short: "List feeds",
+		Use:     name,
+		Aliases: makeAlias(name),
+		Short:   "List feeds",
 		RunE: func(cmd *cobra.Command, args []string) error {
 
 			str, err := storeFromCtx(cmd)

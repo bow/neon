@@ -36,8 +36,9 @@ func newServerCmd() *cobra.Command {
 	)
 
 	serverCmd := cobra.Command{
-		Use:   name,
-		Short: "Start a gRPC server",
+		Use:     name,
+		Aliases: makeAlias(name),
+		Short:   "Start a gRPC server",
 		RunE: func(cmd *cobra.Command, args []string) error {
 
 			if !serverViper.GetBool(quietKey) {

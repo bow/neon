@@ -51,3 +51,7 @@ func showBanner(w io.Writer) {
 
 `)
 }
+
+func makeAlias(name string) []string {
+	return []string{name[:1]}
+}

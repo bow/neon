@@ -16,9 +16,12 @@ import (
 // newVersionCmd creates a new 'version' subcommand.
 func newVersionCmd() *cobra.Command {
 
+	var name = "version"
+
 	versionCmd := cobra.Command{
-		Use:   "version",
-		Short: "Show the version",
+		Use:     name,
+		Aliases: makeAlias(name),
+		Short:   "Show the version",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			bi, ok := debug.ReadBuildInfo()
 			if !ok {
