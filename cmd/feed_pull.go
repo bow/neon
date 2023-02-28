@@ -34,7 +34,10 @@ func newFeedPullCmd() *cobra.Command {
 			for pr := range ch {
 				if err := pr.Error(); err != nil {
 					errs = append(errs, fmt.Errorf("%s: %w", pr.URL(), err))
-					log.Error().Str("url", pr.URL()).Msg("Feed pull failed")
+					log.Error().
+						Str("url", pr.URL()).
+						Str("title", pr.Feed().Title).
+						Msg("Feed pull failed")
 				} else {
 					n++
 					log.Info().
