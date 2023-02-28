@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"github.com/bow/iris/internal/store"
-	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 )
 
@@ -17,10 +16,6 @@ func newFeedCmd() *cobra.Command {
 		Aliases: makeAlias(name),
 		Short:   "View or modify feeds",
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-
-			if zerolog.GlobalLevel() == zerolog.InfoLevel {
-				zerolog.SetGlobalLevel(zerolog.WarnLevel)
-			}
 
 			dbPath, err := resolveDBPath(feedViper.GetString(dbPathKey))
 			if err != nil {

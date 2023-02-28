@@ -174,6 +174,7 @@ func (b *Builder) Build() (*server, error) {
 
 	str := b.store
 	if sp := b.storePath; sp != "" {
+		log.Info().Str("path", sp).Msgf("initializing data store")
 		if str, err = store.NewSQLiteWithParser(sp, b.parser); err != nil {
 			return nil, fmt.Errorf("server build: %w", err)
 		}

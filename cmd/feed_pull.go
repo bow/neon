@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
 
@@ -33,14 +34,19 @@ func newFeedPullCmd() *cobra.Command {
 			for pr := range ch {
 				if err := pr.Error(); err != nil {
 					errs = append(errs, fmt.Errorf("%s: %w", pr.URL(), err))
+					log.Error().Str("url", pr.URL()).Msg("Feed pull failed")
 				} else {
 					n++
+					log.Info().
+						Str("url", pr.URL()).
+						Str("title", pr.Feed().Title).
+						Msg("Feed pull OK")
 				}
 			}
 			if len(errs) > 0 {
 				return errors.Join(errs...)
 			}
-			fmt.Fprintf(cmd.OutOrStdout(), "Updated %d feeds\n", n)
+			log.Info().Int("num_updated", n).Msgf("Finished pulling feeds")
 
 			return nil
 		},

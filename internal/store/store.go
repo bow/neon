@@ -51,8 +51,6 @@ func NewSQLite(filename string) (*SQLite, error) {
 
 func NewSQLiteWithParser(filename string, parser FeedParser) (*SQLite, error) {
 
-	log.Info().Str("path", filename).Msgf("initializing data store")
-
 	fail := failF("NewSQLiteStore")
 
 	log.Debug().Msgf("migrating data store")
