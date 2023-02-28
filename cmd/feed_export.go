@@ -34,7 +34,7 @@ func newFeedExportCmd() *cobra.Command {
 				dest io.Writer
 			)
 			switch out {
-			case "-", "":
+			case "-", "", "/dev/stdout":
 				dest = os.Stdout
 			default:
 				var fh *os.File
@@ -56,7 +56,7 @@ func newFeedExportCmd() *cobra.Command {
 
 	flags := exportCmd.Flags()
 
-	flags.StringP(exportOutKey, "o", "-", "exported path file")
+	flags.StringP(exportOutKey, "o", "/dev/stdout", "exported path file")
 	_ = exportViper.BindPFlag(exportOutKey, flags.Lookup(exportOutKey))
 
 	return &exportCmd
