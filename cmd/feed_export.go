@@ -1,10 +1,14 @@
 package cmd
 
 import (
+	"errors"
+	"fmt"
 	"io"
 	"os"
 
 	"github.com/spf13/cobra"
+
+	"github.com/bow/iris/internal/store/opml"
 )
 
 func newFeedExportCmd() *cobra.Command {
@@ -26,6 +30,9 @@ func newFeedExportCmd() *cobra.Command {
 
 			contents, err := str.ExportOPML(cmd.Context(), nil)
 			if err != nil {
+				if errors.Is(err, opml.ErrEmptyDocument) {
+					return fmt.Errorf("nothing to export")
+				}
 				return err
 			}
 
