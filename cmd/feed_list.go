@@ -44,7 +44,7 @@ func fmtFeed(feed *store.Feed) string {
 		cat = func(format string, a ...any) { fmt.Fprintf(&sb, format, a...) }
 	)
 
-	var upds = "?"
+	var upds = ""
 	upd, err := store.DeserializeTime(&feed.Updated.String)
 	if err != nil {
 		upd = nil
@@ -63,7 +63,9 @@ func fmtFeed(feed *store.Feed) string {
 
 	cat("\x1b[36m▶\x1b[0m \x1b[4m%s\x1b[0m\n", capText(feed.Title))
 	cat("  ID     : %d\n", feed.DBID)
-	cat("  Updated: %s\n", upds)
+	if upds != "" {
+		cat("  Updated: %s\n", upds)
+	}
 	cat("  Unread : %d/%d\n", ntotal-nread, ntotal)
 	cat("  URL    : %s\n", capText(feed.SiteURL.String))
 	cat("  Tags   : #%s\n", strings.Join(feed.Tags, " #"))
