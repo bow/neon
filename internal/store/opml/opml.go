@@ -191,6 +191,14 @@ var ErrEmptyDocument = errors.New("OPML document is empty")
 // roughly based on RFC822, with variations in number of digits for day and year, and
 // presence/absence of minutes. When parsing, they are iterated over in-order.
 var tsFormats = []string{
+	"02 Jan 2006 15:04:05 MST",
+	"02 Jan 2006 15:04 MST",
+	"02 Jan 06 15:04:05 MST",
+	"02 Jan 06 15:04 MST",
+	"2 Jan 2006 15:04:05 MST",
+	"2 Jan 2006 15:04 MST",
+	"2 Jan 06 15:04:05 MST",
+	"2 Jan 06 15:04 MST",
 	"Mon, 02 Jan 2006 15:04:05 MST",
 	"Mon, 02 Jan 2006 15:04 MST",
 	"Mon, 02 Jan 06 15:04:05 MST",
