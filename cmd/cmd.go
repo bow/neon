@@ -20,6 +20,7 @@ const (
 	dbPathKey    = "db-path"
 	quietKey     = "quiet"
 	exportOutKey = "export-out"
+	importInKey  = "import-in"
 
 	displayWidth = 80
 	indentWidth  = 4

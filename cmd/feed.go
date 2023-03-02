@@ -32,8 +32,9 @@ func newFeedCmd() *cobra.Command {
 	pflags.StringP(dbPathKey, "d", defaultDBPath, "data store location")
 	_ = feedViper.BindPFlag(dbPathKey, pflags.Lookup(dbPathKey))
 
-	feedCmd.AddCommand(newFeedListCmd())
 	feedCmd.AddCommand(newFeedExportCmd())
+	feedCmd.AddCommand(newFeedImportCmd())
+	feedCmd.AddCommand(newFeedListCmd())
 	feedCmd.AddCommand(newFeedPullCmd())
 
 	return &feedCmd
