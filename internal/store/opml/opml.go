@@ -167,8 +167,11 @@ func (t *Timestamp) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 			break
 		}
 	}
+	if err != nil {
+		return fmt.Errorf("opml: invalid time: %q matches no expected formats", raw)
+	}
 	if ts.IsZero() {
-		return fmt.Errorf("opml: invalid time: %s", raw)
+		return fmt.Errorf("opml: invalid time: %q is empty", raw)
 	}
 
 	*t = Timestamp(ts)
