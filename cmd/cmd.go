@@ -18,7 +18,6 @@ import (
 const (
 	addrKey      = "addr"
 	dbPathKey    = "db-path"
-	quietKey     = "quiet"
 	exportOutKey = "export-out"
 	importInKey  = "import-in"
 

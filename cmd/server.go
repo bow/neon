@@ -21,6 +21,8 @@ func newServerCmd() *cobra.Command {
 		serverViper = newViper(name)
 	)
 
+	const quietKey = "quiet"
+
 	serverCmd := cobra.Command{
 		Use:     name,
 		Aliases: makeAlias(name),
