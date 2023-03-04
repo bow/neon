@@ -16,7 +16,6 @@ import (
 )
 
 const (
-	addrKey      = "addr"
 	dbPathKey    = "db-path"
 	exportOutKey = "export-out"
 	importInKey  = "import-in"
@@ -29,9 +28,6 @@ const (
 var (
 	relDBPath     = "iris/iris.db"
 	defaultDBPath = fmt.Sprintf("$XDG_DATA_HOME/%s", relDBPath)
-
-	relUDS      = "iris/iris.socket"
-	defaultAddr = fmt.Sprintf("$XDG_RUNTIME_DIR/%s", relUDS)
 )
 
 func newViper(cmdName string) *viper.Viper {

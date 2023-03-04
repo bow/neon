@@ -19,9 +19,13 @@ func newServerCmd() *cobra.Command {
 	var (
 		name        = "server"
 		serverViper = newViper(name)
+		defaultAddr = "$XDG_RUNTIME_DIR/iris/iris.socket"
 	)
 
-	const quietKey = "quiet"
+	const (
+		quietKey = "quiet"
+		addrKey  = "addr"
+	)
 
 	serverCmd := cobra.Command{
 		Use:     name,
@@ -70,6 +74,27 @@ func newServerCmd() *cobra.Command {
 	return &serverCmd
 }
 
+// resolveUDSAddr attempts to resolve the filesystem path to a Unix domain socket exposing
+// the running application.
+func resolveUDSAddr(addr string) (string, error) {
+	var err error
+
+	// return string unchanged if tcp is requested.
+	if strings.HasPrefix(strings.ToLower(addr), "tcp") {
+		return addr, nil
+	}
+
+	xdgDir := "$XDG_RUNTIME_DIR/"
+	if strings.HasPrefix(addr, xdgDir) {
+		rel := strings.TrimPrefix(addr, xdgDir)
+		addr, err = xdg.RuntimeFile(rel)
+		if err != nil {
+			return "", err
+		}
+	}
+	return fmt.Sprintf("file://%s", addr), nil
+}
+
 // resolveDBPath attempts to resolve the filesystem path to the database.
 func resolveDBPath(dbPath string) (string, error) {
 	var err error
@@ -80,21 +105,4 @@ func resolveDBPath(dbPath string) (string, error) {
 		}
 	}
 	return dbPath, nil
-}
-
-// resolveUDSAddr attempts to resolve the filesystem path to a Unix domain socket exposing
-// the running application.
-func resolveUDSAddr(addr string) (string, error) {
-	var err error
-	// return string unchanged if tcp is requested.
-	if strings.HasPrefix(strings.ToLower(addr), "tcp") {
-		return addr, nil
-	}
-	if addr == defaultAddr {
-		addr, err = xdg.RuntimeFile(relUDS)
-		if err != nil {
-			return "", err
-		}
-	}
-	return fmt.Sprintf("file://%s", addr), nil
 }
