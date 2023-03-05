@@ -47,7 +47,7 @@ func fromCmdContext[T any](cmd *cobra.Command, key string) (T, error) {
 	var zero T
 	val, ok := cmd.Context().Value(ctxKey(key)).(T)
 	if !ok {
-		return zero, fmt.Errorf("error retrieving %q from command context", key)
+		return zero, fmt.Errorf("can not retrieve %T value %[1]q from command context", key)
 	}
 	return val, nil
 }
