@@ -74,6 +74,12 @@ func fmtFeed(feed *store.Feed) string {
 	return sb.String()
 }
 
+const (
+	displayWidth = 80
+	indentWidth  = 4
+	ellipsis     = "..."
+)
+
 func capText(txt string) string {
 	if len(txt) > (displayWidth - indentWidth) {
 		return fmt.Sprintf("%s%s", txt[:displayWidth-indentWidth-len(ellipsis)], ellipsis)

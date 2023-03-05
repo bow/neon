@@ -20,10 +20,6 @@ const (
 	dbPathKey    = "db-path"
 	exportOutKey = "export-out"
 	importInKey  = "import-in"
-
-	displayWidth = 80
-	indentWidth  = 4
-	ellipsis     = "..."
 )
 
 var defaultDBPath = "$XDG_DATA_HOME/iris/iris.db"
