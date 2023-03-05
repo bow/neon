@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"io"
 	"os"
 
@@ -9,32 +10,38 @@ import (
 )
 
 func newFeedImportCmd() *cobra.Command {
-	var (
-		name        = "import"
-		importViper = newViper(name)
-	)
+	var name = "import"
 
 	importCmd := cobra.Command{
-		Use:     name,
+		Use:     fmt.Sprintf("%s [input]", name),
+		Args:    cobra.MaximumNArgs(1),
 		Aliases: makeAlias(name),
 		Short:   "Import feeds from OPML",
+		Example: `  - Import from stdin  : cat feeds.opml | iris feed import
+  - Import from a file : iris feed import feeds.opml`,
+
+		DisableFlagsInUseLine: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
 
-			str, err := dataStoreFromCmdCtx(cmd)
+			var (
+				err      error
+				contents []byte
+			)
+			if len(args) == 0 {
+				contents, err = io.ReadAll(os.Stdin)
+			} else {
+				switch fn := args[0]; fn {
+				case "-", "/dev/stdin":
+					contents, err = io.ReadAll(os.Stdin)
+				default:
+					contents, err = os.ReadFile(fn)
+				}
+			}
 			if err != nil {
 				return err
 			}
 
-			var (
-				in       = importViper.GetString(importInKey)
-				contents []byte
-			)
-			switch in {
-			case "-", "/dev/stdin":
-				contents, err = io.ReadAll(os.Stdin)
-			default:
-				contents, err = os.ReadFile(in)
-			}
+			str, err := dataStoreFromCmdCtx(cmd)
 			if err != nil {
 				return err
 			}
@@ -49,13 +56,6 @@ func newFeedImportCmd() *cobra.Command {
 			return nil
 		},
 	}
-
-	flags := importCmd.Flags()
-
-	// TODO: Set as positional argument.
-	flags.StringP(importInKey, "i", "", "path to file to import (required)")
-	_ = importCmd.MarkFlagRequired(importInKey)
-	_ = importViper.BindPFlag(importInKey, flags.Lookup(importInKey))
 
 	return &importCmd
 }

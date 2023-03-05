@@ -16,10 +16,7 @@ import (
 	"github.com/bow/iris/internal"
 )
 
-const (
-	dbPathKey   = "db-path"
-	importInKey = "import-in"
-)
+const dbPathKey = "db-path"
 
 var defaultDBPath = "$XDG_DATA_HOME/iris/iris.db"
 
