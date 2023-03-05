@@ -8,6 +8,7 @@ import (
 	"io"
 	"strings"
 
+	"github.com/adrg/xdg"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"golang.org/x/net/context"
@@ -25,10 +26,7 @@ const (
 	ellipsis     = "..."
 )
 
-var (
-	relDBPath     = "iris/iris.db"
-	defaultDBPath = fmt.Sprintf("$XDG_DATA_HOME/%s", relDBPath)
-)
+var defaultDBPath = "$XDG_DATA_HOME/iris/iris.db"
 
 func newViper(cmdName string) *viper.Viper {
 	v := viper.New()
@@ -52,6 +50,23 @@ func fromCmdContext[T any](cmd *cobra.Command, key string) (T, error) {
 		return zero, fmt.Errorf("error retrieving %q from command context", key)
 	}
 	return val, nil
+}
+
+// resolveDBPath attempts to resolve the filesystem path to the database.
+func resolveDBPath(path string) (string, error) {
+	var (
+		err    error
+		xdgDir = "$XDG_DATA_HOME/"
+	)
+
+	if strings.HasPrefix(path, xdgDir) {
+		rel := strings.TrimPrefix(path, xdgDir)
+		path, err = xdg.DataFile(rel)
+		if err != nil {
+			return "", err
+		}
+	}
+	return path, nil
 }
 
 // showBanner prints the application banner to the given writer.

@@ -94,15 +94,3 @@ func resolveUDSAddr(addr string) (string, error) {
 	}
 	return fmt.Sprintf("file://%s", addr), nil
 }
-
-// resolveDBPath attempts to resolve the filesystem path to the database.
-func resolveDBPath(dbPath string) (string, error) {
-	var err error
-	if dbPath == defaultDBPath {
-		dbPath, err = xdg.DataFile(relDBPath)
-		if err != nil {
-			return "", err
-		}
-	}
-	return dbPath, nil
-}
