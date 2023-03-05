@@ -61,14 +61,31 @@ func fmtFeed(feed *store.Feed) string {
 		ntotal++
 	}
 
-	cat("\x1b[36m▶\x1b[0m \x1b[4m%s\x1b[0m\n", capText(feed.Title))
-	cat("  ID     : %d\n", feed.DBID)
-	if upds != "" {
-		cat("  Updated: %s\n", upds)
+	kv := []*struct {
+		k, v string
+	}{
+		{"ID", fmt.Sprintf("%d", feed.DBID)},
+		{"Updated", upds},
+		{"Unread", fmt.Sprintf("%d/%d", ntotal-nread, ntotal)},
+		{"URL", feed.SiteURL.String},
+		{"Tags", fmt.Sprintf("#%s", strings.Join(feed.Tags, " #"))},
 	}
-	cat("  Unread : %d/%d\n", ntotal-nread, ntotal)
-	cat("  URL    : %s\n", capText(feed.SiteURL.String))
-	cat("  Tags   : #%s\n", strings.Join(feed.Tags, " #"))
+
+	keyMaxLen := 0
+	for _, line := range kv {
+		keyLen := len(line.k)
+		if keyLen > keyMaxLen {
+			keyMaxLen = keyLen
+		}
+	}
+
+	cat("\x1b[36m▶\x1b[0m \x1b[4m%s\x1b[0m\n", capText(feed.Title))
+	for _, line := range kv {
+		if line.v == "" {
+			continue
+		}
+		cat("  %*s : %s\n", -1*keyMaxLen, line.k, capText(line.v))
+	}
 	cat("\n")
 
 	return sb.String()
