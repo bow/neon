@@ -38,7 +38,7 @@ func newViper(cmdName string) *viper.Viper {
 
 type ctxKey string
 
-func inCmdContext(cmd *cobra.Command, key string, value any) {
+func toCmdContext(cmd *cobra.Command, key string, value any) {
 	ctx := context.WithValue(cmd.Context(), ctxKey(key), value)
 	cmd.SetContext(ctx)
 }

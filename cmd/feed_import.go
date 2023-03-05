@@ -20,7 +20,7 @@ func newFeedImportCmd() *cobra.Command {
 		Short:   "Import feeds from OPML",
 		RunE: func(cmd *cobra.Command, args []string) error {
 
-			str, err := storeFromCtx(cmd)
+			str, err := dataStoreFromCmdCtx(cmd)
 			if err != nil {
 				return err
 			}

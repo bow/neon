@@ -21,7 +21,7 @@ func newFeedCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			inCmdContext(cmd, dbPathKey, dbPath)
+			dataStorePathToCmdCtx(cmd, dbPath)
 
 			return nil
 		},
@@ -40,7 +40,11 @@ func newFeedCmd() *cobra.Command {
 	return &feedCmd
 }
 
-func storeFromCtx(cmd *cobra.Command) (*store.SQLite, error) {
+func dataStorePathToCmdCtx(cmd *cobra.Command, path string) {
+	toCmdContext(cmd, dbPathKey, path)
+}
+
+func dataStoreFromCmdCtx(cmd *cobra.Command) (*store.SQLite, error) {
 	dbPath, err := fromCmdContext[string](cmd, dbPathKey)
 	if err != nil {
 		return nil, err
