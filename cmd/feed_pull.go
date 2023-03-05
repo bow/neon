@@ -9,10 +9,7 @@ import (
 )
 
 func newFeedPullCmd() *cobra.Command {
-	var (
-		name        = "pull"
-		exportViper = newViper(name)
-	)
+	var name = "pull"
 
 	exportCmd := cobra.Command{
 		Use:     name,
@@ -54,11 +51,6 @@ func newFeedPullCmd() *cobra.Command {
 			return nil
 		},
 	}
-
-	flags := exportCmd.Flags()
-
-	flags.StringP(exportOutKey, "o", "/dev/stdout", "exported path file")
-	_ = exportViper.BindPFlag(exportOutKey, flags.Lookup(exportOutKey))
 
 	return &exportCmd
 }
