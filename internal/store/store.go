@@ -36,7 +36,7 @@ type FeedStore interface {
 	DeleteFeeds(ctx context.Context, ids []DBID) (err error)
 	EditEntries(ctx context.Context, ops []*EntryEditOp) (entries []*Entry, err error)
 	ExportOPML(ctx context.Context, title *string) (payload []byte, err error)
-	ImportOPML(ctx context.Context, payload []byte) (int, error)
+	ImportOPML(ctx context.Context, payload []byte) (processed int, imported int, err error)
 }
 
 type SQLite struct {

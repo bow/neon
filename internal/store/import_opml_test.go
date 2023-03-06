@@ -20,8 +20,9 @@ func TestImportOPMLErrEmptyPayload(t *testing.T) {
 
 	r.Equal(0, st.countFeeds())
 
-	n, err := st.ImportOPML(context.Background(), []byte{})
-	r.Equal(0, n)
+	nproc, nimp, err := st.ImportOPML(context.Background(), []byte{})
+	r.Equal(0, nproc)
+	r.Equal(0, nimp)
 	a.EqualError(err, "payload is empty")
 
 	a.Equal(0, st.countFeeds())
@@ -47,10 +48,11 @@ func TestImportOPMLOkEmptyOPMLBody(t *testing.T) {
 </opml>
 `
 
-	n, err := st.ImportOPML(context.Background(), []byte(payload))
+	nproc, nimp, err := st.ImportOPML(context.Background(), []byte(payload))
 	r.NoError(err)
 
-	a.Equal(0, n)
+	a.Equal(0, nproc)
+	a.Equal(0, nimp)
 	a.Equal(0, st.countFeeds())
 }
 
@@ -87,10 +89,11 @@ func TestImportOPMLOkMinimal(t *testing.T) {
 </opml>
 `
 
-	n, err := st.ImportOPML(context.Background(), []byte(payload))
+	nproc, nimp, err := st.ImportOPML(context.Background(), []byte(payload))
 	r.NoError(err)
 
-	a.Equal(1, n)
+	a.Equal(1, nproc)
+	a.Equal(1, nimp)
 	a.Equal(1, st.countFeeds())
 	a.True(existf())
 }
@@ -177,10 +180,11 @@ func TestImportOPMLOkExtended(t *testing.T) {
 	a.False(existfA())
 	a.False(existfBC())
 
-	n, err := st.ImportOPML(context.Background(), []byte(payload))
+	nproc, nimp, err := st.ImportOPML(context.Background(), []byte(payload))
 	r.NoError(err)
 
-	a.Equal(2, n)
+	a.Equal(2, nproc)
+	a.Equal(1, nimp)
 	a.Equal(3, st.countFeeds())
 	a.True(existfA())
 	a.True(existfBC())

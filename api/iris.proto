@@ -150,7 +150,8 @@ message ImportOPMLRequest {
 }
 
 message ImportOPMLResponse {
-  int32 num_imported = 1;
+  int32 num_processed = 1;
+  int32 num_imported = 2;
 }
 
 message GetInfoRequest {}

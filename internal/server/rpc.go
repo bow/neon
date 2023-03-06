@@ -222,12 +222,15 @@ func (r *rpc) ImportOPML(
 	req *api.ImportOPMLRequest,
 ) (*api.ImportOPMLResponse, error) {
 
-	n, err := r.store.ImportOPML(ctx, req.Payload)
+	nproc, nimp, err := r.store.ImportOPML(ctx, req.Payload)
 	if err != nil {
 		return nil, err
 	}
 
-	rsp := api.ImportOPMLResponse{NumImported: int32(n)}
+	rsp := api.ImportOPMLResponse{
+		NumProcessed: int32(nproc),
+		NumImported:  int32(nimp),
+	}
 
 	return &rsp, nil
 }

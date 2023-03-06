@@ -109,12 +109,13 @@ func (mr *MockFeedStoreMockRecorder) ExportOPML(ctx, title interface{}) *gomock.
 }
 
 // ImportOPML mocks base method.
-func (m *MockFeedStore) ImportOPML(ctx context.Context, payload []byte) (int, error) {
+func (m *MockFeedStore) ImportOPML(ctx context.Context, payload []byte) (int, int, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ImportOPML", ctx, payload)
 	ret0, _ := ret[0].(int)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret1, _ := ret[1].(int)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
 }
 
 // ImportOPML indicates an expected call of ImportOPML.

@@ -46,12 +46,14 @@ func newFeedImportCmd() *cobra.Command {
 				return err
 			}
 
-			n, err := str.ImportOPML(cmd.Context(), contents)
+			nproc, nimp, err := str.ImportOPML(cmd.Context(), contents)
 			if err != nil {
 				return err
 			}
-			// TODO: Only show newly imported feeds.
-			log.Info().Msgf("imported %d feed(s)", n)
+			log.Info().
+				Int("num_processed", nproc).
+				Int("num_imported", nimp).
+				Msg("finished feed import")
 
 			return nil
 		},

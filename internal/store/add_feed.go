@@ -39,7 +39,7 @@ func (s *SQLite) AddFeed(
 
 		now := time.Now()
 
-		feedDBID, ierr := upsertFeed(
+		feedDBID, _, ierr := upsertFeed(
 			ctx,
 			tx,
 			feed.FeedLink,
@@ -86,9 +86,8 @@ func upsertFeed(
 	isStarred *bool,
 	updateTime *time.Time,
 	subTime *time.Time,
-) (DBID, error) {
+) (feedDBID DBID, added bool, err error) {
 
-	var feedDBID DBID
 	sql1 := `
 		INSERT INTO
 			feeds(
@@ -104,7 +103,7 @@ func upsertFeed(
 `
 	stmt1, err := tx.PrepareContext(ctx, sql1)
 	if err != nil {
-		return feedDBID, err
+		return feedDBID, added, err
 	}
 	defer stmt1.Close()
 
@@ -123,11 +122,12 @@ func upsertFeed(
 		lid, ierr := res.LastInsertId()
 		feedDBID = DBID(lid)
 		if ierr != nil {
-			return feedDBID, ierr
+			return feedDBID, added, ierr
 		}
+		added = true
 	} else {
 		if !isUniqueErr(err, "UNIQUE constraint failed: feeds.feed_url") {
-			return feedDBID, err
+			return feedDBID, added, err
 		}
 		var ierr error
 		if feedDBID, ierr = editFeedWithFeedURL(
@@ -139,11 +139,12 @@ func upsertFeed(
 			siteURL,
 			isStarred,
 		); ierr != nil {
-			return feedDBID, ierr
+			return feedDBID, added, err
 		}
+		added = false
 	}
 
-	return feedDBID, nil
+	return feedDBID, added, nil
 }
 
 func editFeedWithFeedURL(

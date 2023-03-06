@@ -552,13 +552,14 @@ func TestImportOPMLOk(t *testing.T) {
 	payload := []byte("payload")
 	str.EXPECT().
 		ImportOPML(gomock.Any(), payload).
-		Return(3, nil)
+		Return(3, 2, nil)
 
 	req := api.ImportOPMLRequest{Payload: payload}
 	rsp, err := client.ImportOPML(context.Background(), &req)
 	r.NoError(err)
 
-	a.Equal(int32(3), rsp.GetNumImported())
+	a.Equal(int32(3), rsp.GetNumProcessed())
+	a.Equal(int32(2), rsp.GetNumImported())
 }
 
 func TestGetInfoOk(t *testing.T) {
