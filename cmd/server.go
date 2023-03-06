@@ -71,6 +71,8 @@ func newServerCmd() *cobra.Command {
 	flags.StringP(dbPathKey, "d", defaultDBPath, "data store location")
 	_ = serverViper.BindPFlag(dbPathKey, flags.Lookup(dbPathKey))
 
+	serverCmd.AddCommand(newServerProtoCmd())
+
 	return &serverCmd
 }
 
