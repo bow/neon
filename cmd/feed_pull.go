@@ -6,7 +6,9 @@ package cmd
 import (
 	"errors"
 	"fmt"
+	"time"
 
+	"github.com/briandowns/spinner"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
@@ -25,27 +27,23 @@ func newFeedPullCmd() *cobra.Command {
 				return err
 			}
 
-			ch := str.PullFeeds(cmd.Context())
-
 			var (
 				errs []error
 				n    int
+				ch   = str.PullFeeds(cmd.Context())
+				s    = newSpinner()
 			)
+
+			s.Start()
 			for pr := range ch {
 				if err := pr.Error(); err != nil {
 					errs = append(errs, fmt.Errorf("%s: %w", pr.URL(), err))
-					log.Error().
-						Str("url", pr.URL()).
-						Str("title", pr.Feed().Title).
-						Msg("Feed pull failed")
 				} else {
 					n++
-					log.Info().
-						Str("url", pr.URL()).
-						Str("title", pr.Feed().Title).
-						Msg("Feed pull OK")
 				}
 			}
+			s.Stop()
+
 			if len(errs) > 0 {
 				return errors.Join(errs...)
 			}
@@ -56,4 +54,36 @@ func newFeedPullCmd() *cobra.Command {
 	}
 
 	return &exportCmd
+}
+
+func newSpinner() *spinner.Spinner {
+	return spinner.New(
+		spinnerChars,
+		75*time.Millisecond,
+		spinner.WithColor("cyan"),
+		spinner.WithSuffix(" "+bold("Pulling feeds...")),
+	)
+}
+
+var spinnerChars = []string{
+	"█████",
+	"▒████",
+	"▒▒███",
+	"▒▒▒██",
+	"█▒▒▒█",
+	"██▒▒▒",
+	"███▒▒",
+	"████▒",
+	"█████",
+	"████▒",
+	"███▒▒",
+	"██▒▒▒",
+	"█▒▒▒█",
+	"▒▒▒██",
+	"▒▒███",
+	"▒████",
+}
+
+func bold(s any) string {
+	return fmt.Sprintf("\x1b[1m%v\x1b[0m", s)
 }
