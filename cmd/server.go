@@ -63,13 +63,12 @@ func newServerCmd() *cobra.Command {
 	flags := serverCmd.Flags()
 
 	flags.BoolP(quietKey, "q", false, "hide startup banner")
-	_ = serverViper.BindPFlag(quietKey, flags.Lookup(quietKey))
-
 	flags.StringP(addrKey, "a", defaultAddr, "listening address")
-	_ = serverViper.BindPFlag(addrKey, flags.Lookup(addrKey))
-
 	flags.StringP(dbPathKey, "d", defaultDBPath, "data store location")
-	_ = serverViper.BindPFlag(dbPathKey, flags.Lookup(dbPathKey))
+
+	if err := serverViper.BindPFlags(flags); err != nil {
+		panic(err)
+	}
 
 	serverCmd.AddCommand(newServerProtoCmd())
 
