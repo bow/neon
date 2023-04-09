@@ -5,12 +5,30 @@ package store
 
 import (
 	"context"
-	"fmt"
+	"database/sql"
+	"errors"
 )
 
-func (s *SQLite) ListEntries(ctx context.Context, _ DBID) ([]*Entry, error) {
+func (s *SQLite) ListEntries(ctx context.Context, feedID DBID) ([]*Entry, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	return nil, fmt.Errorf("unimplemented")
+	entries := make([]*Entry, 0)
+	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
+		_, err := getFeed(ctx, tx, feedID)
+		if errors.Is(err, sql.ErrNoRows) {
+			return FeedNotFoundError{feedID}
+		}
+		ientries, err := getAllFeedEntries(ctx, tx, feedID, nil)
+		entries = ientries
+		return err
+	}
+
+	fail := failF("SQLite.ListEntries")
+
+	err := s.withTx(ctx, dbFunc)
+	if err != nil {
+		return nil, fail(err)
+	}
+	return entries, nil
 }
