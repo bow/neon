@@ -42,6 +42,7 @@ func newFeedCmd() *cobra.Command {
 	feedCmd.AddCommand(newFeedImportCmd())
 	feedCmd.AddCommand(newFeedListCmd())
 	feedCmd.AddCommand(newFeedPullCmd())
+	feedCmd.AddCommand(newFeedListEntriesCmd())
 
 	return &feedCmd
 }
