@@ -18,7 +18,7 @@ func TestListEntriesOkMinimal(t *testing.T) {
 	r := require.New(t)
 	st := newTestStore(t)
 
-	entries, err := st.ListEntries(context.Background())
+	entries, err := st.ListEntries(context.Background(), 1)
 	r.Error(err)
 
 	a.Empty(entries)

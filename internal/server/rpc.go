@@ -175,10 +175,10 @@ func (r *rpc) PullFeeds(
 // ListEntries satisfies the service API.
 func (r *rpc) ListEntries(
 	ctx context.Context,
-	_ *api.ListEntriesRequest,
+	req *api.ListEntriesRequest,
 ) (*api.ListEntriesResponse, error) {
 
-	entries, err := r.store.ListEntries(ctx)
+	entries, err := r.store.ListEntries(ctx, store.DBID(req.GetFeedId()))
 	if err != nil {
 		return nil, err
 	}

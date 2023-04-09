@@ -8,7 +8,7 @@ import (
 	"fmt"
 )
 
-func (s *SQLite) ListEntries(ctx context.Context) ([]*Entry, error) {
+func (s *SQLite) ListEntries(ctx context.Context, _ DBID) ([]*Entry, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
