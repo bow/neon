@@ -172,6 +172,14 @@ func (r *rpc) PullFeeds(
 	return nil
 }
 
+// ListEntries satisfies the service API.
+func (r *rpc) ListEntries(
+	ctx context.Context,
+	_ *api.ListEntriesRequest,
+) (*api.ListEntriesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "unimplemented")
+}
+
 // EditEntries satisfies the service API.
 func (r *rpc) EditEntries(
 	ctx context.Context,

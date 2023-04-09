@@ -27,6 +27,9 @@ service Iris {
   // DeleteFeeds removes one or more feed sources.
   rpc DeleteFeeds (DeleteFeedsRequest) returns (DeleteFeedsResponse) {}
 
+  // ListEntries lists entries of a specific feed.
+  rpc ListEntries (ListEntriesRequest) returns (ListEntriesResponse) {}
+
   // EditEntries sets one or more fields of an entry.
   rpc EditEntries (EditEntriesRequest) returns (EditEntriesResponse) {}
 
@@ -119,6 +122,14 @@ message DeleteFeedsRequest {
 }
 
 message DeleteFeedsResponse {}
+
+message ListEntriesRequest {
+  int32 feed_id = 1;
+}
+
+message ListEntriesResponse {
+  repeated Entry entries = 1;
+}
 
 message EditEntriesRequest {
   repeated Op ops = 1;

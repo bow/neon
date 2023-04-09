@@ -32,6 +32,8 @@ type IrisClient interface {
 	PullFeeds(ctx context.Context, in *PullFeedsRequest, opts ...grpc.CallOption) (Iris_PullFeedsClient, error)
 	// DeleteFeeds removes one or more feed sources.
 	DeleteFeeds(ctx context.Context, in *DeleteFeedsRequest, opts ...grpc.CallOption) (*DeleteFeedsResponse, error)
+	// ListEntries lists entries of a specific feed.
+	ListEntries(ctx context.Context, in *ListEntriesRequest, opts ...grpc.CallOption) (*ListEntriesResponse, error)
 	// EditEntries sets one or more fields of an entry.
 	EditEntries(ctx context.Context, in *EditEntriesRequest, opts ...grpc.CallOption) (*EditEntriesResponse, error)
 	// ExportOPML exports feed subscriptions as an OPML document.
@@ -118,6 +120,15 @@ func (c *irisClient) DeleteFeeds(ctx context.Context, in *DeleteFeedsRequest, op
 	return out, nil
 }
 
+func (c *irisClient) ListEntries(ctx context.Context, in *ListEntriesRequest, opts ...grpc.CallOption) (*ListEntriesResponse, error) {
+	out := new(ListEntriesResponse)
+	err := c.cc.Invoke(ctx, "/iris.Iris/ListEntries", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *irisClient) EditEntries(ctx context.Context, in *EditEntriesRequest, opts ...grpc.CallOption) (*EditEntriesResponse, error) {
 	out := new(EditEntriesResponse)
 	err := c.cc.Invoke(ctx, "/iris.Iris/EditEntries", in, out, opts...)
@@ -168,6 +179,8 @@ type IrisServer interface {
 	PullFeeds(*PullFeedsRequest, Iris_PullFeedsServer) error
 	// DeleteFeeds removes one or more feed sources.
 	DeleteFeeds(context.Context, *DeleteFeedsRequest) (*DeleteFeedsResponse, error)
+	// ListEntries lists entries of a specific feed.
+	ListEntries(context.Context, *ListEntriesRequest) (*ListEntriesResponse, error)
 	// EditEntries sets one or more fields of an entry.
 	EditEntries(context.Context, *EditEntriesRequest) (*EditEntriesResponse, error)
 	// ExportOPML exports feed subscriptions as an OPML document.
@@ -197,6 +210,9 @@ func (UnimplementedIrisServer) PullFeeds(*PullFeedsRequest, Iris_PullFeedsServer
 }
 func (UnimplementedIrisServer) DeleteFeeds(context.Context, *DeleteFeedsRequest) (*DeleteFeedsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteFeeds not implemented")
+}
+func (UnimplementedIrisServer) ListEntries(context.Context, *ListEntriesRequest) (*ListEntriesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListEntries not implemented")
 }
 func (UnimplementedIrisServer) EditEntries(context.Context, *EditEntriesRequest) (*EditEntriesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EditEntries not implemented")
@@ -316,6 +332,24 @@ func _Iris_DeleteFeeds_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Iris_ListEntries_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListEntriesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IrisServer).ListEntries(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/iris.Iris/ListEntries",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IrisServer).ListEntries(ctx, req.(*ListEntriesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Iris_EditEntries_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(EditEntriesRequest)
 	if err := dec(in); err != nil {
@@ -410,6 +444,10 @@ var Iris_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteFeeds",
 			Handler:    _Iris_DeleteFeeds_Handler,
+		},
+		{
+			MethodName: "ListEntries",
+			Handler:    _Iris_ListEntries_Handler,
 		},
 		{
 			MethodName: "EditEntries",
