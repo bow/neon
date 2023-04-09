@@ -177,7 +177,22 @@ func (r *rpc) ListEntries(
 	ctx context.Context,
 	_ *api.ListEntriesRequest,
 ) (*api.ListEntriesResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "unimplemented")
+
+	entries, err := r.store.ListEntries(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	rsp := api.ListEntriesResponse{}
+	for _, entry := range entries {
+		proto, err := entry.Proto()
+		if err != nil {
+			return nil, status.Error(codes.Internal, err.Error())
+		}
+		rsp.Entries = append(rsp.Entries, proto)
+	}
+
+	return &rsp, nil
 }
 
 // EditEntries satisfies the service API.

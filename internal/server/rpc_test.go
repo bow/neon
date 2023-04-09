@@ -466,6 +466,43 @@ func TestPullFeedsErrNonFeed(t *testing.T) {
 	a.EqualError(err, "rpc error: code = Unknown desc = tx error")
 }
 
+func TestListEntriesOk(t *testing.T) {
+	t.Parallel()
+
+	r := require.New(t)
+	a := assert.New(t)
+	client, str := setupServerTest(t)
+
+	req := api.ListEntriesRequest{FeedId: 2}
+	entries := []*store.Entry{
+		{
+			Title:   "Entry 1",
+			IsRead:  false,
+			Content: store.WrapNullString("Contents 1."),
+		},
+		{
+			Title:   "Entry 2",
+			IsRead:  false,
+			Content: store.WrapNullString("Contents 2."),
+		},
+		{
+			Title:   "Entry 3",
+			IsRead:  true,
+			Content: store.WrapNullString("Contents 3."),
+		},
+	}
+
+	str.EXPECT().
+		ListEntries(gomock.Any()).
+		Return(entries, nil)
+
+	rsp, err := client.ListEntries(context.Background(), &req)
+	r.NoError(err)
+
+	// TODO: Expand test.
+	a.Len(rsp.GetEntries(), 3)
+}
+
 func TestEditEntriesOk(t *testing.T) {
 	t.Parallel()
 
