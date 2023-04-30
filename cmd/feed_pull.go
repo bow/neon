@@ -35,6 +35,7 @@ func newFeedPullCmd() *cobra.Command {
 			)
 
 			s.Start()
+			defer s.Stop()
 			for pr := range ch {
 				if err := pr.Error(); err != nil {
 					errs = append(errs, fmt.Errorf("%s: %w", pr.URL(), err))
