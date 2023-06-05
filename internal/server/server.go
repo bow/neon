@@ -13,7 +13,6 @@ import (
 	"strings"
 	"syscall"
 
-	grpczerolog "github.com/grpc-ecosystem/go-grpc-middleware/providers/zerolog/v2"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"github.com/mmcdole/gofeed"
 	"github.com/rs/zerolog"
@@ -24,6 +23,7 @@ import (
 	"google.golang.org/grpc/reflection"
 
 	"github.com/bow/iris/api"
+	"github.com/bow/iris/internal"
 	"github.com/bow/iris/internal/store"
 )
 
@@ -191,11 +191,11 @@ func (b *Builder) Build() (*server, error) {
 	grpcs := grpc.NewServer(
 		grpc.ChainUnaryInterceptor(
 			storeErrorUnaryServerInterceptor,
-			logging.UnaryServerInterceptor(grpczerolog.InterceptorLogger(logger)),
+			logging.UnaryServerInterceptor(internal.InterceptorLogger(logger)),
 		),
 		grpc.ChainStreamInterceptor(
 			storeErrorStreamServerInterceptor,
-			logging.StreamServerInterceptor(grpczerolog.InterceptorLogger(logger)),
+			logging.StreamServerInterceptor(internal.InterceptorLogger(logger)),
 		),
 	)
 	_ = newRPC(grpcs, str)
