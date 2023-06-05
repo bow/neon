@@ -41,6 +41,7 @@ func New() *cobra.Command {
 	rootCmd.AddCommand(newVersionCmd())
 	rootCmd.AddCommand(newFeedCmd())
 	rootCmd.AddCommand(newServerCmd())
+	rootCmd.AddCommand(newUICmd())
 
 	return &rootCmd
 }
