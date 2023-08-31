@@ -23,6 +23,8 @@ APP_NAME   := iris
 GO_VERSION := $(shell (head -n 3 go.mod | $(SED_EXE) 's/^go//g' | tail -n 1))
 REPO_NAME  := $(shell (head -n 1 go.mod | $(SED_EXE) 's/^module //g'))
 
+ASDF_GO_VERSION := $(GO_VERSION).0
+
 GIT_TAG    := $(shell git describe --tags --always --dirty 2> /dev/null || echo "untagged")
 GIT_COMMIT := $(shell git rev-parse --quiet --verify HEAD || echo "?")
 GIT_DIRTY  := $(shell test -n "$(shell git status --porcelain)" && echo "-dirty" || true)
@@ -90,8 +92,8 @@ install-dev:  ## Install dependencies for local development.
 	@if command -v asdf 1>/dev/null 2>&1; then \
 		if [ ! -f .tool-versions ]; then \
 			(asdf plugin add golang 2> /dev/null || true) \
-				&& asdf install golang $(GO_VERSION) \
-				&& asdf local golang $(GO_VERSION) > .tool-versions; \
+				&& asdf install golang $(ASDF_GO_VERSION) \
+				&& asdf local golang $(ASDF_GO_VERSION) > .tool-versions; \
 			(asdf plugin add protoc 2> /dev/null || true) \
 				&& asdf install protoc $(PROTOC_VERSION) \
 				&& asdf local protoc $(PROTOC_VERSION) >> .tool-versions; \
