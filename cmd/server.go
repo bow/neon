@@ -19,7 +19,7 @@ func newServerCmd() *cobra.Command {
 	var (
 		name        = "server"
 		serverViper = newViper(name)
-		defaultAddr = "$XDG_RUNTIME_DIR/iris/iris.socket"
+		defaultAddr = "$XDG_RUNTIME_DIR/iris/server.socket"
 	)
 
 	const (
