@@ -57,8 +57,8 @@ LD_FLAGS := $(strip $(BASE_LD_FLAGS) $(LD_FLAGS))
 CGO_ENABLED ?= 0
 
 # Protobuf settings.
-PROTOC_VERSION := 21.12
-PROTOC_GEN_GO_GRPC_VERSION := v1.2.0
+PROTOC_VERSION := 24.3
+PROTOC_GEN_GO_GRPC_VERSION := v1.3.0
 GO_PROTOBUF_VERSION := $(shell (cat go.mod | $(GREP_EXE) google.golang.org/protobuf | $(SED_EXE) -r 's/[[:space:]]+google.golang.org\/protobuf //g'))
 PROTO_DIR := $(CURDIR)/api
 PROTO_FILES := $(shell find $(PROTO_DIR) -type f -name "*.proto" -print)
