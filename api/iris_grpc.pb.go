@@ -31,6 +31,7 @@ const (
 	Iris_DeleteFeeds_FullMethodName = "/iris.Iris/DeleteFeeds"
 	Iris_ListEntries_FullMethodName = "/iris.Iris/ListEntries"
 	Iris_EditEntries_FullMethodName = "/iris.Iris/EditEntries"
+	Iris_ViewEntry_FullMethodName   = "/iris.Iris/ViewEntry"
 	Iris_ExportOPML_FullMethodName  = "/iris.Iris/ExportOPML"
 	Iris_ImportOPML_FullMethodName  = "/iris.Iris/ImportOPML"
 	Iris_GetInfo_FullMethodName     = "/iris.Iris/GetInfo"
@@ -54,6 +55,8 @@ type IrisClient interface {
 	ListEntries(ctx context.Context, in *ListEntriesRequest, opts ...grpc.CallOption) (*ListEntriesResponse, error)
 	// EditEntries sets one or more fields of an entry.
 	EditEntries(ctx context.Context, in *EditEntriesRequest, opts ...grpc.CallOption) (*EditEntriesResponse, error)
+	// ViewEntry returns the content of an entry.
+	ViewEntry(ctx context.Context, in *ViewEntryRequest, opts ...grpc.CallOption) (*ViewEntryResponse, error)
 	// ExportOPML exports feed subscriptions as an OPML document.
 	ExportOPML(ctx context.Context, in *ExportOPMLRequest, opts ...grpc.CallOption) (*ExportOPMLResponse, error)
 	// ImportOPML imports an OPML document.
@@ -156,6 +159,15 @@ func (c *irisClient) EditEntries(ctx context.Context, in *EditEntriesRequest, op
 	return out, nil
 }
 
+func (c *irisClient) ViewEntry(ctx context.Context, in *ViewEntryRequest, opts ...grpc.CallOption) (*ViewEntryResponse, error) {
+	out := new(ViewEntryResponse)
+	err := c.cc.Invoke(ctx, Iris_ViewEntry_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *irisClient) ExportOPML(ctx context.Context, in *ExportOPMLRequest, opts ...grpc.CallOption) (*ExportOPMLResponse, error) {
 	out := new(ExportOPMLResponse)
 	err := c.cc.Invoke(ctx, Iris_ExportOPML_FullMethodName, in, out, opts...)
@@ -201,6 +213,8 @@ type IrisServer interface {
 	ListEntries(context.Context, *ListEntriesRequest) (*ListEntriesResponse, error)
 	// EditEntries sets one or more fields of an entry.
 	EditEntries(context.Context, *EditEntriesRequest) (*EditEntriesResponse, error)
+	// ViewEntry returns the content of an entry.
+	ViewEntry(context.Context, *ViewEntryRequest) (*ViewEntryResponse, error)
 	// ExportOPML exports feed subscriptions as an OPML document.
 	ExportOPML(context.Context, *ExportOPMLRequest) (*ExportOPMLResponse, error)
 	// ImportOPML imports an OPML document.
@@ -234,6 +248,9 @@ func (UnimplementedIrisServer) ListEntries(context.Context, *ListEntriesRequest)
 }
 func (UnimplementedIrisServer) EditEntries(context.Context, *EditEntriesRequest) (*EditEntriesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EditEntries not implemented")
+}
+func (UnimplementedIrisServer) ViewEntry(context.Context, *ViewEntryRequest) (*ViewEntryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ViewEntry not implemented")
 }
 func (UnimplementedIrisServer) ExportOPML(context.Context, *ExportOPMLRequest) (*ExportOPMLResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ExportOPML not implemented")
@@ -386,6 +403,24 @@ func _Iris_EditEntries_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Iris_ViewEntry_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ViewEntryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IrisServer).ViewEntry(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Iris_ViewEntry_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IrisServer).ViewEntry(ctx, req.(*ViewEntryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Iris_ExportOPML_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ExportOPMLRequest)
 	if err := dec(in); err != nil {
@@ -470,6 +505,10 @@ var Iris_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "EditEntries",
 			Handler:    _Iris_EditEntries_Handler,
+		},
+		{
+			MethodName: "ViewEntry",
+			Handler:    _Iris_ViewEntry_Handler,
 		},
 		{
 			MethodName: "ExportOPML",

@@ -33,6 +33,9 @@ service Iris {
   // EditEntries sets one or more fields of an entry.
   rpc EditEntries (EditEntriesRequest) returns (EditEntriesResponse) {}
 
+  // ViewEntry returns the content of an entry.
+  rpc ViewEntry (ViewEntryRequest) returns (ViewEntryResponse) {}
+
   // ExportOPML exports feed subscriptions as an OPML document.
   rpc ExportOPML (ExportOPMLRequest) returns (ExportOPMLResponse) {}
 
@@ -146,6 +149,14 @@ message EditEntriesRequest {
 
 message EditEntriesResponse {
   repeated Entry entries = 1;
+}
+
+message ViewEntryRequest {
+  int32 id = 1;
+}
+
+message ViewEntryResponse {
+  Entry entry = 1;
 }
 
 message ExportOPMLRequest {

@@ -551,6 +551,22 @@ func TestEditEntriesOk(t *testing.T) {
 	a.Equal(entries[1].IsRead, entry1.IsRead)
 }
 
+func TestViewEntryOk(t *testing.T) {
+	t.Parallel()
+
+	r := require.New(t)
+	a := assert.New(t)
+
+	client, _ := setupServerTest(t)
+
+	req := api.ViewEntryRequest{}
+	rsp, err := client.ViewEntry(context.Background(), &req)
+
+	r.EqualError(err, "rpc error: code = Unimplemented desc = unimplemented")
+
+	a.Nil(rsp)
+}
+
 func TestExportOPMLOk(t *testing.T) {
 	t.Parallel()
 

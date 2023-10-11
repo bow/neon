@@ -216,6 +216,14 @@ func (svc *service) EditEntries(
 	return &rsp, nil
 }
 
+// ViewEntry satisfies the service API.
+func (svc *service) ViewEntry(
+	ctx context.Context,
+	_ *api.ViewEntryRequest,
+) (*api.ViewEntryResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "unimplemented")
+}
+
 // ExportOPML satisfies the service API.
 func (svc *service) ExportOPML(
 	ctx context.Context,
