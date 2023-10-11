@@ -72,6 +72,7 @@ func fmtEntry(entry *store.Entry) string {
 	kv := []*struct {
 		k, v string
 	}{
+		{"EntryID", fmt.Sprintf("%d", entry.DBID)},
 		{"URL", entry.URL.String},
 		{"Pub", pubs},
 	}
