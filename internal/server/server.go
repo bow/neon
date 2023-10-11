@@ -40,7 +40,10 @@ type server struct {
 	healthSvc *health.Server
 }
 
-func newServer(lis net.Listener, grpcServer *grpc.Server) *server {
+func newServer(lis net.Listener, grpcServer *grpc.Server, str store.FeedStore) *server {
+
+	svc := service{store: str}
+	api.RegisterIrisServer(grpcServer, &svc)
 
 	var (
 		funcCh = make(chan struct{}, 1)
@@ -198,9 +201,7 @@ func (b *Builder) Build() (*server, error) {
 			logging.StreamServerInterceptor(internal.InterceptorLogger(logger)),
 		),
 	)
-	_ = newRPC(grpcs, str)
-
-	s := newServer(lis, grpcs)
+	s := newServer(lis, grpcs, str)
 
 	return s, nil
 }

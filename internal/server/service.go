@@ -6,7 +6,6 @@ package server
 import (
 	"context"
 
-	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
@@ -15,26 +14,20 @@ import (
 	"github.com/bow/iris/internal/store"
 )
 
-// rpc implements the Iris rpc API.
-type rpc struct {
+// service implements the Iris service API.
+type service struct {
 	api.UnimplementedIrisServer
 
 	store store.FeedStore
 }
 
-func newRPC(grpcs *grpc.Server, str store.FeedStore) *rpc {
-	svc := rpc{store: str}
-	api.RegisterIrisServer(grpcs, &svc)
-	return &svc
-}
-
 // AddFeed satisfies the service API.
-func (r *rpc) AddFeed(
+func (svc *service) AddFeed(
 	ctx context.Context,
 	req *api.AddFeedRequest,
 ) (*api.AddFeedResponse, error) {
 
-	created, err := r.store.AddFeed(
+	created, err := svc.store.AddFeed(
 		ctx,
 		req.GetUrl(),
 		req.Title,
@@ -57,12 +50,12 @@ func (r *rpc) AddFeed(
 }
 
 // ListFeeds satisfies the service API.
-func (r *rpc) ListFeeds(
+func (svc *service) ListFeeds(
 	ctx context.Context,
 	_ *api.ListFeedsRequest,
 ) (*api.ListFeedsResponse, error) {
 
-	feeds, err := r.store.ListFeeds(ctx)
+	feeds, err := svc.store.ListFeeds(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -80,7 +73,7 @@ func (r *rpc) ListFeeds(
 }
 
 // EditFeeds satisfies the service API.
-func (r *rpc) EditFeeds(
+func (svc *service) EditFeeds(
 	ctx context.Context,
 	req *api.EditFeedsRequest,
 ) (*api.EditFeedsResponse, error) {
@@ -90,7 +83,7 @@ func (r *rpc) EditFeeds(
 		ops[i] = store.NewFeedEditOp(op)
 	}
 
-	feeds, err := r.store.EditFeeds(ctx, ops)
+	feeds, err := svc.store.EditFeeds(ctx, ops)
 	if err != nil {
 		return nil, err
 	}
@@ -108,7 +101,7 @@ func (r *rpc) EditFeeds(
 }
 
 // DeleteFeeds satisfies the service API.
-func (r *rpc) DeleteFeeds(
+func (svc *service) DeleteFeeds(
 	ctx context.Context,
 	req *api.DeleteFeedsRequest,
 ) (*api.DeleteFeedsResponse, error) {
@@ -118,7 +111,7 @@ func (r *rpc) DeleteFeeds(
 		ids[i] = store.DBID(id)
 	}
 
-	err := r.store.DeleteFeeds(ctx, ids)
+	err := svc.store.DeleteFeeds(ctx, ids)
 
 	rsp := api.DeleteFeedsResponse{}
 
@@ -126,7 +119,7 @@ func (r *rpc) DeleteFeeds(
 }
 
 // PullFeeds satisfies the service API.
-func (r *rpc) PullFeeds(
+func (svc *service) PullFeeds(
 	_ *api.PullFeedsRequest,
 	stream api.Iris_PullFeedsServer,
 ) error {
@@ -154,7 +147,7 @@ func (r *rpc) PullFeeds(
 		return &rsp, nil
 	}
 
-	ch := r.store.PullFeeds(stream.Context())
+	ch := svc.store.PullFeeds(stream.Context())
 
 	for pr := range ch {
 		payload, err := convert(pr)
@@ -173,12 +166,12 @@ func (r *rpc) PullFeeds(
 }
 
 // ListEntries satisfies the service API.
-func (r *rpc) ListEntries(
+func (svc *service) ListEntries(
 	ctx context.Context,
 	req *api.ListEntriesRequest,
 ) (*api.ListEntriesResponse, error) {
 
-	entries, err := r.store.ListEntries(ctx, store.DBID(req.GetFeedId()))
+	entries, err := svc.store.ListEntries(ctx, store.DBID(req.GetFeedId()))
 	if err != nil {
 		return nil, err
 	}
@@ -196,7 +189,7 @@ func (r *rpc) ListEntries(
 }
 
 // EditEntries satisfies the service API.
-func (r *rpc) EditEntries(
+func (svc *service) EditEntries(
 	ctx context.Context,
 	req *api.EditEntriesRequest,
 ) (*api.EditEntriesResponse, error) {
@@ -206,7 +199,7 @@ func (r *rpc) EditEntries(
 		ops[i] = store.NewEntryEditOp(op)
 	}
 
-	entries, err := r.store.EditEntries(ctx, ops)
+	entries, err := svc.store.EditEntries(ctx, ops)
 	if err != nil {
 		return nil, err
 	}
@@ -224,12 +217,12 @@ func (r *rpc) EditEntries(
 }
 
 // ExportOPML satisfies the service API.
-func (r *rpc) ExportOPML(
+func (svc *service) ExportOPML(
 	ctx context.Context,
 	req *api.ExportOPMLRequest,
 ) (*api.ExportOPMLResponse, error) {
 
-	payload, err := r.store.ExportOPML(ctx, req.Title)
+	payload, err := svc.store.ExportOPML(ctx, req.Title)
 	if err != nil {
 		return nil, err
 	}
@@ -240,12 +233,12 @@ func (r *rpc) ExportOPML(
 }
 
 // ImportOPML satisfies the service API.
-func (r *rpc) ImportOPML(
+func (svc *service) ImportOPML(
 	ctx context.Context,
 	req *api.ImportOPMLRequest,
 ) (*api.ImportOPMLResponse, error) {
 
-	nproc, nimp, err := r.store.ImportOPML(ctx, req.Payload)
+	nproc, nimp, err := svc.store.ImportOPML(ctx, req.Payload)
 	if err != nil {
 		return nil, err
 	}
@@ -259,7 +252,7 @@ func (r *rpc) ImportOPML(
 }
 
 // GetInfo satisfies the service API.
-func (r *rpc) GetInfo(
+func (svc *service) GetInfo(
 	_ context.Context,
 	_ *api.GetInfoRequest,
 ) (*api.GetInfoResponse, error) {
