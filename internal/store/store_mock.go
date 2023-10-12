@@ -167,3 +167,18 @@ func (mr *MockFeedStoreMockRecorder) PullFeeds(ctx interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PullFeeds", reflect.TypeOf((*MockFeedStore)(nil).PullFeeds), ctx)
 }
+
+// ViewEntry mocks base method.
+func (m *MockFeedStore) ViewEntry(ctx context.Context, entryID DBID) (*Entry, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ViewEntry", ctx, entryID)
+	ret0, _ := ret[0].(*Entry)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ViewEntry indicates an expected call of ViewEntry.
+func (mr *MockFeedStoreMockRecorder) ViewEntry(ctx, entryID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ViewEntry", reflect.TypeOf((*MockFeedStore)(nil).ViewEntry), ctx, entryID)
+}
