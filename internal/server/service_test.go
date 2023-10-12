@@ -557,14 +557,41 @@ func TestViewEntryOk(t *testing.T) {
 	r := require.New(t)
 	a := assert.New(t)
 
-	client, _ := setupServerTest(t)
+	client, str := setupServerTest(t)
 
-	req := api.ViewEntryRequest{}
+	entry := store.Entry{
+		DBID:      2,
+		FeedDBID:  3,
+		Title:     "Test Feed Entry",
+		IsRead:    false,
+		ExtID:     "4abaed90-3435-426f-bf95-05c700a503bf",
+		Updated:   store.WrapNullString("2023-07-12T05:02:23.764+02:00"),
+		Published: store.WrapNullString("2023-07-12T05:02:23.764+02:00"),
+		Content:   store.WrapNullString("Hello"),
+		URL:       store.WrapNullString("http://x.com/posts/test-feed-entry.html"),
+	}
+
+	str.EXPECT().
+		ViewEntry(gomock.Any(), 2).
+		Return(&entry, nil)
+
+	req := api.ViewEntryRequest{Id: 2}
+
 	rsp, err := client.ViewEntry(context.Background(), &req)
+	r.NoError(err)
 
-	r.EqualError(err, "rpc error: code = Unimplemented desc = unimplemented")
-
-	a.Nil(rsp)
+	r.NotNil(rsp)
+	r.NotNil(rsp.Entry)
+	re := rsp.Entry
+	a.Equal(int32(entry.DBID), re.Id)
+	a.Equal(int32(entry.FeedDBID), re.FeedId)
+	a.Equal(entry.Title, re.Title)
+	a.Equal(entry.IsRead, re.IsRead)
+	a.Equal(entry.ExtID, re.ExtId)
+	a.Equal(entry.Description.String, re.GetDescription())
+	a.Equal(entry.Content.String, re.GetContent())
+	a.Equal(entry.URL.String, re.GetUrl())
+	// TODO: Also test timestamps.
 }
 
 func TestExportOPMLOk(t *testing.T) {

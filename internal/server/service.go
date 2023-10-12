@@ -219,9 +219,21 @@ func (svc *service) EditEntries(
 // ViewEntry satisfies the service API.
 func (svc *service) ViewEntry(
 	ctx context.Context,
-	_ *api.ViewEntryRequest,
+	req *api.ViewEntryRequest,
 ) (*api.ViewEntryResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "unimplemented")
+
+	entry, err := svc.store.ViewEntry(ctx, int(req.GetId()))
+	if err != nil {
+		return nil, err
+	}
+
+	ep, err := entry.Proto()
+	if err != nil {
+		return nil, err
+	}
+	rsp := api.ViewEntryResponse{Entry: ep}
+
+	return &rsp, nil
 }
 
 // ExportOPML satisfies the service API.
