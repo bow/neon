@@ -9,7 +9,7 @@ import (
 	"fmt"
 )
 
-func (s *SQLite) ViewEntry(ctx context.Context, entryID DBID) (*Entry, error) {
+func (s *SQLite) ViewEntry(ctx context.Context, _ DBID) (*Entry, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
