@@ -77,7 +77,6 @@ jobs:
         with:
           version: v1.51.2
           args: --timeout=2m
-          skip-cache: true
 
   scan-ast:
     name: Scan AST security
