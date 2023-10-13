@@ -51,6 +51,25 @@ func TestViewEntryOk(t *testing.T) {
 		context.Background(),
 		keys[dbFeeds[1].Title].Entries["Entry X2"],
 	)
-	r.EqualError(err, "SQLite.ViewFeed: unimplemented")
-	a.Nil(dbEntry)
+	r.NoError(err)
+	r.NotNil(dbEntry)
+
+	a.Equal("Entry X2", dbEntry.Title)
+	a.True(dbEntry.IsRead)
+}
+
+func TestViewEntryErr(t *testing.T) {
+	t.Parallel()
+
+	a := assert.New(t)
+	r := require.New(t)
+	st := newTestStore(t)
+
+	r.Equal(0, st.countFeeds())
+
+	dbEntry, err := st.ViewEntry(context.Background(), 86)
+	r.Nil(dbEntry)
+	r.Error(err)
+
+	a.EqualError(err, "SQLite.ViewFeed: entry with ID=86 not found")
 }
