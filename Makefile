@@ -108,7 +108,7 @@ install-dev:  ## Install dependencies for local development.
 		&& go install github.com/securego/gosec/v2/cmd/gosec@latest \
 		&& go install github.com/sonatype-nexus-community/nancy@latest \
 		&& go install github.com/boumenot/gocover-cobertura@latest \
-		&& go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.51.2 \
+		&& go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.54.2 \
 		&& go install -tags 'sqlite' github.com/golang-migrate/migrate/v4/cmd/migrate@$(GOLANG_MIGRATE_VERSION)
 	@if command -v asdf 1>/dev/null 2>&1; then \
 		asdf reshim; \
