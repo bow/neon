@@ -155,6 +155,8 @@ func setTableField[T any](
 			return nil
 		}
 
+		// https://github.com/golang/go/issues/18478
+		// nolint: gosec
 		sql1 := `UPDATE ` + tableName + ` SET ` + columnName + ` = $2 WHERE id = $1 RETURNING id`
 		stmt1, err := tx.PrepareContext(ctx, sql1)
 		if err != nil {
