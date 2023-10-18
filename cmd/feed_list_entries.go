@@ -44,7 +44,7 @@ func newFeedListEntriesCmd() *cobra.Command {
 				return err
 			}
 			for _, entry := range entries {
-				fmt.Printf("%s\n", fmtEntry(entry))
+				fmt.Printf("%s\n", fmtListEntry(entry))
 			}
 
 			return nil
@@ -54,7 +54,7 @@ func newFeedListEntriesCmd() *cobra.Command {
 	return &listCmd
 }
 
-func fmtEntry(entry *store.Entry) string {
+func fmtListEntry(entry *store.Entry) string {
 	var (
 		sb  strings.Builder
 		cat = func(format string, a ...any) { fmt.Fprintf(&sb, format, a...) }
