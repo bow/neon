@@ -9,16 +9,16 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func newUICommand() *cobra.Command {
+func newReaderCommand() *cobra.Command {
 	var (
-		name = "ui"
+		name = "reader"
 		v    = newViper(name)
 	)
 
 	command := cobra.Command{
 		Use:     name,
-		Aliases: makeAlias(name),
-		Short:   "Open a TUI feed reader",
+		Aliases: append(makeAlias(name), []string{"ui", "tui"}...),
+		Short:   "Open a feed reader",
 		RunE: func(cmd *cobra.Command, args []string) error {
 
 			dbPath, err := resolveDBPath(v.GetString(dbPathKey))

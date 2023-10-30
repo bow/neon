@@ -38,10 +38,10 @@ func New() *cobra.Command {
 		},
 	}
 
-	command.AddCommand(newVersionCommand())
 	command.AddCommand(newFeedCommand())
+	command.AddCommand(newReaderCommand())
 	command.AddCommand(newServerCommand())
-	command.AddCommand(newUICommand())
+	command.AddCommand(newVersionCommand())
 
 	return &command
 }
