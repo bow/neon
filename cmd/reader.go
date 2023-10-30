@@ -4,9 +4,10 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
+
+	"github.com/bow/iris/internal/store"
+	"github.com/bow/iris/internal/tui"
 )
 
 func newReaderCommand() *cobra.Command {
@@ -25,9 +26,12 @@ func newReaderCommand() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			dataStorePathToCmdCtx(cmd, dbPath)
+			fs, err := store.NewSQLite(dbPath)
+			if err != nil {
+				return err
+			}
 
-			return fmt.Errorf("not fully implemented")
+			return tui.Show(fs)
 		},
 	}
 
