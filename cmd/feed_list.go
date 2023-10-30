@@ -12,10 +12,10 @@ import (
 	"github.com/bow/iris/internal/store"
 )
 
-func newFeedListCmd() *cobra.Command {
+func newFeedListCommand() *cobra.Command {
 	var name = "list"
 
-	listCmd := cobra.Command{
+	command := cobra.Command{
 		Use:     name,
 		Aliases: makeAlias(name),
 		Short:   "List feeds",
@@ -38,7 +38,7 @@ func newFeedListCmd() *cobra.Command {
 		},
 	}
 
-	return &listCmd
+	return &command
 }
 
 func fmtFeed(feed *store.Feed) string {

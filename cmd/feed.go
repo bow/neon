@@ -8,19 +8,19 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func newFeedCmd() *cobra.Command {
+func newFeedCommand() *cobra.Command {
 	var (
-		name      = "feed"
-		feedViper = newViper(name)
+		name = "feed"
+		v    = newViper(name)
 	)
 
-	feedCmd := cobra.Command{
+	command := cobra.Command{
 		Use:     name,
 		Aliases: makeAlias(name),
 		Short:   "View or modify feeds",
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 
-			dbPath, err := resolveDBPath(feedViper.GetString(dbPathKey))
+			dbPath, err := resolveDBPath(v.GetString(dbPathKey))
 			if err != nil {
 				return err
 			}
@@ -30,22 +30,22 @@ func newFeedCmd() *cobra.Command {
 		},
 	}
 
-	pflags := feedCmd.PersistentFlags()
+	pflags := command.PersistentFlags()
 
 	pflags.StringP(dbPathKey, "d", defaultDBPath, "data store location")
 
-	if err := feedViper.BindPFlags(pflags); err != nil {
+	if err := v.BindPFlags(pflags); err != nil {
 		panic(err)
 	}
 
-	feedCmd.AddCommand(newFeedExportCmd())
-	feedCmd.AddCommand(newFeedImportCmd())
-	feedCmd.AddCommand(newFeedListCmd())
-	feedCmd.AddCommand(newFeedPullCmd())
-	feedCmd.AddCommand(newFeedListEntriesCmd())
-	feedCmd.AddCommand(newFeedViewEntryCmd())
+	command.AddCommand(newFeedExportCommand())
+	command.AddCommand(newFeedImportCommand())
+	command.AddCommand(newFeedListCommand())
+	command.AddCommand(newFeedPullCommand())
+	command.AddCommand(newFeedListEntriesCommand())
+	command.AddCommand(newFeedViewEntryCommand())
 
-	return &feedCmd
+	return &command
 }
 
 func dataStorePathToCmdCtx(cmd *cobra.Command, path string) {

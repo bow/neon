@@ -13,10 +13,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func newFeedPullCmd() *cobra.Command {
+func newFeedPullCommand() *cobra.Command {
 	var name = "pull"
 
-	exportCmd := cobra.Command{
+	command := cobra.Command{
 		Use:     name,
 		Aliases: makeAlias(name),
 		Short:   "Pull feed entries",
@@ -54,7 +54,7 @@ func newFeedPullCmd() *cobra.Command {
 		},
 	}
 
-	return &exportCmd
+	return &command
 }
 
 func newSpinner() *spinner.Spinner {

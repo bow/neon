@@ -12,10 +12,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func newFeedImportCmd() *cobra.Command {
+func newFeedImportCommand() *cobra.Command {
 	var name = "import"
 
-	importCmd := cobra.Command{
+	command := cobra.Command{
 		Use:     fmt.Sprintf("%s [input]", name),
 		Args:    cobra.MaximumNArgs(1),
 		Aliases: makeAlias(name),
@@ -62,5 +62,5 @@ func newFeedImportCmd() *cobra.Command {
 		},
 	}
 
-	return &importCmd
+	return &command
 }

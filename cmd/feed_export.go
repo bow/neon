@@ -14,10 +14,10 @@ import (
 	"github.com/bow/iris/internal/store/opml"
 )
 
-func newFeedExportCmd() *cobra.Command {
+func newFeedExportCommand() *cobra.Command {
 	var name = "export"
 
-	exportCmd := cobra.Command{
+	command := cobra.Command{
 		Use:     fmt.Sprintf("%s [output]", name),
 		Args:    cobra.MaximumNArgs(1),
 		Aliases: makeAlias(name),
@@ -70,5 +70,5 @@ func newFeedExportCmd() *cobra.Command {
 		},
 	}
 
-	return &exportCmd
+	return &command
 }

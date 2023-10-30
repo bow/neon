@@ -13,12 +13,12 @@ import (
 	"github.com/bow/iris/internal/server"
 )
 
-// newServerCmd creates a new 'server' subcommand along with its command-line flags.
-func newServerCmd() *cobra.Command {
+// newServerCommand creates a new 'server' subcommand along with its command-line flags.
+func newServerCommand() *cobra.Command {
 
 	var (
 		name        = "server"
-		serverViper = newViper(name)
+		v           = newViper(name)
 		defaultAddr = "$XDG_RUNTIME_DIR/iris/server.socket"
 	)
 
@@ -27,22 +27,22 @@ func newServerCmd() *cobra.Command {
 		addrKey  = "addr"
 	)
 
-	serverCmd := cobra.Command{
+	command := cobra.Command{
 		Use:     name,
 		Aliases: makeAlias(name),
 		Short:   "Start a gRPC server",
 		RunE: func(cmd *cobra.Command, args []string) error {
 
-			if !serverViper.GetBool(quietKey) {
+			if !v.GetBool(quietKey) {
 				showBanner(cmd.OutOrStdout())
 			}
 
-			dbPath, err := resolveDBPath(serverViper.GetString(dbPathKey))
+			dbPath, err := resolveDBPath(v.GetString(dbPathKey))
 			if err != nil {
 				return err
 			}
 
-			addr, err := resolveUDSAddr(serverViper.GetString(addrKey))
+			addr, err := resolveUDSAddr(v.GetString(addrKey))
 			if err != nil {
 				return err
 			}
@@ -60,19 +60,19 @@ func newServerCmd() *cobra.Command {
 		},
 	}
 
-	flags := serverCmd.Flags()
+	flags := command.Flags()
 
 	flags.BoolP(quietKey, "q", false, "hide startup banner")
 	flags.StringP(addrKey, "a", defaultAddr, "listening address")
 	flags.StringP(dbPathKey, "d", defaultDBPath, "data store location")
 
-	if err := serverViper.BindPFlags(flags); err != nil {
+	if err := v.BindPFlags(flags); err != nil {
 		panic(err)
 	}
 
-	serverCmd.AddCommand(newServerProtoCmd())
+	command.AddCommand(newServerProtoCommand())
 
-	return &serverCmd
+	return &command
 }
 
 // resolveUDSAddr attempts to resolve the filesystem path to a Unix domain socket exposing

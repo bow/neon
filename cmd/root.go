@@ -17,7 +17,7 @@ import (
 // New creates a new command along with its command-line flags.
 func New() *cobra.Command {
 
-	rootCmd := cobra.Command{
+	command := cobra.Command{
 		Use:                internal.AppName(),
 		Short:              "Feed reader suite",
 		SilenceUsage:       true,
@@ -38,12 +38,12 @@ func New() *cobra.Command {
 		},
 	}
 
-	rootCmd.AddCommand(newVersionCmd())
-	rootCmd.AddCommand(newFeedCmd())
-	rootCmd.AddCommand(newServerCmd())
-	rootCmd.AddCommand(newUICmd())
+	command.AddCommand(newVersionCommand())
+	command.AddCommand(newFeedCommand())
+	command.AddCommand(newServerCommand())
+	command.AddCommand(newUICommand())
 
-	return &rootCmd
+	return &command
 }
 
 func inDocker() bool {

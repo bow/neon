@@ -13,12 +13,12 @@ import (
 	"github.com/bow/iris/internal"
 )
 
-// newVersionCmd creates a new 'version' subcommand.
-func newVersionCmd() *cobra.Command {
+// newVersionCommand creates a new 'version' subcommand.
+func newVersionCommand() *cobra.Command {
 
 	var name = "version"
 
-	versionCmd := cobra.Command{
+	command := cobra.Command{
 		Use:     name,
 		Aliases: makeAlias(name),
 		Short:   "Show the version",
@@ -54,7 +54,7 @@ func newVersionCmd() *cobra.Command {
 		},
 	}
 
-	return &versionCmd
+	return &command
 }
 
 // showVersion prints version-related information to the given writer.

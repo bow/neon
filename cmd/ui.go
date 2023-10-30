@@ -9,19 +9,19 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func newUICmd() *cobra.Command {
+func newUICommand() *cobra.Command {
 	var (
-		name    = "ui"
-		uiViper = newViper(name)
+		name = "ui"
+		v    = newViper(name)
 	)
 
-	uiCmd := cobra.Command{
+	command := cobra.Command{
 		Use:     name,
 		Aliases: makeAlias(name),
 		Short:   "Open a TUI feed reader",
 		RunE: func(cmd *cobra.Command, args []string) error {
 
-			dbPath, err := resolveDBPath(uiViper.GetString(dbPathKey))
+			dbPath, err := resolveDBPath(v.GetString(dbPathKey))
 			if err != nil {
 				return err
 			}
@@ -31,13 +31,13 @@ func newUICmd() *cobra.Command {
 		},
 	}
 
-	pflags := uiCmd.PersistentFlags()
+	pflags := command.PersistentFlags()
 
 	pflags.StringP(dbPathKey, "d", defaultDBPath, "data store location")
 
-	if err := uiViper.BindPFlags(pflags); err != nil {
+	if err := v.BindPFlags(pflags); err != nil {
 		panic(err)
 	}
 
-	return &uiCmd
+	return &command
 }

@@ -12,10 +12,10 @@ import (
 	"github.com/bow/iris/internal/store"
 )
 
-func newFeedViewEntryCmd() *cobra.Command {
+func newFeedViewEntryCommand() *cobra.Command {
 	var name = "view-entry"
 
-	viewCmd := cobra.Command{
+	command := cobra.Command{
 		Use:                   fmt.Sprintf("%s ENTRY-ID", name),
 		Aliases:               []string{"view-e", "ve"},
 		Short:                 "View a feed entry",
@@ -49,5 +49,5 @@ func newFeedViewEntryCmd() *cobra.Command {
 		},
 	}
 
-	return &viewCmd
+	return &command
 }

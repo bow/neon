@@ -13,10 +13,10 @@ import (
 	"github.com/bow/iris/internal/store"
 )
 
-func newFeedListEntriesCmd() *cobra.Command {
+func newFeedListEntriesCommand() *cobra.Command {
 	var name = "list-entries"
 
-	listCmd := cobra.Command{
+	command := cobra.Command{
 		Use:                   fmt.Sprintf("%s FEED-ID", name),
 		Aliases:               []string{"list-e", "le"},
 		Short:                 "List feed entries",
@@ -51,7 +51,7 @@ func newFeedListEntriesCmd() *cobra.Command {
 		},
 	}
 
-	return &listCmd
+	return &command
 }
 
 func fmtListEntry(entry *store.Entry) string {
