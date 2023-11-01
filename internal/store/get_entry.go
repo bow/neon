@@ -9,7 +9,7 @@ import (
 	"errors"
 )
 
-func (s *SQLite) ViewEntry(ctx context.Context, entryID DBID) (*Entry, error) {
+func (s *SQLite) GetEntry(ctx context.Context, entryID DBID) (*Entry, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 

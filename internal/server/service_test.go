@@ -551,7 +551,7 @@ func TestEditEntriesOk(t *testing.T) {
 	a.Equal(entries[1].IsRead, entry1.IsRead)
 }
 
-func TestViewEntryOk(t *testing.T) {
+func TestGetEntryOk(t *testing.T) {
 	t.Parallel()
 
 	r := require.New(t)
@@ -572,12 +572,12 @@ func TestViewEntryOk(t *testing.T) {
 	}
 
 	str.EXPECT().
-		ViewEntry(gomock.Any(), 2).
+		GetEntry(gomock.Any(), 2).
 		Return(&entry, nil)
 
-	req := api.ViewEntryRequest{Id: 2}
+	req := api.GetEntryRequest{Id: 2}
 
-	rsp, err := client.ViewEntry(context.Background(), &req)
+	rsp, err := client.GetEntry(context.Background(), &req)
 	r.NoError(err)
 
 	r.NotNil(rsp)

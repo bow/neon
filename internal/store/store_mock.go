@@ -108,6 +108,21 @@ func (mr *MockFeedStoreMockRecorder) ExportOPML(ctx, title interface{}) *gomock.
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ExportOPML", reflect.TypeOf((*MockFeedStore)(nil).ExportOPML), ctx, title)
 }
 
+// GetEntry mocks base method.
+func (m *MockFeedStore) GetEntry(ctx context.Context, entryID DBID) (*Entry, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetEntry", ctx, entryID)
+	ret0, _ := ret[0].(*Entry)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetEntry indicates an expected call of GetEntry.
+func (mr *MockFeedStoreMockRecorder) GetEntry(ctx, entryID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEntry", reflect.TypeOf((*MockFeedStore)(nil).GetEntry), ctx, entryID)
+}
+
 // ImportOPML mocks base method.
 func (m *MockFeedStore) ImportOPML(ctx context.Context, payload []byte) (int, int, error) {
 	m.ctrl.T.Helper()
@@ -166,19 +181,4 @@ func (m *MockFeedStore) PullFeeds(ctx context.Context) <-chan PullResult {
 func (mr *MockFeedStoreMockRecorder) PullFeeds(ctx interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PullFeeds", reflect.TypeOf((*MockFeedStore)(nil).PullFeeds), ctx)
-}
-
-// ViewEntry mocks base method.
-func (m *MockFeedStore) ViewEntry(ctx context.Context, entryID DBID) (*Entry, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ViewEntry", ctx, entryID)
-	ret0, _ := ret[0].(*Entry)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// ViewEntry indicates an expected call of ViewEntry.
-func (mr *MockFeedStoreMockRecorder) ViewEntry(ctx, entryID interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ViewEntry", reflect.TypeOf((*MockFeedStore)(nil).ViewEntry), ctx, entryID)
 }

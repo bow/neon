@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestViewEntryOk(t *testing.T) {
+func TestGetEntryOk(t *testing.T) {
 	t.Parallel()
 
 	a := assert.New(t)
@@ -47,7 +47,7 @@ func TestViewEntryOk(t *testing.T) {
 	r.Equal(3, st.countFeeds())
 	r.Equal(2, st.countEntries(dbFeeds[1].FeedURL))
 
-	dbEntry, err := st.ViewEntry(
+	dbEntry, err := st.GetEntry(
 		context.Background(),
 		keys[dbFeeds[1].Title].Entries["Entry X2"],
 	)
@@ -58,7 +58,7 @@ func TestViewEntryOk(t *testing.T) {
 	a.True(dbEntry.IsRead)
 }
 
-func TestViewEntryErr(t *testing.T) {
+func TestGetEntryErr(t *testing.T) {
 	t.Parallel()
 
 	a := assert.New(t)
@@ -67,7 +67,7 @@ func TestViewEntryErr(t *testing.T) {
 
 	r.Equal(0, st.countFeeds())
 
-	dbEntry, err := st.ViewEntry(context.Background(), 86)
+	dbEntry, err := st.GetEntry(context.Background(), 86)
 	r.Nil(dbEntry)
 	r.Error(err)
 

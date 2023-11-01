@@ -216,13 +216,13 @@ func (svc *service) EditEntries(
 	return &rsp, nil
 }
 
-// ViewEntry satisfies the service API.
-func (svc *service) ViewEntry(
+// GetEntry satisfies the service API.
+func (svc *service) GetEntry(
 	ctx context.Context,
-	req *api.ViewEntryRequest,
-) (*api.ViewEntryResponse, error) {
+	req *api.GetEntryRequest,
+) (*api.GetEntryResponse, error) {
 
-	entry, err := svc.store.ViewEntry(ctx, int(req.GetId()))
+	entry, err := svc.store.GetEntry(ctx, int(req.GetId()))
 	if err != nil {
 		return nil, err
 	}
@@ -231,7 +231,7 @@ func (svc *service) ViewEntry(
 	if err != nil {
 		return nil, err
 	}
-	rsp := api.ViewEntryResponse{Entry: ep}
+	rsp := api.GetEntryResponse{Entry: ep}
 
 	return &rsp, nil
 }

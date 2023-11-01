@@ -38,7 +38,7 @@ func newFeedViewEntryCommand() *cobra.Command {
 				return err
 			}
 
-			entry, err := str.ViewEntry(cmd.Context(), store.DBID(entryID))
+			entry, err := str.GetEntry(cmd.Context(), store.DBID(entryID))
 			if err != nil {
 				return err
 			}
