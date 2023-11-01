@@ -53,9 +53,9 @@ CREATE TABLE IF NOT EXISTS
   , authors JSON NOT NULL DEFAULT '[]'
   -- tags contains tags linked to the entry.
   , tags JSON NOT NULL DEFAULT '[]'
-  -- publication_time is when the entry was published.
-  , publication_time TIMESTAMP NULL
-  -- update_time is when the entry was last updated; may be the same as publication_time.
+  -- pub_time is when the entry was published.
+  , pub_time TIMESTAMP NULL
+  -- update_time is when the entry was last updated; may be the same as pub_time.
   , update_time TIMESTAMP NULL
   -- is_read indicates whether the entry has been read or not.
   , is_read BOOLEAN NOT NULL DEFAULT false

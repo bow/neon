@@ -122,14 +122,14 @@ func getAllFeedEntries(
 			e.content AS content,
 			e.url AS url,
 			e.update_time AS update_time,
-			e.publication_time AS publication_time
+			e.pub_time AS pub_time
 		FROM
 			entries e
 		WHERE
 			e.feed_id = $1
 			AND COALESCE(e.is_read = $2, true)
 		ORDER BY
-			COALESCE(e.update_time, e.publication_time) DESC
+			COALESCE(e.update_time, e.pub_time) DESC
 `
 	scanRow := func(rows *sql.Rows) (*Entry, error) {
 		var entry Entry

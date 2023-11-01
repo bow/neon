@@ -48,13 +48,13 @@ func getEntry(ctx context.Context, tx *sql.Tx, entryDBID DBID) (*Entry, error) {
 			e.content AS content,
 			e.url AS url,
 			e.update_time AS update_time,
-			e.publication_time AS publication_time
+			e.pub_time AS pub_time
 		FROM
 			entries e
 		WHERE
 			e.id = $1
 		ORDER BY
-			COALESCE(e.update_time, e.publication_time) DESC
+			COALESCE(e.update_time, e.pub_time) DESC
 `
 	scanRow := func(row *sql.Row) (*Entry, error) {
 		var entry Entry

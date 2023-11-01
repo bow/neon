@@ -148,7 +148,7 @@ func (e *Entry) Proto() (*api.Entry, error) {
 
 	var err error
 
-	proto.PublicationTime, err = toProtoTime(unwrapNullString(e.Published))
+	proto.PubTime, err = toProtoTime(unwrapNullString(e.Published))
 	if err != nil {
 		return nil, err
 	}

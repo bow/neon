@@ -199,7 +199,7 @@ func upsertEntries(
 				title,
 				description,
 				content,
-				publication_time,
+				pub_time,
 				update_time
 			)
 			VALUES(?, ?, ?, ?, ?, ?, ?, ?)

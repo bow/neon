@@ -191,13 +191,13 @@ func (s *testStore) getEntryUpdateTime(feedURL string, entryExtID string) sql.Nu
 	return entryUpdateTime
 }
 
-func (s *testStore) getEntryPublicationTime(feedURL string, entryExtID string) sql.NullString {
+func (s *testStore) getEntryPubTime(feedURL string, entryExtID string) sql.NullString {
 	s.t.Helper()
 
 	tx := s.tx()
 	stmt1, err := tx.Prepare(`
 		SELECT
-			e.publication_time
+			e.pub_time
 		FROM
 			entries e
 			INNER JOIN feeds f ON e.feed_id = f.id
@@ -207,11 +207,11 @@ func (s *testStore) getEntryPublicationTime(feedURL string, entryExtID string) s
 	`)
 	require.NoError(s.t, err)
 
-	var entryPublicationTime sql.NullString
-	err = stmt1.QueryRow(feedURL, entryExtID).Scan(&entryPublicationTime)
+	var entryPubTime sql.NullString
+	err = stmt1.QueryRow(feedURL, entryExtID).Scan(&entryPubTime)
 	require.NoError(s.t, err)
 
-	return entryPublicationTime
+	return entryPubTime
 }
 
 func (s *testStore) addFeeds(feeds []*Feed) map[string]feedKey {
