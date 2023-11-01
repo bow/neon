@@ -148,13 +148,13 @@ func TestEditFeedsOk(t *testing.T) {
 
 	r.Len(rsp.Feeds, 3)
 	feed0 := rsp.Feeds[0]
-	a.Equal(int32(feeds[0].DBID), feed0.Id)
+	a.Equal(uint32(feeds[0].DBID), feed0.Id)
 	a.Equal(feeds[0].Title, feed0.Title)
 	feed1 := rsp.Feeds[1]
-	a.Equal(int32(feeds[1].DBID), feed1.Id)
+	a.Equal(uint32(feeds[1].DBID), feed1.Id)
 	a.Equal([]string(feeds[1].Tags), feed1.Tags)
 	feed2 := rsp.Feeds[2]
-	a.Equal(int32(feeds[2].DBID), feed2.Id)
+	a.Equal(uint32(feeds[2].DBID), feed2.Id)
 	a.Equal(feeds[2].IsStarred, feed2.IsStarred)
 }
 
@@ -169,7 +169,7 @@ func TestDeleteFeedsOk(t *testing.T) {
 		DeleteFeeds(gomock.Any(), []store.DBID{1, 9}).
 		Return(nil)
 
-	req := api.DeleteFeedsRequest{FeedIds: []int32{1, 9}}
+	req := api.DeleteFeedsRequest{FeedIds: []uint32{1, 9}}
 	rsp, err := client.DeleteFeeds(context.Background(), &req)
 	r.NoError(err)
 
@@ -187,7 +187,7 @@ func TestDeleteFeedsErrNotFound(t *testing.T) {
 		DeleteFeeds(gomock.Any(), []store.DBID{1, 9}).
 		Return(fmt.Errorf("wrapped: %w", store.FeedNotFoundError{ID: 9}))
 
-	req := api.DeleteFeedsRequest{FeedIds: []int32{1, 9}}
+	req := api.DeleteFeedsRequest{FeedIds: []uint32{1, 9}}
 	rsp, err := client.DeleteFeeds(context.Background(), &req)
 
 	r.Nil(rsp)
@@ -544,10 +544,10 @@ func TestEditEntriesOk(t *testing.T) {
 
 	r.Len(rsp.Entries, 2)
 	entry0 := rsp.Entries[0]
-	a.Equal(int32(entries[0].DBID), entry0.Id)
+	a.Equal(uint32(entries[0].DBID), entry0.Id)
 	a.Equal(entries[0].IsRead, entry0.IsRead)
 	entry1 := rsp.Entries[1]
-	a.Equal(int32(entries[1].DBID), entry1.Id)
+	a.Equal(uint32(entries[1].DBID), entry1.Id)
 	a.Equal(entries[1].IsRead, entry1.IsRead)
 }
 
@@ -583,8 +583,8 @@ func TestGetEntryOk(t *testing.T) {
 	r.NotNil(rsp)
 	r.NotNil(rsp.Entry)
 	re := rsp.Entry
-	a.Equal(int32(entry.DBID), re.Id)
-	a.Equal(int32(entry.FeedDBID), re.FeedId)
+	a.Equal(uint32(entry.DBID), re.Id)
+	a.Equal(uint32(entry.FeedDBID), re.FeedId)
 	a.Equal(entry.Title, re.Title)
 	a.Equal(entry.IsRead, re.IsRead)
 	a.Equal(entry.ExtID, re.ExtId)
@@ -638,8 +638,8 @@ func TestImportOPMLOk(t *testing.T) {
 	rsp, err := client.ImportOPML(context.Background(), &req)
 	r.NoError(err)
 
-	a.Equal(int32(3), rsp.GetNumProcessed())
-	a.Equal(int32(2), rsp.GetNumImported())
+	a.Equal(uint32(3), rsp.GetNumProcessed())
+	a.Equal(uint32(2), rsp.GetNumImported())
 }
 
 func TestGetInfoOk(t *testing.T) {

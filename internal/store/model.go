@@ -50,7 +50,7 @@ type Feed struct {
 
 func (f *Feed) Proto() (*api.Feed, error) {
 	proto := api.Feed{
-		Id:          int32(f.DBID),
+		Id:          uint32(f.DBID),
 		Title:       f.Title,
 		FeedUrl:     f.FeedURL,
 		SiteUrl:     unwrapNullString(f.SiteURL),
@@ -136,8 +136,8 @@ type Entry struct {
 
 func (e *Entry) Proto() (*api.Entry, error) {
 	proto := api.Entry{
-		Id:          int32(e.DBID),
-		FeedId:      int32(e.FeedDBID),
+		Id:          uint32(e.DBID),
+		FeedId:      uint32(e.FeedDBID),
 		Title:       e.Title,
 		IsRead:      e.IsRead,
 		ExtId:       e.ExtID,

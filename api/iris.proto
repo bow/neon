@@ -47,7 +47,7 @@ service Iris {
 }
 
 message Feed {
-  int32 id = 1;
+  uint32 id = 1;
   string title = 2;
   string feed_url = 3;
   repeated string tags = 4;
@@ -60,8 +60,8 @@ message Feed {
 }
 
 message Entry {
-  int32 id = 1;
-  int32 feed_id = 2;
+  uint32 id = 1;
+  uint32 feed_id = 2;
   string title = 3;
   bool is_read = 4;
   string ext_id = 5;
@@ -88,7 +88,7 @@ message EditFeedsRequest {
   repeated Op ops = 1;
 
   message Op {
-    int32 id = 1;
+    uint32 id = 1;
     Fields fields = 2;
 
     message Fields {
@@ -121,13 +121,13 @@ message PullFeedsResponse {
 }
 
 message DeleteFeedsRequest {
-  repeated int32 feed_ids = 1;
+  repeated uint32 feed_ids = 1;
 }
 
 message DeleteFeedsResponse {}
 
 message ListEntriesRequest {
-  int32 feed_id = 1;
+  uint32 feed_id = 1;
 }
 
 message ListEntriesResponse {
@@ -138,7 +138,7 @@ message EditEntriesRequest {
   repeated Op ops = 1;
 
   message Op {
-    int32 id = 1;
+    uint32 id = 1;
     Fields fields = 2;
 
     message Fields {
@@ -152,7 +152,7 @@ message EditEntriesResponse {
 }
 
 message GetEntryRequest {
-  int32 id = 1;
+  uint32 id = 1;
 }
 
 message GetEntryResponse {
@@ -172,8 +172,8 @@ message ImportOPMLRequest {
 }
 
 message ImportOPMLResponse {
-  int32 num_processed = 1;
-  int32 num_imported = 2;
+  uint32 num_processed = 1;
+  uint32 num_imported = 2;
 }
 
 message GetInfoRequest {}
