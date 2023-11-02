@@ -140,13 +140,30 @@ func deref[T any](v *T, def T) T {
 	return def
 }
 
-func setTableField[T any](
-	tableName, columnName string,
-) func(context.Context, *sql.Tx, DBID, *T) error {
+type editableTable interface {
+	name() string
+	errNotFound(id DBID) error
+}
 
-	if tableName != "feeds" && tableName != "entries" {
-		panic("unexpected tableName: " + tableName)
-	}
+type feedsTableType struct{}
+
+func (t *feedsTableType) name() string              { return "feeds" }
+func (t *feedsTableType) errNotFound(id DBID) error { return FeedNotFoundError{id} }
+
+type entriesTableType struct{}
+
+func (t *entriesTableType) name() string              { return "entries" }
+func (t *entriesTableType) errNotFound(id DBID) error { return EntryNotFoundError{id} }
+
+var (
+	feedsTable   = &feedsTableType{}
+	entriesTable = &entriesTableType{}
+)
+
+func tableFieldSetter[T any](
+	table editableTable,
+	columnName string,
+) func(context.Context, *sql.Tx, DBID, *T) error {
 
 	return func(ctx context.Context, tx *sql.Tx, id DBID, fieldValue *T) error {
 
@@ -157,7 +174,7 @@ func setTableField[T any](
 
 		// https://github.com/golang/go/issues/18478
 		// nolint: gosec
-		sql1 := `UPDATE ` + tableName + ` SET ` + columnName + ` = $2 WHERE id = $1 RETURNING id`
+		sql1 := `UPDATE ` + table.name() + ` SET ` + columnName + ` = $2 WHERE id = $1 RETURNING id`
 		stmt1, err := tx.PrepareContext(ctx, sql1)
 		if err != nil {
 			return err
@@ -170,13 +187,7 @@ func setTableField[T any](
 			return err
 		}
 		if updatedID == 0 {
-			switch tableName {
-			case "feeds":
-				return FeedNotFoundError{id}
-			case "entries":
-				return EntryNotFoundError{id}
-			}
-			panic("unexpected tableName: " + tableName)
+			return table.errNotFound(id)
 		}
 		return nil
 	}

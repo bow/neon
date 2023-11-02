@@ -182,3 +182,54 @@ func (mr *MockFeedStoreMockRecorder) PullFeeds(ctx interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PullFeeds", reflect.TypeOf((*MockFeedStore)(nil).PullFeeds), ctx)
 }
+
+// MockeditableTable is a mock of editableTable interface.
+type MockeditableTable struct {
+	ctrl     *gomock.Controller
+	recorder *MockeditableTableMockRecorder
+}
+
+// MockeditableTableMockRecorder is the mock recorder for MockeditableTable.
+type MockeditableTableMockRecorder struct {
+	mock *MockeditableTable
+}
+
+// NewMockeditableTable creates a new mock instance.
+func NewMockeditableTable(ctrl *gomock.Controller) *MockeditableTable {
+	mock := &MockeditableTable{ctrl: ctrl}
+	mock.recorder = &MockeditableTableMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockeditableTable) EXPECT() *MockeditableTableMockRecorder {
+	return m.recorder
+}
+
+// errNotFound mocks base method.
+func (m *MockeditableTable) errNotFound(id DBID) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "errNotFound", id)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// errNotFound indicates an expected call of errNotFound.
+func (mr *MockeditableTableMockRecorder) errNotFound(id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "errNotFound", reflect.TypeOf((*MockeditableTable)(nil).errNotFound), id)
+}
+
+// name mocks base method.
+func (m *MockeditableTable) name() string {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "name")
+	ret0, _ := ret[0].(string)
+	return ret0
+}
+
+// name indicates an expected call of name.
+func (mr *MockeditableTableMockRecorder) name() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "name", reflect.TypeOf((*MockeditableTable)(nil).name))
+}

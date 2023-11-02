@@ -110,10 +110,10 @@ func getFeed(ctx context.Context, tx *sql.Tx, feedDBID DBID) (*Feed, error) {
 }
 
 var (
-	setFeedTitle       = setTableField[string]("feeds", "title")
-	setFeedDescription = setTableField[string]("feeds", "description")
-	setFeedIsStarred   = setTableField[bool]("feeds", "is_starred")
-	setFeedSiteURL     = setTableField[string]("feeds", "site_url")
+	setFeedTitle       = tableFieldSetter[string](feedsTable, "title")
+	setFeedDescription = tableFieldSetter[string](feedsTable, "description")
+	setFeedIsStarred   = tableFieldSetter[bool](feedsTable, "is_starred")
+	setFeedSiteURL     = tableFieldSetter[string](feedsTable, "site_url")
 )
 
 func setFeedTags(

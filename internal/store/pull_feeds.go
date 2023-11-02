@@ -120,7 +120,7 @@ func (pk pullKey) err(e error) PullResult {
 	return PullResult{url: &pk.feedURL, status: pullFail, feed: nil, err: e}
 }
 
-var setFeedUpdateTime = setTableField[string]("feeds", "update_time")
+var setFeedUpdateTime = tableFieldSetter[string](feedsTable, "update_time")
 
 func getAllPullKeys(ctx context.Context, tx *sql.Tx) ([]pullKey, error) {
 

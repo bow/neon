@@ -44,4 +44,4 @@ func (s *SQLite) EditEntries(
 	return entries, nil
 }
 
-var setEntryIsRead = setTableField[bool]("entries", "is_read")
+var setEntryIsRead = tableFieldSetter[bool](entriesTable, "is_read")
