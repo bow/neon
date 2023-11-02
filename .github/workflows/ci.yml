@@ -38,7 +38,7 @@ jobs:
 
       - name: Install and configure dependencies
         run: |
-          make install-dev
+          make dev
 
       - name: Run tests
         run: |
