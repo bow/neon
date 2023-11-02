@@ -222,7 +222,7 @@ func (svc *service) GetEntry(
 	req *api.GetEntryRequest,
 ) (*api.GetEntryResponse, error) {
 
-	entry, err := svc.store.GetEntry(ctx, int(req.GetId()))
+	entry, err := svc.store.GetEntry(ctx, store.DBID(req.GetId()))
 	if err != nil {
 		return nil, err
 	}
