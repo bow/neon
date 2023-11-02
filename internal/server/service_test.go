@@ -42,6 +42,7 @@ func TestAddFeedOk(t *testing.T) {
 		SiteURL:     store.WrapNullString("https://foo.com"),
 		FeedURL:     "https://foo.com/feed.xml",
 		Subscribed:  "2021-07-01T23:33:06.156+02:00",
+		LastPulled:  "2021-07-01T23:33:06.156+02:00",
 		IsStarred:   true,
 	}
 
@@ -79,12 +80,14 @@ func TestListFeedsOk(t *testing.T) {
 			Title:      "Feed A",
 			FeedURL:    "http://a.com/feed.xml",
 			Subscribed: "2022-06-22T19:39:38.964+02:00",
+			LastPulled: "2022-06-22T19:39:38.964+02:00",
 			Updated:    store.WrapNullString("2022-03-19T16:23:18.600+02:00"),
 		},
 		{
 			Title:      "Feed X",
 			FeedURL:    "http://x.com/feed.xml",
 			Subscribed: "2022-06-22T19:39:44.037+02:00",
+			LastPulled: "2022-06-22T19:39:44.037+02:00",
 			Updated:    store.WrapNullString("2022-04-20T16:32:30.760+02:00"),
 		},
 	}
@@ -112,9 +115,24 @@ func TestEditFeedsOk(t *testing.T) {
 		{DBID: 77, IsStarred: pointer(true)},
 	}
 	feeds := []*store.Feed{
-		{DBID: 14, Title: "newer", Subscribed: "2022-06-30T00:53:50.200+02:00"},
-		{DBID: 58, Tags: []string{"x", "y"}, Subscribed: "2022-06-30T00:53:58.135+02:00"},
-		{DBID: 77, IsStarred: true, Subscribed: "2022-06-30T00:53:59.812+02:00"},
+		{
+			DBID:       14,
+			Title:      "newer",
+			Subscribed: "2022-06-30T00:53:50.200+02:00",
+			LastPulled: "2022-06-30T00:53:50.200+02:00",
+		},
+		{
+			DBID:       58,
+			Tags:       []string{"x", "y"},
+			Subscribed: "2022-06-30T00:53:58.135+02:00",
+			LastPulled: "2022-06-30T00:53:58.135+02:00",
+		},
+		{
+			DBID:       77,
+			IsStarred:  true,
+			Subscribed: "2022-06-30T00:53:59.812+02:00",
+			LastPulled: "2022-06-30T00:53:59.812+02:00",
+		},
 	}
 
 	str.EXPECT().
@@ -208,6 +226,7 @@ func TestPullFeedsAllOk(t *testing.T) {
 				Title:      "feed-A",
 				FeedURL:    "https://a.com/feed.xml",
 				Subscribed: "2021-07-23T17:20:29.499+02:00",
+				LastPulled: "2021-07-23T17:20:29.499+02:00",
 				IsStarred:  true,
 				Entries: []*store.Entry{
 					{Title: "Entry A1", IsRead: false},
@@ -222,6 +241,7 @@ func TestPullFeedsAllOk(t *testing.T) {
 				Title:      "feed-C",
 				FeedURL:    "https://c.com/feed.xml",
 				Subscribed: "2021-07-23T17:21:11.489+02:00",
+				LastPulled: "2021-07-23T17:21:11.489+02:00",
 				IsStarred:  false,
 				Entries: []*store.Entry{
 					{Title: "Entry C3", IsRead: false},
@@ -301,6 +321,7 @@ func TestPullFeedsErrSomeFeed(t *testing.T) {
 				Title:      "feed-A",
 				FeedURL:    "https://a.com/feed.xml",
 				Subscribed: "2021-07-23T17:20:29.499+02:00",
+				LastPulled: "2021-07-23T17:20:29.499+02:00",
 				IsStarred:  true,
 				Entries: []*store.Entry{
 					{Title: "Entry A1", IsRead: false},
@@ -316,6 +337,7 @@ func TestPullFeedsErrSomeFeed(t *testing.T) {
 				Title:      "feed-C",
 				FeedURL:    "https://c.com/feed.xml",
 				Subscribed: "2021-07-23T17:21:11.489+02:00",
+				LastPulled: "2021-07-23T17:21:11.489+02:00",
 				IsStarred:  false,
 				Entries: []*store.Entry{
 					{Title: "Entry C3", IsRead: false},
@@ -397,6 +419,7 @@ func TestPullFeedsErrNonFeed(t *testing.T) {
 				Title:      "feed-A",
 				FeedURL:    "https://a.com/feed.xml",
 				Subscribed: "2021-07-23T17:20:29.499+02:00",
+				LastPulled: "2021-07-23T17:20:29.499+02:00",
 				IsStarred:  true,
 				Entries: []*store.Entry{
 					{Title: "Entry A1", IsRead: false},
@@ -411,6 +434,7 @@ func TestPullFeedsErrNonFeed(t *testing.T) {
 				Title:      "feed-C",
 				FeedURL:    "https://c.com/feed.xml",
 				Subscribed: "2021-07-23T17:21:11.489+02:00",
+				LastPulled: "2021-07-23T17:21:11.489+02:00",
 				IsStarred:  false,
 				Entries: []*store.Entry{
 					{Title: "Entry C3", IsRead: false},

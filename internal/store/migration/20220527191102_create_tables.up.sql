@@ -17,6 +17,8 @@ CREATE TABLE IF NOT EXISTS
   , sub_time TIMESTAMP NOT NULL DEFAULT (DATETIME('now'))
   -- update_time is when the feed was last updated; may be derived from update_time of the entries.
   , update_time TIMESTAMP NULL
+  -- last_pull_time is when the feed was last pulled.
+  , last_pull_time TIMESTAMP NOT NULL
   -- feeds must be unique by its feed URL.
   , UNIQUE(feed_url)
 );

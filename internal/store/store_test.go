@@ -227,9 +227,10 @@ func (s *testStore) addFeeds(feeds []*Feed) map[string]feedKey {
 				description,
 				is_starred,
 				sub_time,
+				last_pull_time,
 				update_time
 			)
-			VALUES (?, ?, ?, ?, ?, ?, ?)
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 		RETURNING
 			id
 	`)
@@ -262,6 +263,7 @@ func (s *testStore) addFeeds(feeds []*Feed) map[string]feedKey {
 			feed.Description,
 			feed.IsStarred,
 			subTime,
+			subTime, // last_pull_time defaults to sub_time
 			feed.Updated,
 		).Scan(&feedDBID)
 		require.NoError(s.t, err)
@@ -313,10 +315,10 @@ func (s *testStore) addFeedWithURL(url string) {
 	s.t.Helper()
 
 	tx := s.tx()
-	stmt, err := tx.Prepare(`INSERT INTO feeds(title, feed_url) VALUES (?, ?)`)
+	stmt, err := tx.Prepare(`INSERT INTO feeds(title, feed_url, last_pull_time) VALUES (?, ?, ?)`)
 	require.NoError(s.t, err)
 
-	_, err = stmt.Exec(s.t.Name(), url)
+	_, err = stmt.Exec(s.t.Name(), url, time.Now().UTC().Format(time.RFC3339))
 	require.NoError(s.t, err)
 	require.NoError(s.t, tx.Commit())
 }

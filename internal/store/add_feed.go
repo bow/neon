@@ -97,9 +97,10 @@ func upsertFeed(
 				site_url,
 				is_starred,
 				update_time,
-				sub_time
+				sub_time,
+				last_pull_time
 			)
-			VALUES (?, ?, ?, ?, ?, ?, ?)
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 `
 	stmt1, err := tx.PrepareContext(ctx, sql1)
 	if err != nil {
@@ -107,6 +108,7 @@ func upsertFeed(
 	}
 	defer stmt1.Close()
 
+	sst := serializeTime(subTime)
 	res, err := stmt1.ExecContext(
 		ctx,
 		feedURL,
@@ -115,7 +117,8 @@ func upsertFeed(
 		siteURL,
 		deref(isStarred, false),
 		serializeTime(updateTime),
-		serializeTime(subTime),
+		sst,
+		sst, // last_pull_time defaults to sub_time.
 	)
 
 	if err == nil {

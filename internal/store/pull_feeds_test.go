@@ -221,6 +221,7 @@ func TestPullFeedsOkSomeNewEntries(t *testing.T) {
 			Title:      "Feed A",
 			FeedURL:    "http://a.com/feed.xml",
 			Subscribed: "2022-07-18T22:04:37Z",
+			LastPulled: "2022-07-18T22:04:37Z",
 			Updated:    WrapNullString("2022-03-19T16:23:18.600+02:00"),
 			Entries: []*Entry{
 				{
@@ -253,6 +254,7 @@ func TestPullFeedsOkSomeNewEntries(t *testing.T) {
 			Title:      "Feed X",
 			FeedURL:    "http://x.com/feed.xml",
 			Subscribed: "2022-07-18T22:04:45Z",
+			LastPulled: "2022-07-18T22:04:45Z",
 			Updated:    WrapNullString("2022-04-20T16:32:30.760+02:00"),
 			Entries: []*Entry{
 				{
@@ -348,6 +350,7 @@ func TestPullFeedsOkSomeNewEntries(t *testing.T) {
 				FeedURL:    pulledFeeds[0].FeedURL,
 				Updated:    st.getFeedUpdateTime(feedURL0),
 				Subscribed: st.getFeedSubTime(feedURL0),
+				LastPulled: st.getFeedSubTime(feedURL0),
 				Entries: []*Entry{
 					{
 						DBID:      st.getEntryDBID(feedURL0, pulledFeeds[0].Entries[1].ExtID),
@@ -382,6 +385,7 @@ func TestPullFeedsOkSomeNewEntries(t *testing.T) {
 				FeedURL:    pulledFeeds[1].FeedURL,
 				Updated:    st.getFeedUpdateTime(feedURL1),
 				Subscribed: st.getFeedSubTime(feedURL1),
+				LastPulled: st.getFeedSubTime(feedURL1),
 				Entries: []*Entry{
 					{
 						DBID:      st.getEntryDBID(feedURL1, pulledFeeds[1].Entries[1].ExtID),

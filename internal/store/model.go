@@ -43,6 +43,7 @@ type Feed struct {
 	SiteURL     sql.NullString
 	Subscribed  string
 	Updated     sql.NullString
+	LastPulled  string
 	Tags        jsonArrayString
 	IsStarred   bool
 	Entries     []*Entry
@@ -67,6 +68,11 @@ func (f *Feed) Proto() (*api.Feed, error) {
 	}
 
 	proto.UpdateTime, err = toProtoTime(unwrapNullString(f.Updated))
+	if err != nil {
+		return nil, err
+	}
+
+	proto.LastPullTime, err = toProtoTime(&f.LastPulled)
 	if err != nil {
 		return nil, err
 	}
