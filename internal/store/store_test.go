@@ -131,18 +131,18 @@ func (s *testStore) getFeedUpdateTime(feedURL string) sql.NullString {
 	return sql.NullString{String: updateTime, Valid: true}
 }
 
-func (s *testStore) getFeedSubscriptionTime(feedURL string) string {
+func (s *testStore) getFeedSubTime(feedURL string) string {
 	s.t.Helper()
 
 	tx := s.tx()
-	stmt1, err := tx.Prepare(`SELECT subscription_time FROM feeds WHERE feed_url = ?`)
+	stmt1, err := tx.Prepare(`SELECT sub_time FROM feeds WHERE feed_url = ?`)
 	require.NoError(s.t, err)
 
-	var subscriptionTime string
-	err = stmt1.QueryRow(feedURL, feedURL).Scan(&subscriptionTime)
+	var subTime string
+	err = stmt1.QueryRow(feedURL, feedURL).Scan(&subTime)
 	require.NoError(s.t, err)
 
-	return subscriptionTime
+	return subTime
 }
 
 func (s *testStore) getEntryDBID(feedURL string, entryExtID string) DBID {
@@ -226,7 +226,7 @@ func (s *testStore) addFeeds(feeds []*Feed) map[string]feedKey {
 				site_url,
 				description,
 				is_starred,
-				subscription_time,
+				sub_time,
 				update_time
 			)
 			VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -251,9 +251,9 @@ func (s *testStore) addFeeds(feeds []*Feed) map[string]feedKey {
 	keys := make(map[string]feedKey)
 	for _, feed := range feeds {
 		var feedDBID DBID
-		subscriptionTime := feed.Subscribed
-		if subscriptionTime == "" {
-			subscriptionTime = time.Now().UTC().Format(time.RFC3339)
+		subTime := feed.Subscribed
+		if subTime == "" {
+			subTime = time.Now().UTC().Format(time.RFC3339)
 		}
 		err = stmt1.QueryRow(
 			feed.Title,
@@ -261,7 +261,7 @@ func (s *testStore) addFeeds(feeds []*Feed) map[string]feedKey {
 			feed.SiteURL,
 			feed.Description,
 			feed.IsStarred,
-			subscriptionTime,
+			subTime,
 			feed.Updated,
 		).Scan(&feedDBID)
 		require.NoError(s.t, err)

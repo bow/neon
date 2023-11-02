@@ -54,7 +54,7 @@ message Feed {
   optional string site_url = 5;
   optional string description = 6;
   optional google.protobuf.Timestamp update_time = 7;
-  google.protobuf.Timestamp subscription_time = 8;
+  google.protobuf.Timestamp sub_time = 8;
   bool is_starred = 9;
   repeated Entry entries = 15;
 }

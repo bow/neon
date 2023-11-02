@@ -63,7 +63,7 @@ func getFeed(ctx context.Context, tx *sql.Tx, feedDBID DBID) (*Feed, error) {
 			f.feed_url AS feed_url,
 			f.site_url AS site_url,
 			f.is_starred AS is_starred,
-			f.subscription_time AS subscription_time,
+			f.sub_time AS sub_time,
 			f.update_time AS update_time,
 			json_group_array(fc.name) FILTER (WHERE fc.name IS NOT NULL) AS tags
 		FROM
@@ -75,7 +75,7 @@ func getFeed(ctx context.Context, tx *sql.Tx, feedDBID DBID) (*Feed, error) {
 		GROUP BY
 			f.id
 		ORDER BY
-			COALESCE(f.update_time, f.subscription_time) DESC
+			COALESCE(f.update_time, f.sub_time) DESC
 `
 	scanRow := func(row *sql.Row) (*Feed, error) {
 		var feed Feed

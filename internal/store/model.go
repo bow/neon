@@ -61,7 +61,7 @@ func (f *Feed) Proto() (*api.Feed, error) {
 
 	var err error
 
-	proto.SubscriptionTime, err = toProtoTime(&f.Subscribed)
+	proto.SubTime, err = toProtoTime(&f.Subscribed)
 	if err != nil {
 		return nil, err
 	}

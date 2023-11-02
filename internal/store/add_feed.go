@@ -97,7 +97,7 @@ func upsertFeed(
 				site_url,
 				is_starred,
 				update_time,
-				subscription_time
+				sub_time
 			)
 			VALUES (?, ?, ?, ?, ?, ?, ?)
 `

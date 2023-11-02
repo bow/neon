@@ -347,7 +347,7 @@ func TestPullFeedsOkSomeNewEntries(t *testing.T) {
 				Title:      pulledFeeds[0].Title,
 				FeedURL:    pulledFeeds[0].FeedURL,
 				Updated:    st.getFeedUpdateTime(feedURL0),
-				Subscribed: st.getFeedSubscriptionTime(feedURL0),
+				Subscribed: st.getFeedSubTime(feedURL0),
 				Entries: []*Entry{
 					{
 						DBID:      st.getEntryDBID(feedURL0, pulledFeeds[0].Entries[1].ExtID),
@@ -381,7 +381,7 @@ func TestPullFeedsOkSomeNewEntries(t *testing.T) {
 				Title:      pulledFeeds[1].Title,
 				FeedURL:    pulledFeeds[1].FeedURL,
 				Updated:    st.getFeedUpdateTime(feedURL1),
-				Subscribed: st.getFeedSubscriptionTime(feedURL1),
+				Subscribed: st.getFeedSubTime(feedURL1),
 				Entries: []*Entry{
 					{
 						DBID:      st.getEntryDBID(feedURL1, pulledFeeds[1].Entries[1].ExtID),

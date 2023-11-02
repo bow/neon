@@ -13,8 +13,8 @@ CREATE TABLE IF NOT EXISTS
   , site_url TEXT NULL CHECK(site_url IS NULL or length(site_url) > 0)
   -- is_starred indicates whether the entry has been starred or not.
   , is_starred BOOLEAN NOT NULL DEFAULT false
-  -- subscription_time is when the feed was added into the database.
-  , subscription_time TIMESTAMP NOT NULL DEFAULT (DATETIME('now'))
+  -- sub_time is when the feed was added into the database.
+  , sub_time TIMESTAMP NOT NULL DEFAULT (DATETIME('now'))
   -- update_time is when the feed was last updated; may be derived from update_time of the entries.
   , update_time TIMESTAMP NULL
   -- feeds must be unique by its feed URL.
