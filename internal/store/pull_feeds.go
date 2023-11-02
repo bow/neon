@@ -7,6 +7,7 @@ import (
 	"context"
 	"database/sql"
 	"sync"
+	"time"
 )
 
 func (s *SQLite) PullFeeds(ctx context.Context) <-chan PullResult {
@@ -120,7 +121,10 @@ func (pk pullKey) err(e error) PullResult {
 	return PullResult{url: &pk.feedURL, status: pullFail, feed: nil, err: e}
 }
 
-var setFeedUpdateTime = tableFieldSetter[string](feedsTable, "update_time")
+var (
+	setFeedUpdateTime   = tableFieldSetter[string](feedsTable, "update_time")
+	setFeedLastPullTime = tableFieldSetter[string](feedsTable, "last_pull_time")
+)
 
 func getAllPullKeys(ctx context.Context, tx *sql.Tx) ([]pullKey, error) {
 
@@ -161,6 +165,7 @@ func pullNewFeedEntries(
 	parser FeedParser,
 ) chan PullResult {
 
+	pullTime := time.Now().UTC().Format(time.RFC3339)
 	pullf := func() PullResult {
 
 		gfeed, err := parser.ParseURLWithContext(pk.feedURL, ctx)
@@ -170,6 +175,9 @@ func pullNewFeedEntries(
 
 		updateTime := serializeTime(resolveFeedUpdateTime(gfeed))
 		if err = setFeedUpdateTime(ctx, tx, pk.feedDBID, updateTime); err != nil {
+			return pk.err(err)
+		}
+		if err = setFeedLastPullTime(ctx, tx, pk.feedDBID, &pullTime); err != nil {
 			return pk.err(err)
 		}
 

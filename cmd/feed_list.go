@@ -47,14 +47,8 @@ func fmtFeed(feed *store.Feed) string {
 		cat = func(format string, a ...any) { fmt.Fprintf(&sb, format, a...) }
 	)
 
-	var upds = ""
-	upd, err := store.DeserializeTime(&feed.Updated.String)
-	if err != nil {
-		upd = nil
-	}
-	if upd != nil {
-		upds = upd.Local().Format("2 January 2006 • 15:04 MST")
-	}
+	upds, _ := refmtTime(&feed.Updated.String)
+	ps, _ := refmtTime(&feed.LastPulled)
 
 	var nread, ntotal int
 	for _, entry := range feed.Entries {
@@ -68,6 +62,7 @@ func fmtFeed(feed *store.Feed) string {
 		k, v string
 	}{
 		{"FeedID", fmt.Sprintf("%d", feed.DBID)},
+		{"Last pulled", ps},
 		{"Updated", upds},
 		{"Unread", fmt.Sprintf("%d/%d", ntotal-nread, ntotal)},
 		{"URL", feed.SiteURL.String},
@@ -92,6 +87,17 @@ func fmtFeed(feed *store.Feed) string {
 	cat("\n")
 
 	return sb.String()
+}
+
+func refmtTime(raw *string) (rv string, err error) {
+	deser, err := store.DeserializeTime(raw)
+	if err != nil {
+		deser = nil
+	}
+	if deser != nil {
+		rv = deser.Local().Format("2 January 2006 • 15:04 MST")
+	}
+	return rv, err
 }
 
 const (

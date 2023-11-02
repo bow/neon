@@ -350,7 +350,7 @@ func TestPullFeedsOkSomeNewEntries(t *testing.T) {
 				FeedURL:    pulledFeeds[0].FeedURL,
 				Updated:    st.getFeedUpdateTime(feedURL0),
 				Subscribed: st.getFeedSubTime(feedURL0),
-				LastPulled: st.getFeedSubTime(feedURL0),
+				LastPulled: "",
 				Entries: []*Entry{
 					{
 						DBID:      st.getEntryDBID(feedURL0, pulledFeeds[0].Entries[1].ExtID),
@@ -385,7 +385,7 @@ func TestPullFeedsOkSomeNewEntries(t *testing.T) {
 				FeedURL:    pulledFeeds[1].FeedURL,
 				Updated:    st.getFeedUpdateTime(feedURL1),
 				Subscribed: st.getFeedSubTime(feedURL1),
-				LastPulled: st.getFeedSubTime(feedURL1),
+				LastPulled: "",
 				Entries: []*Entry{
 					{
 						DBID:      st.getEntryDBID(feedURL1, pulledFeeds[1].Entries[1].ExtID),
@@ -405,6 +405,11 @@ func TestPullFeedsOkSomeNewEntries(t *testing.T) {
 	// Sort inner entries first, since ElementsMatch cares about inner array elements order.
 	sortPullResultEntries(want)
 	sortPullResultEntries(got)
+
+	// Set LastPulled fields to empty strings as this value is always updated on every pull.
+	for _, item := range got {
+		item.feed.LastPulled = ""
+	}
 
 	a.ElementsMatch(want, got)
 }
