@@ -51,7 +51,7 @@ type Feed struct {
 
 func (f *Feed) Proto() (*api.Feed, error) {
 	proto := api.Feed{
-		Id:          uint32(f.DBID),
+		Id:          f.DBID,
 		Title:       f.Title,
 		FeedUrl:     f.FeedURL,
 		SiteUrl:     unwrapNullString(f.SiteURL),
@@ -119,7 +119,7 @@ type FeedEditOp struct {
 
 func NewFeedEditOp(proto *api.EditFeedsRequest_Op) *FeedEditOp {
 	return &FeedEditOp{
-		DBID:        DBID(proto.Id),
+		DBID:        proto.Id,
 		Title:       proto.Fields.Title,
 		Description: proto.Fields.Description,
 		Tags:        &proto.Fields.Tags,
@@ -142,8 +142,8 @@ type Entry struct {
 
 func (e *Entry) Proto() (*api.Entry, error) {
 	proto := api.Entry{
-		Id:          uint32(e.DBID),
-		FeedId:      uint32(e.FeedDBID),
+		Id:          e.DBID,
+		FeedId:      e.FeedDBID,
 		Title:       e.Title,
 		IsRead:      e.IsRead,
 		ExtId:       e.ExtID,
@@ -173,7 +173,7 @@ type EntryEditOp struct {
 }
 
 func NewEntryEditOp(proto *api.EditEntriesRequest_Op) *EntryEditOp {
-	return &EntryEditOp{DBID: DBID(proto.Id), IsRead: proto.Fields.IsRead}
+	return &EntryEditOp{DBID: proto.Id, IsRead: proto.Fields.IsRead}
 }
 
 // WrapNullString wraps the given string into an sql.NullString value. An empty string input is

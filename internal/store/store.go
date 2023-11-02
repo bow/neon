@@ -18,7 +18,7 @@ import (
 	"github.com/bow/iris/internal/store/migration"
 )
 
-type DBID = int
+type DBID = uint32
 
 // FeedStore describes the persistence layer interface.
 type FeedStore interface {

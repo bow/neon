@@ -166,13 +166,13 @@ func TestEditFeedsOk(t *testing.T) {
 
 	r.Len(rsp.Feeds, 3)
 	feed0 := rsp.Feeds[0]
-	a.Equal(uint32(feeds[0].DBID), feed0.Id)
+	a.Equal(feeds[0].DBID, feed0.Id)
 	a.Equal(feeds[0].Title, feed0.Title)
 	feed1 := rsp.Feeds[1]
-	a.Equal(uint32(feeds[1].DBID), feed1.Id)
+	a.Equal(feeds[1].DBID, feed1.Id)
 	a.Equal([]string(feeds[1].Tags), feed1.Tags)
 	feed2 := rsp.Feeds[2]
-	a.Equal(uint32(feeds[2].DBID), feed2.Id)
+	a.Equal(feeds[2].DBID, feed2.Id)
 	a.Equal(feeds[2].IsStarred, feed2.IsStarred)
 }
 
@@ -592,7 +592,7 @@ func TestListEntriesOk(t *testing.T) {
 	}
 
 	str.EXPECT().
-		ListEntries(gomock.Any(), store.DBID(req.GetFeedId())).
+		ListEntries(gomock.Any(), req.GetFeedId()).
 		Return(entries, nil)
 
 	rsp, err := client.ListEntries(context.Background(), &req)
@@ -643,10 +643,10 @@ func TestEditEntriesOk(t *testing.T) {
 
 	r.Len(rsp.Entries, 2)
 	entry0 := rsp.Entries[0]
-	a.Equal(uint32(entries[0].DBID), entry0.Id)
+	a.Equal(entries[0].DBID, entry0.Id)
 	a.Equal(entries[0].IsRead, entry0.IsRead)
 	entry1 := rsp.Entries[1]
-	a.Equal(uint32(entries[1].DBID), entry1.Id)
+	a.Equal(entries[1].DBID, entry1.Id)
 	a.Equal(entries[1].IsRead, entry1.IsRead)
 }
 
@@ -671,7 +671,7 @@ func TestGetEntryOk(t *testing.T) {
 	}
 
 	str.EXPECT().
-		GetEntry(gomock.Any(), 2).
+		GetEntry(gomock.Any(), store.DBID(2)).
 		Return(&entry, nil)
 
 	req := api.GetEntryRequest{Id: 2}
@@ -682,8 +682,8 @@ func TestGetEntryOk(t *testing.T) {
 	r.NotNil(rsp)
 	r.NotNil(rsp.Entry)
 	re := rsp.Entry
-	a.Equal(uint32(entry.DBID), re.Id)
-	a.Equal(uint32(entry.FeedDBID), re.FeedId)
+	a.Equal(entry.DBID, re.Id)
+	a.Equal(entry.FeedDBID, re.FeedId)
 	a.Equal(entry.Title, re.Title)
 	a.Equal(entry.IsRead, re.IsRead)
 	a.Equal(entry.ExtID, re.ExtId)

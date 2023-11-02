@@ -108,7 +108,7 @@ func (svc *service) DeleteFeeds(
 
 	ids := make([]store.DBID, len(req.GetFeedIds()))
 	for i, id := range req.GetFeedIds() {
-		ids[i] = store.DBID(id)
+		ids[i] = id
 	}
 
 	err := svc.store.DeleteFeeds(ctx, ids)
@@ -149,7 +149,7 @@ func (svc *service) PullFeeds(
 
 	ids := make([]store.DBID, len(req.GetFeedIds()))
 	for i, id := range req.GetFeedIds() {
-		ids[i] = store.DBID(id)
+		ids[i] = id
 	}
 
 	ch := svc.store.PullFeeds(stream.Context(), ids)
@@ -176,7 +176,7 @@ func (svc *service) ListEntries(
 	req *api.ListEntriesRequest,
 ) (*api.ListEntriesResponse, error) {
 
-	entries, err := svc.store.ListEntries(ctx, store.DBID(req.GetFeedId()))
+	entries, err := svc.store.ListEntries(ctx, req.GetFeedId())
 	if err != nil {
 		return nil, err
 	}
@@ -227,7 +227,7 @@ func (svc *service) GetEntry(
 	req *api.GetEntryRequest,
 ) (*api.GetEntryResponse, error) {
 
-	entry, err := svc.store.GetEntry(ctx, store.DBID(req.GetId()))
+	entry, err := svc.store.GetEntry(ctx, req.GetId())
 	if err != nil {
 		return nil, err
 	}
