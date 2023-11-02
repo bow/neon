@@ -47,7 +47,7 @@ type IrisClient interface {
 	EditFeeds(ctx context.Context, in *EditFeedsRequest, opts ...grpc.CallOption) (*EditFeedsResponse, error)
 	// ListFeeds lists all added feed sources.
 	ListFeeds(ctx context.Context, in *ListFeedsRequest, opts ...grpc.CallOption) (*ListFeedsResponse, error)
-	// PullFeeds checks all feeds for updates and returns all unread entries.
+	// PullFeeds checks feeds for updates and returns all unread entries.
 	PullFeeds(ctx context.Context, in *PullFeedsRequest, opts ...grpc.CallOption) (Iris_PullFeedsClient, error)
 	// DeleteFeeds removes one or more feed sources.
 	DeleteFeeds(ctx context.Context, in *DeleteFeedsRequest, opts ...grpc.CallOption) (*DeleteFeedsResponse, error)
@@ -205,7 +205,7 @@ type IrisServer interface {
 	EditFeeds(context.Context, *EditFeedsRequest) (*EditFeedsResponse, error)
 	// ListFeeds lists all added feed sources.
 	ListFeeds(context.Context, *ListFeedsRequest) (*ListFeedsResponse, error)
-	// PullFeeds checks all feeds for updates and returns all unread entries.
+	// PullFeeds checks feeds for updates and returns all unread entries.
 	PullFeeds(*PullFeedsRequest, Iris_PullFeedsServer) error
 	// DeleteFeeds removes one or more feed sources.
 	DeleteFeeds(context.Context, *DeleteFeedsRequest) (*DeleteFeedsResponse, error)

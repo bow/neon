@@ -30,8 +30,9 @@ func newFeedPullCommand() *cobra.Command {
 			var (
 				errs []error
 				n    int
-				ch   = str.PullFeeds(cmd.Context())
 				s    = newSpinner()
+				// TODO: Implement optional feed pull selection. For now, just pull everything.
+				ch = str.PullFeeds(cmd.Context(), nil)
 			)
 
 			s.Start()

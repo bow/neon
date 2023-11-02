@@ -21,7 +21,7 @@ service Iris {
   // ListFeeds lists all added feed sources.
   rpc ListFeeds (ListFeedsRequest) returns (ListFeedsResponse) {}
 
-  // PullFeeds checks all feeds for updates and returns all unread entries.
+  // PullFeeds checks feeds for updates and returns all unread entries.
   rpc PullFeeds (PullFeedsRequest) returns (stream PullFeedsResponse) {}
 
   // DeleteFeeds removes one or more feed sources.
@@ -113,7 +113,9 @@ message ListFeedsResponse {
   repeated Feed feeds = 1;
 }
 
-message PullFeedsRequest {}
+message PullFeedsRequest {
+  repeated uint32 feed_ids = 1;
+}
 
 message PullFeedsResponse {
   string url = 1;

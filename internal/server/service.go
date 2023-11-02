@@ -120,7 +120,7 @@ func (svc *service) DeleteFeeds(
 
 // PullFeeds satisfies the service API.
 func (svc *service) PullFeeds(
-	_ *api.PullFeedsRequest,
+	req *api.PullFeedsRequest,
 	stream api.Iris_PullFeedsServer,
 ) error {
 
@@ -147,7 +147,12 @@ func (svc *service) PullFeeds(
 		return &rsp, nil
 	}
 
-	ch := svc.store.PullFeeds(stream.Context())
+	ids := make([]store.DBID, len(req.GetFeedIds()))
+	for i, id := range req.GetFeedIds() {
+		ids[i] = store.DBID(id)
+	}
+
+	ch := svc.store.PullFeeds(stream.Context(), ids)
 
 	for pr := range ch {
 		payload, err := convert(pr)

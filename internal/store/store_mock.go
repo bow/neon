@@ -170,17 +170,17 @@ func (mr *MockFeedStoreMockRecorder) ListFeeds(ctx interface{}) *gomock.Call {
 }
 
 // PullFeeds mocks base method.
-func (m *MockFeedStore) PullFeeds(ctx context.Context) <-chan PullResult {
+func (m *MockFeedStore) PullFeeds(ctx context.Context, feedIDs []DBID) <-chan PullResult {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "PullFeeds", ctx)
+	ret := m.ctrl.Call(m, "PullFeeds", ctx, feedIDs)
 	ret0, _ := ret[0].(<-chan PullResult)
 	return ret0
 }
 
 // PullFeeds indicates an expected call of PullFeeds.
-func (mr *MockFeedStoreMockRecorder) PullFeeds(ctx interface{}) *gomock.Call {
+func (mr *MockFeedStoreMockRecorder) PullFeeds(ctx, feedIDs interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PullFeeds", reflect.TypeOf((*MockFeedStore)(nil).PullFeeds), ctx)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PullFeeds", reflect.TypeOf((*MockFeedStore)(nil).PullFeeds), ctx, feedIDs)
 }
 
 // MockeditableTable is a mock of editableTable interface.

@@ -267,7 +267,7 @@ func TestPullFeedsAllOk(t *testing.T) {
 	}()
 
 	str.EXPECT().
-		PullFeeds(gomock.Any()).
+		PullFeeds(gomock.Any(), []store.DBID{}).
 		Return(ch)
 
 	req := api.PullFeedsRequest{}
@@ -305,6 +305,81 @@ func TestPullFeedsAllOk(t *testing.T) {
 	r.Nil(rsp1.Error)
 	r.NotNil(rsp0.Feed)
 	a.Len(rsp1.GetFeed().GetEntries(), 1)
+}
+
+func TestPullFeedsSelectedAllOk(t *testing.T) {
+	t.Parallel()
+
+	a := assert.New(t)
+	r := require.New(t)
+	client, str := setupServerTest(t)
+
+	prs := []store.PullResult{
+		store.NewPullResultFromFeed(pointer("http://z.com/feed.xml"), nil),
+		store.NewPullResultFromFeed(
+			pointer("http://c.com/feed.xml"),
+			&store.Feed{
+				Title:      "feed-C",
+				FeedURL:    "https://c.com/feed.xml",
+				Subscribed: "2021-07-23T17:21:11.489+02:00",
+				LastPulled: "2021-07-23T17:21:11.489+02:00",
+				IsStarred:  false,
+				Entries: []*store.Entry{
+					{Title: "Entry C3", IsRead: false},
+				},
+			},
+		),
+	}
+
+	ch := make(chan store.PullResult)
+	go func() {
+		defer close(ch)
+
+		// Randomize ordering, to simulate actual URL pulls.
+		shufres := make([]store.PullResult, len(prs))
+		copy(shufres, prs)
+		r := rand.New(rand.NewSource(time.Now().UnixNano())) // #nosec: G404
+		shf := func(i, j int) { shufres[i], shufres[j] = shufres[j], shufres[i] }
+		r.Shuffle(len(shufres), shf)
+
+		for i := 0; i < len(shufres); i++ {
+			ch <- shufres[i]
+		}
+	}()
+
+	str.EXPECT().
+		PullFeeds(gomock.Any(), []store.DBID{2, 3}).
+		Return(ch)
+
+	req := api.PullFeedsRequest{FeedIds: []uint32{2, 3}}
+	stream, err := client.PullFeeds(context.Background(), &req)
+	r.NoError(err)
+
+	var (
+		rsp       *api.PullFeedsResponse
+		errStream error
+		rsps      = make([]*api.PullFeedsResponse, 1)
+	)
+
+	for i := 0; i < len(rsps); i++ {
+		rsp, errStream = stream.Recv()
+		a.NoError(errStream)
+		a.NotNil(rsp)
+		rsps[i] = rsp
+	}
+
+	rsp, errStream = stream.Recv()
+	a.ErrorIs(errStream, io.EOF)
+	a.Nil(rsp)
+
+	// Sort responses so tests are insensitive to input order.
+	sort.SliceStable(rsps, func(i, j int) bool { return rsps[i].GetUrl() < rsps[j].GetUrl() })
+
+	rsp0 := rsps[0]
+	r.Equal(prs[1].URL(), rsp0.GetUrl())
+	r.Nil(rsp0.Error)
+	r.NotNil(rsp0.Feed)
+	a.Len(rsp0.GetFeed().GetEntries(), 1)
 }
 
 func TestPullFeedsErrSomeFeed(t *testing.T) {
@@ -363,7 +438,7 @@ func TestPullFeedsErrSomeFeed(t *testing.T) {
 	}()
 
 	str.EXPECT().
-		PullFeeds(gomock.Any()).
+		PullFeeds(gomock.Any(), []store.DBID{}).
 		Return(ch)
 
 	req := api.PullFeedsRequest{}
@@ -461,7 +536,7 @@ func TestPullFeedsErrNonFeed(t *testing.T) {
 	}()
 
 	str.EXPECT().
-		PullFeeds(gomock.Any()).
+		PullFeeds(gomock.Any(), []store.DBID{}).
 		Return(ch)
 
 	req := api.PullFeedsRequest{}

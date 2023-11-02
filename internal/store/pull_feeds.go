@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-func (s *SQLite) PullFeeds(ctx context.Context) <-chan PullResult {
+func (s *SQLite) PullFeeds(ctx context.Context, feedDBIDs []DBID) <-chan PullResult {
 
 	var (
 		fail = failF("SQLite.PullFeeds")
@@ -23,7 +23,15 @@ func (s *SQLite) PullFeeds(ctx context.Context) <-chan PullResult {
 
 		defer wg.Done()
 
-		pks, err := getAllPullKeys(ctx, tx)
+		var (
+			pks []pullKey
+			err error
+		)
+		if len(feedDBIDs) == 0 {
+			pks, err = getAllPullKeys(ctx, tx)
+		} else {
+			pks, err = getPullKeys(ctx, tx, feedDBIDs)
+		}
 		if err != nil {
 			c <- NewPullResultFromError(nil, fail(err))
 			return nil
@@ -125,6 +133,26 @@ var (
 	setFeedUpdateTime   = tableFieldSetter[string](feedsTable, "update_time")
 	setFeedLastPullTime = tableFieldSetter[string](feedsTable, "last_pull_time")
 )
+
+func getPullKeys(ctx context.Context, tx *sql.Tx, feedDBIDs []DBID) ([]pullKey, error) {
+	// FIXME: Find a cleaner way to check for array membership using database/sql.
+	//        Until then, we just loop through all IDs.
+	stmt1, err := tx.PrepareContext(ctx, `SELECT feed_url FROM feeds WHERE id = ?`)
+	if err != nil {
+		return nil, err
+	}
+
+	pks := make([]pullKey, len(feedDBIDs))
+	for i, dbid := range feedDBIDs {
+		pk := pullKey{feedDBID: dbid}
+		if err := stmt1.QueryRowContext(ctx, pk.feedDBID).Scan(&pk.feedURL); err != nil {
+			return nil, err
+		}
+		pks[i] = pk
+	}
+
+	return pks, nil
+}
 
 func getAllPullKeys(ctx context.Context, tx *sql.Tx) ([]pullKey, error) {
 

@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestPullFeedsOkEmptyDB(t *testing.T) {
+func TestPullFeedsAllOkEmptyDB(t *testing.T) {
 	t.Parallel()
 
 	a := assert.New(t)
@@ -27,11 +27,11 @@ func TestPullFeedsOkEmptyDB(t *testing.T) {
 		ParseURLWithContext(gomock.Any(), gomock.Any()).
 		MaxTimes(0)
 
-	c := st.PullFeeds(context.Background())
+	c := st.PullFeeds(context.Background(), nil)
 	a.Empty(c)
 }
 
-func TestPullFeedsOkEmptyEntries(t *testing.T) {
+func TestPullFeedsAllOkEmptyEntries(t *testing.T) {
 	t.Parallel()
 
 	a := assert.New(t)
@@ -66,7 +66,7 @@ func TestPullFeedsOkEmptyEntries(t *testing.T) {
 		MaxTimes(1).
 		Return(toGFeed(t, dbFeeds[1]), nil)
 
-	c := st.PullFeeds(context.Background())
+	c := st.PullFeeds(context.Background(), nil)
 
 	got := make([]PullResult, 0)
 	for res := range c {
@@ -91,7 +91,7 @@ func TestPullFeedsOkEmptyEntries(t *testing.T) {
 	a.ElementsMatch(want, got)
 }
 
-func TestPullFeedsOkNoNewEntries(t *testing.T) {
+func TestPullFeedsAllOkNoNewEntries(t *testing.T) {
 	t.Parallel()
 
 	a := assert.New(t)
@@ -184,7 +184,7 @@ func TestPullFeedsOkNoNewEntries(t *testing.T) {
 		MaxTimes(1).
 		Return(toGFeed(t, pulledFeeds[1]), nil)
 
-	c := st.PullFeeds(context.Background())
+	c := st.PullFeeds(context.Background(), nil)
 
 	got := make([]PullResult, 0)
 	for res := range c {
@@ -209,7 +209,7 @@ func TestPullFeedsOkNoNewEntries(t *testing.T) {
 	a.ElementsMatch(want, got)
 }
 
-func TestPullFeedsOkSomeNewEntries(t *testing.T) {
+func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 	t.Parallel()
 
 	a := assert.New(t)
@@ -329,7 +329,7 @@ func TestPullFeedsOkSomeNewEntries(t *testing.T) {
 		MaxTimes(1).
 		Return(toGFeed(t, pulledFeeds[1]), nil)
 
-	c := st.PullFeeds(context.Background())
+	c := st.PullFeeds(context.Background(), nil)
 
 	got := make([]PullResult, 0)
 	for res := range c {
@@ -395,6 +395,140 @@ func TestPullFeedsOkSomeNewEntries(t *testing.T) {
 						Updated:   st.getEntryUpdateTime(feedURL1, pulledFeeds[1].Entries[1].ExtID),
 						Published: st.getEntryPubTime(feedURL1, pulledFeeds[1].Entries[1].ExtID),
 						URL:       pulledFeeds[1].Entries[1].URL,
+						IsRead:    false,
+					},
+				},
+			},
+		},
+	}
+
+	// Sort inner entries first, since ElementsMatch cares about inner array elements order.
+	sortPullResultEntries(want)
+	sortPullResultEntries(got)
+
+	// Set LastPulled fields to empty strings as this value is always updated on every pull.
+	for _, item := range got {
+		item.feed.LastPulled = ""
+	}
+
+	a.ElementsMatch(want, got)
+}
+
+func TestPullFeedsSelectedOkSomeNewEntries(t *testing.T) {
+	t.Parallel()
+
+	a := assert.New(t)
+	r := require.New(t)
+	st := newTestStore(t)
+
+	dbFeeds := []*Feed{
+		// This feed should not be returned later, it is not selected.
+		{
+			Title:      "Feed A",
+			FeedURL:    "http://a.com/feed.xml",
+			Subscribed: "2022-07-18T22:04:37Z",
+			LastPulled: "2022-07-18T22:04:37Z",
+			Updated:    WrapNullString("2022-03-19T16:23:18.600+02:00"),
+			Entries: []*Entry{
+				{
+					Title:   "Entry A1",
+					ExtID:   "A1",
+					IsRead:  true,
+					Updated: WrapNullString("2022-07-16T23:39:07.383+02:00"),
+					URL:     WrapNullString("http://a.com/a1.html"),
+				},
+				{
+					Title:   "Entry A2",
+					ExtID:   "A2",
+					IsRead:  false,
+					Updated: WrapNullString("2022-07-16T23:42:24.988+02:00"),
+					URL:     WrapNullString("http://a.com/a2.html"),
+				},
+				{
+					Title:   "Entry A3",
+					ExtID:   "A3",
+					IsRead:  true,
+					Updated: WrapNullString("2022-03-18T22:51:49.404+02:00"),
+					URL:     WrapNullString("http://a.com/a3.html"),
+				},
+			},
+		},
+		// This feed should be returned later, it is selected.
+		{
+			Title:      "Feed X",
+			FeedURL:    "http://x.com/feed.xml",
+			Subscribed: "2022-07-18T22:04:45Z",
+			LastPulled: "2022-07-18T22:04:45Z",
+			Updated:    WrapNullString("2022-04-20T16:32:30.760+02:00"),
+			Entries: []*Entry{
+				{
+					// This entry should not be returned later; 'updated' remains the same.
+					Title:   "Entry X1",
+					ExtID:   "X1",
+					IsRead:  true,
+					Updated: WrapNullString("2022-07-16T23:43:12.759+02:00"),
+					URL:     WrapNullString("http://x.com/x1.html"),
+				},
+			},
+		},
+	}
+
+	keys := st.addFeeds(dbFeeds)
+	r.Equal(2, st.countFeeds())
+
+	pulledFeed := &Feed{
+		Title:   dbFeeds[1].Title,
+		FeedURL: dbFeeds[1].FeedURL,
+		Updated: WrapNullString("2022-07-18T22:21:41.647+02:00"),
+		Entries: []*Entry{
+			{
+				Title:   dbFeeds[1].Entries[0].Title,
+				ExtID:   dbFeeds[1].Entries[0].ExtID,
+				Updated: dbFeeds[1].Entries[0].Updated,
+				URL:     dbFeeds[1].Entries[0].URL,
+			},
+			{
+				Title:   "Entry X2",
+				ExtID:   "X2",
+				Updated: WrapNullString("2022-07-18T22:21:41.647+02:00"),
+				URL:     WrapNullString("http://x.com/x2.html"),
+			},
+		},
+	}
+
+	st.parser.EXPECT().
+		ParseURLWithContext(dbFeeds[1].FeedURL, gomock.Any()).
+		MaxTimes(1).
+		Return(toGFeed(t, pulledFeed), nil)
+
+	c := st.PullFeeds(context.Background(), []DBID{keys[pulledFeed.Title].DBID})
+
+	got := make([]PullResult, 0)
+	for res := range c {
+		got = append(got, res)
+	}
+
+	want := []PullResult{
+		{
+			url:    &dbFeeds[1].FeedURL,
+			status: pullSuccess,
+			err:    nil,
+			feed: &Feed{
+				DBID:       keys[pulledFeed.Title].DBID,
+				Title:      pulledFeed.Title,
+				FeedURL:    pulledFeed.FeedURL,
+				Updated:    st.getFeedUpdateTime(pulledFeed.FeedURL),
+				Subscribed: st.getFeedSubTime(pulledFeed.FeedURL),
+				LastPulled: "",
+				Entries: []*Entry{
+					{
+						DBID:      st.getEntryDBID(pulledFeed.FeedURL, pulledFeed.Entries[1].ExtID),
+						FeedDBID:  keys[pulledFeed.Title].DBID,
+						Title:     pulledFeed.Entries[1].Title,
+						ExtID:     pulledFeed.Entries[1].ExtID,
+						Updated:   st.getEntryUpdateTime(pulledFeed.FeedURL, pulledFeed.Entries[1].ExtID),
+						Published: st.getEntryPubTime(pulledFeed.FeedURL, pulledFeed.Entries[1].ExtID),
+						URL:       pulledFeed.Entries[1].URL,
 						IsRead:    false,
 					},
 				},
