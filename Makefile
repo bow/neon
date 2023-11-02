@@ -82,13 +82,8 @@ clean:  ## Remove all build artifacts.
 	rm -f bin/* coverage.html .coverage.out .junit.xml $(DEV_DB_FILE) && (docker rmi $(IMG_NAME) 2> /dev/null || true)
 
 
-.PHONY: img
-img:  ## Build and tag the Docker container.
-	docker build --build-arg REVISION=$(GIT_COMMIT)$(GIT_DIRTY) --build-arg BUILD_TIME=$(BUILD_TIME) --tag $(IMG_NAME):$(IMG_TAG) .
-
-
-.PHONY: install-dev
-install-dev:  ## Install dependencies for local development.
+.PHONY: dev
+dev:  ## Install dependencies for local development.
 	@if command -v asdf 1>/dev/null 2>&1; then \
 		if [ ! -f .tool-versions ]; then \
 			(asdf plugin add golang 2> /dev/null || true) \
@@ -131,6 +126,11 @@ help:  ## Show this help.
 		&& $(GREP_EXE) -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
 			| awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m» \033[33m%-*s\033[0m \033[36m· \033[0m%s\n", $(PADLEN), $$1, $$2}' \
 			| sort
+
+
+.PHONY: img
+img:  ## Build and tag the Docker container.
+	docker build --build-arg REVISION=$(GIT_COMMIT)$(GIT_DIRTY) --build-arg BUILD_TIME=$(BUILD_TIME) --tag $(IMG_NAME):$(IMG_TAG) .
 
 
 .PHONY: lint
