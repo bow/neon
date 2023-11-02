@@ -604,7 +604,7 @@ func TestExportOPMLOk(t *testing.T) {
 	payload := `<\?xml version="1.0" encoding="UTF-8"\?>
 <opml version="2.0">
   <head>
-    <title>Iris export</title>
+    <title>iris export</title>
 	<dateCreated>Thu, 17 Feb 2022 16:37:19 CET</dateCreated>
   </head>
   <body>

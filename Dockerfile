@@ -3,7 +3,7 @@
 # Copyright (c) 2022 Wibowo Arindrarto <contact@arindrarto.dev>
 # SPDX-License-Identifier: BSD-3-Clause
 #
-# This file is part of Iris <https://github.com/bow/iris>.
+# This file is part of iris <https://github.com/bow/iris>.
 
 FROM golang:1.21-alpine AS builder
 

@@ -3,7 +3,7 @@
 # Copyright (c) 2022 Wibowo Arindrarto <contact@arindrarto.dev>
 # SPDX-License-Identifier: BSD-3-Clause
 #
-# This file is part of Iris <https://github.com/bow/iris>.
+# This file is part of iris <https://github.com/bow/iris>.
 
 # Cross-platform adjustments.
 SYS := $(shell uname 2> /dev/null)

@@ -1,4 +1,4 @@
-// Protobuf interface of the Iris service.
+// Protobuf interface of the iris service.
 //
 // Copyright (c) 2022 Wibowo Arindrarto <contact@arindrarto.dev>
 // SPDX-License-Identifier: BSD-3-Clause

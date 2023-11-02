@@ -14,7 +14,7 @@ import (
 	"github.com/bow/iris/internal/store"
 )
 
-// service implements the Iris service API.
+// service implements the iris service API.
 type service struct {
 	api.UnimplementedIrisServer
 
