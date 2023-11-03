@@ -203,7 +203,7 @@ func TestDeleteFeedsErrNotFound(t *testing.T) {
 
 	str.EXPECT().
 		DeleteFeeds(gomock.Any(), []store.ID{1, 9}).
-		Return(fmt.Errorf("wrapped: %w", store.FeedNotFoundError{FeedID: 9}))
+		Return(fmt.Errorf("wrapped: %w", store.FeedNotFoundError{ID: 9}))
 
 	req := api.DeleteFeedsRequest{FeedIds: []uint32{1, 9}}
 	rsp, err := client.DeleteFeeds(context.Background(), &req)
