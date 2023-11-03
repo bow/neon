@@ -11,6 +11,8 @@ import (
 )
 
 func (s *SQLite) PullFeeds(ctx context.Context, ids []ID) <-chan PullResult {
+	s.mu.Lock()
+	defer s.mu.Unlock()
 
 	var (
 		fail = failF("SQLite.PullFeeds")
