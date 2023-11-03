@@ -12,6 +12,8 @@ func (s *SQLite) DeleteFeeds(ctx context.Context, ids []ID) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
+	ids = dedup(ids)
+
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
 
 		sql1 := `DELETE FROM feeds WHERE id = ?`

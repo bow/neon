@@ -19,6 +19,7 @@ func (s *SQLite) PullFeeds(ctx context.Context, ids []ID) <-chan PullResult {
 		c    = make(chan PullResult)
 		wg   sync.WaitGroup
 	)
+	ids = dedup(ids)
 
 	// nolint: unparam
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
