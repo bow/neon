@@ -202,16 +202,16 @@ func tableFieldSetter[T any](
 	}
 }
 
-func dedup(ids []ID) []ID {
-	seen := make(map[ID]struct{})
-	nodup := make([]ID, 0)
+func dedup[T comparable](values []T) []T {
+	seen := make(map[T]struct{})
+	nodup := make([]T, 0)
 
-	for _, id := range ids {
-		if _, exists := seen[id]; exists {
+	for _, val := range values {
+		if _, exists := seen[val]; exists {
 			continue
 		}
-		seen[id] = struct{}{}
-		nodup = append(nodup, id)
+		seen[val] = struct{}{}
+		nodup = append(nodup, val)
 	}
 
 	return nodup
