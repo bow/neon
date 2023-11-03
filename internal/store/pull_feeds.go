@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-func (s *SQLite) PullFeeds(ctx context.Context, feedIDs []ID) <-chan PullResult {
+func (s *SQLite) PullFeeds(ctx context.Context, ids []ID) <-chan PullResult {
 
 	var (
 		fail = failF("SQLite.PullFeeds")
@@ -27,10 +27,10 @@ func (s *SQLite) PullFeeds(ctx context.Context, feedIDs []ID) <-chan PullResult 
 			pks []pullKey
 			err error
 		)
-		if len(feedIDs) == 0 {
+		if len(ids) == 0 {
 			pks, err = getAllPullKeys(ctx, tx)
 		} else {
-			pks, err = getPullKeys(ctx, tx, feedIDs)
+			pks, err = getPullKeys(ctx, tx, ids)
 		}
 		if err != nil {
 			c <- NewPullResultFromError(nil, fail(err))
