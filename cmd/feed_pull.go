@@ -67,7 +67,7 @@ func newFeedPullCommand() *cobra.Command {
 			if len(errs) > 0 {
 				return errors.Join(errs...)
 			}
-			log.Info().Int("num_updated", n).Msgf("Finished pulling feeds")
+			log.Info().Int("num_pulled", n).Msgf("Finished pulling feeds")
 
 			return nil
 		},
