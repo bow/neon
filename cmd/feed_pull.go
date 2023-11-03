@@ -37,13 +37,9 @@ func newFeedPullCommand() *cobra.Command {
 				return err
 			}
 
-			ids := make([]store.ID, nargs)
-			for i, arg := range args {
-				id, err := store.ToFeedID(arg)
-				if err != nil {
-					return err
-				}
-				ids[i] = id
+			ids, err := store.ToFeedIDs(args)
+			if err != nil {
+				return err
 			}
 
 			var (

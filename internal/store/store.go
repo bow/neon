@@ -21,14 +21,6 @@ import (
 
 type ID = uint32
 
-func ToFeedID(raw string) (ID, error) {
-	id, err := strconv.ParseUint(raw, 10, 32)
-	if err != nil {
-		return 0, FeedNotFoundError{ID: raw}
-	}
-	return ID(id), nil
-}
-
 // FeedStore describes the persistence layer interface.
 type FeedStore interface {
 	AddFeed(
@@ -131,6 +123,27 @@ func (s *SQLite) withTx(
 	err = dbFunc(ctx, tx)
 
 	return err
+}
+
+func ToFeedIDs(raw []string) ([]ID, error) {
+	nodup := dedup(raw)
+	ids := make([]ID, 0)
+	for _, item := range nodup {
+		id, err := toFeedID(item)
+		if err != nil {
+			return nil, err
+		}
+		ids = append(ids, id)
+	}
+	return ids, nil
+}
+
+func toFeedID(raw string) (ID, error) {
+	id, err := strconv.ParseUint(raw, 10, 32)
+	if err != nil {
+		return 0, FeedNotFoundError{ID: raw}
+	}
+	return ID(id), nil
 }
 
 func pointerOrNil(v string) *string {
