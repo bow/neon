@@ -39,7 +39,7 @@ func (s *SQLite) AddFeed(
 
 		now := time.Now()
 
-		feedDBID, _, ierr := upsertFeed(
+		feedID, _, ierr := upsertFeed(
 			ctx,
 			tx,
 			feed.FeedLink,
@@ -54,15 +54,15 @@ func (s *SQLite) AddFeed(
 			return ierr
 		}
 
-		if ierr = upsertEntries(ctx, tx, feedDBID, feed.Items); ierr != nil {
+		if ierr = upsertEntries(ctx, tx, feedID, feed.Items); ierr != nil {
 			return ierr
 		}
 
-		if ierr = addFeedTags(ctx, tx, feedDBID, tags); ierr != nil {
+		if ierr = addFeedTags(ctx, tx, feedID, tags); ierr != nil {
 			return ierr
 		}
 
-		if created, ierr = getFeed(ctx, tx, feedDBID); ierr != nil {
+		if created, ierr = getFeed(ctx, tx, feedID); ierr != nil {
 			return ierr
 		}
 
@@ -86,7 +86,7 @@ func upsertFeed(
 	isStarred *bool,
 	updateTime *time.Time,
 	subTime *time.Time,
-) (feedDBID DBID, added bool, err error) {
+) (feedID ID, added bool, err error) {
 
 	sql1 := `
 		INSERT INTO
@@ -104,7 +104,7 @@ func upsertFeed(
 `
 	stmt1, err := tx.PrepareContext(ctx, sql1)
 	if err != nil {
-		return feedDBID, added, err
+		return feedID, added, err
 	}
 	defer stmt1.Close()
 
@@ -123,17 +123,17 @@ func upsertFeed(
 
 	if err == nil {
 		lid, ierr := res.LastInsertId()
-		feedDBID = DBID(lid)
+		feedID = ID(lid)
 		if ierr != nil {
-			return feedDBID, added, ierr
+			return feedID, added, ierr
 		}
 		added = true
 	} else {
 		if !isUniqueErr(err, "UNIQUE constraint failed: feeds.feed_url") {
-			return feedDBID, added, err
+			return feedID, added, err
 		}
 		var ierr error
-		if feedDBID, ierr = editFeedWithFeedURL(
+		if feedID, ierr = editFeedWithFeedURL(
 			ctx,
 			tx,
 			feedURL,
@@ -142,12 +142,12 @@ func upsertFeed(
 			siteURL,
 			isStarred,
 		); ierr != nil {
-			return feedDBID, added, err
+			return feedID, added, err
 		}
 		added = false
 	}
 
-	return feedDBID, added, nil
+	return feedID, added, nil
 }
 
 func editFeedWithFeedURL(
@@ -158,9 +158,9 @@ func editFeedWithFeedURL(
 	desc *string,
 	siteURL *string,
 	isStarred *bool,
-) (DBID, error) {
+) (ID, error) {
 
-	var feedDBID DBID
+	var feedID ID
 
 	sql1 := `SELECT id FROM feeds WHERE feed_url = ?`
 	stmt1, err := tx.PrepareContext(ctx, sql1)
@@ -168,28 +168,28 @@ func editFeedWithFeedURL(
 		return 0, err
 	}
 
-	if err := stmt1.QueryRowContext(ctx, feedURL).Scan(&feedDBID); err != nil {
+	if err := stmt1.QueryRowContext(ctx, feedURL).Scan(&feedID); err != nil {
 		return 0, err
 	}
-	if err := setFeedTitle(ctx, tx, feedDBID, title); err != nil {
+	if err := setFeedTitle(ctx, tx, feedID, title); err != nil {
 		return 0, err
 	}
-	if err := setFeedDescription(ctx, tx, feedDBID, desc); err != nil {
+	if err := setFeedDescription(ctx, tx, feedID, desc); err != nil {
 		return 0, err
 	}
-	if err := setFeedIsStarred(ctx, tx, feedDBID, isStarred); err != nil {
+	if err := setFeedIsStarred(ctx, tx, feedID, isStarred); err != nil {
 		return 0, err
 	}
-	if err := setFeedSiteURL(ctx, tx, feedDBID, siteURL); err != nil {
+	if err := setFeedSiteURL(ctx, tx, feedID, siteURL); err != nil {
 		return 0, err
 	}
-	return feedDBID, nil
+	return feedID, nil
 }
 
 func upsertEntries(
 	ctx context.Context,
 	tx *sql.Tx,
-	feedDBID DBID,
+	feedID ID,
 	entries []*gofeed.Item,
 ) error {
 
@@ -239,7 +239,7 @@ func upsertEntries(
 		updateTime := serializeTime(resolveEntryUpdateTime(entry))
 		_, err := insertStmt.ExecContext(
 			ctx,
-			feedDBID,
+			feedID,
 			entry.GUID,
 			entry.Link,
 			entry.Title,
@@ -255,7 +255,7 @@ func upsertEntries(
 			if _, ierr := updateStmt.ExecContext(
 				ctx,
 				updateTime,
-				feedDBID,
+				feedID,
 				entry.GUID,
 			); ierr != nil {
 				return ierr
@@ -275,7 +275,7 @@ func upsertEntries(
 func addFeedTags(
 	ctx context.Context,
 	tx *sql.Tx,
-	feedDBID DBID,
+	feedID ID,
 	tags []string,
 ) error {
 
@@ -298,12 +298,12 @@ func addFeedTags(
 		return err
 	}
 	defer stmt2.Close()
-	ids := make(map[string]DBID)
+	ids := make(map[string]ID)
 	for _, tag := range tags {
 		if _, exists := ids[tag]; exists {
 			continue
 		}
-		var id DBID
+		var id ID
 		row := stmt2.QueryRowContext(ctx, tag)
 		if err = row.Scan(&id); err != nil {
 			return err
@@ -318,8 +318,8 @@ func addFeedTags(
 	}
 	defer stmt3.Close()
 
-	for _, catDBID := range ids {
-		if _, err := stmt3.ExecContext(ctx, feedDBID, catDBID); err != nil {
+	for _, catID := range ids {
+		if _, err := stmt3.ExecContext(ctx, feedID, catID); err != nil {
 			return err
 		}
 	}

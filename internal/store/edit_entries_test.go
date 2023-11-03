@@ -57,7 +57,7 @@ func TestEditEntriesOkMinimal(t *testing.T) {
 	a.False(existe("Entry A1", false))
 
 	ops := []*EntryEditOp{
-		{DBID: keys["Feed A"].Entries["Entry A1"], IsRead: pointer(false)},
+		{ID: keys["Feed A"].Entries["Entry A1"], IsRead: pointer(false)},
 	}
 	entries, err := st.EditEntries(context.Background(), ops)
 	r.NoError(err)
@@ -116,8 +116,8 @@ func TestEditEntriesOkExtended(t *testing.T) {
 	a.False(existe("Entry X1", true))
 
 	setOps := []*EntryEditOp{
-		{DBID: keys["Feed X"].Entries["Entry X1"], IsRead: pointer(true)},
-		{DBID: keys["Feed A"].Entries["Entry A2"], IsRead: pointer(true)},
+		{ID: keys["Feed X"].Entries["Entry X1"], IsRead: pointer(true)},
+		{ID: keys["Feed A"].Entries["Entry A2"], IsRead: pointer(true)},
 	}
 	entries, err := st.EditEntries(context.Background(), setOps)
 	r.NoError(err)

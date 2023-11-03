@@ -106,7 +106,7 @@ func (svc *service) DeleteFeeds(
 	req *api.DeleteFeedsRequest,
 ) (*api.DeleteFeedsResponse, error) {
 
-	ids := make([]store.DBID, len(req.GetFeedIds()))
+	ids := make([]store.ID, len(req.GetFeedIds()))
 	for i, id := range req.GetFeedIds() {
 		ids[i] = id
 	}
@@ -147,7 +147,7 @@ func (svc *service) PullFeeds(
 		return &rsp, nil
 	}
 
-	ids := make([]store.DBID, len(req.GetFeedIds()))
+	ids := make([]store.ID, len(req.GetFeedIds()))
 	for i, id := range req.GetFeedIds() {
 		ids[i] = id
 	}

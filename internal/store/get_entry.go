@@ -9,7 +9,7 @@ import (
 	"errors"
 )
 
-func (s *SQLite) GetEntry(ctx context.Context, entryID DBID) (*Entry, error) {
+func (s *SQLite) GetEntry(ctx context.Context, entryID ID) (*Entry, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -35,7 +35,7 @@ func (s *SQLite) GetEntry(ctx context.Context, entryID DBID) (*Entry, error) {
 	return entry, nil
 }
 
-func getEntry(ctx context.Context, tx *sql.Tx, entryDBID DBID) (*Entry, error) {
+func getEntry(ctx context.Context, tx *sql.Tx, entryID ID) (*Entry, error) {
 
 	sql1 := `
 		SELECT
@@ -59,8 +59,8 @@ func getEntry(ctx context.Context, tx *sql.Tx, entryDBID DBID) (*Entry, error) {
 	scanRow := func(row *sql.Row) (*Entry, error) {
 		var entry Entry
 		if err := row.Scan(
-			&entry.DBID,
-			&entry.FeedDBID,
+			&entry.ID,
+			&entry.FeedID,
 			&entry.Title,
 			&entry.IsRead,
 			&entry.ExtID,
@@ -81,5 +81,5 @@ func getEntry(ctx context.Context, tx *sql.Tx, entryDBID DBID) (*Entry, error) {
 	}
 	defer stmt1.Close()
 
-	return scanRow(stmt1.QueryRowContext(ctx, entryDBID))
+	return scanRow(stmt1.QueryRowContext(ctx, entryID))
 }

@@ -36,7 +36,7 @@ func (sub Subscription) Export(title *string) ([]byte, error) {
 }
 
 type Feed struct {
-	DBID        DBID
+	ID          ID
 	Title       string
 	Description sql.NullString
 	FeedURL     string
@@ -51,7 +51,7 @@ type Feed struct {
 
 func (f *Feed) Proto() (*api.Feed, error) {
 	proto := api.Feed{
-		Id:          f.DBID,
+		Id:          f.ID,
 		Title:       f.Title,
 		FeedUrl:     f.FeedURL,
 		SiteUrl:     unwrapNullString(f.SiteURL),
@@ -110,7 +110,7 @@ func (f *Feed) Outline() (*opml.Outline, error) {
 }
 
 type FeedEditOp struct {
-	DBID        DBID
+	ID          ID
 	Title       *string
 	Description *string
 	Tags        *[]string
@@ -119,7 +119,7 @@ type FeedEditOp struct {
 
 func NewFeedEditOp(proto *api.EditFeedsRequest_Op) *FeedEditOp {
 	return &FeedEditOp{
-		DBID:        proto.Id,
+		ID:          proto.Id,
 		Title:       proto.Fields.Title,
 		Description: proto.Fields.Description,
 		Tags:        &proto.Fields.Tags,
@@ -128,8 +128,8 @@ func NewFeedEditOp(proto *api.EditFeedsRequest_Op) *FeedEditOp {
 }
 
 type Entry struct {
-	DBID        DBID
-	FeedDBID    DBID
+	ID          ID
+	FeedID      ID
 	Title       string
 	IsRead      bool
 	ExtID       string
@@ -142,8 +142,8 @@ type Entry struct {
 
 func (e *Entry) Proto() (*api.Entry, error) {
 	proto := api.Entry{
-		Id:          e.DBID,
-		FeedId:      e.FeedDBID,
+		Id:          e.ID,
+		FeedId:      e.FeedID,
 		Title:       e.Title,
 		IsRead:      e.IsRead,
 		ExtId:       e.ExtID,
@@ -168,12 +168,12 @@ func (e *Entry) Proto() (*api.Entry, error) {
 }
 
 type EntryEditOp struct {
-	DBID   DBID
+	ID     ID
 	IsRead *bool
 }
 
 func NewEntryEditOp(proto *api.EditEntriesRequest_Op) *EntryEditOp {
-	return &EntryEditOp{DBID: proto.Id, IsRead: proto.Fields.IsRead}
+	return &EntryEditOp{ID: proto.Id, IsRead: proto.Fields.IsRead}
 }
 
 // WrapNullString wraps the given string into an sql.NullString value. An empty string input is

@@ -17,19 +17,19 @@ func (s *SQLite) EditFeeds(
 	defer s.mu.Unlock()
 
 	updateFunc := func(ctx context.Context, tx *sql.Tx, op *FeedEditOp) (*Feed, error) {
-		if err := setFeedTitle(ctx, tx, op.DBID, op.Title); err != nil {
+		if err := setFeedTitle(ctx, tx, op.ID, op.Title); err != nil {
 			return nil, err
 		}
-		if err := setFeedDescription(ctx, tx, op.DBID, op.Description); err != nil {
+		if err := setFeedDescription(ctx, tx, op.ID, op.Description); err != nil {
 			return nil, err
 		}
-		if err := setFeedTags(ctx, tx, op.DBID, op.Tags); err != nil {
+		if err := setFeedTags(ctx, tx, op.ID, op.Tags); err != nil {
 			return nil, err
 		}
-		if err := setFeedIsStarred(ctx, tx, op.DBID, op.IsStarred); err != nil {
+		if err := setFeedIsStarred(ctx, tx, op.ID, op.IsStarred); err != nil {
 			return nil, err
 		}
-		return getFeed(ctx, tx, op.DBID)
+		return getFeed(ctx, tx, op.ID)
 	}
 
 	var entries = make([]*Feed, len(ops))
@@ -53,7 +53,7 @@ func (s *SQLite) EditFeeds(
 	return entries, nil
 }
 
-func getFeed(ctx context.Context, tx *sql.Tx, feedDBID DBID) (*Feed, error) {
+func getFeed(ctx context.Context, tx *sql.Tx, feedID ID) (*Feed, error) {
 
 	sql1 := `
 		SELECT
@@ -81,7 +81,7 @@ func getFeed(ctx context.Context, tx *sql.Tx, feedDBID DBID) (*Feed, error) {
 	scanRow := func(row *sql.Row) (*Feed, error) {
 		var feed Feed
 		if err := row.Scan(
-			&feed.DBID,
+			&feed.ID,
 			&feed.Title,
 			&feed.Description,
 			&feed.FeedURL,
@@ -106,7 +106,7 @@ func getFeed(ctx context.Context, tx *sql.Tx, feedDBID DBID) (*Feed, error) {
 	}
 	defer stmt1.Close()
 
-	return scanRow(stmt1.QueryRowContext(ctx, feedDBID))
+	return scanRow(stmt1.QueryRowContext(ctx, feedID))
 }
 
 var (
@@ -119,7 +119,7 @@ var (
 func setFeedTags(
 	ctx context.Context,
 	tx *sql.Tx,
-	feedDBID DBID,
+	feedID ID,
 	tags *[]string,
 ) error {
 
@@ -138,7 +138,7 @@ func setFeedTags(
 		return err
 	}
 
-	if err = addFeedTags(ctx, tx, feedDBID, *tags); err != nil {
+	if err = addFeedTags(ctx, tx, feedID, *tags); err != nil {
 		return err
 	}
 

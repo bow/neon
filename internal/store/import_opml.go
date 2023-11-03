@@ -37,7 +37,7 @@ func (s *SQLite) ImportOPML(
 		now := time.Now()
 
 		for _, outl := range doc.Body.Outlines {
-			feedDBID, isAdded, ierr := upsertFeed(
+			feedID, isAdded, ierr := upsertFeed(
 				ctx,
 				tx,
 				outl.XMLURL,
@@ -52,7 +52,7 @@ func (s *SQLite) ImportOPML(
 				return ierr
 			}
 
-			if ierr = addFeedTags(ctx, tx, feedDBID, outl.Categories); ierr != nil {
+			if ierr = addFeedTags(ctx, tx, feedID, outl.Categories); ierr != nil {
 				return ierr
 			}
 			processed++

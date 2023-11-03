@@ -61,7 +61,7 @@ func fmtFeed(feed *store.Feed) string {
 	kv := []*struct {
 		k, v string
 	}{
-		{"FeedID", fmt.Sprintf("%d", feed.DBID)},
+		{"FeedID", fmt.Sprintf("%d", feed.ID)},
 		{"Last pulled", ps},
 		{"Updated", upds},
 		{"Unread", fmt.Sprintf("%d/%d", ntotal-nread, ntotal)},

@@ -14,16 +14,16 @@ import (
 
 var ErrEmptyPayload = errors.New("payload is empty")
 
-type FeedNotFoundError struct{ ID DBID }
+type FeedNotFoundError struct{ FeedID ID }
 
 func (e FeedNotFoundError) Error() string {
-	return fmt.Sprintf("feed with ID=%d not found", e.ID)
+	return fmt.Sprintf("feed with ID=%d not found", e.FeedID)
 }
 
-type EntryNotFoundError struct{ ID DBID }
+type EntryNotFoundError struct{ EntryID ID }
 
 func (e EntryNotFoundError) Error() string {
-	return fmt.Sprintf("entry with ID=%d not found", e.ID)
+	return fmt.Sprintf("entry with ID=%d not found", e.EntryID)
 }
 
 // isUniqueErr returns true if the given error represents or wraps an SQLite unique constraint

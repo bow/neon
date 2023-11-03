@@ -39,7 +39,7 @@ func newFeedListEntriesCommand() *cobra.Command {
 				return err
 			}
 
-			entries, err := str.ListEntries(cmd.Context(), store.DBID(feedID))
+			entries, err := str.ListEntries(cmd.Context(), store.ID(feedID))
 			if err != nil {
 				return err
 			}
@@ -72,7 +72,7 @@ func fmtListEntry(entry *store.Entry) string {
 	kv := []*struct {
 		k, v string
 	}{
-		{"EntryID", fmt.Sprintf("%d", entry.DBID)},
+		{"EntryID", fmt.Sprintf("%d", entry.ID)},
 		{"URL", entry.URL.String},
 		{"Pub", pubs},
 	}

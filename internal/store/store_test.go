@@ -18,9 +18,9 @@ import (
 
 // feedKey is a helper struct for testing.
 type feedKey struct {
-	DBID    DBID
+	ID      ID
 	Title   string
-	Entries map[string]DBID
+	Entries map[string]ID
 }
 
 type testStore struct {
@@ -145,7 +145,7 @@ func (s *testStore) getFeedSubTime(feedURL string) string {
 	return subTime
 }
 
-func (s *testStore) getEntryDBID(feedURL string, entryExtID string) DBID {
+func (s *testStore) getEntryID(feedURL string, entryExtID string) ID {
 	s.t.Helper()
 
 	tx := s.tx()
@@ -161,11 +161,11 @@ func (s *testStore) getEntryDBID(feedURL string, entryExtID string) DBID {
 	`)
 	require.NoError(s.t, err)
 
-	var entryDBID DBID
-	err = stmt1.QueryRow(feedURL, entryExtID).Scan(&entryDBID)
+	var entryID ID
+	err = stmt1.QueryRow(feedURL, entryExtID).Scan(&entryID)
 	require.NoError(s.t, err)
 
-	return entryDBID
+	return entryID
 }
 
 func (s *testStore) getEntryUpdateTime(feedURL string, entryExtID string) sql.NullString {
@@ -251,7 +251,7 @@ func (s *testStore) addFeeds(feeds []*Feed) map[string]feedKey {
 
 	keys := make(map[string]feedKey)
 	for _, feed := range feeds {
-		var feedDBID DBID
+		var feedID ID
 		subTime := feed.Subscribed
 		if subTime == "" {
 			subTime = time.Now().UTC().Format(time.RFC3339)
@@ -265,14 +265,14 @@ func (s *testStore) addFeeds(feeds []*Feed) map[string]feedKey {
 			subTime,
 			subTime, // last_pull_time defaults to sub_time
 			feed.Updated,
-		).Scan(&feedDBID)
+		).Scan(&feedID)
 		require.NoError(s.t, err)
 
-		entries := make(map[string]DBID)
+		entries := make(map[string]ID)
 
 		for i, entry := range feed.Entries {
 			var (
-				entryDBID  DBID
+				entryID    ID
 				extID      = entry.ExtID
 				updateTime = entry.Updated
 			)
@@ -289,21 +289,21 @@ func (s *testStore) addFeeds(feeds []*Feed) map[string]feedKey {
 				updateTime.Valid = true
 			}
 			err = stmt2.QueryRow(
-				feedDBID,
+				feedID,
 				extID,
 				entry.Title,
 				entry.URL,
 				entry.IsRead,
 				updateTime,
-			).Scan(&entryDBID)
+			).Scan(&entryID)
 			require.NoError(s.t, err)
-			entries[entry.Title] = entryDBID
+			entries[entry.Title] = entryID
 		}
 
-		keys[feed.Title] = feedKey{DBID: feedDBID, Title: feed.Title, Entries: entries}
+		keys[feed.Title] = feedKey{ID: feedID, Title: feed.Title, Entries: entries}
 
 		if len(feed.Tags) > 0 {
-			require.NoError(s.t, addFeedTags(context.Background(), tx, feedDBID, feed.Tags))
+			require.NoError(s.t, addFeedTags(context.Background(), tx, feedID, feed.Tags))
 		}
 	}
 	require.NoError(s.t, tx.Commit())

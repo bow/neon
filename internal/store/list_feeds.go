@@ -21,7 +21,7 @@ func (s *SQLite) ListFeeds(ctx context.Context) ([]*Feed, error) {
 		}
 		for _, ifeed := range ifeeds {
 			ifeed := ifeed
-			entries, err := getAllFeedEntries(ctx, tx, ifeed.DBID, nil)
+			entries, err := getAllFeedEntries(ctx, tx, ifeed.ID, nil)
 			if err != nil {
 				return err
 			}
@@ -67,7 +67,7 @@ func getAllFeeds(ctx context.Context, tx *sql.Tx) ([]*Feed, error) {
 	scanRow := func(rows *sql.Rows) (*Feed, error) {
 		var feed Feed
 		if err := rows.Scan(
-			&feed.DBID,
+			&feed.ID,
 			&feed.Title,
 			&feed.Description,
 			&feed.FeedURL,
@@ -109,7 +109,7 @@ func getAllFeeds(ctx context.Context, tx *sql.Tx) ([]*Feed, error) {
 func getAllFeedEntries(
 	ctx context.Context,
 	tx *sql.Tx,
-	feedDBID DBID,
+	feedID ID,
 	isRead *bool,
 ) ([]*Entry, error) {
 
@@ -136,8 +136,8 @@ func getAllFeedEntries(
 	scanRow := func(rows *sql.Rows) (*Entry, error) {
 		var entry Entry
 		if err := rows.Scan(
-			&entry.DBID,
-			&entry.FeedDBID,
+			&entry.ID,
+			&entry.FeedID,
 			&entry.Title,
 			&entry.IsRead,
 			&entry.ExtID,
@@ -158,7 +158,7 @@ func getAllFeedEntries(
 	}
 	defer stmt1.Close()
 
-	rows, err := stmt1.QueryContext(ctx, feedDBID, isRead)
+	rows, err := stmt1.QueryContext(ctx, feedID, isRead)
 	if err != nil {
 		return nil, err
 	}

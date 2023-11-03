@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-func (s *SQLite) PullFeeds(ctx context.Context, feedDBIDs []DBID) <-chan PullResult {
+func (s *SQLite) PullFeeds(ctx context.Context, feedIDs []ID) <-chan PullResult {
 
 	var (
 		fail = failF("SQLite.PullFeeds")
@@ -27,10 +27,10 @@ func (s *SQLite) PullFeeds(ctx context.Context, feedDBIDs []DBID) <-chan PullRes
 			pks []pullKey
 			err error
 		)
-		if len(feedDBIDs) == 0 {
+		if len(feedIDs) == 0 {
 			pks, err = getAllPullKeys(ctx, tx)
 		} else {
-			pks, err = getPullKeys(ctx, tx, feedDBIDs)
+			pks, err = getPullKeys(ctx, tx, feedIDs)
 		}
 		if err != nil {
 			c <- NewPullResultFromError(nil, fail(err))
@@ -117,8 +117,8 @@ const (
 )
 
 type pullKey struct {
-	feedDBID DBID
-	feedURL  string
+	feedID  ID
+	feedURL string
 }
 
 func (pk pullKey) ok(feed *Feed) PullResult {
@@ -134,7 +134,7 @@ var (
 	setFeedLastPullTime = tableFieldSetter[string](feedsTable, "last_pull_time")
 )
 
-func getPullKeys(ctx context.Context, tx *sql.Tx, feedDBIDs []DBID) ([]pullKey, error) {
+func getPullKeys(ctx context.Context, tx *sql.Tx, feedIDs []ID) ([]pullKey, error) {
 	// FIXME: Find a cleaner way to check for array membership using database/sql.
 	//        Until then, we just loop through all IDs.
 	stmt1, err := tx.PrepareContext(ctx, `SELECT feed_url FROM feeds WHERE id = ?`)
@@ -142,10 +142,10 @@ func getPullKeys(ctx context.Context, tx *sql.Tx, feedDBIDs []DBID) ([]pullKey, 
 		return nil, err
 	}
 
-	pks := make([]pullKey, len(feedDBIDs))
-	for i, dbid := range feedDBIDs {
-		pk := pullKey{feedDBID: dbid}
-		if err := stmt1.QueryRowContext(ctx, pk.feedDBID).Scan(&pk.feedURL); err != nil {
+	pks := make([]pullKey, len(feedIDs))
+	for i, id := range feedIDs {
+		pk := pullKey{feedID: id}
+		if err := stmt1.QueryRowContext(ctx, pk.feedID).Scan(&pk.feedURL); err != nil {
 			return nil, err
 		}
 		pks[i] = pk
@@ -160,7 +160,7 @@ func getAllPullKeys(ctx context.Context, tx *sql.Tx) ([]pullKey, error) {
 
 	scanRow := func(rows *sql.Rows) (pullKey, error) {
 		var pk pullKey
-		err := rows.Scan(&pk.feedDBID, &pk.feedURL)
+		err := rows.Scan(&pk.feedID, &pk.feedURL)
 		return pk, err
 	}
 
@@ -202,10 +202,10 @@ func pullNewFeedEntries(
 		}
 
 		updateTime := serializeTime(resolveFeedUpdateTime(gfeed))
-		if err = setFeedUpdateTime(ctx, tx, pk.feedDBID, updateTime); err != nil {
+		if err = setFeedUpdateTime(ctx, tx, pk.feedID, updateTime); err != nil {
 			return pk.err(err)
 		}
-		if err = setFeedLastPullTime(ctx, tx, pk.feedDBID, &pullTime); err != nil {
+		if err = setFeedLastPullTime(ctx, tx, pk.feedID, &pullTime); err != nil {
 			return pk.err(err)
 		}
 
@@ -213,11 +213,11 @@ func pullNewFeedEntries(
 			return pk.ok(nil)
 		}
 
-		if err = upsertEntries(ctx, tx, pk.feedDBID, gfeed.Items); err != nil {
+		if err = upsertEntries(ctx, tx, pk.feedID, gfeed.Items); err != nil {
 			return pk.err(err)
 		}
 
-		unreadEntries, err := getAllFeedEntries(ctx, tx, pk.feedDBID, pointer(false))
+		unreadEntries, err := getAllFeedEntries(ctx, tx, pk.feedID, pointer(false))
 		if err != nil {
 			return pk.err(err)
 		}
@@ -225,7 +225,7 @@ func pullNewFeedEntries(
 			return pk.ok(nil)
 		}
 
-		feed, err := getFeed(ctx, tx, pk.feedDBID)
+		feed, err := getFeed(ctx, tx, pk.feedID)
 		if err != nil {
 			return pk.err(err)
 		}

@@ -30,7 +30,7 @@ func TestListEntriesOkMinimal(t *testing.T) {
 	r.Equal(1, st.countFeeds())
 	r.Equal(0, st.countEntries(dbFeeds[0].FeedURL))
 
-	entries, err := st.ListEntries(context.Background(), keys[dbFeeds[0].Title].DBID)
+	entries, err := st.ListEntries(context.Background(), keys[dbFeeds[0].Title].ID)
 	r.NoError(err)
 
 	a.Len(entries, 0)
@@ -72,7 +72,7 @@ func TestListEntriesOkExtended(t *testing.T) {
 	r.Equal(3, st.countFeeds())
 	r.Equal(2, st.countEntries(dbFeeds[1].FeedURL))
 
-	entries, err := st.ListEntries(context.Background(), keys[dbFeeds[1].Title].DBID)
+	entries, err := st.ListEntries(context.Background(), keys[dbFeeds[1].Title].ID)
 	r.NoError(err)
 
 	a.Len(entries, 2)

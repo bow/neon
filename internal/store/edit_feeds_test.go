@@ -55,7 +55,7 @@ func TestEditFeedsOkExtended(t *testing.T) {
 	a.False(existf("Feed X", true))
 
 	ops := []*FeedEditOp{
-		{DBID: keys["Feed A"].DBID, Title: pointer("Feed X"), IsStarred: pointer(true)},
+		{ID: keys["Feed A"].ID, Title: pointer("Feed X"), IsStarred: pointer(true)},
 	}
 	feeds, err := st.EditFeeds(context.Background(), ops)
 	r.NoError(err)

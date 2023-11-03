@@ -9,7 +9,7 @@ import (
 	"errors"
 )
 
-func (s *SQLite) ListEntries(ctx context.Context, feedID DBID) ([]*Entry, error) {
+func (s *SQLite) ListEntries(ctx context.Context, feedID ID) ([]*Entry, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 

@@ -345,7 +345,7 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 			status: pullSuccess,
 			err:    nil,
 			feed: &Feed{
-				DBID:       keys[pulledFeeds[0].Title].DBID,
+				ID:         keys[pulledFeeds[0].Title].ID,
 				Title:      pulledFeeds[0].Title,
 				FeedURL:    pulledFeeds[0].FeedURL,
 				Updated:    st.getFeedUpdateTime(feedURL0),
@@ -353,8 +353,8 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 				LastPulled: "",
 				Entries: []*Entry{
 					{
-						DBID:      st.getEntryDBID(feedURL0, pulledFeeds[0].Entries[1].ExtID),
-						FeedDBID:  keys[pulledFeeds[0].Title].DBID,
+						ID:        st.getEntryID(feedURL0, pulledFeeds[0].Entries[1].ExtID),
+						FeedID:    keys[pulledFeeds[0].Title].ID,
 						Title:     pulledFeeds[0].Entries[1].Title,
 						ExtID:     pulledFeeds[0].Entries[1].ExtID,
 						Updated:   st.getEntryUpdateTime(feedURL0, pulledFeeds[0].Entries[1].ExtID),
@@ -363,8 +363,8 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 						IsRead:    false,
 					},
 					{
-						DBID:      st.getEntryDBID(feedURL0, pulledFeeds[0].Entries[2].ExtID),
-						FeedDBID:  keys[pulledFeeds[0].Title].DBID,
+						ID:        st.getEntryID(feedURL0, pulledFeeds[0].Entries[2].ExtID),
+						FeedID:    keys[pulledFeeds[0].Title].ID,
 						Title:     pulledFeeds[0].Entries[2].Title,
 						ExtID:     pulledFeeds[0].Entries[2].ExtID,
 						Updated:   st.getEntryUpdateTime(feedURL0, pulledFeeds[0].Entries[2].ExtID),
@@ -380,7 +380,7 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 			status: pullSuccess,
 			err:    nil,
 			feed: &Feed{
-				DBID:       keys[pulledFeeds[1].Title].DBID,
+				ID:         keys[pulledFeeds[1].Title].ID,
 				Title:      pulledFeeds[1].Title,
 				FeedURL:    pulledFeeds[1].FeedURL,
 				Updated:    st.getFeedUpdateTime(feedURL1),
@@ -388,8 +388,8 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 				LastPulled: "",
 				Entries: []*Entry{
 					{
-						DBID:      st.getEntryDBID(feedURL1, pulledFeeds[1].Entries[1].ExtID),
-						FeedDBID:  keys[pulledFeeds[1].Title].DBID,
+						ID:        st.getEntryID(feedURL1, pulledFeeds[1].Entries[1].ExtID),
+						FeedID:    keys[pulledFeeds[1].Title].ID,
 						Title:     pulledFeeds[1].Entries[1].Title,
 						ExtID:     pulledFeeds[1].Entries[1].ExtID,
 						Updated:   st.getEntryUpdateTime(feedURL1, pulledFeeds[1].Entries[1].ExtID),
@@ -501,7 +501,7 @@ func TestPullFeedsSelectedOkSomeNewEntries(t *testing.T) {
 		MaxTimes(1).
 		Return(toGFeed(t, pulledFeed), nil)
 
-	c := st.PullFeeds(context.Background(), []DBID{keys[pulledFeed.Title].DBID})
+	c := st.PullFeeds(context.Background(), []ID{keys[pulledFeed.Title].ID})
 
 	got := make([]PullResult, 0)
 	for res := range c {
@@ -514,7 +514,7 @@ func TestPullFeedsSelectedOkSomeNewEntries(t *testing.T) {
 			status: pullSuccess,
 			err:    nil,
 			feed: &Feed{
-				DBID:       keys[pulledFeed.Title].DBID,
+				ID:         keys[pulledFeed.Title].ID,
 				Title:      pulledFeed.Title,
 				FeedURL:    pulledFeed.FeedURL,
 				Updated:    st.getFeedUpdateTime(pulledFeed.FeedURL),
@@ -522,8 +522,8 @@ func TestPullFeedsSelectedOkSomeNewEntries(t *testing.T) {
 				LastPulled: "",
 				Entries: []*Entry{
 					{
-						DBID:      st.getEntryDBID(pulledFeed.FeedURL, pulledFeed.Entries[1].ExtID),
-						FeedDBID:  keys[pulledFeed.Title].DBID,
+						ID:        st.getEntryID(pulledFeed.FeedURL, pulledFeed.Entries[1].ExtID),
+						FeedID:    keys[pulledFeed.Title].ID,
 						Title:     pulledFeed.Entries[1].Title,
 						ExtID:     pulledFeed.Entries[1].ExtID,
 						Updated:   st.getEntryUpdateTime(pulledFeed.FeedURL, pulledFeed.Entries[1].ExtID),

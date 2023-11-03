@@ -8,7 +8,7 @@ import (
 	"database/sql"
 )
 
-func (s *SQLite) DeleteFeeds(ctx context.Context, ids []DBID) error {
+func (s *SQLite) DeleteFeeds(ctx context.Context, ids []ID) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -20,7 +20,7 @@ func (s *SQLite) DeleteFeeds(ctx context.Context, ids []DBID) error {
 			return err
 		}
 
-		deleteFunc := func(ctx context.Context, id DBID) error {
+		deleteFunc := func(ctx context.Context, id ID) error {
 			res, err := stmt1.ExecContext(ctx, id)
 			if err != nil {
 				return err

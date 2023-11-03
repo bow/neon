@@ -17,10 +17,10 @@ func (s *SQLite) EditEntries(
 	defer s.mu.Unlock()
 
 	updateFunc := func(ctx context.Context, tx *sql.Tx, op *EntryEditOp) (*Entry, error) {
-		if err := setEntryIsRead(ctx, tx, op.DBID, op.IsRead); err != nil {
+		if err := setEntryIsRead(ctx, tx, op.ID, op.IsRead); err != nil {
 			return nil, err
 		}
-		return getEntry(ctx, tx, op.DBID)
+		return getEntry(ctx, tx, op.ID)
 	}
 
 	var entries = make([]*Entry, len(ops))

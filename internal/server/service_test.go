@@ -110,25 +110,25 @@ func TestEditFeedsOk(t *testing.T) {
 	client, str := setupServerTest(t)
 
 	ops := []*store.FeedEditOp{
-		{DBID: 14, Title: pointer("newer")},
-		{DBID: 58, Tags: pointer([]string{"x", "y"})},
-		{DBID: 77, IsStarred: pointer(true)},
+		{ID: 14, Title: pointer("newer")},
+		{ID: 58, Tags: pointer([]string{"x", "y"})},
+		{ID: 77, IsStarred: pointer(true)},
 	}
 	feeds := []*store.Feed{
 		{
-			DBID:       14,
+			ID:         14,
 			Title:      "newer",
 			Subscribed: "2022-06-30T00:53:50.200+02:00",
 			LastPulled: "2022-06-30T00:53:50.200+02:00",
 		},
 		{
-			DBID:       58,
+			ID:         58,
 			Tags:       []string{"x", "y"},
 			Subscribed: "2022-06-30T00:53:58.135+02:00",
 			LastPulled: "2022-06-30T00:53:58.135+02:00",
 		},
 		{
-			DBID:       77,
+			ID:         77,
 			IsStarred:  true,
 			Subscribed: "2022-06-30T00:53:59.812+02:00",
 			LastPulled: "2022-06-30T00:53:59.812+02:00",
@@ -166,13 +166,13 @@ func TestEditFeedsOk(t *testing.T) {
 
 	r.Len(rsp.Feeds, 3)
 	feed0 := rsp.Feeds[0]
-	a.Equal(feeds[0].DBID, feed0.Id)
+	a.Equal(feeds[0].ID, feed0.Id)
 	a.Equal(feeds[0].Title, feed0.Title)
 	feed1 := rsp.Feeds[1]
-	a.Equal(feeds[1].DBID, feed1.Id)
+	a.Equal(feeds[1].ID, feed1.Id)
 	a.Equal([]string(feeds[1].Tags), feed1.Tags)
 	feed2 := rsp.Feeds[2]
-	a.Equal(feeds[2].DBID, feed2.Id)
+	a.Equal(feeds[2].ID, feed2.Id)
 	a.Equal(feeds[2].IsStarred, feed2.IsStarred)
 }
 
@@ -184,7 +184,7 @@ func TestDeleteFeedsOk(t *testing.T) {
 	client, str := setupServerTest(t)
 
 	str.EXPECT().
-		DeleteFeeds(gomock.Any(), []store.DBID{1, 9}).
+		DeleteFeeds(gomock.Any(), []store.ID{1, 9}).
 		Return(nil)
 
 	req := api.DeleteFeedsRequest{FeedIds: []uint32{1, 9}}
@@ -202,8 +202,8 @@ func TestDeleteFeedsErrNotFound(t *testing.T) {
 	client, str := setupServerTest(t)
 
 	str.EXPECT().
-		DeleteFeeds(gomock.Any(), []store.DBID{1, 9}).
-		Return(fmt.Errorf("wrapped: %w", store.FeedNotFoundError{ID: 9}))
+		DeleteFeeds(gomock.Any(), []store.ID{1, 9}).
+		Return(fmt.Errorf("wrapped: %w", store.FeedNotFoundError{FeedID: 9}))
 
 	req := api.DeleteFeedsRequest{FeedIds: []uint32{1, 9}}
 	rsp, err := client.DeleteFeeds(context.Background(), &req)
@@ -267,7 +267,7 @@ func TestPullFeedsAllOk(t *testing.T) {
 	}()
 
 	str.EXPECT().
-		PullFeeds(gomock.Any(), []store.DBID{}).
+		PullFeeds(gomock.Any(), []store.ID{}).
 		Return(ch)
 
 	req := api.PullFeedsRequest{}
@@ -348,7 +348,7 @@ func TestPullFeedsSelectedAllOk(t *testing.T) {
 	}()
 
 	str.EXPECT().
-		PullFeeds(gomock.Any(), []store.DBID{2, 3}).
+		PullFeeds(gomock.Any(), []store.ID{2, 3}).
 		Return(ch)
 
 	req := api.PullFeedsRequest{FeedIds: []uint32{2, 3}}
@@ -438,7 +438,7 @@ func TestPullFeedsErrSomeFeed(t *testing.T) {
 	}()
 
 	str.EXPECT().
-		PullFeeds(gomock.Any(), []store.DBID{}).
+		PullFeeds(gomock.Any(), []store.ID{}).
 		Return(ch)
 
 	req := api.PullFeedsRequest{}
@@ -536,7 +536,7 @@ func TestPullFeedsErrNonFeed(t *testing.T) {
 	}()
 
 	str.EXPECT().
-		PullFeeds(gomock.Any(), []store.DBID{}).
+		PullFeeds(gomock.Any(), []store.ID{}).
 		Return(ch)
 
 	req := api.PullFeedsRequest{}
@@ -610,12 +610,12 @@ func TestEditEntriesOk(t *testing.T) {
 	client, str := setupServerTest(t)
 
 	ops := []*store.EntryEditOp{
-		{DBID: 37, IsRead: pointer(true)},
-		{DBID: 49, IsRead: pointer(false)},
+		{ID: 37, IsRead: pointer(true)},
+		{ID: 49, IsRead: pointer(false)},
 	}
 	entries := []*store.Entry{
-		{DBID: 37, IsRead: true},
-		{DBID: 49, IsRead: false},
+		{ID: 37, IsRead: true},
+		{ID: 49, IsRead: false},
 	}
 
 	str.EXPECT().
@@ -643,10 +643,10 @@ func TestEditEntriesOk(t *testing.T) {
 
 	r.Len(rsp.Entries, 2)
 	entry0 := rsp.Entries[0]
-	a.Equal(entries[0].DBID, entry0.Id)
+	a.Equal(entries[0].ID, entry0.Id)
 	a.Equal(entries[0].IsRead, entry0.IsRead)
 	entry1 := rsp.Entries[1]
-	a.Equal(entries[1].DBID, entry1.Id)
+	a.Equal(entries[1].ID, entry1.Id)
 	a.Equal(entries[1].IsRead, entry1.IsRead)
 }
 
@@ -659,8 +659,8 @@ func TestGetEntryOk(t *testing.T) {
 	client, str := setupServerTest(t)
 
 	entry := store.Entry{
-		DBID:      2,
-		FeedDBID:  3,
+		ID:        2,
+		FeedID:    3,
 		Title:     "Test Feed Entry",
 		IsRead:    false,
 		ExtID:     "4abaed90-3435-426f-bf95-05c700a503bf",
@@ -671,7 +671,7 @@ func TestGetEntryOk(t *testing.T) {
 	}
 
 	str.EXPECT().
-		GetEntry(gomock.Any(), store.DBID(2)).
+		GetEntry(gomock.Any(), store.ID(2)).
 		Return(&entry, nil)
 
 	req := api.GetEntryRequest{Id: 2}
@@ -682,8 +682,8 @@ func TestGetEntryOk(t *testing.T) {
 	r.NotNil(rsp)
 	r.NotNil(rsp.Entry)
 	re := rsp.Entry
-	a.Equal(entry.DBID, re.Id)
-	a.Equal(entry.FeedDBID, re.FeedId)
+	a.Equal(entry.ID, re.Id)
+	a.Equal(entry.FeedID, re.FeedId)
 	a.Equal(entry.Title, re.Title)
 	a.Equal(entry.IsRead, re.IsRead)
 	a.Equal(entry.ExtID, re.ExtId)

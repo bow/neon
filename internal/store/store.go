@@ -18,7 +18,7 @@ import (
 	"github.com/bow/iris/internal/store/migration"
 )
 
-type DBID = uint32
+type ID = uint32
 
 // FeedStore describes the persistence layer interface.
 type FeedStore interface {
@@ -32,11 +32,11 @@ type FeedStore interface {
 	) (addedFeed *Feed, err error)
 	EditFeeds(ctx context.Context, ops []*FeedEditOp) (feeds []*Feed, err error)
 	ListFeeds(ctx context.Context) (feeds []*Feed, err error)
-	PullFeeds(ctx context.Context, feedIDs []DBID) (results <-chan PullResult)
-	DeleteFeeds(ctx context.Context, ids []DBID) (err error)
-	ListEntries(ctx context.Context, feedID DBID) (entries []*Entry, err error)
+	PullFeeds(ctx context.Context, feedIDs []ID) (results <-chan PullResult)
+	DeleteFeeds(ctx context.Context, ids []ID) (err error)
+	ListEntries(ctx context.Context, feedID ID) (entries []*Entry, err error)
 	EditEntries(ctx context.Context, ops []*EntryEditOp) (entries []*Entry, err error)
-	GetEntry(ctx context.Context, entryID DBID) (entry *Entry, err error)
+	GetEntry(ctx context.Context, entryID ID) (entry *Entry, err error)
 	ExportOPML(ctx context.Context, title *string) (payload []byte, err error)
 	ImportOPML(ctx context.Context, payload []byte) (processed int, imported int, err error)
 }
@@ -142,18 +142,18 @@ func deref[T any](v *T, def T) T {
 
 type editableTable interface {
 	name() string
-	errNotFound(id DBID) error
+	errNotFound(id ID) error
 }
 
 type feedsTableType struct{}
 
-func (t *feedsTableType) name() string              { return "feeds" }
-func (t *feedsTableType) errNotFound(id DBID) error { return FeedNotFoundError{id} }
+func (t *feedsTableType) name() string            { return "feeds" }
+func (t *feedsTableType) errNotFound(id ID) error { return FeedNotFoundError{id} }
 
 type entriesTableType struct{}
 
-func (t *entriesTableType) name() string              { return "entries" }
-func (t *entriesTableType) errNotFound(id DBID) error { return EntryNotFoundError{id} }
+func (t *entriesTableType) name() string            { return "entries" }
+func (t *entriesTableType) errNotFound(id ID) error { return EntryNotFoundError{id} }
 
 var (
 	feedsTable   = &feedsTableType{}
@@ -163,9 +163,9 @@ var (
 func tableFieldSetter[T any](
 	table editableTable,
 	columnName string,
-) func(context.Context, *sql.Tx, DBID, *T) error {
+) func(context.Context, *sql.Tx, ID, *T) error {
 
-	return func(ctx context.Context, tx *sql.Tx, id DBID, fieldValue *T) error {
+	return func(ctx context.Context, tx *sql.Tx, id ID, fieldValue *T) error {
 
 		// nil pointers mean no value is given and so no updates are needed.
 		if fieldValue == nil {
@@ -181,7 +181,7 @@ func tableFieldSetter[T any](
 		}
 		defer stmt1.Close()
 
-		var updatedID DBID
+		var updatedID ID
 		err = stmt1.QueryRowContext(ctx, id, fieldValue).Scan(&updatedID)
 		if err != nil {
 			return err

@@ -33,7 +33,7 @@ func TestDeleteFeedsOkEmpty(t *testing.T) {
 	st.addFeeds(dbFeeds)
 	r.Equal(2, st.countFeeds())
 
-	err := st.DeleteFeeds(context.Background(), []DBID{})
+	err := st.DeleteFeeds(context.Background(), []ID{})
 	r.NoError(err)
 
 	a.Equal(2, st.countFeeds())
@@ -77,7 +77,7 @@ func TestDeleteFeedsOkSingle(t *testing.T) {
 	a.True(existf("Feed A"))
 	a.True(existf("Feed X"))
 
-	err := st.DeleteFeeds(context.Background(), []DBID{keys["Feed X"].DBID})
+	err := st.DeleteFeeds(context.Background(), []ID{keys["Feed X"].ID})
 	r.NoError(err)
 	a.Equal(1, st.countFeeds())
 	a.Equal(2, st.countEntries(dbFeeds[0].FeedURL))
@@ -137,7 +137,7 @@ func TestDeleteFeedsOkMultiple(t *testing.T) {
 	a.True(existf("Feed P"))
 	a.True(existf("Feed X"))
 
-	err := st.DeleteFeeds(context.Background(), []DBID{keys["Feed A"].DBID, keys["Feed P"].DBID})
+	err := st.DeleteFeeds(context.Background(), []ID{keys["Feed A"].ID, keys["Feed P"].ID})
 	r.NoError(err)
 	a.Equal(1, st.countFeeds())
 	a.Equal(0, st.countEntries(dbFeeds[0].FeedURL))
@@ -199,7 +199,7 @@ func TestDeleteFeedsErrHasMissing(t *testing.T) {
 	a.True(existf("Feed P"))
 	a.True(existf("Feed X"))
 
-	err := st.DeleteFeeds(context.Background(), []DBID{keys["Feed A"].DBID, 99})
+	err := st.DeleteFeeds(context.Background(), []ID{keys["Feed A"].ID, 99})
 	a.EqualError(err, "SQLite.DeleteFeeds: feed with ID=99 not found")
 
 	r.Equal(3, st.countFeeds())

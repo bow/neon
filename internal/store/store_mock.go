@@ -50,7 +50,7 @@ func (mr *MockFeedStoreMockRecorder) AddFeed(ctx, feedURL, title, desc, tags, is
 }
 
 // DeleteFeeds mocks base method.
-func (m *MockFeedStore) DeleteFeeds(ctx context.Context, ids []DBID) error {
+func (m *MockFeedStore) DeleteFeeds(ctx context.Context, ids []ID) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DeleteFeeds", ctx, ids)
 	ret0, _ := ret[0].(error)
@@ -109,7 +109,7 @@ func (mr *MockFeedStoreMockRecorder) ExportOPML(ctx, title interface{}) *gomock.
 }
 
 // GetEntry mocks base method.
-func (m *MockFeedStore) GetEntry(ctx context.Context, entryID DBID) (*Entry, error) {
+func (m *MockFeedStore) GetEntry(ctx context.Context, entryID ID) (*Entry, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetEntry", ctx, entryID)
 	ret0, _ := ret[0].(*Entry)
@@ -140,7 +140,7 @@ func (mr *MockFeedStoreMockRecorder) ImportOPML(ctx, payload interface{}) *gomoc
 }
 
 // ListEntries mocks base method.
-func (m *MockFeedStore) ListEntries(ctx context.Context, feedID DBID) ([]*Entry, error) {
+func (m *MockFeedStore) ListEntries(ctx context.Context, feedID ID) ([]*Entry, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ListEntries", ctx, feedID)
 	ret0, _ := ret[0].([]*Entry)
@@ -170,7 +170,7 @@ func (mr *MockFeedStoreMockRecorder) ListFeeds(ctx interface{}) *gomock.Call {
 }
 
 // PullFeeds mocks base method.
-func (m *MockFeedStore) PullFeeds(ctx context.Context, feedIDs []DBID) <-chan PullResult {
+func (m *MockFeedStore) PullFeeds(ctx context.Context, feedIDs []ID) <-chan PullResult {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "PullFeeds", ctx, feedIDs)
 	ret0, _ := ret[0].(<-chan PullResult)
@@ -207,7 +207,7 @@ func (m *MockeditableTable) EXPECT() *MockeditableTableMockRecorder {
 }
 
 // errNotFound mocks base method.
-func (m *MockeditableTable) errNotFound(id DBID) error {
+func (m *MockeditableTable) errNotFound(id ID) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "errNotFound", id)
 	ret0, _ := ret[0].(error)
