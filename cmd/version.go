@@ -22,6 +22,8 @@ func newVersionCommand() *cobra.Command {
 		Use:     name,
 		Aliases: makeAlias(name),
 		Short:   "Show the version",
+
+		DisableFlagsInUseLine: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			bi, ok := debug.ReadBuildInfo()
 			if !ok {

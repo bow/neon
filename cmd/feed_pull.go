@@ -23,6 +23,8 @@ func newFeedPullCommand() *cobra.Command {
 		Use:     fmt.Sprintf("%s [FEED-ID...]", name),
 		Aliases: makeAlias(name),
 		Short:   "Pull feed entries",
+
+		DisableFlagsInUseLine: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
 
 			nargs := len(args)
