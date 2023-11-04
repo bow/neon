@@ -181,16 +181,38 @@ type Stats struct {
 	NumEntries       uint32
 	NumEntriesUnread uint32
 
-	rawLastPullTime         string
-	rawMostRecentUpdateTime sql.NullString
+	RawLastPullTime         string
+	RawMostRecentUpdateTime sql.NullString
 }
 
 func (s *Stats) LastPullTime() (*time.Time, error) {
-	return DeserializeTime(&s.rawLastPullTime)
+	return DeserializeTime(&s.RawLastPullTime)
 }
 
 func (s *Stats) MostRecentUpdateTime() (*time.Time, error) {
-	return DeserializeTime(unwrapNullString(s.rawMostRecentUpdateTime))
+	return DeserializeTime(unwrapNullString(s.RawMostRecentUpdateTime))
+}
+
+func (s *Stats) Proto() (*api.GetStatsResponse_Stats, error) {
+	proto := api.GetStatsResponse_Stats{
+		NumFeeds:         s.NumFeeds,
+		NumEntries:       s.NumEntries,
+		NumEntriesUnread: s.NumEntriesUnread,
+	}
+
+	var err error
+
+	proto.LastPullTime, err = toProtoTime(&s.RawLastPullTime)
+	if err != nil {
+		return nil, err
+	}
+
+	proto.MostRecentUpdateTime, err = toProtoTime(unwrapNullString(s.RawMostRecentUpdateTime))
+	if err != nil {
+		return nil, err
+	}
+
+	return &proto, nil
 }
 
 // WrapNullString wraps the given string into an sql.NullString value. An empty string input is

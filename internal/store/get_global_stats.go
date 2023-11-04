@@ -96,12 +96,12 @@ func getGlobalStats(ctx context.Context, tx *sql.Tx) (*Stats, error) {
 	if stats.NumFeeds == 0 {
 		return &stats, err
 	}
-	if err = stmt3.QueryRowContext(ctx).Scan(&stats.rawLastPullTime); err != nil {
+	if err = stmt3.QueryRowContext(ctx).Scan(&stats.RawLastPullTime); err != nil {
 		if !errors.Is(err, sql.ErrNoRows) {
 			return nil, err
 		}
 	}
-	if err = stmt4.QueryRowContext(ctx).Scan(&stats.rawMostRecentUpdateTime); err != nil {
+	if err = stmt4.QueryRowContext(ctx).Scan(&stats.RawMostRecentUpdateTime); err != nil {
 		if !errors.Is(err, sql.ErrNoRows) {
 			return nil, err
 		}

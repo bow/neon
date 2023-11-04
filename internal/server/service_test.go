@@ -745,12 +745,36 @@ func TestGetStatsOk(t *testing.T) {
 	t.Parallel()
 
 	r := require.New(t)
-	client, _ := setupServerTest(t)
+	a := assert.New(t)
+	client, str := setupServerTest(t)
+
+	stats := store.Stats{
+		NumFeeds:                45,
+		NumEntries:              5311,
+		NumEntriesUnread:        8,
+		RawLastPullTime:         "2023-11-04T05:13:12.805Z",
+		RawMostRecentUpdateTime: store.WrapNullString("2023-11-04T05:13:12.805Z"),
+	}
+	lpt, err := stats.LastPullTime()
+	r.NoError(err)
+	mrpt, err := stats.MostRecentUpdateTime()
+	r.NoError(err)
+
+	str.EXPECT().
+		GetGlobalStats(gomock.Any()).
+		Return(&stats, nil)
 
 	req := api.GetStatsRequest{}
 	rsp, err := client.GetStats(context.Background(), &req)
-	r.Nil(rsp)
-	r.EqualError(err, "rpc error: code = Unimplemented desc = unimplemented")
+	r.NoError(err)
+	r.NotNil(rsp)
+
+	gs := rsp.GetGlobal()
+	a.Equal(uint32(45), gs.GetNumFeeds())
+	a.Equal(uint32(5311), gs.GetNumEntries())
+	a.Equal(uint32(8), gs.GetNumEntriesUnread())
+	a.Equal(lpt.Unix(), gs.GetLastPullTime().Seconds)
+	a.Equal(mrpt.Unix(), gs.GetMostRecentUpdateTime().Seconds)
 }
 
 func TestGetInfoOk(t *testing.T) {

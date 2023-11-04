@@ -282,7 +282,19 @@ func (svc *service) GetStats(
 	_ *api.GetStatsRequest,
 ) (*api.GetStatsResponse, error) {
 
-	return nil, status.Error(codes.Unimplemented, "unimplemented")
+	gstats, err := svc.store.GetGlobalStats(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	payload, err := gstats.Proto()
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	rsp := api.GetStatsResponse{Global: payload}
+
+	return &rsp, nil
 }
 
 // GetInfo satisfies the service API.
