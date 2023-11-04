@@ -236,6 +236,9 @@ func DeserializeTime(v *string) (*time.Time, error) {
 	if v == nil {
 		return nil, nil
 	}
+	if *v == "" {
+		return nil, nil
+	}
 	pv, err := time.Parse(time.RFC3339, *v)
 	if err != nil {
 		return nil, err
