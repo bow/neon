@@ -123,6 +123,21 @@ func (mr *MockFeedStoreMockRecorder) GetEntry(ctx, entryID interface{}) *gomock.
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEntry", reflect.TypeOf((*MockFeedStore)(nil).GetEntry), ctx, entryID)
 }
 
+// GetGlobalStats mocks base method.
+func (m *MockFeedStore) GetGlobalStats(ctx context.Context) (*Stats, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetGlobalStats", ctx)
+	ret0, _ := ret[0].(*Stats)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetGlobalStats indicates an expected call of GetGlobalStats.
+func (mr *MockFeedStoreMockRecorder) GetGlobalStats(ctx interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGlobalStats", reflect.TypeOf((*MockFeedStore)(nil).GetGlobalStats), ctx)
+}
+
 // ImportOPML mocks base method.
 func (m *MockFeedStore) ImportOPML(ctx context.Context, payload []byte) (int, int, error) {
 	m.ctrl.T.Helper()

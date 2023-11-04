@@ -40,6 +40,7 @@ type FeedStore interface {
 	GetEntry(ctx context.Context, entryID ID) (entry *Entry, err error)
 	ExportOPML(ctx context.Context, title *string) (payload []byte, err error)
 	ImportOPML(ctx context.Context, payload []byte) (processed int, imported int, err error)
+	GetGlobalStats(ctx context.Context) (stats *Stats, err error)
 }
 
 type SQLite struct {

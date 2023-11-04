@@ -176,6 +176,9 @@ func NewEntryEditOp(proto *api.EditEntriesRequest_Op) *EntryEditOp {
 	return &EntryEditOp{ID: proto.Id, IsRead: proto.Fields.IsRead}
 }
 
+type Stats struct {
+}
+
 // WrapNullString wraps the given string into an sql.NullString value. An empty string input is
 // considered a database NULL value.
 func WrapNullString(v string) sql.NullString {
