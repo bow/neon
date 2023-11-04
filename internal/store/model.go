@@ -177,6 +177,20 @@ func NewEntryEditOp(proto *api.EditEntriesRequest_Op) *EntryEditOp {
 }
 
 type Stats struct {
+	NumFeeds         uint32
+	NumEntries       uint32
+	NumEntriesUnread uint32
+
+	rawLastPullTime         string
+	rawMostRecentUpdateTime sql.NullString
+}
+
+func (s *Stats) LastPullTime() (*time.Time, error) {
+	return DeserializeTime(&s.rawLastPullTime)
+}
+
+func (s *Stats) MostRecentUpdateTime() (*time.Time, error) {
+	return DeserializeTime(unwrapNullString(s.rawMostRecentUpdateTime))
 }
 
 // WrapNullString wraps the given string into an sql.NullString value. An empty string input is
