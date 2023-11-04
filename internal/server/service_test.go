@@ -741,6 +741,18 @@ func TestImportOPMLOk(t *testing.T) {
 	a.Equal(uint32(2), rsp.GetNumImported())
 }
 
+func TestGetStatsOk(t *testing.T) {
+	t.Parallel()
+
+	r := require.New(t)
+	client, _ := setupServerTest(t)
+
+	req := api.GetStatsRequest{}
+	rsp, err := client.GetStats(context.Background(), &req)
+	r.Nil(rsp)
+	r.EqualError(err, "rpc error: code = Unimplemented desc = unimplemented")
+}
+
 func TestGetInfoOk(t *testing.T) {
 	t.Parallel()
 

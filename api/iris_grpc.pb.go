@@ -34,6 +34,7 @@ const (
 	Iris_GetEntry_FullMethodName    = "/iris.Iris/GetEntry"
 	Iris_ExportOPML_FullMethodName  = "/iris.Iris/ExportOPML"
 	Iris_ImportOPML_FullMethodName  = "/iris.Iris/ImportOPML"
+	Iris_GetStats_FullMethodName    = "/iris.Iris/GetStats"
 	Iris_GetInfo_FullMethodName     = "/iris.Iris/GetInfo"
 )
 
@@ -61,6 +62,8 @@ type IrisClient interface {
 	ExportOPML(ctx context.Context, in *ExportOPMLRequest, opts ...grpc.CallOption) (*ExportOPMLResponse, error)
 	// ImportOPML imports an OPML document.
 	ImportOPML(ctx context.Context, in *ImportOPMLRequest, opts ...grpc.CallOption) (*ImportOPMLResponse, error)
+	// GetStats returns various statistics of the feed subscriptions.
+	GetStats(ctx context.Context, in *GetStatsRequest, opts ...grpc.CallOption) (*GetStatsResponse, error)
 	// GetInfo returns the version info of the running server.
 	GetInfo(ctx context.Context, in *GetInfoRequest, opts ...grpc.CallOption) (*GetInfoResponse, error)
 }
@@ -186,6 +189,15 @@ func (c *irisClient) ImportOPML(ctx context.Context, in *ImportOPMLRequest, opts
 	return out, nil
 }
 
+func (c *irisClient) GetStats(ctx context.Context, in *GetStatsRequest, opts ...grpc.CallOption) (*GetStatsResponse, error) {
+	out := new(GetStatsResponse)
+	err := c.cc.Invoke(ctx, Iris_GetStats_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *irisClient) GetInfo(ctx context.Context, in *GetInfoRequest, opts ...grpc.CallOption) (*GetInfoResponse, error) {
 	out := new(GetInfoResponse)
 	err := c.cc.Invoke(ctx, Iris_GetInfo_FullMethodName, in, out, opts...)
@@ -219,6 +231,8 @@ type IrisServer interface {
 	ExportOPML(context.Context, *ExportOPMLRequest) (*ExportOPMLResponse, error)
 	// ImportOPML imports an OPML document.
 	ImportOPML(context.Context, *ImportOPMLRequest) (*ImportOPMLResponse, error)
+	// GetStats returns various statistics of the feed subscriptions.
+	GetStats(context.Context, *GetStatsRequest) (*GetStatsResponse, error)
 	// GetInfo returns the version info of the running server.
 	GetInfo(context.Context, *GetInfoRequest) (*GetInfoResponse, error)
 	mustEmbedUnimplementedIrisServer()
@@ -257,6 +271,9 @@ func (UnimplementedIrisServer) ExportOPML(context.Context, *ExportOPMLRequest) (
 }
 func (UnimplementedIrisServer) ImportOPML(context.Context, *ImportOPMLRequest) (*ImportOPMLResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ImportOPML not implemented")
+}
+func (UnimplementedIrisServer) GetStats(context.Context, *GetStatsRequest) (*GetStatsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetStats not implemented")
 }
 func (UnimplementedIrisServer) GetInfo(context.Context, *GetInfoRequest) (*GetInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetInfo not implemented")
@@ -457,6 +474,24 @@ func _Iris_ImportOPML_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Iris_GetStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetStatsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IrisServer).GetStats(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Iris_GetStats_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IrisServer).GetStats(ctx, req.(*GetStatsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Iris_GetInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetInfoRequest)
 	if err := dec(in); err != nil {
@@ -517,6 +552,10 @@ var Iris_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ImportOPML",
 			Handler:    _Iris_ImportOPML_Handler,
+		},
+		{
+			MethodName: "GetStats",
+			Handler:    _Iris_GetStats_Handler,
 		},
 		{
 			MethodName: "GetInfo",

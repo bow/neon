@@ -276,6 +276,15 @@ func (svc *service) ImportOPML(
 	return &rsp, nil
 }
 
+// GetStats satisfies the service API.
+func (svc *service) GetStats(
+	ctx context.Context,
+	_ *api.GetStatsRequest,
+) (*api.GetStatsResponse, error) {
+
+	return nil, status.Error(codes.Unimplemented, "unimplemented")
+}
+
 // GetInfo satisfies the service API.
 func (svc *service) GetInfo(
 	_ context.Context,
