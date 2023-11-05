@@ -284,7 +284,7 @@ func (s *testStore) addFeeds(feeds []*Feed) map[string]feedKey {
 				updateTime.String = time.Now().UTC().Format(time.RFC822)
 				updateTime.Valid = true
 			} else {
-				tv, ierr := DeserializeTime(&updateTime.String)
+				tv, ierr := deserializeTime(&updateTime.String)
 				require.NoError(s.t, ierr)
 				updateTime.String = *serializeTime(tv)
 				updateTime.Valid = true
@@ -326,7 +326,7 @@ func (s *testStore) addFeedWithURL(url string) {
 
 func ts(t *testing.T, value string) *time.Time {
 	t.Helper()
-	tv, err := DeserializeTime(&value)
+	tv, err := deserializeTime(&value)
 	require.NoError(t, err)
 	return tv
 }

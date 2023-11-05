@@ -92,7 +92,7 @@ func fmtFeed(feed *store.Feed) string {
 }
 
 func refmtTime(raw *string) (rv string, err error) {
-	deser, err := store.DeserializeTime(raw)
+	deser, err := deserializeTime(raw)
 	if err != nil {
 		deser = nil
 	}

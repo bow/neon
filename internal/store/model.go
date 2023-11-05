@@ -186,11 +186,11 @@ type Stats struct {
 }
 
 func (s *Stats) LastPullTime() (*time.Time, error) {
-	return DeserializeTime(&s.RawLastPullTime)
+	return deserializeTime(&s.RawLastPullTime)
 }
 
 func (s *Stats) MostRecentUpdateTime() (*time.Time, error) {
-	return DeserializeTime(unwrapNullString(s.RawMostRecentUpdateTime))
+	return deserializeTime(unwrapNullString(s.RawMostRecentUpdateTime))
 }
 
 func (s *Stats) Proto() (*api.GetStatsResponse_Stats, error) {
@@ -268,7 +268,7 @@ func serializeTime(tv *time.Time) *string {
 	return &ts
 }
 
-func DeserializeTime(v *string) (*time.Time, error) {
+func deserializeTime(v *string) (*time.Time, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -284,7 +284,7 @@ func DeserializeTime(v *string) (*time.Time, error) {
 }
 
 func toProtoTime(v *string) (*timestamppb.Timestamp, error) {
-	tv, err := DeserializeTime(v)
+	tv, err := deserializeTime(v)
 	if err != nil {
 		return nil, err
 	}

@@ -61,7 +61,7 @@ func fmtListEntry(entry *store.Entry) string {
 	)
 
 	var pubs = ""
-	pub, err := store.DeserializeTime(&entry.Published.String)
+	pub, err := deserializeTime(&entry.Published.String)
 	if err != nil {
 		pub = nil
 	}
