@@ -22,7 +22,7 @@ func TestListEntriesOkMinimal(t *testing.T) {
 		{
 			Title:   "Feed A",
 			FeedURL: "http://a.com/feed.xml",
-			Updated: wrapNullString("2022-03-19T16:23:18.600+02:00"),
+			Updated: toNullString("2022-03-19T16:23:18.600+02:00"),
 		},
 	}
 	keys := st.addFeeds(dbFeeds)
@@ -47,7 +47,7 @@ func TestListEntriesOkExtended(t *testing.T) {
 		{
 			Title:   "Feed A",
 			FeedURL: "http://a.com/feed.xml",
-			Updated: wrapNullString("2022-03-19T16:23:18.600+02:00"),
+			Updated: toNullString("2022-03-19T16:23:18.600+02:00"),
 			Entries: []*Entry{
 				{Title: "Entry A1", IsRead: true},
 			},
@@ -55,7 +55,7 @@ func TestListEntriesOkExtended(t *testing.T) {
 		{
 			Title:   "Feed X",
 			FeedURL: "http://x.com/feed.xml",
-			Updated: wrapNullString("2022-04-20T16:32:30.760+02:00"),
+			Updated: toNullString("2022-04-20T16:32:30.760+02:00"),
 			Entries: []*Entry{
 				{Title: "Entry X1", IsRead: false},
 				{Title: "Entry X2", IsRead: true},
@@ -64,7 +64,7 @@ func TestListEntriesOkExtended(t *testing.T) {
 		{
 			Title:   "Feed B",
 			FeedURL: "http://b.com/feed.xml",
-			Updated: wrapNullString("2023-04-09T09:49:22.685+02:00"),
+			Updated: toNullString("2023-04-09T09:49:22.685+02:00"),
 		},
 	}
 	keys := st.addFeeds(dbFeeds)
@@ -89,7 +89,7 @@ func TestListEntriesErrFeedIDNotFound(t *testing.T) {
 		{
 			Title:   "Feed A",
 			FeedURL: "http://a.com/feed.xml",
-			Updated: wrapNullString("2022-03-19T16:23:18.600+02:00"),
+			Updated: toNullString("2022-03-19T16:23:18.600+02:00"),
 			Entries: []*Entry{
 				{Title: "Entry A1", IsRead: true},
 			},
@@ -97,7 +97,7 @@ func TestListEntriesErrFeedIDNotFound(t *testing.T) {
 		{
 			Title:   "Feed X",
 			FeedURL: "http://x.com/feed.xml",
-			Updated: wrapNullString("2022-04-20T16:32:30.760+02:00"),
+			Updated: toNullString("2022-04-20T16:32:30.760+02:00"),
 			Entries: []*Entry{
 				{Title: "Entry X1", IsRead: false},
 				{Title: "Entry X2", IsRead: true},
@@ -106,7 +106,7 @@ func TestListEntriesErrFeedIDNotFound(t *testing.T) {
 		{
 			Title:   "Feed B",
 			FeedURL: "http://b.com/feed.xml",
-			Updated: wrapNullString("2023-04-09T09:49:22.685+02:00"),
+			Updated: toNullString("2023-04-09T09:49:22.685+02:00"),
 		},
 	}
 	st.addFeeds(dbFeeds)

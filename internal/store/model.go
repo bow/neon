@@ -54,9 +54,9 @@ func (f *Feed) Proto() (*api.Feed, error) {
 		Id:          f.ID,
 		Title:       f.Title,
 		FeedUrl:     f.FeedURL,
-		SiteUrl:     unwrapNullString(f.SiteURL),
+		SiteUrl:     fromNullString(f.SiteURL),
 		Tags:        []string(f.Tags),
-		Description: unwrapNullString(f.Description),
+		Description: fromNullString(f.Description),
 		IsStarred:   f.IsStarred,
 	}
 
@@ -67,7 +67,7 @@ func (f *Feed) Proto() (*api.Feed, error) {
 		return nil, err
 	}
 
-	proto.UpdateTime, err = toProtoTime(unwrapNullString(f.Updated))
+	proto.UpdateTime, err = toProtoTime(fromNullString(f.Updated))
 	if err != nil {
 		return nil, err
 	}
@@ -147,19 +147,19 @@ func (e *Entry) Proto() (*api.Entry, error) {
 		Title:       e.Title,
 		IsRead:      e.IsRead,
 		ExtId:       e.ExtID,
-		Description: unwrapNullString(e.Description),
-		Content:     unwrapNullString(e.Content),
-		Url:         unwrapNullString(e.URL),
+		Description: fromNullString(e.Description),
+		Content:     fromNullString(e.Content),
+		Url:         fromNullString(e.URL),
 	}
 
 	var err error
 
-	proto.PubTime, err = toProtoTime(unwrapNullString(e.Published))
+	proto.PubTime, err = toProtoTime(fromNullString(e.Published))
 	if err != nil {
 		return nil, err
 	}
 
-	proto.UpdateTime, err = toProtoTime(unwrapNullString(e.Updated))
+	proto.UpdateTime, err = toProtoTime(fromNullString(e.Updated))
 	if err != nil {
 		return nil, err
 	}
@@ -190,7 +190,7 @@ func (s *Stats) LastPullTime() (*time.Time, error) {
 }
 
 func (s *Stats) MostRecentUpdateTime() (*time.Time, error) {
-	return deserializeTime(unwrapNullString(s.RawMostRecentUpdateTime))
+	return deserializeTime(fromNullString(s.RawMostRecentUpdateTime))
 }
 
 func (s *Stats) Proto() (*api.GetStatsResponse_Stats, error) {
@@ -207,7 +207,7 @@ func (s *Stats) Proto() (*api.GetStatsResponse_Stats, error) {
 		return nil, err
 	}
 
-	proto.MostRecentUpdateTime, err = toProtoTime(unwrapNullString(s.RawMostRecentUpdateTime))
+	proto.MostRecentUpdateTime, err = toProtoTime(fromNullString(s.RawMostRecentUpdateTime))
 	if err != nil {
 		return nil, err
 	}
@@ -215,9 +215,9 @@ func (s *Stats) Proto() (*api.GetStatsResponse_Stats, error) {
 	return &proto, nil
 }
 
-// wrapNullString wraps the given string into an sql.NullString value. An empty string input is
+// toNullString wraps the given string into an sql.NullString value. An empty string input is
 // considered a database NULL value.
-func wrapNullString(v string) sql.NullString {
+func toNullString(v string) sql.NullString {
 	return sql.NullString{String: v, Valid: v != ""}
 }
 
@@ -294,9 +294,9 @@ func toProtoTime(v *string) (*timestamppb.Timestamp, error) {
 	return timestamppb.New(*tv), nil
 }
 
-// unwrapNullString unwraps the given sql.NullString value into a string pointer. If the input value
+// fromNullString unwraps the given sql.NullString value into a string pointer. If the input value
 // is NULL (i.e. its `Valid` field is `false`), `nil` is returned.
-func unwrapNullString(v sql.NullString) *string {
+func fromNullString(v sql.NullString) *string {
 	if v.Valid {
 		s := v.String
 		return &s
