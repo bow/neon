@@ -79,11 +79,11 @@ func (s *SQLite) PullFeeds(ctx context.Context, ids []ID) <-chan PullResult {
 type PullResult struct {
 	url    *string
 	status pullStatus
-	feed   *Feed
+	feed   *FeedRecord
 	err    error
 }
 
-func NewPullResultFromFeed(url *string, feed *Feed) PullResult {
+func NewPullResultFromFeed(url *string, feed *FeedRecord) PullResult {
 	return PullResult{status: pullSuccess, url: url, feed: feed}
 }
 
@@ -91,7 +91,7 @@ func NewPullResultFromError(url *string, err error) PullResult {
 	return PullResult{status: pullFail, url: url, err: err}
 }
 
-func (msg PullResult) Feed() *Feed {
+func (msg PullResult) Feed() *FeedRecord {
 	if msg.status == pullSuccess {
 		return msg.feed
 	}
@@ -124,7 +124,7 @@ type pullKey struct {
 	feedURL string
 }
 
-func (pk pullKey) ok(feed *Feed) PullResult {
+func (pk pullKey) ok(feed *FeedRecord) PullResult {
 	return PullResult{url: &pk.feedURL, status: pullSuccess, feed: feed, err: nil}
 }
 

@@ -38,7 +38,7 @@ func TestPullFeedsAllOkEmptyEntries(t *testing.T) {
 	r := require.New(t)
 	st := newTestStore(t)
 
-	dbFeeds := []*Feed{
+	dbFeeds := []*FeedRecord{
 		{
 			title:   "Feed A",
 			feedURL: "http://a.com/feed.xml",
@@ -98,7 +98,7 @@ func TestPullFeedsAllOkNoNewEntries(t *testing.T) {
 	r := require.New(t)
 	st := newTestStore(t)
 
-	dbFeeds := []*Feed{
+	dbFeeds := []*FeedRecord{
 		{
 			title:   "Feed A",
 			feedURL: "http://a.com/feed.xml",
@@ -139,7 +139,7 @@ func TestPullFeedsAllOkNoNewEntries(t *testing.T) {
 	st.addFeeds(dbFeeds)
 	r.Equal(2, st.countFeeds())
 
-	pulledFeeds := []*Feed{
+	pulledFeeds := []*FeedRecord{
 		{
 			title:   dbFeeds[0].title,
 			feedURL: dbFeeds[0].feedURL,
@@ -216,7 +216,7 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 	r := require.New(t)
 	st := newTestStore(t)
 
-	dbFeeds := []*Feed{
+	dbFeeds := []*FeedRecord{
 		{
 			title:      "Feed A",
 			feedURL:    "http://a.com/feed.xml",
@@ -272,7 +272,7 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 	keys := st.addFeeds(dbFeeds)
 	r.Equal(2, st.countFeeds())
 
-	pulledFeeds := []*Feed{
+	pulledFeeds := []*FeedRecord{
 		{
 			title:   dbFeeds[0].title,
 			feedURL: dbFeeds[0].feedURL,
@@ -344,7 +344,7 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 			url:    &dbFeeds[0].feedURL,
 			status: pullSuccess,
 			err:    nil,
-			feed: &Feed{
+			feed: &FeedRecord{
 				id:         keys[pulledFeeds[0].title].ID,
 				title:      pulledFeeds[0].title,
 				feedURL:    pulledFeeds[0].feedURL,
@@ -379,7 +379,7 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 			url:    &dbFeeds[1].feedURL,
 			status: pullSuccess,
 			err:    nil,
-			feed: &Feed{
+			feed: &FeedRecord{
 				id:         keys[pulledFeeds[1].title].ID,
 				title:      pulledFeeds[1].title,
 				feedURL:    pulledFeeds[1].feedURL,
@@ -421,7 +421,7 @@ func TestPullFeedsSelectedOkSomeNewEntries(t *testing.T) {
 	r := require.New(t)
 	st := newTestStore(t)
 
-	dbFeeds := []*Feed{
+	dbFeeds := []*FeedRecord{
 		// This feed should not be returned later, it is not selected.
 		{
 			title:      "Feed A",
@@ -476,7 +476,7 @@ func TestPullFeedsSelectedOkSomeNewEntries(t *testing.T) {
 	keys := st.addFeeds(dbFeeds)
 	r.Equal(2, st.countFeeds())
 
-	pulledFeed := &Feed{
+	pulledFeed := &FeedRecord{
 		title:   dbFeeds[1].title,
 		feedURL: dbFeeds[1].feedURL,
 		updated: toNullString("2022-07-18T22:21:41.647+02:00"),
@@ -513,7 +513,7 @@ func TestPullFeedsSelectedOkSomeNewEntries(t *testing.T) {
 			url:    &dbFeeds[1].feedURL,
 			status: pullSuccess,
 			err:    nil,
-			feed: &Feed{
+			feed: &FeedRecord{
 				id:         keys[pulledFeed.title].ID,
 				title:      pulledFeed.title,
 				feedURL:    pulledFeed.feedURL,
@@ -559,7 +559,7 @@ func sortPullResultEntries(arr []PullResult) {
 	}
 }
 
-func toGFeed(t *testing.T, feed *Feed) *gofeed.Feed {
+func toGFeed(t *testing.T, feed *FeedRecord) *gofeed.Feed {
 	t.Helper()
 	gfeed := gofeed.Feed{
 		Title:    feed.title,

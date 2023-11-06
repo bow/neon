@@ -215,7 +215,7 @@ func (s *testStore) getEntryPubTime(feedURL string, entryExtID string) sql.NullS
 	return entryPubTime
 }
 
-func (s *testStore) addFeeds(feeds []*Feed) map[string]feedKey {
+func (s *testStore) addFeeds(feeds []*FeedRecord) map[string]feedKey {
 	s.t.Helper()
 
 	tx := s.tx()

@@ -18,7 +18,7 @@ func TestListEntriesOkMinimal(t *testing.T) {
 	r := require.New(t)
 	st := newTestStore(t)
 
-	dbFeeds := []*Feed{
+	dbFeeds := []*FeedRecord{
 		{
 			title:   "Feed A",
 			feedURL: "http://a.com/feed.xml",
@@ -43,7 +43,7 @@ func TestListEntriesOkExtended(t *testing.T) {
 	r := require.New(t)
 	st := newTestStore(t)
 
-	dbFeeds := []*Feed{
+	dbFeeds := []*FeedRecord{
 		{
 			title:   "Feed A",
 			feedURL: "http://a.com/feed.xml",
@@ -85,7 +85,7 @@ func TestListEntriesErrFeedIDNotFound(t *testing.T) {
 	r := require.New(t)
 	st := newTestStore(t)
 
-	dbFeeds := []*Feed{
+	dbFeeds := []*FeedRecord{
 		{
 			title:   "Feed A",
 			feedURL: "http://a.com/feed.xml",

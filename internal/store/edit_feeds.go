@@ -12,11 +12,11 @@ import (
 func (s *SQLite) EditFeeds(
 	ctx context.Context,
 	ops []*FeedEditOp,
-) ([]*Feed, error) {
+) ([]*FeedRecord, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	updateFunc := func(ctx context.Context, tx *sql.Tx, op *FeedEditOp) (*Feed, error) {
+	updateFunc := func(ctx context.Context, tx *sql.Tx, op *FeedEditOp) (*FeedRecord, error) {
 		if err := setFeedTitle(ctx, tx, op.ID, op.Title); err != nil {
 			return nil, err
 		}
@@ -32,7 +32,7 @@ func (s *SQLite) EditFeeds(
 		return getFeed(ctx, tx, op.ID)
 	}
 
-	var entries = make([]*Feed, len(ops))
+	var entries = make([]*FeedRecord, len(ops))
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
 		for i, op := range ops {
 			feed, err := updateFunc(ctx, tx, op)
@@ -53,7 +53,7 @@ func (s *SQLite) EditFeeds(
 	return entries, nil
 }
 
-func getFeed(ctx context.Context, tx *sql.Tx, feedID ID) (*Feed, error) {
+func getFeed(ctx context.Context, tx *sql.Tx, feedID ID) (*FeedRecord, error) {
 
 	sql1 := `
 		SELECT
@@ -78,8 +78,8 @@ func getFeed(ctx context.Context, tx *sql.Tx, feedID ID) (*Feed, error) {
 		ORDER BY
 			COALESCE(f.update_time, f.sub_time) DESC
 `
-	scanRow := func(row *sql.Row) (*Feed, error) {
-		var feed Feed
+	scanRow := func(row *sql.Row) (*FeedRecord, error) {
+		var feed FeedRecord
 		if err := row.Scan(
 			&feed.id,
 			&feed.title,

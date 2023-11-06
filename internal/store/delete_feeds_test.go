@@ -18,7 +18,7 @@ func TestDeleteFeedsOkEmpty(t *testing.T) {
 	r := require.New(t)
 	st := newTestStore(t)
 
-	dbFeeds := []*Feed{
+	dbFeeds := []*FeedRecord{
 		{
 			title:   "Feed A",
 			feedURL: "http://a.com/feed.xml",
@@ -46,7 +46,7 @@ func TestDeleteFeedsOkSingle(t *testing.T) {
 	r := require.New(t)
 	st := newTestStore(t)
 
-	dbFeeds := []*Feed{
+	dbFeeds := []*FeedRecord{
 		{
 			title:   "Feed A",
 			feedURL: "http://a.com/feed.xml",
@@ -94,7 +94,7 @@ func TestDeleteFeedsOkMultiple(t *testing.T) {
 	r := require.New(t)
 	st := newTestStore(t)
 
-	dbFeeds := []*Feed{
+	dbFeeds := []*FeedRecord{
 		{
 			title:   "Feed A",
 			feedURL: "http://a.com/feed.xml",
@@ -156,7 +156,7 @@ func TestDeleteFeedsErrHasMissing(t *testing.T) {
 	r := require.New(t)
 	st := newTestStore(t)
 
-	dbFeeds := []*Feed{
+	dbFeeds := []*FeedRecord{
 		{
 			title:   "Feed A",
 			feedURL: "http://a.com/feed.xml",

@@ -11,7 +11,7 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-func toFeedPB(sf *store.Feed) (af *api.Feed, err error) {
+func toFeedPB(sf *store.FeedRecord) (af *api.Feed, err error) {
 	af = &api.Feed{
 		Id:           sf.ID(),
 		Title:        sf.Title(),

@@ -19,7 +19,7 @@ func (s *SQLite) AddFeed(
 	desc *string,
 	tags []string,
 	isStarred *bool,
-) (*Feed, error) {
+) (*FeedRecord, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -34,7 +34,7 @@ func (s *SQLite) AddFeed(
 		feed.FeedLink = feedURL
 	}
 
-	var created *Feed
+	var created *FeedRecord
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
 
 		now := time.Now()

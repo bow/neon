@@ -43,7 +43,7 @@ func TestGetGlobalStatsExtendedOk(t *testing.T) {
 	a := assert.New(t)
 	st := newTestStore(t)
 
-	dbFeeds := []*Feed{
+	dbFeeds := []*FeedRecord{
 		{
 			title:      "Feed A",
 			feedURL:    "http://a.com/feed.xml",

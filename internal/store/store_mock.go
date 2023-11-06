@@ -35,10 +35,10 @@ func (m *MockFeedStore) EXPECT() *MockFeedStoreMockRecorder {
 }
 
 // AddFeed mocks base method.
-func (m *MockFeedStore) AddFeed(ctx context.Context, feedURL string, title, desc *string, tags []string, isStarred *bool) (*Feed, error) {
+func (m *MockFeedStore) AddFeed(ctx context.Context, feedURL string, title, desc *string, tags []string, isStarred *bool) (*FeedRecord, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AddFeed", ctx, feedURL, title, desc, tags, isStarred)
-	ret0, _ := ret[0].(*Feed)
+	ret0, _ := ret[0].(*FeedRecord)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -79,10 +79,10 @@ func (mr *MockFeedStoreMockRecorder) EditEntries(ctx, ops interface{}) *gomock.C
 }
 
 // EditFeeds mocks base method.
-func (m *MockFeedStore) EditFeeds(ctx context.Context, ops []*FeedEditOp) ([]*Feed, error) {
+func (m *MockFeedStore) EditFeeds(ctx context.Context, ops []*FeedEditOp) ([]*FeedRecord, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "EditFeeds", ctx, ops)
-	ret0, _ := ret[0].([]*Feed)
+	ret0, _ := ret[0].([]*FeedRecord)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -170,10 +170,10 @@ func (mr *MockFeedStoreMockRecorder) ListEntries(ctx, feedID interface{}) *gomoc
 }
 
 // ListFeeds mocks base method.
-func (m *MockFeedStore) ListFeeds(ctx context.Context) ([]*Feed, error) {
+func (m *MockFeedStore) ListFeeds(ctx context.Context) ([]*FeedRecord, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ListFeeds", ctx)
-	ret0, _ := ret[0].([]*Feed)
+	ret0, _ := ret[0].([]*FeedRecord)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

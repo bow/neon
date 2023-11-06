@@ -77,7 +77,7 @@ func TestListFeedsOk(t *testing.T) {
 	client, str := setupServerTest(t)
 
 	req := api.ListFeedsRequest{}
-	feeds := []*store.Feed{
+	feeds := []*store.FeedRecord{
 		store.NewFeedBuilder().
 			ID(store.ID(2)).
 			Title("Feed A").
@@ -119,7 +119,7 @@ func TestEditFeedsOk(t *testing.T) {
 		{ID: 58, Tags: pointer([]string{"x", "y"})},
 		{ID: 77, IsStarred: pointer(true)},
 	}
-	feeds := []*store.Feed{
+	feeds := []*store.FeedRecord{
 		store.NewFeedBuilder().
 			ID(14).
 			Title("newer").

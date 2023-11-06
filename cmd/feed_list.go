@@ -44,7 +44,7 @@ func newFeedListCommand() *cobra.Command {
 	return &command
 }
 
-func fmtFeed(feed *store.Feed) string {
+func fmtFeed(feed *store.FeedRecord) string {
 	var (
 		sb  strings.Builder
 		cat = func(format string, a ...any) { fmt.Fprintf(&sb, format, a...) }

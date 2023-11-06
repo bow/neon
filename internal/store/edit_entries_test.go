@@ -31,7 +31,7 @@ func TestEditEntriesOkMinimal(t *testing.T) {
 	r := require.New(t)
 	st := newTestStore(t)
 
-	dbFeeds := []*Feed{
+	dbFeeds := []*FeedRecord{
 		{
 			title:   "Feed A",
 			feedURL: "http://a.com/feed.xml",
@@ -75,7 +75,7 @@ func TestEditEntriesOkExtended(t *testing.T) {
 	r := require.New(t)
 	st := newTestStore(t)
 
-	dbFeeds := []*Feed{
+	dbFeeds := []*FeedRecord{
 		{
 			title:   "Feed A",
 			feedURL: "http://a.com/feed.xml",

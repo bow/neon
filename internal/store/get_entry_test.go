@@ -18,7 +18,7 @@ func TestGetEntryOk(t *testing.T) {
 	r := require.New(t)
 	st := newTestStore(t)
 
-	dbFeeds := []*Feed{
+	dbFeeds := []*FeedRecord{
 		{
 			title:   "Feed A",
 			feedURL: "http://a.com/feed.xml",

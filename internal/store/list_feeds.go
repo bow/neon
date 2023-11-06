@@ -8,11 +8,11 @@ import (
 	"database/sql"
 )
 
-func (s *SQLite) ListFeeds(ctx context.Context) ([]*Feed, error) {
+func (s *SQLite) ListFeeds(ctx context.Context) ([]*FeedRecord, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	feeds := make([]*Feed, 0)
+	feeds := make([]*FeedRecord, 0)
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
 
 		ifeeds, err := getAllFeeds(ctx, tx)
@@ -41,7 +41,7 @@ func (s *SQLite) ListFeeds(ctx context.Context) ([]*Feed, error) {
 	return feeds, nil
 }
 
-func getAllFeeds(ctx context.Context, tx *sql.Tx) ([]*Feed, error) {
+func getAllFeeds(ctx context.Context, tx *sql.Tx) ([]*FeedRecord, error) {
 
 	sql1 := `
 		SELECT
@@ -64,8 +64,8 @@ func getAllFeeds(ctx context.Context, tx *sql.Tx) ([]*Feed, error) {
 		ORDER BY
 			COALESCE(f.update_time, f.sub_time) DESC
 `
-	scanRow := func(rows *sql.Rows) (*Feed, error) {
-		var feed Feed
+	scanRow := func(rows *sql.Rows) (*FeedRecord, error) {
+		var feed FeedRecord
 		if err := rows.Scan(
 			&feed.id,
 			&feed.title,
@@ -94,7 +94,7 @@ func getAllFeeds(ctx context.Context, tx *sql.Tx) ([]*Feed, error) {
 		return nil, err
 	}
 
-	feeds := make([]*Feed, 0)
+	feeds := make([]*FeedRecord, 0)
 	for rows.Next() {
 		feed, err := scanRow(rows)
 		if err != nil {

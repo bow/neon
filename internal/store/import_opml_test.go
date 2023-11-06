@@ -105,7 +105,7 @@ func TestImportOPMLOkExtended(t *testing.T) {
 	r := require.New(t)
 	st := newTestStore(t)
 
-	dbFeeds := []*Feed{
+	dbFeeds := []*FeedRecord{
 		{
 			title:     "Feed BC",
 			feedURL:   "http://bc.com/feed.xml",

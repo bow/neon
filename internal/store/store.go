@@ -30,9 +30,9 @@ type FeedStore interface {
 		desc *string,
 		tags []string,
 		isStarred *bool,
-	) (addedFeed *Feed, err error)
-	EditFeeds(ctx context.Context, ops []*FeedEditOp) (feeds []*Feed, err error)
-	ListFeeds(ctx context.Context) (feeds []*Feed, err error)
+	) (addedFeed *FeedRecord, err error)
+	EditFeeds(ctx context.Context, ops []*FeedEditOp) (feeds []*FeedRecord, err error)
+	ListFeeds(ctx context.Context) (feeds []*FeedRecord, err error)
 	PullFeeds(ctx context.Context, feedIDs []ID) (results <-chan PullResult)
 	DeleteFeeds(ctx context.Context, ids []ID) (err error)
 	ListEntries(ctx context.Context, feedID ID) (entries []*Entry, err error)

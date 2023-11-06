@@ -19,7 +19,7 @@ import (
 
 const defaultExportTitle = "iris export"
 
-type Subscription []*Feed
+type Subscription []*FeedRecord
 
 func (sub Subscription) Export(title *string) ([]byte, error) {
 	et := defaultExportTitle
@@ -35,7 +35,7 @@ func (sub Subscription) Export(title *string) ([]byte, error) {
 	return doc.XML()
 }
 
-type Feed struct {
+type FeedRecord struct {
 	id          ID
 	title       string
 	description sql.NullString
@@ -49,28 +49,28 @@ type Feed struct {
 	entries     []*Entry
 }
 
-func (f *Feed) ID() ID            { return f.id }
-func (f *Feed) Title() string     { return f.title }
-func (f *Feed) FeedURL() string   { return f.feedURL }
-func (f *Feed) IsStarred() bool   { return f.isStarred }
-func (f *Feed) Tags() []string    { return []string(f.tags) }
-func (f *Feed) Entries() []*Entry { return f.entries }
+func (f *FeedRecord) ID() ID            { return f.id }
+func (f *FeedRecord) Title() string     { return f.title }
+func (f *FeedRecord) FeedURL() string   { return f.feedURL }
+func (f *FeedRecord) IsStarred() bool   { return f.isStarred }
+func (f *FeedRecord) Tags() []string    { return []string(f.tags) }
+func (f *FeedRecord) Entries() []*Entry { return f.entries }
 
-func (f *Feed) Description() *string {
+func (f *FeedRecord) Description() *string {
 	if f.description.Valid {
 		return &f.description.String
 	}
 	return pointer("")
 }
 
-func (f *Feed) SiteURL() *string {
+func (f *FeedRecord) SiteURL() *string {
 	if f.siteURL.Valid {
 		return &f.siteURL.String
 	}
 	return pointer("")
 }
 
-func (f *Feed) Subscribed() time.Time {
+func (f *FeedRecord) Subscribed() time.Time {
 	subt, err := deserializeTime(&f.subscribed)
 	if err != nil {
 		// FIXME: How to best handle DB-related panics?
@@ -79,7 +79,7 @@ func (f *Feed) Subscribed() time.Time {
 	return *subt
 }
 
-func (f *Feed) LastPulled() time.Time {
+func (f *FeedRecord) LastPulled() time.Time {
 	lpt, err := deserializeTime(&f.lastPulled)
 	if err != nil {
 		// FIXME: How to best handle DB-related panics?
@@ -88,7 +88,7 @@ func (f *Feed) LastPulled() time.Time {
 	return *lpt
 }
 
-func (f *Feed) Updated() *time.Time {
+func (f *FeedRecord) Updated() *time.Time {
 	if !f.updated.Valid {
 		return nil
 	}
@@ -100,9 +100,9 @@ func (f *Feed) Updated() *time.Time {
 	return upt
 }
 
-func (f *Feed) NumEntriesTotal() int { return len(f.entries) }
+func (f *FeedRecord) NumEntriesTotal() int { return len(f.entries) }
 
-func (f *Feed) NumEntriesRead() int {
+func (f *FeedRecord) NumEntriesRead() int {
 	var n int
 	for _, entry := range f.entries {
 		if entry.IsRead {
@@ -112,11 +112,11 @@ func (f *Feed) NumEntriesRead() int {
 	return n
 }
 
-func (f *Feed) NumEntriesUnread() int {
+func (f *FeedRecord) NumEntriesUnread() int {
 	return f.NumEntriesTotal() - f.NumEntriesRead()
 }
 
-func (f *Feed) Outline() (*opml.Outline, error) {
+func (f *FeedRecord) Outline() (*opml.Outline, error) {
 	outl := opml.Outline{
 		Text:   f.title,
 		Type:   "rss",
@@ -155,8 +155,8 @@ func NewFeedBuilder() *FeedBuilder {
 	return &FeedBuilder{}
 }
 
-func (b *FeedBuilder) Build() *Feed {
-	return &Feed{
+func (b *FeedBuilder) Build() *FeedRecord {
+	return &FeedRecord{
 		id:          b.id,
 		title:       b.title,
 		description: asNullString(b.description),
