@@ -253,25 +253,25 @@ func (s *testStore) addFeeds(feeds []*Feed) map[string]feedKey {
 	keys := make(map[string]feedKey)
 	for _, feed := range feeds {
 		var feedID ID
-		subTime := feed.Subscribed
+		subTime := feed.subscribed
 		if subTime == "" {
 			subTime = time.Now().UTC().Format(time.RFC3339)
 		}
 		err = stmt1.QueryRow(
-			feed.Title,
-			feed.FeedURL,
-			feed.SiteURL,
-			feed.Description,
-			feed.IsStarred,
+			feed.title,
+			feed.feedURL,
+			feed.siteURL,
+			feed.description,
+			feed.isStarred,
 			subTime,
 			subTime, // last_pull_time defaults to sub_time
-			feed.Updated,
+			feed.updated,
 		).Scan(&feedID)
 		require.NoError(s.t, err)
 
 		entries := make(map[string]ID)
 
-		for i, entry := range feed.Entries {
+		for i, entry := range feed.entries {
 			var (
 				entryID    ID
 				extID      = entry.ExtID
@@ -301,10 +301,10 @@ func (s *testStore) addFeeds(feeds []*Feed) map[string]feedKey {
 			entries[entry.Title] = entryID
 		}
 
-		keys[feed.Title] = feedKey{ID: feedID, Title: feed.Title, Entries: entries}
+		keys[feed.title] = feedKey{ID: feedID, Title: feed.title, Entries: entries}
 
-		if len(feed.Tags) > 0 {
-			require.NoError(s.t, addFeedTags(context.Background(), tx, feedID, feed.Tags))
+		if len(feed.tags) > 0 {
+			require.NoError(s.t, addFeedTags(context.Background(), tx, feedID, feed.tags))
 		}
 	}
 	require.NoError(s.t, tx.Commit())

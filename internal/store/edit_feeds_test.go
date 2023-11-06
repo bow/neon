@@ -33,10 +33,10 @@ func TestEditFeedsOkExtended(t *testing.T) {
 
 	dbFeeds := []*Feed{
 		{
-			Title:     "Feed A",
-			FeedURL:   "http://a.com/feed.xml",
-			Updated:   toNullString("2022-03-19T16:23:18.600+02:00"),
-			IsStarred: false,
+			title:     "Feed A",
+			feedURL:   "http://a.com/feed.xml",
+			updated:   toNullString("2022-03-19T16:23:18.600+02:00"),
+			isStarred: false,
 		},
 	}
 	keys := st.addFeeds(dbFeeds)

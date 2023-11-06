@@ -21,11 +21,11 @@ func (s *SQLite) ListFeeds(ctx context.Context) ([]*Feed, error) {
 		}
 		for _, ifeed := range ifeeds {
 			ifeed := ifeed
-			entries, err := getAllFeedEntries(ctx, tx, ifeed.ID, nil)
+			entries, err := getAllFeedEntries(ctx, tx, ifeed.id, nil)
 			if err != nil {
 				return err
 			}
-			ifeed.Entries = entries
+			ifeed.entries = entries
 		}
 		feeds = ifeeds
 
@@ -67,16 +67,16 @@ func getAllFeeds(ctx context.Context, tx *sql.Tx) ([]*Feed, error) {
 	scanRow := func(rows *sql.Rows) (*Feed, error) {
 		var feed Feed
 		if err := rows.Scan(
-			&feed.ID,
-			&feed.Title,
-			&feed.Description,
-			&feed.FeedURL,
-			&feed.SiteURL,
-			&feed.IsStarred,
-			&feed.Subscribed,
-			&feed.LastPulled,
-			&feed.Updated,
-			&feed.Tags,
+			&feed.id,
+			&feed.title,
+			&feed.description,
+			&feed.feedURL,
+			&feed.siteURL,
+			&feed.isStarred,
+			&feed.subscribed,
+			&feed.lastPulled,
+			&feed.updated,
+			&feed.tags,
 		); err != nil {
 			return nil, err
 		}

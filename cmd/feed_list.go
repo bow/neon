@@ -6,6 +6,7 @@ package cmd
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/spf13/cobra"
 
@@ -49,11 +50,12 @@ func fmtFeed(feed *store.Feed) string {
 		cat = func(format string, a ...any) { fmt.Fprintf(&sb, format, a...) }
 	)
 
-	upds, _ := refmtTime(&feed.Updated.String)
-	ps, _ := refmtTime(&feed.LastPulled)
+	upds := refmtTime(feed.Updated())
+	lpt := feed.LastPulled()
+	ps := refmtTime(&lpt)
 
 	var nread, ntotal int
-	for _, entry := range feed.Entries {
+	for _, entry := range feed.Entries() {
 		if entry.IsRead {
 			nread++
 		}
@@ -63,12 +65,12 @@ func fmtFeed(feed *store.Feed) string {
 	kv := []*struct {
 		k, v string
 	}{
-		{"FeedID", fmt.Sprintf("%d", feed.ID)},
+		{"FeedID", fmt.Sprintf("%d", feed.ID())},
 		{"Last pulled", ps},
 		{"Updated", upds},
 		{"Unread", fmt.Sprintf("%d/%d", ntotal-nread, ntotal)},
-		{"URL", feed.SiteURL.String},
-		{"Tags", fmt.Sprintf("#%s", strings.Join(feed.Tags, " #"))},
+		{"URL", *feed.SiteURL()},
+		{"Tags", fmt.Sprintf("#%s", strings.Join(feed.Tags(), " #"))},
 	}
 
 	keyMaxLen := 0
@@ -79,7 +81,7 @@ func fmtFeed(feed *store.Feed) string {
 		}
 	}
 
-	cat("\x1b[36m▶\x1b[0m \x1b[4m%s\x1b[0m\n", capText(feed.Title))
+	cat("\x1b[36m▶\x1b[0m \x1b[4m%s\x1b[0m\n", capText(feed.Title()))
 	for _, line := range kv {
 		if line.v == "" {
 			continue
@@ -91,15 +93,11 @@ func fmtFeed(feed *store.Feed) string {
 	return sb.String()
 }
 
-func refmtTime(raw *string) (rv string, err error) {
-	deser, err := deserializeTime(raw)
-	if err != nil {
-		deser = nil
+func refmtTime(value *time.Time) string {
+	if value == nil {
+		return ""
 	}
-	if deser != nil {
-		rv = deser.Local().Format("2 January 2006 • 15:04 MST")
-	}
-	return rv, err
+	return value.Local().Format("2 January 2006 • 15:04 MST")
 }
 
 const (

@@ -81,21 +81,21 @@ func getFeed(ctx context.Context, tx *sql.Tx, feedID ID) (*Feed, error) {
 	scanRow := func(row *sql.Row) (*Feed, error) {
 		var feed Feed
 		if err := row.Scan(
-			&feed.ID,
-			&feed.Title,
-			&feed.Description,
-			&feed.FeedURL,
-			&feed.SiteURL,
-			&feed.IsStarred,
-			&feed.Subscribed,
-			&feed.Updated,
-			&feed.LastPulled,
-			&feed.Tags,
+			&feed.id,
+			&feed.title,
+			&feed.description,
+			&feed.feedURL,
+			&feed.siteURL,
+			&feed.isStarred,
+			&feed.subscribed,
+			&feed.updated,
+			&feed.lastPulled,
+			&feed.tags,
 		); err != nil {
 			return nil, err
 		}
-		if len(feed.Tags) == 0 {
-			feed.Tags = nil
+		if len(feed.tags) == 0 {
+			feed.tags = nil
 		}
 		return &feed, nil
 	}

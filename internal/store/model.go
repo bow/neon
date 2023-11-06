@@ -36,77 +36,178 @@ func (sub Subscription) Export(title *string) ([]byte, error) {
 }
 
 type Feed struct {
-	ID          ID
-	Title       string
-	Description sql.NullString
-	FeedURL     string
-	SiteURL     sql.NullString
-	Subscribed  string
-	Updated     sql.NullString
-	LastPulled  string
-	Tags        jsonArrayString
-	IsStarred   bool
-	Entries     []*Entry
+	id          ID
+	title       string
+	description sql.NullString
+	feedURL     string
+	siteURL     sql.NullString
+	subscribed  string
+	lastPulled  string
+	updated     sql.NullString
+	isStarred   bool
+	tags        jsonArrayString
+	entries     []*Entry
 }
 
-func (f *Feed) Proto() (*api.Feed, error) {
-	proto := api.Feed{
-		Id:          f.ID,
-		Title:       f.Title,
-		FeedUrl:     f.FeedURL,
-		SiteUrl:     fromNullString(f.SiteURL),
-		Tags:        []string(f.Tags),
-		Description: fromNullString(f.Description),
-		IsStarred:   f.IsStarred,
+func (f *Feed) ID() ID            { return f.id }
+func (f *Feed) Title() string     { return f.title }
+func (f *Feed) FeedURL() string   { return f.feedURL }
+func (f *Feed) IsStarred() bool   { return f.isStarred }
+func (f *Feed) Tags() []string    { return []string(f.tags) }
+func (f *Feed) Entries() []*Entry { return f.entries }
+
+func (f *Feed) Description() *string {
+	if f.description.Valid {
+		return &f.description.String
 	}
+	return pointer("")
+}
 
-	var err error
+func (f *Feed) SiteURL() *string {
+	if f.siteURL.Valid {
+		return &f.siteURL.String
+	}
+	return pointer("")
+}
 
-	proto.SubTime, err = toProtoTime(&f.Subscribed)
+func (f *Feed) Subscribed() time.Time {
+	subt, err := deserializeTime(&f.subscribed)
 	if err != nil {
-		return nil, err
+		// FIXME: How to best handle DB-related panics?
+		panic(err)
 	}
+	return *subt
+}
 
-	proto.UpdateTime, err = toProtoTime(fromNullString(f.Updated))
+func (f *Feed) LastPulled() time.Time {
+	lpt, err := deserializeTime(&f.lastPulled)
 	if err != nil {
-		return nil, err
+		// FIXME: How to best handle DB-related panics?
+		panic(err)
 	}
+	return *lpt
+}
 
-	proto.LastPullTime, err = toProtoTime(&f.LastPulled)
+func (f *Feed) Updated() *time.Time {
+	if !f.updated.Valid {
+		return nil
+	}
+	upt, err := deserializeTime(&f.updated.String)
 	if err != nil {
-		return nil, err
+		// FIXME: How to best handle DB-related panics?
+		panic(err)
 	}
-
-	for _, entry := range f.Entries {
-		ep, err := entry.Proto()
-		if err != nil {
-			return nil, err
-		}
-		proto.Entries = append(proto.Entries, ep)
-	}
-
-	return &proto, nil
+	return upt
 }
 
 func (f *Feed) Outline() (*opml.Outline, error) {
 	outl := opml.Outline{
-		Text:   f.Title,
+		Text:   f.title,
 		Type:   "rss",
-		XMLURL: f.FeedURL,
+		XMLURL: f.feedURL,
 	}
-	if f.SiteURL.Valid {
-		outl.HTMLURL = pointer(f.SiteURL.String)
+	if f.siteURL.Valid {
+		outl.HTMLURL = pointer(f.siteURL.String)
 	}
-	if f.Description.Valid {
-		outl.Description = pointer(f.Description.String)
+	if f.description.Valid {
+		outl.Description = pointer(f.description.String)
 	}
-	if len(f.Tags) > 0 {
-		outl.Categories = opml.Categories(f.Tags)
+	if len(f.tags) > 0 {
+		outl.Categories = opml.Categories(f.tags)
 	}
-	if f.IsStarred {
-		outl.IsStarred = &f.IsStarred
+	if f.isStarred {
+		outl.IsStarred = &f.isStarred
 	}
 	return &outl, nil
+}
+
+type FeedBuilder struct {
+	id          ID
+	title       string
+	description *string
+	feedURL     string
+	siteURL     *string
+	subscribed  time.Time
+	lastPulled  time.Time
+	updated     *time.Time
+	isStarred   bool
+	tags        []string
+	entries     []*Entry
+}
+
+func NewFeedBuilder() *FeedBuilder {
+	return &FeedBuilder{}
+}
+
+func (b *FeedBuilder) Build() *Feed {
+	return &Feed{
+		id:          b.id,
+		title:       b.title,
+		description: asNullString(b.description),
+		feedURL:     b.feedURL,
+		siteURL:     asNullString(b.siteURL),
+		subscribed:  *serializeTime(&b.subscribed),
+		lastPulled:  *serializeTime(&b.lastPulled),
+		updated:     asNullString(serializeTime(b.updated)),
+		isStarred:   b.isStarred,
+		tags:        jsonArrayString(b.tags),
+		entries:     b.entries,
+	}
+}
+
+func (b *FeedBuilder) ID(value ID) *FeedBuilder {
+	b.id = value
+	return b
+}
+
+func (b *FeedBuilder) Title(value string) *FeedBuilder {
+	b.title = value
+	return b
+}
+
+func (b *FeedBuilder) Description(value *string) *FeedBuilder {
+	b.description = value
+	return b
+}
+
+func (b *FeedBuilder) FeedURL(value string) *FeedBuilder {
+	b.feedURL = value
+	return b
+}
+
+func (b *FeedBuilder) SiteURL(value *string) *FeedBuilder {
+	b.siteURL = value
+	return b
+}
+
+func (b *FeedBuilder) Subscribed(value time.Time) *FeedBuilder {
+	b.subscribed = value
+	return b
+}
+
+func (b *FeedBuilder) LastPulled(value time.Time) *FeedBuilder {
+	b.lastPulled = value
+	return b
+}
+
+func (b *FeedBuilder) Updated(value *time.Time) *FeedBuilder {
+	b.updated = value
+	return b
+}
+
+func (b *FeedBuilder) IsStarred(value bool) *FeedBuilder {
+	b.isStarred = value
+	return b
+}
+
+func (b *FeedBuilder) Tags(value []string) *FeedBuilder {
+	b.tags = value
+	return b
+}
+
+func (b *FeedBuilder) Entries(value []*Entry) *FeedBuilder {
+	b.entries = value
+	return b
 }
 
 type FeedEditOp struct {
@@ -213,6 +314,14 @@ func (s *Stats) Proto() (*api.GetStatsResponse_Stats, error) {
 	}
 
 	return &proto, nil
+}
+
+// asNullString returns a valid sql.NullString representation of the given string pointer.
+func asNullString(v *string) sql.NullString {
+	if v == nil {
+		return sql.NullString{String: "", Valid: false}
+	}
+	return toNullString(*v)
 }
 
 // toNullString wraps the given string into an sql.NullString value. An empty string input is

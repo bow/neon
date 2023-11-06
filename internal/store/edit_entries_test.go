@@ -33,10 +33,10 @@ func TestEditEntriesOkMinimal(t *testing.T) {
 
 	dbFeeds := []*Feed{
 		{
-			Title:   "Feed A",
-			FeedURL: "http://a.com/feed.xml",
-			Updated: toNullString("2022-03-19T16:23:18.600+02:00"),
-			Entries: []*Entry{
+			title:   "Feed A",
+			feedURL: "http://a.com/feed.xml",
+			updated: toNullString("2022-03-19T16:23:18.600+02:00"),
+			entries: []*Entry{
 				{Title: "Entry A1", IsRead: true},
 			},
 		},
@@ -77,19 +77,19 @@ func TestEditEntriesOkExtended(t *testing.T) {
 
 	dbFeeds := []*Feed{
 		{
-			Title:   "Feed A",
-			FeedURL: "http://a.com/feed.xml",
-			Updated: toNullString("2022-03-19T16:23:18.600+02:00"),
-			Entries: []*Entry{
+			title:   "Feed A",
+			feedURL: "http://a.com/feed.xml",
+			updated: toNullString("2022-03-19T16:23:18.600+02:00"),
+			entries: []*Entry{
 				{Title: "Entry A1", IsRead: false},
 				{Title: "Entry A2", IsRead: false},
 			},
 		},
 		{
-			Title:   "Feed X",
-			FeedURL: "http://x.com/feed.xml",
-			Updated: toNullString("2022-04-20T16:32:30.760+02:00"),
-			Entries: []*Entry{
+			title:   "Feed X",
+			feedURL: "http://x.com/feed.xml",
+			updated: toNullString("2022-04-20T16:32:30.760+02:00"),
+			entries: []*Entry{
 				{Title: "Entry X1", IsRead: false},
 			},
 		},

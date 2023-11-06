@@ -20,14 +20,14 @@ func TestDeleteFeedsOkEmpty(t *testing.T) {
 
 	dbFeeds := []*Feed{
 		{
-			Title:   "Feed A",
-			FeedURL: "http://a.com/feed.xml",
-			Updated: toNullString("2022-03-19T16:23:18.600+02:00"),
+			title:   "Feed A",
+			feedURL: "http://a.com/feed.xml",
+			updated: toNullString("2022-03-19T16:23:18.600+02:00"),
 		},
 		{
-			Title:   "Feed X",
-			FeedURL: "http://x.com/feed.xml",
-			Updated: toNullString("2022-04-20T16:32:30.760+02:00"),
+			title:   "Feed X",
+			feedURL: "http://x.com/feed.xml",
+			updated: toNullString("2022-04-20T16:32:30.760+02:00"),
 		},
 	}
 	st.addFeeds(dbFeeds)
@@ -48,27 +48,27 @@ func TestDeleteFeedsOkSingle(t *testing.T) {
 
 	dbFeeds := []*Feed{
 		{
-			Title:   "Feed A",
-			FeedURL: "http://a.com/feed.xml",
-			Updated: toNullString("2022-03-19T16:23:18.600+02:00"),
-			Entries: []*Entry{
+			title:   "Feed A",
+			feedURL: "http://a.com/feed.xml",
+			updated: toNullString("2022-03-19T16:23:18.600+02:00"),
+			entries: []*Entry{
 				{Title: "Entry A1"},
 				{Title: "Entry A2"},
 			},
 		},
 		{
-			Title:   "Feed X",
-			FeedURL: "http://x.com/feed.xml",
-			Updated: toNullString("2022-04-20T16:32:30.760+02:00"),
-			Entries: []*Entry{
+			title:   "Feed X",
+			feedURL: "http://x.com/feed.xml",
+			updated: toNullString("2022-04-20T16:32:30.760+02:00"),
+			entries: []*Entry{
 				{Title: "Entry X1"},
 			},
 		},
 	}
 	keys := st.addFeeds(dbFeeds)
 	r.Equal(2, st.countFeeds())
-	a.Equal(2, st.countEntries(dbFeeds[0].FeedURL))
-	a.Equal(1, st.countEntries(dbFeeds[1].FeedURL))
+	a.Equal(2, st.countEntries(dbFeeds[0].feedURL))
+	a.Equal(1, st.countEntries(dbFeeds[1].feedURL))
 
 	existf := func(title string) bool {
 		return st.rowExists(`SELECT * FROM feeds WHERE title = ?`, title)
@@ -80,8 +80,8 @@ func TestDeleteFeedsOkSingle(t *testing.T) {
 	err := st.DeleteFeeds(context.Background(), []ID{keys["Feed X"].ID})
 	r.NoError(err)
 	a.Equal(1, st.countFeeds())
-	a.Equal(2, st.countEntries(dbFeeds[0].FeedURL))
-	a.Equal(0, st.countEntries(dbFeeds[1].FeedURL))
+	a.Equal(2, st.countEntries(dbFeeds[0].feedURL))
+	a.Equal(0, st.countEntries(dbFeeds[1].feedURL))
 
 	a.True(existf("Feed A"))
 	a.False(existf("Feed X"))
@@ -96,38 +96,38 @@ func TestDeleteFeedsOkMultiple(t *testing.T) {
 
 	dbFeeds := []*Feed{
 		{
-			Title:   "Feed A",
-			FeedURL: "http://a.com/feed.xml",
-			Updated: toNullString("2022-03-19T16:23:18.600+02:00"),
-			Entries: []*Entry{
+			title:   "Feed A",
+			feedURL: "http://a.com/feed.xml",
+			updated: toNullString("2022-03-19T16:23:18.600+02:00"),
+			entries: []*Entry{
 				{Title: "Entry A1"},
 				{Title: "Entry A2"},
 			},
 		},
 		{
-			Title:   "Feed P",
-			FeedURL: "http://p.com/feed.xml",
-			Updated: toNullString("2022-04-02T10:16:00.471+02:00"),
-			Entries: []*Entry{
+			title:   "Feed P",
+			feedURL: "http://p.com/feed.xml",
+			updated: toNullString("2022-04-02T10:16:00.471+02:00"),
+			entries: []*Entry{
 				{Title: "Entry P5"},
 				{Title: "Entry P6"},
 				{Title: "Entry P7"},
 			},
 		},
 		{
-			Title:   "Feed X",
-			FeedURL: "http://x.com/feed.xml",
-			Updated: toNullString("2022-04-20T16:32:30.760+02:00"),
-			Entries: []*Entry{
+			title:   "Feed X",
+			feedURL: "http://x.com/feed.xml",
+			updated: toNullString("2022-04-20T16:32:30.760+02:00"),
+			entries: []*Entry{
 				{Title: "Entry X1"},
 			},
 		},
 	}
 	keys := st.addFeeds(dbFeeds)
 	r.Equal(3, st.countFeeds())
-	a.Equal(2, st.countEntries(dbFeeds[0].FeedURL))
-	a.Equal(3, st.countEntries(dbFeeds[1].FeedURL))
-	a.Equal(1, st.countEntries(dbFeeds[2].FeedURL))
+	a.Equal(2, st.countEntries(dbFeeds[0].feedURL))
+	a.Equal(3, st.countEntries(dbFeeds[1].feedURL))
+	a.Equal(1, st.countEntries(dbFeeds[2].feedURL))
 
 	existf := func(title string) bool {
 		return st.rowExists(`SELECT * FROM feeds WHERE title = ?`, title)
@@ -140,9 +140,9 @@ func TestDeleteFeedsOkMultiple(t *testing.T) {
 	err := st.DeleteFeeds(context.Background(), []ID{keys["Feed A"].ID, keys["Feed P"].ID})
 	r.NoError(err)
 	a.Equal(1, st.countFeeds())
-	a.Equal(0, st.countEntries(dbFeeds[0].FeedURL))
-	a.Equal(0, st.countEntries(dbFeeds[1].FeedURL))
-	a.Equal(1, st.countEntries(dbFeeds[2].FeedURL))
+	a.Equal(0, st.countEntries(dbFeeds[0].feedURL))
+	a.Equal(0, st.countEntries(dbFeeds[1].feedURL))
+	a.Equal(1, st.countEntries(dbFeeds[2].feedURL))
 
 	a.False(existf("Feed A"))
 	a.False(existf("Feed P"))
@@ -158,38 +158,38 @@ func TestDeleteFeedsErrHasMissing(t *testing.T) {
 
 	dbFeeds := []*Feed{
 		{
-			Title:   "Feed A",
-			FeedURL: "http://a.com/feed.xml",
-			Updated: toNullString("2022-03-19T16:23:18.600+02:00"),
-			Entries: []*Entry{
+			title:   "Feed A",
+			feedURL: "http://a.com/feed.xml",
+			updated: toNullString("2022-03-19T16:23:18.600+02:00"),
+			entries: []*Entry{
 				{Title: "Entry A1"},
 				{Title: "Entry A2"},
 			},
 		},
 		{
-			Title:   "Feed P",
-			FeedURL: "http://p.com/feed.xml",
-			Updated: toNullString("2022-04-02T10:16:00.471+02:00"),
-			Entries: []*Entry{
+			title:   "Feed P",
+			feedURL: "http://p.com/feed.xml",
+			updated: toNullString("2022-04-02T10:16:00.471+02:00"),
+			entries: []*Entry{
 				{Title: "Entry P5"},
 				{Title: "Entry P6"},
 				{Title: "Entry P7"},
 			},
 		},
 		{
-			Title:   "Feed X",
-			FeedURL: "http://x.com/feed.xml",
-			Updated: toNullString("2022-04-20T16:32:30.760+02:00"),
-			Entries: []*Entry{
+			title:   "Feed X",
+			feedURL: "http://x.com/feed.xml",
+			updated: toNullString("2022-04-20T16:32:30.760+02:00"),
+			entries: []*Entry{
 				{Title: "Entry X1"},
 			},
 		},
 	}
 	keys := st.addFeeds(dbFeeds)
 	r.Equal(3, st.countFeeds())
-	a.Equal(2, st.countEntries(dbFeeds[0].FeedURL))
-	a.Equal(3, st.countEntries(dbFeeds[1].FeedURL))
-	a.Equal(1, st.countEntries(dbFeeds[2].FeedURL))
+	a.Equal(2, st.countEntries(dbFeeds[0].feedURL))
+	a.Equal(3, st.countEntries(dbFeeds[1].feedURL))
+	a.Equal(1, st.countEntries(dbFeeds[2].feedURL))
 
 	existf := func(title string) bool {
 		return st.rowExists(`SELECT * FROM feeds WHERE title = ?`, title)
@@ -203,9 +203,9 @@ func TestDeleteFeedsErrHasMissing(t *testing.T) {
 	a.EqualError(err, "SQLite.DeleteFeeds: feed with ID=99 not found")
 
 	r.Equal(3, st.countFeeds())
-	a.Equal(2, st.countEntries(dbFeeds[0].FeedURL))
-	a.Equal(3, st.countEntries(dbFeeds[1].FeedURL))
-	a.Equal(1, st.countEntries(dbFeeds[2].FeedURL))
+	a.Equal(2, st.countEntries(dbFeeds[0].feedURL))
+	a.Equal(3, st.countEntries(dbFeeds[1].feedURL))
+	a.Equal(1, st.countEntries(dbFeeds[2].feedURL))
 
 	a.True(existf("Feed A"))
 	a.True(existf("Feed P"))

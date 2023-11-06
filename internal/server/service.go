@@ -39,7 +39,7 @@ func (svc *service) AddFeed(
 		return nil, err
 	}
 
-	payload, err := created.Proto()
+	payload, err := toFeedPB(created)
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
@@ -62,7 +62,7 @@ func (svc *service) ListFeeds(
 
 	rsp := api.ListFeedsResponse{}
 	for _, feed := range feeds {
-		proto, err := feed.Proto()
+		proto, err := toFeedPB(feed)
 		if err != nil {
 			return nil, status.Error(codes.Internal, err.Error())
 		}
@@ -90,7 +90,7 @@ func (svc *service) EditFeeds(
 
 	rsp := api.EditFeedsResponse{}
 	for _, feed := range feeds {
-		fp, err := feed.Proto()
+		fp, err := toFeedPB(feed)
 		if err != nil {
 			return nil, status.Error(codes.Internal, err.Error())
 		}
@@ -138,7 +138,7 @@ func (svc *service) PullFeeds(
 		if feed == nil {
 			return nil, nil
 		}
-		fp, err := feed.Proto()
+		fp, err := toFeedPB(feed)
 		if err != nil {
 			return nil, err
 		}

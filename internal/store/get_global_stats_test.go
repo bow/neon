@@ -45,12 +45,12 @@ func TestGetGlobalStatsExtendedOk(t *testing.T) {
 
 	dbFeeds := []*Feed{
 		{
-			Title:      "Feed A",
-			FeedURL:    "http://a.com/feed.xml",
-			Subscribed: "2022-07-18T22:04:37Z",
-			LastPulled: "2022-07-18T22:04:37Z",
-			Updated:    toNullString("2022-04-20T16:32:30.760+02:00"),
-			Entries: []*Entry{
+			title:      "Feed A",
+			feedURL:    "http://a.com/feed.xml",
+			subscribed: "2022-07-18T22:04:37Z",
+			lastPulled: "2022-07-18T22:04:37Z",
+			updated:    toNullString("2022-04-20T16:32:30.760+02:00"),
+			entries: []*Entry{
 				{
 					Title:   "Entry A1",
 					ExtID:   "A1",
@@ -75,12 +75,12 @@ func TestGetGlobalStatsExtendedOk(t *testing.T) {
 			},
 		},
 		{
-			Title:      "Feed X",
-			FeedURL:    "http://x.com/feed.xml",
-			Subscribed: "2022-07-18T22:04:45Z",
-			LastPulled: "2022-07-18T22:04:45Z",
-			Updated:    toNullString("2022-03-19T16:23:18.600+02:00"),
-			Entries: []*Entry{
+			title:      "Feed X",
+			feedURL:    "http://x.com/feed.xml",
+			subscribed: "2022-07-18T22:04:45Z",
+			lastPulled: "2022-07-18T22:04:45Z",
+			updated:    toNullString("2022-03-19T16:23:18.600+02:00"),
+			entries: []*Entry{
 				{
 					Title:   "Entry X1",
 					ExtID:   "X1",

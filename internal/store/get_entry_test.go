@@ -20,36 +20,36 @@ func TestGetEntryOk(t *testing.T) {
 
 	dbFeeds := []*Feed{
 		{
-			Title:   "Feed A",
-			FeedURL: "http://a.com/feed.xml",
-			Updated: toNullString("2022-03-19T16:23:18.600+02:00"),
-			Entries: []*Entry{
+			title:   "Feed A",
+			feedURL: "http://a.com/feed.xml",
+			updated: toNullString("2022-03-19T16:23:18.600+02:00"),
+			entries: []*Entry{
 				{Title: "Entry A1", IsRead: true},
 			},
 		},
 		{
-			Title:   "Feed X",
-			FeedURL: "http://x.com/feed.xml",
-			Updated: toNullString("2022-04-20T16:32:30.760+02:00"),
-			Entries: []*Entry{
+			title:   "Feed X",
+			feedURL: "http://x.com/feed.xml",
+			updated: toNullString("2022-04-20T16:32:30.760+02:00"),
+			entries: []*Entry{
 				{Title: "Entry X1", IsRead: false},
 				{Title: "Entry X2", IsRead: true},
 			},
 		},
 		{
-			Title:   "Feed B",
-			FeedURL: "http://b.com/feed.xml",
-			Updated: toNullString("2023-04-09T09:49:22.685+02:00"),
+			title:   "Feed B",
+			feedURL: "http://b.com/feed.xml",
+			updated: toNullString("2023-04-09T09:49:22.685+02:00"),
 		},
 	}
 	keys := st.addFeeds(dbFeeds)
 
 	r.Equal(3, st.countFeeds())
-	r.Equal(2, st.countEntries(dbFeeds[1].FeedURL))
+	r.Equal(2, st.countEntries(dbFeeds[1].feedURL))
 
 	dbEntry, err := st.GetEntry(
 		context.Background(),
-		keys[dbFeeds[1].Title].Entries["Entry X2"],
+		keys[dbFeeds[1].title].Entries["Entry X2"],
 	)
 	r.NoError(err)
 	r.NotNil(dbEntry)

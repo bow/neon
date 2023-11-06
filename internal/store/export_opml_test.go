@@ -38,29 +38,29 @@ func TestExportOPMLOkExtended(t *testing.T) {
 
 	dbFeeds := []*Feed{
 		{
-			Title:   "Feed A",
-			FeedURL: "http://a.com/feed.xml",
-			Updated: toNullString("2022-03-19T16:23:18.600+02:00"),
-			Entries: []*Entry{
+			title:   "Feed A",
+			feedURL: "http://a.com/feed.xml",
+			updated: toNullString("2022-03-19T16:23:18.600+02:00"),
+			entries: []*Entry{
 				{Title: "Entry A1", IsRead: false},
 				{Title: "Entry A2", IsRead: false},
 			},
 		},
 		{
-			Title:   "Feed X",
-			FeedURL: "http://x.com/feed.xml",
-			Updated: toNullString("2022-04-20T16:32:30.760+02:00"),
-			Entries: []*Entry{
+			title:   "Feed X",
+			feedURL: "http://x.com/feed.xml",
+			updated: toNullString("2022-04-20T16:32:30.760+02:00"),
+			entries: []*Entry{
 				{Title: "Entry X1", IsRead: false},
 			},
-			Tags: []string{"foo", "baz"},
+			tags: []string{"foo", "baz"},
 		},
 		{
-			Title:     "Feed Q",
-			FeedURL:   "http://q.com/feed.xml",
-			Updated:   toNullString("2022-05-02T11:47:33.683+02:00"),
-			IsStarred: true,
-			Entries: []*Entry{
+			title:     "Feed Q",
+			feedURL:   "http://q.com/feed.xml",
+			updated:   toNullString("2022-05-02T11:47:33.683+02:00"),
+			isStarred: true,
+			entries: []*Entry{
 				{Title: "Entry Q1", IsRead: false},
 			},
 		},

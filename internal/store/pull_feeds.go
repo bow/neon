@@ -233,7 +233,7 @@ func pullNewFeedEntries(
 			return pk.err(err)
 		}
 
-		feed.Entries = unreadEntries
+		feed.entries = unreadEntries
 
 		return pk.ok(feed)
 	}

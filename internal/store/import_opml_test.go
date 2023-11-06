@@ -107,24 +107,24 @@ func TestImportOPMLOkExtended(t *testing.T) {
 
 	dbFeeds := []*Feed{
 		{
-			Title:     "Feed BC",
-			FeedURL:   "http://bc.com/feed.xml",
-			Updated:   toNullString("2022-03-19T16:23:18.600+02:00"),
-			IsStarred: false,
-			Entries: []*Entry{
+			title:     "Feed BC",
+			feedURL:   "http://bc.com/feed.xml",
+			updated:   toNullString("2022-03-19T16:23:18.600+02:00"),
+			isStarred: false,
+			entries: []*Entry{
 				{Title: "Entry BC1", IsRead: false},
 				{Title: "Entry BC2", IsRead: true},
 			},
 		},
 		{
-			Title:     "Feed D",
-			FeedURL:   "http://d.com/feed.xml",
-			Updated:   toNullString("2022-04-20T16:32:30.760+02:00"),
-			IsStarred: true,
-			Entries: []*Entry{
+			title:     "Feed D",
+			feedURL:   "http://d.com/feed.xml",
+			updated:   toNullString("2022-04-20T16:32:30.760+02:00"),
+			isStarred: true,
+			entries: []*Entry{
 				{Title: "Entry D1", IsRead: false},
 			},
-			Tags: []string{"foo", "baz"},
+			tags: []string{"foo", "baz"},
 		},
 	}
 	st.addFeeds(dbFeeds)
