@@ -50,14 +50,6 @@ func fmtFeed(feed *store.Feed) string {
 		cat = func(format string, a ...any) { fmt.Fprintf(&sb, format, a...) }
 	)
 
-	var nread, ntotal int
-	for _, entry := range feed.Entries() {
-		if entry.IsRead {
-			nread++
-		}
-		ntotal++
-	}
-
 	var upds string
 	if fu := feed.Updated(); fu != nil {
 		upds = fmtTime(*fu)
@@ -74,7 +66,7 @@ func fmtFeed(feed *store.Feed) string {
 		{"FeedID", fmt.Sprintf("%d", feed.ID())},
 		{"Last pulled", fmtTime(feed.LastPulled())},
 		{"Updated", upds},
-		{"Unread", fmt.Sprintf("%d/%d", ntotal-nread, ntotal)},
+		{"Unread", fmt.Sprintf("%d/%d", feed.NumEntriesUnread(), feed.NumEntriesTotal())},
 		{"URL", siteURL},
 		{"Tags", fmt.Sprintf("#%s", strings.Join(feed.Tags(), " #"))},
 	}

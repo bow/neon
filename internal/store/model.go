@@ -100,6 +100,22 @@ func (f *Feed) Updated() *time.Time {
 	return upt
 }
 
+func (f *Feed) NumEntriesTotal() int { return len(f.entries) }
+
+func (f *Feed) NumEntriesRead() int {
+	var n int
+	for _, entry := range f.entries {
+		if entry.IsRead {
+			n++
+		}
+	}
+	return n
+}
+
+func (f *Feed) NumEntriesUnread() int {
+	return f.NumEntriesTotal() - f.NumEntriesRead()
+}
+
 func (f *Feed) Outline() (*opml.Outline, error) {
 	outl := opml.Outline{
 		Text:   f.title,
