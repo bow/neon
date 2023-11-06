@@ -50,10 +50,6 @@ func fmtFeed(feed *store.Feed) string {
 		cat = func(format string, a ...any) { fmt.Fprintf(&sb, format, a...) }
 	)
 
-	upds := refmtTime(feed.Updated())
-	lpt := feed.LastPulled()
-	ps := refmtTime(&lpt)
-
 	var nread, ntotal int
 	for _, entry := range feed.Entries() {
 		if entry.IsRead {
@@ -62,14 +58,24 @@ func fmtFeed(feed *store.Feed) string {
 		ntotal++
 	}
 
+	var upds string
+	if fu := feed.Updated(); fu != nil {
+		upds = fmtTime(*fu)
+	}
+
+	var siteURL string
+	if su := feed.SiteURL(); su != nil {
+		siteURL = *su
+	}
+
 	kv := []*struct {
 		k, v string
 	}{
 		{"FeedID", fmt.Sprintf("%d", feed.ID())},
-		{"Last pulled", ps},
+		{"Last pulled", fmtTime(feed.LastPulled())},
 		{"Updated", upds},
 		{"Unread", fmt.Sprintf("%d/%d", ntotal-nread, ntotal)},
-		{"URL", *feed.SiteURL()},
+		{"URL", siteURL},
 		{"Tags", fmt.Sprintf("#%s", strings.Join(feed.Tags(), " #"))},
 	}
 
@@ -93,10 +99,7 @@ func fmtFeed(feed *store.Feed) string {
 	return sb.String()
 }
 
-func refmtTime(value *time.Time) string {
-	if value == nil {
-		return ""
-	}
+func fmtTime(value time.Time) string {
 	return value.Local().Format("2 January 2006 • 15:04 MST")
 }
 
