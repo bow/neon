@@ -215,9 +215,9 @@ func (s *Stats) Proto() (*api.GetStatsResponse_Stats, error) {
 	return &proto, nil
 }
 
-// WrapNullString wraps the given string into an sql.NullString value. An empty string input is
+// wrapNullString wraps the given string into an sql.NullString value. An empty string input is
 // considered a database NULL value.
-func WrapNullString(v string) sql.NullString {
+func wrapNullString(v string) sql.NullString {
 	return sql.NullString{String: v, Valid: v != ""}
 }
 

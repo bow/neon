@@ -42,13 +42,13 @@ func TestPullFeedsAllOkEmptyEntries(t *testing.T) {
 		{
 			Title:   "Feed A",
 			FeedURL: "http://a.com/feed.xml",
-			Updated: WrapNullString("2022-03-19T16:23:18.600+02:00"),
+			Updated: wrapNullString("2022-03-19T16:23:18.600+02:00"),
 			Entries: []*Entry{},
 		},
 		{
 			Title:   "Feed X",
 			FeedURL: "http://x.com/feed.xml",
-			Updated: WrapNullString("2022-04-20T16:32:30.760+02:00"),
+			Updated: wrapNullString("2022-04-20T16:32:30.760+02:00"),
 			Entries: []*Entry{},
 		},
 	}
@@ -102,35 +102,35 @@ func TestPullFeedsAllOkNoNewEntries(t *testing.T) {
 		{
 			Title:   "Feed A",
 			FeedURL: "http://a.com/feed.xml",
-			Updated: WrapNullString("2022-03-19T16:23:18.600+02:00"),
+			Updated: wrapNullString("2022-03-19T16:23:18.600+02:00"),
 			Entries: []*Entry{
 				{
 					Title:   "Entry A1",
 					ExtID:   "A1",
 					IsRead:  true,
-					Updated: WrapNullString("2022-07-16T23:39:07.383+02:00"),
-					URL:     WrapNullString("http://a.com/a1.html"),
+					Updated: wrapNullString("2022-07-16T23:39:07.383+02:00"),
+					URL:     wrapNullString("http://a.com/a1.html"),
 				},
 				{
 					Title:   "Entry A2",
 					ExtID:   "A2",
 					IsRead:  true,
-					Updated: WrapNullString("2022-07-16T23:42:24.988+02:00"),
-					URL:     WrapNullString("http://a.com/a2.html"),
+					Updated: wrapNullString("2022-07-16T23:42:24.988+02:00"),
+					URL:     wrapNullString("http://a.com/a2.html"),
 				},
 			},
 		},
 		{
 			Title:   "Feed X",
 			FeedURL: "http://x.com/feed.xml",
-			Updated: WrapNullString("2022-04-20T16:32:30.760+02:00"),
+			Updated: wrapNullString("2022-04-20T16:32:30.760+02:00"),
 			Entries: []*Entry{
 				{
 					Title:   "Entry X1",
 					ExtID:   "X1",
 					IsRead:  true,
-					Updated: WrapNullString("2022-07-16T23:43:12.759+02:00"),
-					URL:     WrapNullString("http://x.com/x1.html"),
+					Updated: wrapNullString("2022-07-16T23:43:12.759+02:00"),
+					URL:     wrapNullString("http://x.com/x1.html"),
 				},
 			},
 		},
@@ -222,31 +222,31 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 			FeedURL:    "http://a.com/feed.xml",
 			Subscribed: "2022-07-18T22:04:37Z",
 			LastPulled: "2022-07-18T22:04:37Z",
-			Updated:    WrapNullString("2022-03-19T16:23:18.600+02:00"),
+			Updated:    wrapNullString("2022-03-19T16:23:18.600+02:00"),
 			Entries: []*Entry{
 				{
 					// This entry should not be returned later; 'updated' remains the same.
 					Title:   "Entry A1",
 					ExtID:   "A1",
 					IsRead:  true,
-					Updated: WrapNullString("2022-07-16T23:39:07.383+02:00"),
-					URL:     WrapNullString("http://a.com/a1.html"),
+					Updated: wrapNullString("2022-07-16T23:39:07.383+02:00"),
+					URL:     wrapNullString("http://a.com/a1.html"),
 				},
 				{
 					// This entry should not be returned later; 'updated' remains the same.
 					Title:   "Entry A2",
 					ExtID:   "A2",
 					IsRead:  false,
-					Updated: WrapNullString("2022-07-16T23:42:24.988+02:00"),
-					URL:     WrapNullString("http://a.com/a2.html"),
+					Updated: wrapNullString("2022-07-16T23:42:24.988+02:00"),
+					URL:     wrapNullString("http://a.com/a2.html"),
 				},
 				{
 					// This entry should be returned later; 'updated' will be changed.
 					Title:   "Entry A3",
 					ExtID:   "A3",
 					IsRead:  true,
-					Updated: WrapNullString("2022-03-18T22:51:49.404+02:00"),
-					URL:     WrapNullString("http://a.com/a3.html"),
+					Updated: wrapNullString("2022-03-18T22:51:49.404+02:00"),
+					URL:     wrapNullString("http://a.com/a3.html"),
 				},
 			},
 		},
@@ -255,15 +255,15 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 			FeedURL:    "http://x.com/feed.xml",
 			Subscribed: "2022-07-18T22:04:45Z",
 			LastPulled: "2022-07-18T22:04:45Z",
-			Updated:    WrapNullString("2022-04-20T16:32:30.760+02:00"),
+			Updated:    wrapNullString("2022-04-20T16:32:30.760+02:00"),
 			Entries: []*Entry{
 				{
 					// This entry should not be returned later; 'updated' remains the same.
 					Title:   "Entry X1",
 					ExtID:   "X1",
 					IsRead:  true,
-					Updated: WrapNullString("2022-07-16T23:43:12.759+02:00"),
-					URL:     WrapNullString("http://x.com/x1.html"),
+					Updated: wrapNullString("2022-07-16T23:43:12.759+02:00"),
+					URL:     wrapNullString("http://x.com/x1.html"),
 				},
 			},
 		},
@@ -276,7 +276,7 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 		{
 			Title:   dbFeeds[0].Title,
 			FeedURL: dbFeeds[0].FeedURL,
-			Updated: WrapNullString("2022-07-18T22:51:49.404+02:00"),
+			Updated: wrapNullString("2022-07-18T22:51:49.404+02:00"),
 			Entries: []*Entry{
 				{
 					Title:   dbFeeds[0].Entries[0].Title,
@@ -293,7 +293,7 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 				{
 					Title:   dbFeeds[0].Entries[2].Title,
 					ExtID:   dbFeeds[0].Entries[2].ExtID,
-					Updated: WrapNullString("2022-07-19T16:23:18.600+02:00"),
+					Updated: wrapNullString("2022-07-19T16:23:18.600+02:00"),
 					URL:     dbFeeds[0].Entries[2].URL,
 				},
 			},
@@ -301,7 +301,7 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 		{
 			Title:   dbFeeds[1].Title,
 			FeedURL: dbFeeds[1].FeedURL,
-			Updated: WrapNullString("2022-07-18T22:21:41.647+02:00"),
+			Updated: wrapNullString("2022-07-18T22:21:41.647+02:00"),
 			Entries: []*Entry{
 				{
 					Title:   dbFeeds[1].Entries[0].Title,
@@ -312,8 +312,8 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 				{
 					Title:   "Entry X2",
 					ExtID:   "X2",
-					Updated: WrapNullString("2022-07-18T22:21:41.647+02:00"),
-					URL:     WrapNullString("http://x.com/x2.html"),
+					Updated: wrapNullString("2022-07-18T22:21:41.647+02:00"),
+					URL:     wrapNullString("http://x.com/x2.html"),
 				},
 			},
 		},
@@ -428,28 +428,28 @@ func TestPullFeedsSelectedOkSomeNewEntries(t *testing.T) {
 			FeedURL:    "http://a.com/feed.xml",
 			Subscribed: "2022-07-18T22:04:37Z",
 			LastPulled: "2022-07-18T22:04:37Z",
-			Updated:    WrapNullString("2022-03-19T16:23:18.600+02:00"),
+			Updated:    wrapNullString("2022-03-19T16:23:18.600+02:00"),
 			Entries: []*Entry{
 				{
 					Title:   "Entry A1",
 					ExtID:   "A1",
 					IsRead:  true,
-					Updated: WrapNullString("2022-07-16T23:39:07.383+02:00"),
-					URL:     WrapNullString("http://a.com/a1.html"),
+					Updated: wrapNullString("2022-07-16T23:39:07.383+02:00"),
+					URL:     wrapNullString("http://a.com/a1.html"),
 				},
 				{
 					Title:   "Entry A2",
 					ExtID:   "A2",
 					IsRead:  false,
-					Updated: WrapNullString("2022-07-16T23:42:24.988+02:00"),
-					URL:     WrapNullString("http://a.com/a2.html"),
+					Updated: wrapNullString("2022-07-16T23:42:24.988+02:00"),
+					URL:     wrapNullString("http://a.com/a2.html"),
 				},
 				{
 					Title:   "Entry A3",
 					ExtID:   "A3",
 					IsRead:  true,
-					Updated: WrapNullString("2022-03-18T22:51:49.404+02:00"),
-					URL:     WrapNullString("http://a.com/a3.html"),
+					Updated: wrapNullString("2022-03-18T22:51:49.404+02:00"),
+					URL:     wrapNullString("http://a.com/a3.html"),
 				},
 			},
 		},
@@ -459,15 +459,15 @@ func TestPullFeedsSelectedOkSomeNewEntries(t *testing.T) {
 			FeedURL:    "http://x.com/feed.xml",
 			Subscribed: "2022-07-18T22:04:45Z",
 			LastPulled: "2022-07-18T22:04:45Z",
-			Updated:    WrapNullString("2022-04-20T16:32:30.760+02:00"),
+			Updated:    wrapNullString("2022-04-20T16:32:30.760+02:00"),
 			Entries: []*Entry{
 				{
 					// This entry should not be returned later; 'updated' remains the same.
 					Title:   "Entry X1",
 					ExtID:   "X1",
 					IsRead:  true,
-					Updated: WrapNullString("2022-07-16T23:43:12.759+02:00"),
-					URL:     WrapNullString("http://x.com/x1.html"),
+					Updated: wrapNullString("2022-07-16T23:43:12.759+02:00"),
+					URL:     wrapNullString("http://x.com/x1.html"),
 				},
 			},
 		},
@@ -479,7 +479,7 @@ func TestPullFeedsSelectedOkSomeNewEntries(t *testing.T) {
 	pulledFeed := &Feed{
 		Title:   dbFeeds[1].Title,
 		FeedURL: dbFeeds[1].FeedURL,
-		Updated: WrapNullString("2022-07-18T22:21:41.647+02:00"),
+		Updated: wrapNullString("2022-07-18T22:21:41.647+02:00"),
 		Entries: []*Entry{
 			{
 				Title:   dbFeeds[1].Entries[0].Title,
@@ -490,8 +490,8 @@ func TestPullFeedsSelectedOkSomeNewEntries(t *testing.T) {
 			{
 				Title:   "Entry X2",
 				ExtID:   "X2",
-				Updated: WrapNullString("2022-07-18T22:21:41.647+02:00"),
-				URL:     WrapNullString("http://x.com/x2.html"),
+				Updated: wrapNullString("2022-07-18T22:21:41.647+02:00"),
+				URL:     wrapNullString("http://x.com/x2.html"),
 			},
 		},
 	}

@@ -22,12 +22,12 @@ func TestDeleteFeedsOkEmpty(t *testing.T) {
 		{
 			Title:   "Feed A",
 			FeedURL: "http://a.com/feed.xml",
-			Updated: WrapNullString("2022-03-19T16:23:18.600+02:00"),
+			Updated: wrapNullString("2022-03-19T16:23:18.600+02:00"),
 		},
 		{
 			Title:   "Feed X",
 			FeedURL: "http://x.com/feed.xml",
-			Updated: WrapNullString("2022-04-20T16:32:30.760+02:00"),
+			Updated: wrapNullString("2022-04-20T16:32:30.760+02:00"),
 		},
 	}
 	st.addFeeds(dbFeeds)
@@ -50,7 +50,7 @@ func TestDeleteFeedsOkSingle(t *testing.T) {
 		{
 			Title:   "Feed A",
 			FeedURL: "http://a.com/feed.xml",
-			Updated: WrapNullString("2022-03-19T16:23:18.600+02:00"),
+			Updated: wrapNullString("2022-03-19T16:23:18.600+02:00"),
 			Entries: []*Entry{
 				{Title: "Entry A1"},
 				{Title: "Entry A2"},
@@ -59,7 +59,7 @@ func TestDeleteFeedsOkSingle(t *testing.T) {
 		{
 			Title:   "Feed X",
 			FeedURL: "http://x.com/feed.xml",
-			Updated: WrapNullString("2022-04-20T16:32:30.760+02:00"),
+			Updated: wrapNullString("2022-04-20T16:32:30.760+02:00"),
 			Entries: []*Entry{
 				{Title: "Entry X1"},
 			},
@@ -98,7 +98,7 @@ func TestDeleteFeedsOkMultiple(t *testing.T) {
 		{
 			Title:   "Feed A",
 			FeedURL: "http://a.com/feed.xml",
-			Updated: WrapNullString("2022-03-19T16:23:18.600+02:00"),
+			Updated: wrapNullString("2022-03-19T16:23:18.600+02:00"),
 			Entries: []*Entry{
 				{Title: "Entry A1"},
 				{Title: "Entry A2"},
@@ -107,7 +107,7 @@ func TestDeleteFeedsOkMultiple(t *testing.T) {
 		{
 			Title:   "Feed P",
 			FeedURL: "http://p.com/feed.xml",
-			Updated: WrapNullString("2022-04-02T10:16:00.471+02:00"),
+			Updated: wrapNullString("2022-04-02T10:16:00.471+02:00"),
 			Entries: []*Entry{
 				{Title: "Entry P5"},
 				{Title: "Entry P6"},
@@ -117,7 +117,7 @@ func TestDeleteFeedsOkMultiple(t *testing.T) {
 		{
 			Title:   "Feed X",
 			FeedURL: "http://x.com/feed.xml",
-			Updated: WrapNullString("2022-04-20T16:32:30.760+02:00"),
+			Updated: wrapNullString("2022-04-20T16:32:30.760+02:00"),
 			Entries: []*Entry{
 				{Title: "Entry X1"},
 			},
@@ -160,7 +160,7 @@ func TestDeleteFeedsErrHasMissing(t *testing.T) {
 		{
 			Title:   "Feed A",
 			FeedURL: "http://a.com/feed.xml",
-			Updated: WrapNullString("2022-03-19T16:23:18.600+02:00"),
+			Updated: wrapNullString("2022-03-19T16:23:18.600+02:00"),
 			Entries: []*Entry{
 				{Title: "Entry A1"},
 				{Title: "Entry A2"},
@@ -169,7 +169,7 @@ func TestDeleteFeedsErrHasMissing(t *testing.T) {
 		{
 			Title:   "Feed P",
 			FeedURL: "http://p.com/feed.xml",
-			Updated: WrapNullString("2022-04-02T10:16:00.471+02:00"),
+			Updated: wrapNullString("2022-04-02T10:16:00.471+02:00"),
 			Entries: []*Entry{
 				{Title: "Entry P5"},
 				{Title: "Entry P6"},
@@ -179,7 +179,7 @@ func TestDeleteFeedsErrHasMissing(t *testing.T) {
 		{
 			Title:   "Feed X",
 			FeedURL: "http://x.com/feed.xml",
-			Updated: WrapNullString("2022-04-20T16:32:30.760+02:00"),
+			Updated: wrapNullString("2022-04-20T16:32:30.760+02:00"),
 			Entries: []*Entry{
 				{Title: "Entry X1"},
 			},

@@ -5,6 +5,7 @@ package server
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"io"
 	"math/rand"
@@ -38,8 +39,8 @@ func TestAddFeedOk(t *testing.T) {
 	}
 	created := store.Feed{
 		Title:       "feed-title-original",
-		Description: store.WrapNullString("feed-description-original"),
-		SiteURL:     store.WrapNullString("https://foo.com"),
+		Description: wrapNullString("feed-description-original"),
+		SiteURL:     wrapNullString("https://foo.com"),
 		FeedURL:     "https://foo.com/feed.xml",
 		Subscribed:  "2021-07-01T23:33:06.156+02:00",
 		LastPulled:  "2021-07-01T23:33:06.156+02:00",
@@ -81,14 +82,14 @@ func TestListFeedsOk(t *testing.T) {
 			FeedURL:    "http://a.com/feed.xml",
 			Subscribed: "2022-06-22T19:39:38.964+02:00",
 			LastPulled: "2022-06-22T19:39:38.964+02:00",
-			Updated:    store.WrapNullString("2022-03-19T16:23:18.600+02:00"),
+			Updated:    wrapNullString("2022-03-19T16:23:18.600+02:00"),
 		},
 		{
 			Title:      "Feed X",
 			FeedURL:    "http://x.com/feed.xml",
 			Subscribed: "2022-06-22T19:39:44.037+02:00",
 			LastPulled: "2022-06-22T19:39:44.037+02:00",
-			Updated:    store.WrapNullString("2022-04-20T16:32:30.760+02:00"),
+			Updated:    wrapNullString("2022-04-20T16:32:30.760+02:00"),
 		},
 	}
 	str.EXPECT().
@@ -577,17 +578,17 @@ func TestListEntriesOk(t *testing.T) {
 		{
 			Title:   "Entry 1",
 			IsRead:  false,
-			Content: store.WrapNullString("Contents 1."),
+			Content: wrapNullString("Contents 1."),
 		},
 		{
 			Title:   "Entry 2",
 			IsRead:  false,
-			Content: store.WrapNullString("Contents 2."),
+			Content: wrapNullString("Contents 2."),
 		},
 		{
 			Title:   "Entry 3",
 			IsRead:  true,
-			Content: store.WrapNullString("Contents 3."),
+			Content: wrapNullString("Contents 3."),
 		},
 	}
 
@@ -664,10 +665,10 @@ func TestGetEntryOk(t *testing.T) {
 		Title:     "Test Feed Entry",
 		IsRead:    false,
 		ExtID:     "4abaed90-3435-426f-bf95-05c700a503bf",
-		Updated:   store.WrapNullString("2023-07-12T05:02:23.764+02:00"),
-		Published: store.WrapNullString("2023-07-12T05:02:23.764+02:00"),
-		Content:   store.WrapNullString("Hello"),
-		URL:       store.WrapNullString("http://x.com/posts/test-feed-entry.html"),
+		Updated:   wrapNullString("2023-07-12T05:02:23.764+02:00"),
+		Published: wrapNullString("2023-07-12T05:02:23.764+02:00"),
+		Content:   wrapNullString("Hello"),
+		URL:       wrapNullString("http://x.com/posts/test-feed-entry.html"),
 	}
 
 	str.EXPECT().
@@ -753,7 +754,7 @@ func TestGetStatsOk(t *testing.T) {
 		NumEntries:              5311,
 		NumEntriesUnread:        8,
 		RawLastPullTime:         "2023-11-04T05:13:12.805Z",
-		RawMostRecentUpdateTime: store.WrapNullString("2023-11-04T05:13:12.805Z"),
+		RawMostRecentUpdateTime: wrapNullString("2023-11-04T05:13:12.805Z"),
 	}
 	lpt, err := stats.LastPullTime()
 	r.NoError(err)
@@ -802,3 +803,5 @@ func TestGetInfoOk(t *testing.T) {
 }
 
 func pointer[T any](value T) *T { return &value }
+
+func wrapNullString(v string) sql.NullString { return sql.NullString{String: v, Valid: v != ""} }

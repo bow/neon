@@ -40,7 +40,7 @@ func TestExportOPMLOkExtended(t *testing.T) {
 		{
 			Title:   "Feed A",
 			FeedURL: "http://a.com/feed.xml",
-			Updated: WrapNullString("2022-03-19T16:23:18.600+02:00"),
+			Updated: wrapNullString("2022-03-19T16:23:18.600+02:00"),
 			Entries: []*Entry{
 				{Title: "Entry A1", IsRead: false},
 				{Title: "Entry A2", IsRead: false},
@@ -49,7 +49,7 @@ func TestExportOPMLOkExtended(t *testing.T) {
 		{
 			Title:   "Feed X",
 			FeedURL: "http://x.com/feed.xml",
-			Updated: WrapNullString("2022-04-20T16:32:30.760+02:00"),
+			Updated: wrapNullString("2022-04-20T16:32:30.760+02:00"),
 			Entries: []*Entry{
 				{Title: "Entry X1", IsRead: false},
 			},
@@ -58,7 +58,7 @@ func TestExportOPMLOkExtended(t *testing.T) {
 		{
 			Title:     "Feed Q",
 			FeedURL:   "http://q.com/feed.xml",
-			Updated:   WrapNullString("2022-05-02T11:47:33.683+02:00"),
+			Updated:   wrapNullString("2022-05-02T11:47:33.683+02:00"),
 			IsStarred: true,
 			Entries: []*Entry{
 				{Title: "Entry Q1", IsRead: false},
