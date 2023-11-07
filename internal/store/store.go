@@ -30,22 +30,89 @@ type FeedStore interface {
 		desc *string,
 		tags []string,
 		isStarred *bool,
-	) (addedFeed *internal.Feed, err error)
-	EditFeeds(ctx context.Context, ops []*internal.FeedEditOp) (feeds []*internal.Feed, err error)
-	ListFeeds(ctx context.Context) (feeds []*internal.Feed, err error)
-	PullFeeds(ctx context.Context, feedIDs []ID) (results <-chan internal.PullResult)
-	DeleteFeeds(ctx context.Context, ids []ID) (err error)
-	ListEntries(ctx context.Context, feedID ID) (entries []*internal.Entry, err error)
+	) (
+		addedFeed *internal.Feed,
+		err error,
+	)
+
+	EditFeeds(
+		ctx context.Context,
+		ops []*internal.FeedEditOp,
+	) (
+		feeds []*internal.Feed,
+		err error,
+	)
+
+	ListFeeds(
+		ctx context.Context,
+	) (
+		feeds []*internal.Feed,
+		err error,
+	)
+
+	PullFeeds(
+		ctx context.Context,
+		ids []ID,
+	) (
+		results <-chan internal.PullResult,
+	)
+
+	DeleteFeeds(
+		ctx context.Context,
+		ids []ID,
+	) (
+		err error,
+	)
+
+	ListEntries(
+		ctx context.Context,
+		feedID ID,
+	) (
+		entries []*internal.Entry,
+		err error,
+	)
+
 	EditEntries(
 		ctx context.Context,
 		ops []*internal.EntryEditOp,
-	) (entries []*internal.Entry, err error)
-	GetEntry(ctx context.Context, entryID ID) (entry *internal.Entry, err error)
+	) (
+		entries []*internal.Entry,
+		err error,
+	)
+
+	GetEntry(
+		ctx context.Context,
+		id ID,
+	) (
+		entry *internal.Entry,
+		err error,
+	)
+
 	// TODO: Export OPML structs instead.
-	ExportOPML(ctx context.Context, title *string) (payload []byte, err error)
+	ExportOPML(
+		ctx context.Context,
+		exportTitle *string,
+	) (
+		payload []byte,
+		err error,
+	)
+
 	// TODO: Import OPML structs instead.
-	ImportOPML(ctx context.Context, payload []byte) (processed int, imported int, err error)
-	GetGlobalStats(ctx context.Context) (stats *internal.Stats, err error)
+	ImportOPML(
+		ctx context.Context,
+		payload []byte,
+	) (
+		processed int,
+		imported int,
+		err error,
+	)
+
+	GetGlobalStats(
+		ctx context.Context,
+	) (
+		stats *internal.Stats,
+		err error,
+	)
 }
 
 type SQLite struct {

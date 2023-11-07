@@ -95,33 +95,33 @@ func (mr *MockFeedStoreMockRecorder) EditFeeds(ctx, ops interface{}) *gomock.Cal
 }
 
 // ExportOPML mocks base method.
-func (m *MockFeedStore) ExportOPML(ctx context.Context, title *string) ([]byte, error) {
+func (m *MockFeedStore) ExportOPML(ctx context.Context, exportTitle *string) ([]byte, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ExportOPML", ctx, title)
+	ret := m.ctrl.Call(m, "ExportOPML", ctx, exportTitle)
 	ret0, _ := ret[0].([]byte)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ExportOPML indicates an expected call of ExportOPML.
-func (mr *MockFeedStoreMockRecorder) ExportOPML(ctx, title interface{}) *gomock.Call {
+func (mr *MockFeedStoreMockRecorder) ExportOPML(ctx, exportTitle interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ExportOPML", reflect.TypeOf((*MockFeedStore)(nil).ExportOPML), ctx, title)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ExportOPML", reflect.TypeOf((*MockFeedStore)(nil).ExportOPML), ctx, exportTitle)
 }
 
 // GetEntry mocks base method.
-func (m *MockFeedStore) GetEntry(ctx context.Context, entryID ID) (*internal.Entry, error) {
+func (m *MockFeedStore) GetEntry(ctx context.Context, id ID) (*internal.Entry, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetEntry", ctx, entryID)
+	ret := m.ctrl.Call(m, "GetEntry", ctx, id)
 	ret0, _ := ret[0].(*internal.Entry)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetEntry indicates an expected call of GetEntry.
-func (mr *MockFeedStoreMockRecorder) GetEntry(ctx, entryID interface{}) *gomock.Call {
+func (mr *MockFeedStoreMockRecorder) GetEntry(ctx, id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEntry", reflect.TypeOf((*MockFeedStore)(nil).GetEntry), ctx, entryID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEntry", reflect.TypeOf((*MockFeedStore)(nil).GetEntry), ctx, id)
 }
 
 // GetGlobalStats mocks base method.
@@ -186,17 +186,17 @@ func (mr *MockFeedStoreMockRecorder) ListFeeds(ctx interface{}) *gomock.Call {
 }
 
 // PullFeeds mocks base method.
-func (m *MockFeedStore) PullFeeds(ctx context.Context, feedIDs []ID) <-chan internal.PullResult {
+func (m *MockFeedStore) PullFeeds(ctx context.Context, ids []ID) <-chan internal.PullResult {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "PullFeeds", ctx, feedIDs)
+	ret := m.ctrl.Call(m, "PullFeeds", ctx, ids)
 	ret0, _ := ret[0].(<-chan internal.PullResult)
 	return ret0
 }
 
 // PullFeeds indicates an expected call of PullFeeds.
-func (mr *MockFeedStoreMockRecorder) PullFeeds(ctx, feedIDs interface{}) *gomock.Call {
+func (mr *MockFeedStoreMockRecorder) PullFeeds(ctx, ids interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PullFeeds", reflect.TypeOf((*MockFeedStore)(nil).PullFeeds), ctx, feedIDs)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PullFeeds", reflect.TypeOf((*MockFeedStore)(nil).PullFeeds), ctx, ids)
 }
 
 // MockeditableTable is a mock of editableTable interface.

@@ -11,16 +11,16 @@ import (
 	"github.com/bow/iris/internal"
 )
 
-func (s *SQLite) GetEntry(ctx context.Context, entryID ID) (*internal.Entry, error) {
+func (s *SQLite) GetEntry(ctx context.Context, id ID) (*internal.Entry, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
 	var rec *entryRecord
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
-		irec, err := getEntry(ctx, tx, entryID)
+		irec, err := getEntry(ctx, tx, id)
 		if err != nil {
 			if errors.Is(err, sql.ErrNoRows) {
-				return EntryNotFoundError{entryID}
+				return EntryNotFoundError{id}
 			}
 			return err
 		}
