@@ -8,10 +8,8 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"strconv"
 	"strings"
 	"sync"
-	"time"
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/mmcdole/gofeed"
@@ -141,130 +139,6 @@ func ToFeedIDs(raw []string) ([]ID, error) {
 		ids = append(ids, id)
 	}
 	return ids, nil
-}
-
-func toFeedID(raw string) (ID, error) {
-	id, err := strconv.ParseUint(raw, 10, 32)
-	if err != nil {
-		return 0, FeedNotFoundError{ID: raw}
-	}
-	return ID(id), nil
-}
-
-func toFeed(rec *FeedRecord) (*internal.Feed, error) {
-
-	subt, err := deserializeTime(&rec.subscribed)
-	if err != nil {
-		return nil, fmt.Errorf("failed to deserialize Feed.Subscribed time: %w", err)
-	}
-	lpt, err := deserializeTime(&rec.lastPulled)
-	if err != nil {
-		return nil, err
-	}
-	var upt *time.Time
-	if v := fromNullString(rec.updated); v != nil {
-		upt, err = deserializeTime(v)
-		if err != nil {
-			return nil, fmt.Errorf("failed to deserialize Feed.Updated time: %w", err)
-		}
-	}
-	entries, err := toEntries(rec.entries)
-	if err != nil {
-		return nil, err
-	}
-
-	feed := internal.Feed{
-		ID:          rec.id,
-		Title:       rec.title,
-		Description: fromNullString(rec.description),
-		FeedURL:     rec.feedURL,
-		SiteURL:     fromNullString(rec.siteURL),
-		Subscribed:  *subt,
-		LastPulled:  *lpt,
-		Updated:     upt,
-		IsStarred:   rec.isStarred,
-		Tags:        []string(rec.tags),
-		Entries:     entries,
-	}
-	return &feed, nil
-}
-
-func toFeeds(recs []*FeedRecord) ([]*internal.Feed, error) {
-
-	feeds := make([]*internal.Feed, len(recs))
-	for i, rec := range recs {
-		feed, err := toFeed(rec)
-		if err != nil {
-			return nil, err
-		}
-		feeds[i] = feed
-	}
-
-	return feeds, nil
-}
-
-func toEntry(rec *EntryRecord) (*internal.Entry, error) {
-
-	ut, err := deserializeTime(fromNullString(rec.Updated))
-	if err != nil {
-		return nil, fmt.Errorf("failed to deserialize Entry.Updated time: %w", err)
-	}
-	pt, err := deserializeTime(fromNullString(rec.Published))
-	if err != nil {
-		return nil, fmt.Errorf("failed to deserialize Entry.Published time: %w", err)
-	}
-
-	entry := internal.Entry{
-		ID:          rec.ID,
-		FeedID:      rec.FeedID,
-		Title:       rec.Title,
-		IsRead:      rec.IsRead,
-		ExtID:       rec.ExtID,
-		Updated:     ut,
-		Published:   pt,
-		Description: fromNullString(rec.Description),
-		Content:     fromNullString(rec.Content),
-		URL:         fromNullString(rec.URL),
-	}
-
-	return &entry, nil
-}
-
-func toEntries(recs []*EntryRecord) ([]*internal.Entry, error) {
-
-	entries := make([]*internal.Entry, len(recs))
-	for i, rec := range recs {
-		entry, err := toEntry(rec)
-		if err != nil {
-			return nil, err
-		}
-		entries[i] = entry
-	}
-
-	return entries, nil
-}
-
-func toStats(aggr *StatsAggregateRecord) (*internal.Stats, error) {
-
-	lpt, err := deserializeTime(&aggr.lastPullTime)
-	if err != nil {
-		return nil, fmt.Errorf("failed to deserialize Stats.LastPullTime: %w", err)
-	}
-
-	mrut, err := deserializeTime(fromNullString(aggr.mostRecentUpdateTime))
-	if err != nil {
-		return nil, fmt.Errorf("failed to deserialize Stats.MostRecentUpdateTime: %w", err)
-	}
-
-	stats := internal.Stats{
-		NumFeeds:             aggr.numFeeds,
-		NumEntries:           aggr.numEntries,
-		NumEntriesUnread:     aggr.numEntriesUnread,
-		LastPullTime:         lpt,
-		MostRecentUpdateTime: mrut,
-	}
-
-	return &stats, nil
 }
 
 func pointerOrNil(v string) *string {
