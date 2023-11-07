@@ -118,7 +118,7 @@ func (s *testStore) countFeedTags() int {
 	return s.countTableRows("feed_tags")
 }
 
-func (s *testStore) getFeedUpdateTime(feedURL string) sql.NullString {
+func (s *testStore) getFeedUpdateTime(feedURL string) *time.Time {
 	s.t.Helper()
 
 	tx := s.tx()
@@ -129,10 +129,10 @@ func (s *testStore) getFeedUpdateTime(feedURL string) sql.NullString {
 	err = stmt1.QueryRow(feedURL, feedURL).Scan(&updateTime)
 	require.NoError(s.t, err)
 
-	return sql.NullString{String: updateTime, Valid: true}
+	return mustTimeP(s.t, updateTime)
 }
 
-func (s *testStore) getFeedSubTime(feedURL string) string {
+func (s *testStore) getFeedSubTime(feedURL string) time.Time {
 	s.t.Helper()
 
 	tx := s.tx()
@@ -143,7 +143,10 @@ func (s *testStore) getFeedSubTime(feedURL string) string {
 	err = stmt1.QueryRow(feedURL, feedURL).Scan(&subTime)
 	require.NoError(s.t, err)
 
-	return subTime
+	rv, err := deserializeTime(&subTime)
+	require.NoError(s.t, err)
+
+	return *rv
 }
 
 func (s *testStore) getEntryID(feedURL string, entryExtID string) ID {
@@ -169,7 +172,7 @@ func (s *testStore) getEntryID(feedURL string, entryExtID string) ID {
 	return entryID
 }
 
-func (s *testStore) getEntryUpdateTime(feedURL string, entryExtID string) sql.NullString {
+func (s *testStore) getEntryUpdateTime(feedURL string, entryExtID string) *time.Time {
 	s.t.Helper()
 
 	tx := s.tx()
@@ -189,10 +192,13 @@ func (s *testStore) getEntryUpdateTime(feedURL string, entryExtID string) sql.Nu
 	err = stmt1.QueryRow(feedURL, entryExtID).Scan(&entryUpdateTime)
 	require.NoError(s.t, err)
 
-	return entryUpdateTime
+	if entryUpdateTime.Valid {
+		return mustTimeP(s.t, entryUpdateTime.String)
+	}
+	return nil
 }
 
-func (s *testStore) getEntryPubTime(feedURL string, entryExtID string) sql.NullString {
+func (s *testStore) getEntryPubTime(feedURL string, entryExtID string) *time.Time {
 	s.t.Helper()
 
 	tx := s.tx()
@@ -212,7 +218,10 @@ func (s *testStore) getEntryPubTime(feedURL string, entryExtID string) sql.NullS
 	err = stmt1.QueryRow(feedURL, entryExtID).Scan(&entryPubTime)
 	require.NoError(s.t, err)
 
-	return entryPubTime
+	if entryPubTime.Valid {
+		return mustTimeP(s.t, entryPubTime.String)
+	}
+	return nil
 }
 
 func (s *testStore) addFeeds(feeds []*FeedRecord) map[string]feedKey {
@@ -324,15 +333,7 @@ func (s *testStore) addFeedWithURL(url string) {
 	require.NoError(s.t, tx.Commit())
 }
 
-func mustTimePP(t *testing.T, value *string) *time.Time {
-	t.Helper()
-	if value == nil {
-		return nil
-	}
-	return mustTimeVP(t, *value)
-}
-
-func mustTimeVP(t *testing.T, value string) *time.Time {
+func mustTimeP(t *testing.T, value string) *time.Time {
 	t.Helper()
 	tv, err := deserializeTime(&value)
 	require.NoError(t, err)
