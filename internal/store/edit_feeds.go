@@ -55,7 +55,7 @@ func (s *SQLite) EditFeeds(
 	if err != nil {
 		return nil, fail(err)
 	}
-	return feedRecords(feeds).toInternal()
+	return feedRecords(feeds).feeds()
 }
 
 func getFeed(ctx context.Context, tx *sql.Tx, feedID ID) (*feedRecord, error) {

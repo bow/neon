@@ -197,7 +197,7 @@ func pullNewFeedEntries(
 
 		rec.entries = unreadEntries
 
-		feed, err := rec.toInternal()
+		feed, err := rec.feed()
 		if err != nil {
 			return pk.err(err)
 		}

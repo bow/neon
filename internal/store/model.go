@@ -30,7 +30,7 @@ type feedRecord struct {
 	entries     []*entryRecord
 }
 
-func (rec *feedRecord) toInternal() (*internal.Feed, error) {
+func (rec *feedRecord) feed() (*internal.Feed, error) {
 
 	subt, err := deserializeTime(&rec.subscribed)
 	if err != nil {
@@ -47,7 +47,7 @@ func (rec *feedRecord) toInternal() (*internal.Feed, error) {
 			return nil, fmt.Errorf("failed to deserialize Feed.Updated time: %w", err)
 		}
 	}
-	entries, err := entryRecords(rec.entries).toInternal()
+	entries, err := entryRecords(rec.entries).entries()
 	if err != nil {
 		return nil, err
 	}
@@ -70,11 +70,11 @@ func (rec *feedRecord) toInternal() (*internal.Feed, error) {
 
 type feedRecords []*feedRecord
 
-func (recs feedRecords) toInternal() ([]*internal.Feed, error) {
+func (recs feedRecords) feeds() ([]*internal.Feed, error) {
 
 	feeds := make([]*internal.Feed, len(recs))
 	for i, rec := range recs {
-		feed, err := rec.toInternal()
+		feed, err := rec.feed()
 		if err != nil {
 			return nil, err
 		}
@@ -97,7 +97,7 @@ type entryRecord struct {
 	url         sql.NullString
 }
 
-func (rec *entryRecord) toInternal() (*internal.Entry, error) {
+func (rec *entryRecord) entry() (*internal.Entry, error) {
 
 	ut, err := deserializeTime(fromNullString(rec.updated))
 	if err != nil {
@@ -126,11 +126,11 @@ func (rec *entryRecord) toInternal() (*internal.Entry, error) {
 
 type entryRecords []*entryRecord
 
-func (recs entryRecords) toInternal() ([]*internal.Entry, error) {
+func (recs entryRecords) entries() ([]*internal.Entry, error) {
 
 	entries := make([]*internal.Entry, len(recs))
 	for i, rec := range recs {
-		entry, err := rec.toInternal()
+		entry, err := rec.entry()
 		if err != nil {
 			return nil, err
 		}
@@ -148,7 +148,7 @@ type statsAggregateRecord struct {
 	mostRecentUpdateTime sql.NullString
 }
 
-func (aggr *statsAggregateRecord) toInternal() (*internal.Stats, error) {
+func (aggr *statsAggregateRecord) stats() (*internal.Stats, error) {
 
 	lpt, err := deserializeTime(&aggr.lastPullTime)
 	if err != nil {
