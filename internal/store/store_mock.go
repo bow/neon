@@ -186,10 +186,10 @@ func (mr *MockFeedStoreMockRecorder) ListFeeds(ctx interface{}) *gomock.Call {
 }
 
 // PullFeeds mocks base method.
-func (m *MockFeedStore) PullFeeds(ctx context.Context, feedIDs []ID) <-chan PullResult {
+func (m *MockFeedStore) PullFeeds(ctx context.Context, feedIDs []ID) <-chan internal.PullResult {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "PullFeeds", ctx, feedIDs)
-	ret0, _ := ret[0].(<-chan PullResult)
+	ret0, _ := ret[0].(<-chan internal.PullResult)
 	return ret0
 }
 

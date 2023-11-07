@@ -223,8 +223,8 @@ func TestPullFeedsAllOk(t *testing.T) {
 	r := require.New(t)
 	client, str := setupServerTest(t)
 
-	prs := []store.PullResult{
-		store.NewPullResultFromFeed(
+	prs := []internal.PullResult{
+		internal.NewPullResultFromFeed(
 			pointer("http://a.com/feed.xml"),
 			&internal.Feed{
 				Title:      "feed-A",
@@ -238,8 +238,8 @@ func TestPullFeedsAllOk(t *testing.T) {
 				},
 			},
 		),
-		store.NewPullResultFromFeed(pointer("http://z.com/feed.xml"), nil),
-		store.NewPullResultFromFeed(
+		internal.NewPullResultFromFeed(pointer("http://z.com/feed.xml"), nil),
+		internal.NewPullResultFromFeed(
 			pointer("http://c.com/feed.xml"),
 			&internal.Feed{
 				Title:      "feed-C",
@@ -254,12 +254,12 @@ func TestPullFeedsAllOk(t *testing.T) {
 		),
 	}
 
-	ch := make(chan store.PullResult)
+	ch := make(chan internal.PullResult)
 	go func() {
 		defer close(ch)
 
 		// Randomize ordering, to simulate actual URL pulls.
-		shufres := make([]store.PullResult, len(prs))
+		shufres := make([]internal.PullResult, len(prs))
 		copy(shufres, prs)
 		r := rand.New(rand.NewSource(time.Now().UnixNano())) // #nosec: G404
 		shf := func(i, j int) { shufres[i], shufres[j] = shufres[j], shufres[i] }
@@ -318,9 +318,9 @@ func TestPullFeedsSelectedAllOk(t *testing.T) {
 	r := require.New(t)
 	client, str := setupServerTest(t)
 
-	prs := []store.PullResult{
-		store.NewPullResultFromFeed(pointer("http://z.com/feed.xml"), nil),
-		store.NewPullResultFromFeed(
+	prs := []internal.PullResult{
+		internal.NewPullResultFromFeed(pointer("http://z.com/feed.xml"), nil),
+		internal.NewPullResultFromFeed(
 			pointer("http://c.com/feed.xml"),
 			&internal.Feed{
 				Title:      "feed-C",
@@ -335,12 +335,12 @@ func TestPullFeedsSelectedAllOk(t *testing.T) {
 		),
 	}
 
-	ch := make(chan store.PullResult)
+	ch := make(chan internal.PullResult)
 	go func() {
 		defer close(ch)
 
 		// Randomize ordering, to simulate actual URL pulls.
-		shufres := make([]store.PullResult, len(prs))
+		shufres := make([]internal.PullResult, len(prs))
 		copy(shufres, prs)
 		r := rand.New(rand.NewSource(time.Now().UnixNano())) // #nosec: G404
 		shf := func(i, j int) { shufres[i], shufres[j] = shufres[j], shufres[i] }
@@ -393,8 +393,8 @@ func TestPullFeedsErrSomeFeed(t *testing.T) {
 	r := require.New(t)
 	client, str := setupServerTest(t)
 
-	prs := []store.PullResult{
-		store.NewPullResultFromFeed(
+	prs := []internal.PullResult{
+		internal.NewPullResultFromFeed(
 			pointer("https://a.com/feed.xml"),
 			&internal.Feed{
 				Title:      "feed-A",
@@ -408,9 +408,9 @@ func TestPullFeedsErrSomeFeed(t *testing.T) {
 				},
 			},
 		),
-		store.NewPullResultFromError(pointer("https://x.com/feed.xml"), fmt.Errorf("timed out")),
-		store.NewPullResultFromFeed(pointer("https://z.com/feed.xml"), nil),
-		store.NewPullResultFromFeed(
+		internal.NewPullResultFromError(pointer("https://x.com/feed.xml"), fmt.Errorf("timed out")),
+		internal.NewPullResultFromFeed(pointer("https://z.com/feed.xml"), nil),
+		internal.NewPullResultFromFeed(
 			pointer("https://c.com/feed.xml"),
 			&internal.Feed{
 				Title:      "feed-C",
@@ -425,12 +425,12 @@ func TestPullFeedsErrSomeFeed(t *testing.T) {
 		),
 	}
 
-	ch := make(chan store.PullResult)
+	ch := make(chan internal.PullResult)
 	go func() {
 		defer close(ch)
 
 		// Randomize ordering, to simulate actual URL pulls.
-		shufres := make([]store.PullResult, len(prs))
+		shufres := make([]internal.PullResult, len(prs))
 		copy(shufres, prs)
 		r := rand.New(rand.NewSource(time.Now().UnixNano())) // #nosec: G404
 		shf := func(i, j int) { shufres[i], shufres[j] = shufres[j], shufres[i] }
@@ -491,8 +491,8 @@ func TestPullFeedsErrNonFeed(t *testing.T) {
 	r := require.New(t)
 	client, str := setupServerTest(t)
 
-	prs := []store.PullResult{
-		store.NewPullResultFromFeed(
+	prs := []internal.PullResult{
+		internal.NewPullResultFromFeed(
 			pointer("https://a.com/feed.xml"),
 			&internal.Feed{
 				Title:      "feed-A",
@@ -506,8 +506,8 @@ func TestPullFeedsErrNonFeed(t *testing.T) {
 				},
 			},
 		),
-		store.NewPullResultFromFeed(pointer("https://z.com/feed.xml"), nil),
-		store.NewPullResultFromFeed(
+		internal.NewPullResultFromFeed(pointer("https://z.com/feed.xml"), nil),
+		internal.NewPullResultFromFeed(
 			pointer("https://c.com/feed.xml"),
 			&internal.Feed{
 				Title:      "feed-C",
@@ -520,15 +520,15 @@ func TestPullFeedsErrNonFeed(t *testing.T) {
 				},
 			},
 		),
-		store.NewPullResultFromError(nil, fmt.Errorf("tx error")),
+		internal.NewPullResultFromError(nil, fmt.Errorf("tx error")),
 	}
 
-	ch := make(chan store.PullResult)
+	ch := make(chan internal.PullResult)
 	go func() {
 		defer close(ch)
 
 		// Randomize ordering, to simulate actual URL pulls.
-		shufres := make([]store.PullResult, len(prs))
+		shufres := make([]internal.PullResult, len(prs))
 		copy(shufres, prs)
 		r := rand.New(rand.NewSource(time.Now().UnixNano())) // #nosec: G404
 		shf := func(i, j int) { shufres[i], shufres[j] = shufres[j], shufres[i] }

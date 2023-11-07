@@ -97,7 +97,7 @@ func (svc *service) PullFeeds(
 	stream api.Iris_PullFeedsServer,
 ) error {
 
-	convert := func(pr store.PullResult) (*api.PullFeedsResponse, error) {
+	convert := func(pr internal.PullResult) (*api.PullFeedsResponse, error) {
 		if err := pr.Error(); err != nil {
 			url := pr.URL()
 			if url == "" {

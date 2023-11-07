@@ -12,13 +12,13 @@ import (
 	"github.com/bow/iris/internal"
 )
 
-func (s *SQLite) PullFeeds(ctx context.Context, ids []ID) <-chan PullResult {
+func (s *SQLite) PullFeeds(ctx context.Context, ids []ID) <-chan internal.PullResult {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
 	var (
 		fail = failF("SQLite.PullFeeds")
-		c    = make(chan PullResult)
+		c    = make(chan internal.PullResult)
 		wg   sync.WaitGroup
 	)
 	ids = dedup(ids)
@@ -38,23 +38,23 @@ func (s *SQLite) PullFeeds(ctx context.Context, ids []ID) <-chan PullResult {
 			pks, err = getPullKeys(ctx, tx, ids)
 		}
 		if err != nil {
-			c <- NewPullResultFromError(nil, fail(err))
+			c <- internal.NewPullResultFromError(nil, fail(err))
 			return nil
 		}
 		if len(pks) == 0 {
-			c <- NewPullResultFromFeed(nil, nil)
+			c <- internal.NewPullResultFromFeed(nil, nil)
 			return nil
 		}
 
-		chs := make([]<-chan PullResult, len(pks))
+		chs := make([]<-chan internal.PullResult, len(pks))
 		for i, pk := range pks {
 			chs[i] = pullNewFeedEntries(ctx, tx, pk, s.parser)
 		}
 
 		for pr := range merge(chs) {
 			pr := pr
-			if pr.Error() != nil {
-				pr.err = fail(pr.err)
+			if e := pr.Error(); e != nil {
+				pr.SetError(fail(e))
 			}
 			c <- pr
 		}
@@ -70,68 +70,28 @@ func (s *SQLite) PullFeeds(ctx context.Context, ids []ID) <-chan PullResult {
 		wg.Add(1)
 		err := s.withTx(ctx, dbFunc)
 		if err != nil {
-			c <- NewPullResultFromError(nil, fail(err))
+			c <- internal.NewPullResultFromError(nil, fail(err))
 		}
 	}()
 
 	return c
 }
 
-// PullResult is a container for a pull operation.
-type PullResult struct {
-	url    *string
-	status pullStatus
-	feed   *internal.Feed
-	err    error
-}
-
-func NewPullResultFromFeed(url *string, feed *internal.Feed) PullResult {
-	return PullResult{status: pullSuccess, url: url, feed: feed}
-}
-
-func NewPullResultFromError(url *string, err error) PullResult {
-	return PullResult{status: pullFail, url: url, err: err}
-}
-
-func (msg PullResult) Feed() *internal.Feed {
-	if msg.status == pullSuccess {
-		return msg.feed
-	}
-	return nil
-}
-
-func (msg PullResult) Error() error {
-	if msg.status == pullFail {
-		return msg.err
-	}
-	return nil
-}
-
-func (msg PullResult) URL() string {
-	if msg.url != nil {
-		return *msg.url
-	}
-	return ""
-}
-
-type pullStatus int
-
-const (
-	pullSuccess pullStatus = iota
-	pullFail
-)
-
 type pullKey struct {
 	feedID  ID
 	feedURL string
 }
 
-func (pk pullKey) ok(feed *internal.Feed) PullResult {
-	return PullResult{url: &pk.feedURL, status: pullSuccess, feed: feed, err: nil}
+func (pk pullKey) ok(feed *internal.Feed) internal.PullResult {
+	pr := internal.NewPullResultFromFeed(&pk.feedURL, feed)
+	pr.SetStatus(internal.PullSuccess)
+	return pr
 }
 
-func (pk pullKey) err(e error) PullResult {
-	return PullResult{url: &pk.feedURL, status: pullFail, feed: nil, err: e}
+func (pk pullKey) err(e error) internal.PullResult {
+	pr := internal.NewPullResultFromError(&pk.feedURL, e)
+	pr.SetStatus(internal.PullFail)
+	return pr
 }
 
 var (
@@ -196,10 +156,10 @@ func pullNewFeedEntries(
 	tx *sql.Tx,
 	pk pullKey,
 	parser FeedParser,
-) chan PullResult {
+) chan internal.PullResult {
 
 	pullTime := time.Now().UTC().Format(time.RFC3339)
-	pullf := func() PullResult {
+	pullf := func() internal.PullResult {
 
 		gfeed, err := parser.ParseURLWithContext(pk.feedURL, ctx)
 		if err != nil {
@@ -245,13 +205,13 @@ func pullNewFeedEntries(
 		return pk.ok(feed)
 	}
 
-	ic := make(chan PullResult)
+	ic := make(chan internal.PullResult)
 	go func() {
 		defer close(ic)
 		ic <- pullf()
 	}()
 
-	oc := make(chan PullResult)
+	oc := make(chan internal.PullResult)
 	go func() {
 		defer close(oc)
 		select {

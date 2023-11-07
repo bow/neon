@@ -33,7 +33,7 @@ type FeedStore interface {
 	) (addedFeed *internal.Feed, err error)
 	EditFeeds(ctx context.Context, ops []*internal.FeedEditOp) (feeds []*internal.Feed, err error)
 	ListFeeds(ctx context.Context) (feeds []*internal.Feed, err error)
-	PullFeeds(ctx context.Context, feedIDs []ID) (results <-chan PullResult)
+	PullFeeds(ctx context.Context, feedIDs []ID) (results <-chan internal.PullResult)
 	DeleteFeeds(ctx context.Context, ids []ID) (err error)
 	ListEntries(ctx context.Context, feedID ID) (entries []*internal.Entry, err error)
 	EditEntries(

@@ -70,24 +70,20 @@ func TestPullFeedsAllOkEmptyEntries(t *testing.T) {
 
 	c := st.PullFeeds(context.Background(), nil)
 
-	got := make([]PullResult, 0)
+	got := make([]internal.PullResult, 0)
 	for res := range c {
 		got = append(got, res)
 	}
 
-	want := []PullResult{
-		{
-			url:    &dbFeeds[0].feedURL,
-			status: pullSuccess,
-			feed:   nil,
-			err:    nil,
-		},
-		{
-			url:    &dbFeeds[1].feedURL,
-			status: pullSuccess,
-			feed:   nil,
-			err:    nil,
-		},
+	want := []internal.PullResult{
+		internal.NewPullResultFromFeed(
+			&dbFeeds[0].feedURL,
+			nil,
+		),
+		internal.NewPullResultFromFeed(
+			&dbFeeds[1].feedURL,
+			nil,
+		),
 	}
 
 	a.ElementsMatch(want, got)
@@ -188,24 +184,20 @@ func TestPullFeedsAllOkNoNewEntries(t *testing.T) {
 
 	c := st.PullFeeds(context.Background(), nil)
 
-	got := make([]PullResult, 0)
+	got := make([]internal.PullResult, 0)
 	for res := range c {
 		got = append(got, res)
 	}
 
-	want := []PullResult{
-		{
-			url:    &pulledFeeds[0].feedURL,
-			status: pullSuccess,
-			err:    nil,
-			feed:   nil,
-		},
-		{
-			url:    &pulledFeeds[1].feedURL,
-			status: pullSuccess,
-			err:    nil,
-			feed:   nil,
-		},
+	want := []internal.PullResult{
+		internal.NewPullResultFromFeed(
+			&pulledFeeds[0].feedURL,
+			nil,
+		),
+		internal.NewPullResultFromFeed(
+			&pulledFeeds[1].feedURL,
+			nil,
+		),
 	}
 
 	a.ElementsMatch(want, got)
@@ -333,7 +325,7 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 
 	c := st.PullFeeds(context.Background(), nil)
 
-	got := make([]PullResult, 0)
+	got := make([]internal.PullResult, 0)
 	for res := range c {
 		got = append(got, res)
 	}
@@ -341,12 +333,10 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 	feedURL0 := pulledFeeds[0].feedURL
 	feedURL1 := pulledFeeds[1].feedURL
 
-	want := []PullResult{
-		{
-			url:    &dbFeeds[0].feedURL,
-			status: pullSuccess,
-			err:    nil,
-			feed: &internal.Feed{
+	want := []internal.PullResult{
+		internal.NewPullResultFromFeed(
+			&dbFeeds[0].feedURL,
+			&internal.Feed{
 				ID:         keys[pulledFeeds[0].title].ID,
 				Title:      pulledFeeds[0].title,
 				FeedURL:    pulledFeeds[0].feedURL,
@@ -376,12 +366,10 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 					},
 				},
 			},
-		},
-		{
-			url:    &dbFeeds[1].feedURL,
-			status: pullSuccess,
-			err:    nil,
-			feed: &internal.Feed{
+		),
+		internal.NewPullResultFromFeed(
+			&dbFeeds[1].feedURL,
+			&internal.Feed{
 				ID:         keys[pulledFeeds[1].title].ID,
 				Title:      pulledFeeds[1].title,
 				FeedURL:    pulledFeeds[1].feedURL,
@@ -401,7 +389,7 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 					},
 				},
 			},
-		},
+		),
 	}
 
 	// Sort inner entries first, since ElementsMatch cares about inner array elements order.
@@ -410,7 +398,7 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 
 	// Set LastPulled fields to the zero value as this value is always updated on every pull.
 	for _, item := range got {
-		item.feed.LastPulled = time.Time{}
+		item.Feed().LastPulled = time.Time{}
 	}
 
 	a.ElementsMatch(want, got)
@@ -505,17 +493,15 @@ func TestPullFeedsSelectedOkSomeNewEntries(t *testing.T) {
 
 	c := st.PullFeeds(context.Background(), []ID{keys[pulledFeed.title].ID})
 
-	got := make([]PullResult, 0)
+	got := make([]internal.PullResult, 0)
 	for res := range c {
 		got = append(got, res)
 	}
 
-	want := []PullResult{
-		{
-			url:    &dbFeeds[1].feedURL,
-			status: pullSuccess,
-			err:    nil,
-			feed: &internal.Feed{
+	want := []internal.PullResult{
+		internal.NewPullResultFromFeed(
+			&dbFeeds[1].feedURL,
+			&internal.Feed{
 				ID:         keys[pulledFeed.title].ID,
 				Title:      pulledFeed.title,
 				FeedURL:    pulledFeed.feedURL,
@@ -535,7 +521,7 @@ func TestPullFeedsSelectedOkSomeNewEntries(t *testing.T) {
 					},
 				},
 			},
-		},
+		),
 	}
 
 	// Sort inner entries first, since ElementsMatch cares about inner array elements order.
@@ -544,18 +530,18 @@ func TestPullFeedsSelectedOkSomeNewEntries(t *testing.T) {
 
 	// Set LastPulled fields to the zero value as this value is always updated on every pull.
 	for _, item := range got {
-		item.feed.LastPulled = time.Time{}
+		item.Feed().LastPulled = time.Time{}
 	}
 
 	a.ElementsMatch(want, got)
 }
 
-func sortPullResultEntries(arr []PullResult) {
+func sortPullResultEntries(arr []internal.PullResult) {
 	for _, item := range arr {
 		sort.SliceStable(
-			item.feed.Entries,
+			item.Feed().Entries,
 			func(i, j int) bool {
-				return item.feed.Entries[i].ExtID < item.feed.Entries[j].ExtID
+				return item.Feed().Entries[i].ExtID < item.Feed().Entries[j].ExtID
 			},
 		)
 	}
