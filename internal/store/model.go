@@ -226,43 +226,12 @@ func NewEntryEditOp(proto *api.EditEntriesRequest_Op) *EntryEditOp {
 	return &EntryEditOp{ID: proto.Id, IsRead: proto.Fields.IsRead}
 }
 
-type Stats struct {
-	NumFeeds         uint32
-	NumEntries       uint32
-	NumEntriesUnread uint32
-
-	RawLastPullTime         string
-	RawMostRecentUpdateTime sql.NullString
-}
-
-func (s *Stats) LastPullTime() (*time.Time, error) {
-	return deserializeTime(&s.RawLastPullTime)
-}
-
-func (s *Stats) MostRecentUpdateTime() (*time.Time, error) {
-	return deserializeTime(fromNullString(s.RawMostRecentUpdateTime))
-}
-
-func (s *Stats) Proto() (*api.GetStatsResponse_Stats, error) {
-	proto := api.GetStatsResponse_Stats{
-		NumFeeds:         s.NumFeeds,
-		NumEntries:       s.NumEntries,
-		NumEntriesUnread: s.NumEntriesUnread,
-	}
-
-	var err error
-
-	proto.LastPullTime, err = toProtoTime(&s.RawLastPullTime)
-	if err != nil {
-		return nil, err
-	}
-
-	proto.MostRecentUpdateTime, err = toProtoTime(fromNullString(s.RawMostRecentUpdateTime))
-	if err != nil {
-		return nil, err
-	}
-
-	return &proto, nil
+type StatsAggregateRecord struct {
+	numFeeds             uint32
+	numEntries           uint32
+	numEntriesUnread     uint32
+	lastPullTime         string
+	mostRecentUpdateTime sql.NullString
 }
 
 // asNullString returns a valid sql.NullString representation of the given string pointer.

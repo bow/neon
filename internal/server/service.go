@@ -6,9 +6,6 @@ package server
 import (
 	"context"
 
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
-
 	"github.com/bow/iris/api"
 	"github.com/bow/iris/internal"
 	"github.com/bow/iris/internal/store"
@@ -245,12 +242,7 @@ func (svc *service) GetStats(
 		return nil, err
 	}
 
-	payload, err := gstats.Proto()
-	if err != nil {
-		return nil, status.Error(codes.Internal, err.Error())
-	}
-
-	rsp := api.GetStatsResponse{Global: payload}
+	rsp := api.GetStatsResponse{Global: toStatsPb(gstats)}
 
 	return &rsp, nil
 }

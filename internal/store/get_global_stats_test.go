@@ -26,14 +26,8 @@ func TestGetGlobalStatsEmptyOk(t *testing.T) {
 	a.Equal(uint32(0), stats.NumFeeds)
 	a.Equal(uint32(0), stats.NumEntries)
 	a.Equal(uint32(0), stats.NumEntriesUnread)
-
-	lpt, err := stats.LastPullTime()
-	r.NoError(err)
-	a.Nil(lpt)
-
-	mrpt, err := stats.MostRecentUpdateTime()
-	r.NoError(err)
-	a.Nil(mrpt)
+	a.Nil(stats.LastPullTime)
+	a.Nil(stats.MostRecentUpdateTime)
 }
 
 func TestGetGlobalStatsExtendedOk(t *testing.T) {
@@ -101,18 +95,12 @@ func TestGetGlobalStatsExtendedOk(t *testing.T) {
 	a.Equal(uint32(2), stats.NumFeeds)
 	a.Equal(uint32(4), stats.NumEntries)
 	a.Equal(uint32(1), stats.NumEntriesUnread)
-
-	lpt, err := stats.LastPullTime()
-	r.NoError(err)
 	a.Equal(
 		"2022-07-18T22:04:45Z",
-		lpt.UTC().Format(time.RFC3339),
+		stats.LastPullTime.UTC().Format(time.RFC3339),
 	)
-
-	mrpt, err := stats.MostRecentUpdateTime()
-	r.NoError(err)
 	a.Equal(
 		"2022-04-20T14:32:30Z",
-		mrpt.UTC().Format(time.RFC3339),
+		stats.MostRecentUpdateTime.UTC().Format(time.RFC3339),
 	)
 }

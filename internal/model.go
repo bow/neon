@@ -53,3 +53,11 @@ type Entry struct {
 	Content     *string
 	URL         *string
 }
+
+type Stats struct {
+	NumFeeds             uint32
+	NumEntries           uint32
+	NumEntriesUnread     uint32
+	LastPullTime         *time.Time
+	MostRecentUpdateTime *time.Time
+}

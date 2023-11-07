@@ -5,7 +5,6 @@ package server
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	"io"
 	"math/rand"
@@ -753,17 +752,13 @@ func TestGetStatsOk(t *testing.T) {
 	a := assert.New(t)
 	client, str := setupServerTest(t)
 
-	stats := store.Stats{
-		NumFeeds:                45,
-		NumEntries:              5311,
-		NumEntriesUnread:        8,
-		RawLastPullTime:         "2023-11-04T05:13:12.805Z",
-		RawMostRecentUpdateTime: wrapNullString("2023-11-04T05:13:12.805Z"),
+	stats := internal.Stats{
+		NumFeeds:             45,
+		NumEntries:           5311,
+		NumEntriesUnread:     8,
+		LastPullTime:         pointer(mustTimeVV(t, "2023-11-04T05:13:12.805Z")),
+		MostRecentUpdateTime: pointer(mustTimeVV(t, "2023-11-04T05:13:12.805Z")),
 	}
-	lpt, err := stats.LastPullTime()
-	r.NoError(err)
-	mrpt, err := stats.MostRecentUpdateTime()
-	r.NoError(err)
 
 	str.EXPECT().
 		GetGlobalStats(gomock.Any()).
@@ -778,8 +773,8 @@ func TestGetStatsOk(t *testing.T) {
 	a.Equal(uint32(45), gs.GetNumFeeds())
 	a.Equal(uint32(5311), gs.GetNumEntries())
 	a.Equal(uint32(8), gs.GetNumEntriesUnread())
-	a.Equal(lpt.Unix(), gs.GetLastPullTime().Seconds)
-	a.Equal(mrpt.Unix(), gs.GetMostRecentUpdateTime().Seconds)
+	a.Equal(stats.LastPullTime.Unix(), gs.GetLastPullTime().Seconds)
+	a.Equal(stats.MostRecentUpdateTime.Unix(), gs.GetMostRecentUpdateTime().Seconds)
 }
 
 func TestGetInfoOk(t *testing.T) {
@@ -807,8 +802,6 @@ func TestGetInfoOk(t *testing.T) {
 }
 
 func pointer[T any](value T) *T { return &value }
-
-func wrapNullString(v string) sql.NullString { return sql.NullString{String: v, Valid: v != ""} }
 
 func mustTimeVV(t *testing.T, v string) time.Time {
 	t.Helper()

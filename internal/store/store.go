@@ -42,7 +42,7 @@ type FeedStore interface {
 	GetEntry(ctx context.Context, entryID ID) (entry *internal.Entry, err error)
 	ExportOPML(ctx context.Context, title *string) (payload []byte, err error)
 	ImportOPML(ctx context.Context, payload []byte) (processed int, imported int, err error)
-	GetGlobalStats(ctx context.Context) (stats *Stats, err error)
+	GetGlobalStats(ctx context.Context) (stats *internal.Stats, err error)
 }
 
 type SQLite struct {
@@ -240,6 +240,29 @@ func toEntries(recs []*EntryRecord) ([]*internal.Entry, error) {
 	}
 
 	return entries, nil
+}
+
+func toStats(aggr *StatsAggregateRecord) (*internal.Stats, error) {
+
+	lpt, err := deserializeTime(&aggr.lastPullTime)
+	if err != nil {
+		return nil, fmt.Errorf("failed to deserialize Stats.LastPullTime: %w", err)
+	}
+
+	mrut, err := deserializeTime(fromNullString(aggr.mostRecentUpdateTime))
+	if err != nil {
+		return nil, fmt.Errorf("failed to deserialize Stats.MostRecentUpdateTime: %w", err)
+	}
+
+	stats := internal.Stats{
+		NumFeeds:             aggr.numFeeds,
+		NumEntries:           aggr.numEntries,
+		NumEntriesUnread:     aggr.numEntriesUnread,
+		LastPullTime:         lpt,
+		MostRecentUpdateTime: mrut,
+	}
+
+	return &stats, nil
 }
 
 func pointerOrNil(v string) *string {

@@ -125,10 +125,10 @@ func (mr *MockFeedStoreMockRecorder) GetEntry(ctx, entryID interface{}) *gomock.
 }
 
 // GetGlobalStats mocks base method.
-func (m *MockFeedStore) GetGlobalStats(ctx context.Context) (*Stats, error) {
+func (m *MockFeedStore) GetGlobalStats(ctx context.Context) (*internal.Stats, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetGlobalStats", ctx)
-	ret0, _ := ret[0].(*Stats)
+	ret0, _ := ret[0].(*internal.Stats)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

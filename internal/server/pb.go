@@ -58,6 +58,16 @@ func toEntryPbs(entries []*internal.Entry) []*api.Entry {
 	return pbs
 }
 
+func toStatsPb(stats *internal.Stats) *api.GetStatsResponse_Stats {
+	return &api.GetStatsResponse_Stats{
+		NumFeeds:             stats.NumFeeds,
+		NumEntries:           stats.NumEntries,
+		NumEntriesUnread:     stats.NumEntriesUnread,
+		LastPullTime:         toTimestampPb(stats.LastPullTime),
+		MostRecentUpdateTime: toTimestampPb(stats.MostRecentUpdateTime),
+	}
+}
+
 func toTimestampPb(v *time.Time) *timestamppb.Timestamp {
 	if v == nil {
 		return nil

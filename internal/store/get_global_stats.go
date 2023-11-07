@@ -7,19 +7,21 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+
+	"github.com/bow/iris/internal"
 )
 
-func (s *SQLite) GetGlobalStats(ctx context.Context) (*Stats, error) {
+func (s *SQLite) GetGlobalStats(ctx context.Context) (*internal.Stats, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	stats := &Stats{}
+	aggr := &StatsAggregateRecord{}
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
-		istats, err := getGlobalStats(ctx, tx)
+		iaggr, err := getGlobalStats(ctx, tx)
 		if err != nil {
 			return err
 		}
-		stats = istats
+		aggr = iaggr
 		return nil
 	}
 
@@ -29,12 +31,12 @@ func (s *SQLite) GetGlobalStats(ctx context.Context) (*Stats, error) {
 	if err != nil {
 		return nil, fail(err)
 	}
-	return stats, nil
+	return toStats(aggr)
 }
 
-func getGlobalStats(ctx context.Context, tx *sql.Tx) (*Stats, error) {
+func getGlobalStats(ctx context.Context, tx *sql.Tx) (*StatsAggregateRecord, error) {
 
-	var stats Stats
+	var stats StatsAggregateRecord
 
 	stmt1, err := tx.PrepareContext(
 		ctx,
@@ -87,21 +89,21 @@ func getGlobalStats(ctx context.Context, tx *sql.Tx) (*Stats, error) {
 	}
 	defer stmt4.Close()
 
-	if err = stmt1.QueryRowContext(ctx).Scan(&stats.NumFeeds, &stats.NumEntries); err != nil {
+	if err = stmt1.QueryRowContext(ctx).Scan(&stats.numFeeds, &stats.numEntries); err != nil {
 		return nil, err
 	}
-	if err = stmt2.QueryRowContext(ctx).Scan(&stats.NumEntriesUnread); err != nil {
+	if err = stmt2.QueryRowContext(ctx).Scan(&stats.numEntriesUnread); err != nil {
 		return nil, err
 	}
-	if stats.NumFeeds == 0 {
+	if stats.numFeeds == 0 {
 		return &stats, err
 	}
-	if err = stmt3.QueryRowContext(ctx).Scan(&stats.RawLastPullTime); err != nil {
+	if err = stmt3.QueryRowContext(ctx).Scan(&stats.lastPullTime); err != nil {
 		if !errors.Is(err, sql.ErrNoRows) {
 			return nil, err
 		}
 	}
-	if err = stmt4.QueryRowContext(ctx).Scan(&stats.RawMostRecentUpdateTime); err != nil {
+	if err = stmt4.QueryRowContext(ctx).Scan(&stats.mostRecentUpdateTime); err != nil {
 		if !errors.Is(err, sql.ErrNoRows) {
 			return nil, err
 		}
