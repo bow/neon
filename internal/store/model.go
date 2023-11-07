@@ -23,7 +23,7 @@ type feedRecord struct {
 	feedURL     string
 	siteURL     sql.NullString
 	subscribed  time.Time
-	lastPulled  string
+	lastPulled  time.Time
 	updated     sql.NullString
 	isStarred   bool
 	tags        jsonArrayString
@@ -32,10 +32,6 @@ type feedRecord struct {
 
 func (rec *feedRecord) feed() (*internal.Feed, error) {
 
-	lpt, err := deserializeTime(rec.lastPulled)
-	if err != nil {
-		return nil, err
-	}
 	upt, err := deserializeNullTime(rec.updated)
 	if err != nil {
 		return nil, fmt.Errorf("failed to deserialize Feed.Updated time: %w", err)
@@ -52,7 +48,7 @@ func (rec *feedRecord) feed() (*internal.Feed, error) {
 		FeedURL:     rec.feedURL,
 		SiteURL:     fromNullString(rec.siteURL),
 		Subscribed:  rec.subscribed,
-		LastPulled:  *lpt,
+		LastPulled:  rec.lastPulled,
 		Updated:     upt,
 		IsStarred:   rec.isStarred,
 		Tags:        []string(rec.tags),

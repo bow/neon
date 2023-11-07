@@ -215,7 +215,7 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 			title:      "Feed A",
 			feedURL:    "http://a.com/feed.xml",
 			subscribed: mustTime(t, "2022-07-18T22:04:37Z"),
-			lastPulled: "2022-07-18T22:04:37Z",
+			lastPulled: mustTime(t, "2022-07-18T22:04:37Z"),
 			updated:    toNullString("2022-03-19T16:23:18.600+02:00"),
 			entries: []*entryRecord{
 				{
@@ -248,7 +248,7 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 			title:      "Feed X",
 			feedURL:    "http://x.com/feed.xml",
 			subscribed: mustTime(t, "2022-07-18T22:04:45Z"),
-			lastPulled: "2022-07-18T22:04:45Z",
+			lastPulled: mustTime(t, "2022-07-18T22:04:45Z"),
 			updated:    toNullString("2022-04-20T16:32:30.760+02:00"),
 			entries: []*entryRecord{
 				{
@@ -417,7 +417,7 @@ func TestPullFeedsSelectedOkSomeNewEntries(t *testing.T) {
 			title:      "Feed A",
 			feedURL:    "http://a.com/feed.xml",
 			subscribed: mustTime(t, "2022-07-18T22:04:37Z"),
-			lastPulled: "2022-07-18T22:04:37Z",
+			lastPulled: mustTime(t, "2022-07-18T22:04:37Z"),
 			updated:    toNullString("2022-03-19T16:23:18.600+02:00"),
 			entries: []*entryRecord{
 				{
@@ -448,7 +448,7 @@ func TestPullFeedsSelectedOkSomeNewEntries(t *testing.T) {
 			title:      "Feed X",
 			feedURL:    "http://x.com/feed.xml",
 			subscribed: mustTime(t, "2022-07-18T22:04:45Z"),
-			lastPulled: "2022-07-18T22:04:45Z",
+			lastPulled: mustTime(t, "2022-07-18T22:04:45Z"),
 			updated:    toNullString("2022-04-20T16:32:30.760+02:00"),
 			entries: []*entryRecord{
 				{
