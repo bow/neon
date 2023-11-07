@@ -6,13 +6,15 @@ package store
 import (
 	"context"
 	"database/sql"
+
+	"github.com/bow/iris/internal"
 )
 
 // EditFeed updates fields of an feed.
 func (s *SQLite) EditFeeds(
 	ctx context.Context,
 	ops []*FeedEditOp,
-) ([]*FeedRecord, error) {
+) ([]*internal.Feed, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -32,14 +34,14 @@ func (s *SQLite) EditFeeds(
 		return getFeed(ctx, tx, op.ID)
 	}
 
-	var entries = make([]*FeedRecord, len(ops))
+	var feeds = make([]*FeedRecord, len(ops))
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
 		for i, op := range ops {
 			feed, err := updateFunc(ctx, tx, op)
 			if err != nil {
 				return err
 			}
-			entries[i] = feed
+			feeds[i] = feed
 		}
 		return nil
 	}
@@ -50,7 +52,7 @@ func (s *SQLite) EditFeeds(
 	if err != nil {
 		return nil, fail(err)
 	}
-	return entries, nil
+	return toFeeds(feeds)
 }
 
 func getFeed(ctx context.Context, tx *sql.Tx, feedID ID) (*FeedRecord, error) {

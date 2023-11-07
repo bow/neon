@@ -10,6 +10,7 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/bow/iris/internal"
 	"github.com/bow/iris/internal/store"
 )
 
@@ -54,26 +55,27 @@ func newFeedListEntriesCommand() *cobra.Command {
 	return &command
 }
 
-func fmtListEntry(entry *store.Entry) string {
+func fmtListEntry(entry *internal.Entry) string {
 	var (
 		sb  strings.Builder
 		cat = func(format string, a ...any) { fmt.Fprintf(&sb, format, a...) }
 	)
 
-	var pubs = ""
-	pub, err := deserializeTime(&entry.Published.String)
-	if err != nil {
-		pub = nil
-	}
-	if pub != nil {
+	pubs := ""
+	if pub := entry.Published; pub != nil {
 		pubs = pub.Local().Format("2 January 2006 • 15:04 MST")
+	}
+
+	urls := ""
+	if url := entry.URL; url != nil {
+		urls = *url
 	}
 
 	kv := []*struct {
 		k, v string
 	}{
 		{"EntryID", fmt.Sprintf("%d", entry.ID)},
-		{"URL", entry.URL.String},
+		{"URL", urls},
 		{"Pub", pubs},
 	}
 

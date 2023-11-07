@@ -111,7 +111,7 @@ func TestImportOPMLOkExtended(t *testing.T) {
 			feedURL:   "http://bc.com/feed.xml",
 			updated:   toNullString("2022-03-19T16:23:18.600+02:00"),
 			isStarred: false,
-			entries: []*Entry{
+			entries: []*EntryRecord{
 				{Title: "Entry BC1", IsRead: false},
 				{Title: "Entry BC2", IsRead: true},
 			},
@@ -121,7 +121,7 @@ func TestImportOPMLOkExtended(t *testing.T) {
 			feedURL:   "http://d.com/feed.xml",
 			updated:   toNullString("2022-04-20T16:32:30.760+02:00"),
 			isStarred: true,
-			entries: []*Entry{
+			entries: []*EntryRecord{
 				{Title: "Entry D1", IsRead: false},
 			},
 			tags: []string{"foo", "baz"},

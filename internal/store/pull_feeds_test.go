@@ -7,7 +7,9 @@ import (
 	"context"
 	"sort"
 	"testing"
+	"time"
 
+	"github.com/bow/iris/internal"
 	gomock "github.com/golang/mock/gomock"
 	"github.com/mmcdole/gofeed"
 	"github.com/stretchr/testify/assert"
@@ -43,13 +45,13 @@ func TestPullFeedsAllOkEmptyEntries(t *testing.T) {
 			title:   "Feed A",
 			feedURL: "http://a.com/feed.xml",
 			updated: toNullString("2022-03-19T16:23:18.600+02:00"),
-			entries: []*Entry{},
+			entries: []*EntryRecord{},
 		},
 		{
 			title:   "Feed X",
 			feedURL: "http://x.com/feed.xml",
 			updated: toNullString("2022-04-20T16:32:30.760+02:00"),
-			entries: []*Entry{},
+			entries: []*EntryRecord{},
 		},
 	}
 
@@ -103,7 +105,7 @@ func TestPullFeedsAllOkNoNewEntries(t *testing.T) {
 			title:   "Feed A",
 			feedURL: "http://a.com/feed.xml",
 			updated: toNullString("2022-03-19T16:23:18.600+02:00"),
-			entries: []*Entry{
+			entries: []*EntryRecord{
 				{
 					Title:   "Entry A1",
 					ExtID:   "A1",
@@ -124,7 +126,7 @@ func TestPullFeedsAllOkNoNewEntries(t *testing.T) {
 			title:   "Feed X",
 			feedURL: "http://x.com/feed.xml",
 			updated: toNullString("2022-04-20T16:32:30.760+02:00"),
-			entries: []*Entry{
+			entries: []*EntryRecord{
 				{
 					Title:   "Entry X1",
 					ExtID:   "X1",
@@ -144,7 +146,7 @@ func TestPullFeedsAllOkNoNewEntries(t *testing.T) {
 			title:   dbFeeds[0].title,
 			feedURL: dbFeeds[0].feedURL,
 			updated: dbFeeds[0].updated,
-			entries: []*Entry{
+			entries: []*EntryRecord{
 				{
 					Title:   dbFeeds[0].entries[0].Title,
 					ExtID:   dbFeeds[0].entries[0].ExtID,
@@ -163,7 +165,7 @@ func TestPullFeedsAllOkNoNewEntries(t *testing.T) {
 			title:   dbFeeds[1].title,
 			feedURL: dbFeeds[1].feedURL,
 			updated: dbFeeds[1].updated,
-			entries: []*Entry{
+			entries: []*EntryRecord{
 				{
 					Title:   dbFeeds[1].entries[0].Title,
 					ExtID:   dbFeeds[1].entries[0].ExtID,
@@ -223,7 +225,7 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 			subscribed: "2022-07-18T22:04:37Z",
 			lastPulled: "2022-07-18T22:04:37Z",
 			updated:    toNullString("2022-03-19T16:23:18.600+02:00"),
-			entries: []*Entry{
+			entries: []*EntryRecord{
 				{
 					// This entry should not be returned later; 'updated' remains the same.
 					Title:   "Entry A1",
@@ -256,7 +258,7 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 			subscribed: "2022-07-18T22:04:45Z",
 			lastPulled: "2022-07-18T22:04:45Z",
 			updated:    toNullString("2022-04-20T16:32:30.760+02:00"),
-			entries: []*Entry{
+			entries: []*EntryRecord{
 				{
 					// This entry should not be returned later; 'updated' remains the same.
 					Title:   "Entry X1",
@@ -277,7 +279,7 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 			title:   dbFeeds[0].title,
 			feedURL: dbFeeds[0].feedURL,
 			updated: toNullString("2022-07-18T22:51:49.404+02:00"),
-			entries: []*Entry{
+			entries: []*EntryRecord{
 				{
 					Title:   dbFeeds[0].entries[0].Title,
 					ExtID:   dbFeeds[0].entries[0].ExtID,
@@ -302,7 +304,7 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 			title:   dbFeeds[1].title,
 			feedURL: dbFeeds[1].feedURL,
 			updated: toNullString("2022-07-18T22:21:41.647+02:00"),
-			entries: []*Entry{
+			entries: []*EntryRecord{
 				{
 					Title:   dbFeeds[1].entries[0].Title,
 					ExtID:   dbFeeds[1].entries[0].ExtID,
@@ -344,33 +346,45 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 			url:    &dbFeeds[0].feedURL,
 			status: pullSuccess,
 			err:    nil,
-			feed: &FeedRecord{
-				id:         keys[pulledFeeds[0].title].ID,
-				title:      pulledFeeds[0].title,
-				feedURL:    pulledFeeds[0].feedURL,
-				updated:    st.getFeedUpdateTime(feedURL0),
-				subscribed: st.getFeedSubTime(feedURL0),
-				lastPulled: "",
-				entries: []*Entry{
+			feed: &internal.Feed{
+				ID:         keys[pulledFeeds[0].title].ID,
+				Title:      pulledFeeds[0].title,
+				FeedURL:    pulledFeeds[0].feedURL,
+				Updated:    mustTimePP(t, fromNullString(st.getFeedUpdateTime(feedURL0))),
+				Subscribed: *mustTimeVP(t, st.getFeedSubTime(feedURL0)),
+				LastPulled: time.Time{},
+				Entries: []*internal.Entry{
 					{
-						ID:        st.getEntryID(feedURL0, pulledFeeds[0].entries[1].ExtID),
-						FeedID:    keys[pulledFeeds[0].title].ID,
-						Title:     pulledFeeds[0].entries[1].Title,
-						ExtID:     pulledFeeds[0].entries[1].ExtID,
-						Updated:   st.getEntryUpdateTime(feedURL0, pulledFeeds[0].entries[1].ExtID),
-						Published: st.getEntryPubTime(feedURL0, pulledFeeds[0].entries[1].ExtID),
-						URL:       pulledFeeds[0].entries[1].URL,
-						IsRead:    false,
+						ID:     st.getEntryID(feedURL0, pulledFeeds[0].entries[1].ExtID),
+						FeedID: keys[pulledFeeds[0].title].ID,
+						Title:  pulledFeeds[0].entries[1].Title,
+						ExtID:  pulledFeeds[0].entries[1].ExtID,
+						Updated: mustTimePP(
+							t,
+							fromNullString(st.getEntryUpdateTime(feedURL0, pulledFeeds[0].entries[1].ExtID)),
+						),
+						Published: mustTimePP(
+							t,
+							fromNullString(st.getEntryPubTime(feedURL0, pulledFeeds[0].entries[1].ExtID)),
+						),
+						URL:    fromNullString(pulledFeeds[0].entries[1].URL),
+						IsRead: false,
 					},
 					{
-						ID:        st.getEntryID(feedURL0, pulledFeeds[0].entries[2].ExtID),
-						FeedID:    keys[pulledFeeds[0].title].ID,
-						Title:     pulledFeeds[0].entries[2].Title,
-						ExtID:     pulledFeeds[0].entries[2].ExtID,
-						Updated:   st.getEntryUpdateTime(feedURL0, pulledFeeds[0].entries[2].ExtID),
-						Published: st.getEntryPubTime(feedURL0, pulledFeeds[0].entries[2].ExtID),
-						URL:       pulledFeeds[0].entries[2].URL,
-						IsRead:    false,
+						ID:     st.getEntryID(feedURL0, pulledFeeds[0].entries[2].ExtID),
+						FeedID: keys[pulledFeeds[0].title].ID,
+						Title:  pulledFeeds[0].entries[2].Title,
+						ExtID:  pulledFeeds[0].entries[2].ExtID,
+						Updated: mustTimePP(
+							t,
+							fromNullString(st.getEntryUpdateTime(feedURL0, pulledFeeds[0].entries[2].ExtID)),
+						),
+						Published: mustTimePP(
+							t,
+							fromNullString(st.getEntryPubTime(feedURL0, pulledFeeds[0].entries[2].ExtID)),
+						),
+						URL:    fromNullString(pulledFeeds[0].entries[2].URL),
+						IsRead: false,
 					},
 				},
 			},
@@ -379,23 +393,29 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 			url:    &dbFeeds[1].feedURL,
 			status: pullSuccess,
 			err:    nil,
-			feed: &FeedRecord{
-				id:         keys[pulledFeeds[1].title].ID,
-				title:      pulledFeeds[1].title,
-				feedURL:    pulledFeeds[1].feedURL,
-				updated:    st.getFeedUpdateTime(feedURL1),
-				subscribed: st.getFeedSubTime(feedURL1),
-				lastPulled: "",
-				entries: []*Entry{
+			feed: &internal.Feed{
+				ID:         keys[pulledFeeds[1].title].ID,
+				Title:      pulledFeeds[1].title,
+				FeedURL:    pulledFeeds[1].feedURL,
+				Updated:    mustTimePP(t, fromNullString(st.getFeedUpdateTime(feedURL1))),
+				Subscribed: *mustTimeVP(t, st.getFeedSubTime(feedURL1)),
+				LastPulled: time.Time{},
+				Entries: []*internal.Entry{
 					{
-						ID:        st.getEntryID(feedURL1, pulledFeeds[1].entries[1].ExtID),
-						FeedID:    keys[pulledFeeds[1].title].ID,
-						Title:     pulledFeeds[1].entries[1].Title,
-						ExtID:     pulledFeeds[1].entries[1].ExtID,
-						Updated:   st.getEntryUpdateTime(feedURL1, pulledFeeds[1].entries[1].ExtID),
-						Published: st.getEntryPubTime(feedURL1, pulledFeeds[1].entries[1].ExtID),
-						URL:       pulledFeeds[1].entries[1].URL,
-						IsRead:    false,
+						ID:     st.getEntryID(feedURL1, pulledFeeds[1].entries[1].ExtID),
+						FeedID: keys[pulledFeeds[1].title].ID,
+						Title:  pulledFeeds[1].entries[1].Title,
+						ExtID:  pulledFeeds[1].entries[1].ExtID,
+						Updated: mustTimePP(
+							t,
+							fromNullString(st.getEntryUpdateTime(feedURL1, pulledFeeds[1].entries[1].ExtID)),
+						),
+						Published: mustTimePP(
+							t,
+							fromNullString(st.getEntryPubTime(feedURL1, pulledFeeds[1].entries[1].ExtID)),
+						),
+						URL:    fromNullString(pulledFeeds[1].entries[1].URL),
+						IsRead: false,
 					},
 				},
 			},
@@ -406,9 +426,9 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 	sortPullResultEntries(want)
 	sortPullResultEntries(got)
 
-	// Set LastPulled fields to empty strings as this value is always updated on every pull.
+	// Set LastPulled fields to the zero value as this value is always updated on every pull.
 	for _, item := range got {
-		item.feed.lastPulled = ""
+		item.feed.LastPulled = time.Time{}
 	}
 
 	a.ElementsMatch(want, got)
@@ -429,7 +449,7 @@ func TestPullFeedsSelectedOkSomeNewEntries(t *testing.T) {
 			subscribed: "2022-07-18T22:04:37Z",
 			lastPulled: "2022-07-18T22:04:37Z",
 			updated:    toNullString("2022-03-19T16:23:18.600+02:00"),
-			entries: []*Entry{
+			entries: []*EntryRecord{
 				{
 					Title:   "Entry A1",
 					ExtID:   "A1",
@@ -460,7 +480,7 @@ func TestPullFeedsSelectedOkSomeNewEntries(t *testing.T) {
 			subscribed: "2022-07-18T22:04:45Z",
 			lastPulled: "2022-07-18T22:04:45Z",
 			updated:    toNullString("2022-04-20T16:32:30.760+02:00"),
-			entries: []*Entry{
+			entries: []*EntryRecord{
 				{
 					// This entry should not be returned later; 'updated' remains the same.
 					Title:   "Entry X1",
@@ -480,7 +500,7 @@ func TestPullFeedsSelectedOkSomeNewEntries(t *testing.T) {
 		title:   dbFeeds[1].title,
 		feedURL: dbFeeds[1].feedURL,
 		updated: toNullString("2022-07-18T22:21:41.647+02:00"),
-		entries: []*Entry{
+		entries: []*EntryRecord{
 			{
 				Title:   dbFeeds[1].entries[0].Title,
 				ExtID:   dbFeeds[1].entries[0].ExtID,
@@ -513,23 +533,29 @@ func TestPullFeedsSelectedOkSomeNewEntries(t *testing.T) {
 			url:    &dbFeeds[1].feedURL,
 			status: pullSuccess,
 			err:    nil,
-			feed: &FeedRecord{
-				id:         keys[pulledFeed.title].ID,
-				title:      pulledFeed.title,
-				feedURL:    pulledFeed.feedURL,
-				updated:    st.getFeedUpdateTime(pulledFeed.feedURL),
-				subscribed: st.getFeedSubTime(pulledFeed.feedURL),
-				lastPulled: "",
-				entries: []*Entry{
+			feed: &internal.Feed{
+				ID:         keys[pulledFeed.title].ID,
+				Title:      pulledFeed.title,
+				FeedURL:    pulledFeed.feedURL,
+				Updated:    mustTimePP(t, fromNullString(st.getFeedUpdateTime(pulledFeed.feedURL))),
+				Subscribed: *mustTimeVP(t, st.getFeedSubTime(pulledFeed.feedURL)),
+				LastPulled: time.Time{},
+				Entries: []*internal.Entry{
 					{
-						ID:        st.getEntryID(pulledFeed.feedURL, pulledFeed.entries[1].ExtID),
-						FeedID:    keys[pulledFeed.title].ID,
-						Title:     pulledFeed.entries[1].Title,
-						ExtID:     pulledFeed.entries[1].ExtID,
-						Updated:   st.getEntryUpdateTime(pulledFeed.feedURL, pulledFeed.entries[1].ExtID),
-						Published: st.getEntryPubTime(pulledFeed.feedURL, pulledFeed.entries[1].ExtID),
-						URL:       pulledFeed.entries[1].URL,
-						IsRead:    false,
+						ID:     st.getEntryID(pulledFeed.feedURL, pulledFeed.entries[1].ExtID),
+						FeedID: keys[pulledFeed.title].ID,
+						Title:  pulledFeed.entries[1].Title,
+						ExtID:  pulledFeed.entries[1].ExtID,
+						Updated: mustTimePP(
+							t,
+							fromNullString(st.getEntryUpdateTime(pulledFeed.feedURL, pulledFeed.entries[1].ExtID)),
+						),
+						Published: mustTimePP(
+							t,
+							fromNullString(st.getEntryPubTime(pulledFeed.feedURL, pulledFeed.entries[1].ExtID)),
+						),
+						URL:    fromNullString(pulledFeed.entries[1].URL),
+						IsRead: false,
 					},
 				},
 			},
@@ -540,9 +566,9 @@ func TestPullFeedsSelectedOkSomeNewEntries(t *testing.T) {
 	sortPullResultEntries(want)
 	sortPullResultEntries(got)
 
-	// Set LastPulled fields to empty strings as this value is always updated on every pull.
+	// Set LastPulled fields to the zero value as this value is always updated on every pull.
 	for _, item := range got {
-		item.feed.lastPulled = ""
+		item.feed.LastPulled = time.Time{}
 	}
 
 	a.ElementsMatch(want, got)
@@ -551,9 +577,9 @@ func TestPullFeedsSelectedOkSomeNewEntries(t *testing.T) {
 func sortPullResultEntries(arr []PullResult) {
 	for _, item := range arr {
 		sort.SliceStable(
-			item.feed.entries,
+			item.feed.Entries,
 			func(i, j int) bool {
-				return item.feed.entries[i].ExtID < item.feed.entries[j].ExtID
+				return item.feed.Entries[i].ExtID < item.feed.Entries[j].ExtID
 			},
 		)
 	}
@@ -567,7 +593,7 @@ func toGFeed(t *testing.T, feed *FeedRecord) *gofeed.Feed {
 	}
 	if feed.updated.String != "" {
 		gfeed.Updated = feed.updated.String
-		gfeed.UpdatedParsed = ts(t, feed.updated.String)
+		gfeed.UpdatedParsed = mustTimeVP(t, feed.updated.String)
 	}
 	for _, entry := range feed.entries {
 		item := gofeed.Item{
@@ -578,11 +604,11 @@ func toGFeed(t *testing.T, feed *FeedRecord) *gofeed.Feed {
 		}
 		if entry.Published.String != "" {
 			item.Published = entry.Published.String
-			item.PublishedParsed = ts(t, entry.Published.String)
+			item.PublishedParsed = mustTimeVP(t, entry.Published.String)
 		}
 		if entry.Updated.String != "" {
 			item.Updated = entry.Updated.String
-			item.UpdatedParsed = ts(t, entry.Updated.String)
+			item.UpdatedParsed = mustTimeVP(t, entry.Updated.String)
 		}
 		gfeed.Items = append(gfeed.Items, &item)
 	}

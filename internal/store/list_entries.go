@@ -7,20 +7,22 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+
+	"github.com/bow/iris/internal"
 )
 
-func (s *SQLite) ListEntries(ctx context.Context, feedID ID) ([]*Entry, error) {
+func (s *SQLite) ListEntries(ctx context.Context, feedID ID) ([]*internal.Entry, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	entries := make([]*Entry, 0)
+	recs := make([]*EntryRecord, 0)
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
 		_, err := getFeed(ctx, tx, feedID)
 		if errors.Is(err, sql.ErrNoRows) {
 			return FeedNotFoundError{feedID}
 		}
-		ientries, err := getAllFeedEntries(ctx, tx, feedID, nil)
-		entries = ientries
+		irecs, err := getAllFeedEntries(ctx, tx, feedID, nil)
+		recs = irecs
 		return err
 	}
 
@@ -30,5 +32,6 @@ func (s *SQLite) ListEntries(ctx context.Context, feedID ID) ([]*Entry, error) {
 	if err != nil {
 		return nil, fail(err)
 	}
-	return entries, nil
+
+	return toEntries(recs)
 }

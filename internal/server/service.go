@@ -39,12 +39,7 @@ func (svc *service) AddFeed(
 		return nil, err
 	}
 
-	payload, err := toFeedPB(created)
-	if err != nil {
-		return nil, status.Error(codes.Internal, err.Error())
-	}
-
-	rsp := api.AddFeedResponse{Feed: payload}
+	rsp := api.AddFeedResponse{Feed: toFeedPb(created)}
 
 	return &rsp, nil
 }
@@ -59,15 +54,7 @@ func (svc *service) ListFeeds(
 	if err != nil {
 		return nil, err
 	}
-
-	rsp := api.ListFeedsResponse{}
-	for _, feed := range feeds {
-		proto, err := toFeedPB(feed)
-		if err != nil {
-			return nil, status.Error(codes.Internal, err.Error())
-		}
-		rsp.Feeds = append(rsp.Feeds, proto)
-	}
+	rsp := api.ListFeedsResponse{Feeds: toFeedPbs(feeds)}
 
 	return &rsp, nil
 }
@@ -88,14 +75,7 @@ func (svc *service) EditFeeds(
 		return nil, err
 	}
 
-	rsp := api.EditFeedsResponse{}
-	for _, feed := range feeds {
-		fp, err := toFeedPB(feed)
-		if err != nil {
-			return nil, status.Error(codes.Internal, err.Error())
-		}
-		rsp.Feeds = append(rsp.Feeds, fp)
-	}
+	rsp := api.EditFeedsResponse{Feeds: toFeedPbs(feeds)}
 
 	return &rsp, nil
 }
@@ -138,11 +118,7 @@ func (svc *service) PullFeeds(
 		if feed == nil {
 			return nil, nil
 		}
-		fp, err := toFeedPB(feed)
-		if err != nil {
-			return nil, err
-		}
-		rsp := api.PullFeedsResponse{Url: pr.URL(), Feed: fp}
+		rsp := api.PullFeedsResponse{Url: pr.URL(), Feed: toFeedPb(feed)}
 
 		return &rsp, nil
 	}
@@ -181,14 +157,7 @@ func (svc *service) ListEntries(
 		return nil, err
 	}
 
-	rsp := api.ListEntriesResponse{}
-	for _, entry := range entries {
-		proto, err := entry.Proto()
-		if err != nil {
-			return nil, status.Error(codes.Internal, err.Error())
-		}
-		rsp.Entries = append(rsp.Entries, proto)
-	}
+	rsp := api.ListEntriesResponse{Entries: toEntryPbs(entries)}
 
 	return &rsp, nil
 }
@@ -209,14 +178,7 @@ func (svc *service) EditEntries(
 		return nil, err
 	}
 
-	rsp := api.EditEntriesResponse{}
-	for _, entry := range entries {
-		ep, err := entry.Proto()
-		if err != nil {
-			return nil, status.Error(codes.Internal, err.Error())
-		}
-		rsp.Entries = append(rsp.Entries, ep)
-	}
+	rsp := api.EditEntriesResponse{Entries: toEntryPbs(entries)}
 
 	return &rsp, nil
 }
@@ -232,11 +194,7 @@ func (svc *service) GetEntry(
 		return nil, err
 	}
 
-	ep, err := entry.Proto()
-	if err != nil {
-		return nil, err
-	}
-	rsp := api.GetEntryResponse{Entry: ep}
+	rsp := api.GetEntryResponse{Entry: toEntryPb(entry)}
 
 	return &rsp, nil
 }

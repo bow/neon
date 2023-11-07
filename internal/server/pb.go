@@ -7,36 +7,58 @@ import (
 	"time"
 
 	"github.com/bow/iris/api"
-	"github.com/bow/iris/internal/store"
+	"github.com/bow/iris/internal"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-func toFeedPB(sf *store.FeedRecord) (af *api.Feed, err error) {
-	af = &api.Feed{
-		Id:           sf.ID(),
-		Title:        sf.Title(),
-		FeedUrl:      sf.FeedURL(),
-		SiteUrl:      sf.SiteURL(),
-		Tags:         sf.Tags(),
-		Description:  sf.Description(),
-		IsStarred:    sf.IsStarred(),
-		SubTime:      timestamppb.New(sf.Subscribed()),
-		LastPullTime: timestamppb.New(sf.LastPulled()),
-		UpdateTime:   toTimestampPB(sf.Updated()),
+func toFeedPb(feed *internal.Feed) *api.Feed {
+	return &api.Feed{
+		Id:           feed.ID,
+		Title:        feed.Title,
+		FeedUrl:      feed.FeedURL,
+		SiteUrl:      feed.SiteURL,
+		Tags:         feed.Tags,
+		Description:  feed.Description,
+		IsStarred:    feed.IsStarred,
+		SubTime:      timestamppb.New(feed.Subscribed),
+		LastPullTime: timestamppb.New(feed.LastPulled),
+		UpdateTime:   toTimestampPb(feed.Updated),
+		Entries:      toEntryPbs(feed.Entries),
 	}
-
-	for _, entry := range sf.Entries() {
-		ep, err := entry.Proto()
-		if err != nil {
-			return nil, err
-		}
-		af.Entries = append(af.Entries, ep)
-	}
-
-	return af, nil
 }
 
-func toTimestampPB(v *time.Time) *timestamppb.Timestamp {
+func toFeedPbs(feeds []*internal.Feed) []*api.Feed {
+	pbs := make([]*api.Feed, len(feeds))
+	for i, feed := range feeds {
+		pbs[i] = toFeedPb(feed)
+	}
+	return pbs
+}
+
+func toEntryPb(entry *internal.Entry) *api.Entry {
+	return &api.Entry{
+		Id:          entry.ID,
+		FeedId:      entry.FeedID,
+		Title:       entry.Title,
+		IsRead:      entry.IsRead,
+		ExtId:       entry.ExtID,
+		Description: entry.Description,
+		Content:     entry.Content,
+		Url:         entry.URL,
+		PubTime:     toTimestampPb(entry.Published),
+		UpdateTime:  toTimestampPb(entry.Updated),
+	}
+}
+
+func toEntryPbs(entries []*internal.Entry) []*api.Entry {
+	pbs := make([]*api.Entry, len(entries))
+	for i, entry := range entries {
+		pbs[i] = toEntryPb(entry)
+	}
+	return pbs
+}
+
+func toTimestampPb(v *time.Time) *timestamppb.Timestamp {
 	if v == nil {
 		return nil
 	}

@@ -7,22 +7,24 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+
+	"github.com/bow/iris/internal"
 )
 
-func (s *SQLite) GetEntry(ctx context.Context, entryID ID) (*Entry, error) {
+func (s *SQLite) GetEntry(ctx context.Context, entryID ID) (*internal.Entry, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	var entry *Entry
+	var rec *EntryRecord
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
-		ientry, err := getEntry(ctx, tx, entryID)
+		irec, err := getEntry(ctx, tx, entryID)
 		if err != nil {
 			if errors.Is(err, sql.ErrNoRows) {
 				return EntryNotFoundError{entryID}
 			}
 			return err
 		}
-		entry = ientry
+		rec = irec
 		return nil
 	}
 
@@ -32,10 +34,11 @@ func (s *SQLite) GetEntry(ctx context.Context, entryID ID) (*Entry, error) {
 	if err != nil {
 		return nil, fail(err)
 	}
-	return entry, nil
+
+	return toEntry(rec)
 }
 
-func getEntry(ctx context.Context, tx *sql.Tx, entryID ID) (*Entry, error) {
+func getEntry(ctx context.Context, tx *sql.Tx, entryID ID) (*EntryRecord, error) {
 
 	sql1 := `
 		SELECT
@@ -56,8 +59,8 @@ func getEntry(ctx context.Context, tx *sql.Tx, entryID ID) (*Entry, error) {
 		ORDER BY
 			COALESCE(e.update_time, e.pub_time) DESC
 `
-	scanRow := func(row *sql.Row) (*Entry, error) {
-		var entry Entry
+	scanRow := func(row *sql.Row) (*EntryRecord, error) {
+		var entry EntryRecord
 		if err := row.Scan(
 			&entry.ID,
 			&entry.FeedID,

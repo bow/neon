@@ -46,74 +46,7 @@ type FeedRecord struct {
 	updated     sql.NullString
 	isStarred   bool
 	tags        jsonArrayString
-	entries     []*Entry
-}
-
-func (f *FeedRecord) ID() ID            { return f.id }
-func (f *FeedRecord) Title() string     { return f.title }
-func (f *FeedRecord) FeedURL() string   { return f.feedURL }
-func (f *FeedRecord) IsStarred() bool   { return f.isStarred }
-func (f *FeedRecord) Tags() []string    { return []string(f.tags) }
-func (f *FeedRecord) Entries() []*Entry { return f.entries }
-
-func (f *FeedRecord) Description() *string {
-	if f.description.Valid {
-		return &f.description.String
-	}
-	return pointer("")
-}
-
-func (f *FeedRecord) SiteURL() *string {
-	if f.siteURL.Valid {
-		return &f.siteURL.String
-	}
-	return pointer("")
-}
-
-func (f *FeedRecord) Subscribed() time.Time {
-	subt, err := deserializeTime(&f.subscribed)
-	if err != nil {
-		// FIXME: How to best handle DB-related panics?
-		panic(err)
-	}
-	return *subt
-}
-
-func (f *FeedRecord) LastPulled() time.Time {
-	lpt, err := deserializeTime(&f.lastPulled)
-	if err != nil {
-		// FIXME: How to best handle DB-related panics?
-		panic(err)
-	}
-	return *lpt
-}
-
-func (f *FeedRecord) Updated() *time.Time {
-	if !f.updated.Valid {
-		return nil
-	}
-	upt, err := deserializeTime(&f.updated.String)
-	if err != nil {
-		// FIXME: How to best handle DB-related panics?
-		panic(err)
-	}
-	return upt
-}
-
-func (f *FeedRecord) NumEntriesTotal() int { return len(f.entries) }
-
-func (f *FeedRecord) NumEntriesRead() int {
-	var n int
-	for _, entry := range f.entries {
-		if entry.IsRead {
-			n++
-		}
-	}
-	return n
-}
-
-func (f *FeedRecord) NumEntriesUnread() int {
-	return f.NumEntriesTotal() - f.NumEntriesRead()
+	entries     []*EntryRecord
 }
 
 func (f *FeedRecord) Outline() (*opml.Outline, error) {
@@ -148,7 +81,7 @@ type FeedBuilder struct {
 	updated     *time.Time
 	isStarred   bool
 	tags        []string
-	entries     []*Entry
+	entries     []*EntryRecord
 }
 
 func NewFeedBuilder() *FeedBuilder {
@@ -221,7 +154,7 @@ func (b *FeedBuilder) Tags(value []string) *FeedBuilder {
 	return b
 }
 
-func (b *FeedBuilder) Entries(value []*Entry) *FeedBuilder {
+func (b *FeedBuilder) Entries(value []*EntryRecord) *FeedBuilder {
 	b.entries = value
 	return b
 }
@@ -244,7 +177,7 @@ func NewFeedEditOp(proto *api.EditFeedsRequest_Op) *FeedEditOp {
 	}
 }
 
-type Entry struct {
+type EntryRecord struct {
 	ID          ID
 	FeedID      ID
 	Title       string
@@ -257,7 +190,7 @@ type Entry struct {
 	URL         sql.NullString
 }
 
-func (e *Entry) Proto() (*api.Entry, error) {
+func (e *EntryRecord) Proto() (*api.Entry, error) {
 	proto := api.Entry{
 		Id:          e.ID,
 		FeedId:      e.FeedID,

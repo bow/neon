@@ -11,11 +11,13 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/mmcdole/gofeed"
 	"github.com/rs/zerolog/log"
 
+	"github.com/bow/iris/internal"
 	"github.com/bow/iris/internal/store/migration"
 )
 
@@ -30,14 +32,14 @@ type FeedStore interface {
 		desc *string,
 		tags []string,
 		isStarred *bool,
-	) (addedFeed *FeedRecord, err error)
-	EditFeeds(ctx context.Context, ops []*FeedEditOp) (feeds []*FeedRecord, err error)
-	ListFeeds(ctx context.Context) (feeds []*FeedRecord, err error)
+	) (addedFeed *internal.Feed, err error)
+	EditFeeds(ctx context.Context, ops []*FeedEditOp) (feeds []*internal.Feed, err error)
+	ListFeeds(ctx context.Context) (feeds []*internal.Feed, err error)
 	PullFeeds(ctx context.Context, feedIDs []ID) (results <-chan PullResult)
 	DeleteFeeds(ctx context.Context, ids []ID) (err error)
-	ListEntries(ctx context.Context, feedID ID) (entries []*Entry, err error)
-	EditEntries(ctx context.Context, ops []*EntryEditOp) (entries []*Entry, err error)
-	GetEntry(ctx context.Context, entryID ID) (entry *Entry, err error)
+	ListEntries(ctx context.Context, feedID ID) (entries []*internal.Entry, err error)
+	EditEntries(ctx context.Context, ops []*EntryEditOp) (entries []*internal.Entry, err error)
+	GetEntry(ctx context.Context, entryID ID) (entry *internal.Entry, err error)
 	ExportOPML(ctx context.Context, title *string) (payload []byte, err error)
 	ImportOPML(ctx context.Context, payload []byte) (processed int, imported int, err error)
 	GetGlobalStats(ctx context.Context) (stats *Stats, err error)
@@ -145,6 +147,99 @@ func toFeedID(raw string) (ID, error) {
 		return 0, FeedNotFoundError{ID: raw}
 	}
 	return ID(id), nil
+}
+
+func toFeed(rec *FeedRecord) (*internal.Feed, error) {
+
+	subt, err := deserializeTime(&rec.subscribed)
+	if err != nil {
+		return nil, fmt.Errorf("failed to deserialize Feed.Subscribed time: %w", err)
+	}
+	lpt, err := deserializeTime(&rec.lastPulled)
+	if err != nil {
+		return nil, err
+	}
+	var upt *time.Time
+	if v := fromNullString(rec.updated); v != nil {
+		upt, err = deserializeTime(v)
+		if err != nil {
+			return nil, fmt.Errorf("failed to deserialize Feed.Updated time: %w", err)
+		}
+	}
+	entries, err := toEntries(rec.entries)
+	if err != nil {
+		return nil, err
+	}
+
+	feed := internal.Feed{
+		ID:          rec.id,
+		Title:       rec.title,
+		Description: fromNullString(rec.description),
+		FeedURL:     rec.feedURL,
+		SiteURL:     fromNullString(rec.siteURL),
+		Subscribed:  *subt,
+		LastPulled:  *lpt,
+		Updated:     upt,
+		IsStarred:   rec.isStarred,
+		Tags:        []string(rec.tags),
+		Entries:     entries,
+	}
+	return &feed, nil
+}
+
+func toFeeds(recs []*FeedRecord) ([]*internal.Feed, error) {
+
+	feeds := make([]*internal.Feed, len(recs))
+	for i, rec := range recs {
+		feed, err := toFeed(rec)
+		if err != nil {
+			return nil, err
+		}
+		feeds[i] = feed
+	}
+
+	return feeds, nil
+}
+
+func toEntry(rec *EntryRecord) (*internal.Entry, error) {
+
+	ut, err := deserializeTime(fromNullString(rec.Updated))
+	if err != nil {
+		return nil, fmt.Errorf("failed to deserialize Entry.Updated time: %w", err)
+	}
+	pt, err := deserializeTime(fromNullString(rec.Published))
+	if err != nil {
+		return nil, fmt.Errorf("failed to deserialize Entry.Published time: %w", err)
+	}
+
+	entry := internal.Entry{
+		ID:          rec.ID,
+		FeedID:      rec.FeedID,
+		Title:       rec.Title,
+		IsRead:      rec.IsRead,
+		ExtID:       rec.ExtID,
+		Updated:     ut,
+		Published:   pt,
+		Description: fromNullString(rec.Description),
+		Content:     fromNullString(rec.Content),
+		URL:         fromNullString(rec.URL),
+	}
+
+	return &entry, nil
+}
+
+func toEntries(recs []*EntryRecord) ([]*internal.Entry, error) {
+
+	entries := make([]*internal.Entry, len(recs))
+	for i, rec := range recs {
+		entry, err := toEntry(rec)
+		if err != nil {
+			return nil, err
+		}
+		entries[i] = entry
+	}
+
+	return entries, nil
 }
 
 func pointerOrNil(v string) *string {

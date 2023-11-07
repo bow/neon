@@ -4,8 +4,9 @@
 package cmd
 
 import (
-	"github.com/bow/iris/internal/store"
 	"github.com/spf13/cobra"
+
+	"github.com/bow/iris/internal/store"
 )
 
 func newFeedCommand() *cobra.Command {

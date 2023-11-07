@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"strings"
-	"time"
 
 	"github.com/adrg/xdg"
 	"github.com/spf13/cobra"
@@ -60,21 +59,6 @@ func resolveDBPath(path string) (string, error) {
 		}
 	}
 	return path, nil
-}
-
-func deserializeTime(v *string) (*time.Time, error) {
-	if v == nil {
-		return nil, nil
-	}
-	if *v == "" {
-		return nil, nil
-	}
-	pv, err := time.Parse(time.RFC3339, *v)
-	if err != nil {
-		return nil, err
-	}
-	upv := pv.UTC()
-	return &upv, nil
 }
 
 // showBanner prints the application banner to the given writer.

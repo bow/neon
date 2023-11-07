@@ -6,9 +6,11 @@ package store
 import (
 	"context"
 	"database/sql"
+
+	"github.com/bow/iris/internal"
 )
 
-func (s *SQLite) ListFeeds(ctx context.Context) ([]*FeedRecord, error) {
+func (s *SQLite) ListFeeds(ctx context.Context) ([]*internal.Feed, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -38,7 +40,7 @@ func (s *SQLite) ListFeeds(ctx context.Context) ([]*FeedRecord, error) {
 	if err != nil {
 		return nil, fail(err)
 	}
-	return feeds, nil
+	return toFeeds(feeds)
 }
 
 func getAllFeeds(ctx context.Context, tx *sql.Tx) ([]*FeedRecord, error) {
@@ -111,7 +113,7 @@ func getAllFeedEntries(
 	tx *sql.Tx,
 	feedID ID,
 	isRead *bool,
-) ([]*Entry, error) {
+) ([]*EntryRecord, error) {
 
 	sql1 := `
 		SELECT
@@ -133,8 +135,8 @@ func getAllFeedEntries(
 		ORDER BY
 			COALESCE(e.update_time, e.pub_time) DESC
 `
-	scanRow := func(rows *sql.Rows) (*Entry, error) {
-		var entry Entry
+	scanRow := func(rows *sql.Rows) (*EntryRecord, error) {
+		var entry EntryRecord
 		if err := rows.Scan(
 			&entry.ID,
 			&entry.FeedID,
@@ -163,7 +165,7 @@ func getAllFeedEntries(
 		return nil, err
 	}
 
-	entries := make([]*Entry, 0)
+	entries := make([]*EntryRecord, 0)
 	for rows.Next() {
 		entry, err := scanRow(rows)
 		if err != nil {

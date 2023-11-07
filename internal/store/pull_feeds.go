@@ -8,6 +8,8 @@ import (
 	"database/sql"
 	"sync"
 	"time"
+
+	"github.com/bow/iris/internal"
 )
 
 func (s *SQLite) PullFeeds(ctx context.Context, ids []ID) <-chan PullResult {
@@ -79,11 +81,11 @@ func (s *SQLite) PullFeeds(ctx context.Context, ids []ID) <-chan PullResult {
 type PullResult struct {
 	url    *string
 	status pullStatus
-	feed   *FeedRecord
+	feed   *internal.Feed
 	err    error
 }
 
-func NewPullResultFromFeed(url *string, feed *FeedRecord) PullResult {
+func NewPullResultFromFeed(url *string, feed *internal.Feed) PullResult {
 	return PullResult{status: pullSuccess, url: url, feed: feed}
 }
 
@@ -91,7 +93,7 @@ func NewPullResultFromError(url *string, err error) PullResult {
 	return PullResult{status: pullFail, url: url, err: err}
 }
 
-func (msg PullResult) Feed() *FeedRecord {
+func (msg PullResult) Feed() *internal.Feed {
 	if msg.status == pullSuccess {
 		return msg.feed
 	}
@@ -124,7 +126,7 @@ type pullKey struct {
 	feedURL string
 }
 
-func (pk pullKey) ok(feed *FeedRecord) PullResult {
+func (pk pullKey) ok(feed *internal.Feed) PullResult {
 	return PullResult{url: &pk.feedURL, status: pullSuccess, feed: feed, err: nil}
 }
 
@@ -228,12 +230,17 @@ func pullNewFeedEntries(
 			return pk.ok(nil)
 		}
 
-		feed, err := getFeed(ctx, tx, pk.feedID)
+		rec, err := getFeed(ctx, tx, pk.feedID)
 		if err != nil {
 			return pk.err(err)
 		}
 
-		feed.entries = unreadEntries
+		rec.entries = unreadEntries
+
+		feed, err := toFeed(rec)
+		if err != nil {
+			return pk.err(err)
+		}
 
 		return pk.ok(feed)
 	}

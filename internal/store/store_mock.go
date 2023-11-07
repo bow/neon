@@ -8,6 +8,7 @@ import (
 	context "context"
 	reflect "reflect"
 
+	internal "github.com/bow/iris/internal"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -35,10 +36,10 @@ func (m *MockFeedStore) EXPECT() *MockFeedStoreMockRecorder {
 }
 
 // AddFeed mocks base method.
-func (m *MockFeedStore) AddFeed(ctx context.Context, feedURL string, title, desc *string, tags []string, isStarred *bool) (*FeedRecord, error) {
+func (m *MockFeedStore) AddFeed(ctx context.Context, feedURL string, title, desc *string, tags []string, isStarred *bool) (*internal.Feed, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AddFeed", ctx, feedURL, title, desc, tags, isStarred)
-	ret0, _ := ret[0].(*FeedRecord)
+	ret0, _ := ret[0].(*internal.Feed)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -64,10 +65,10 @@ func (mr *MockFeedStoreMockRecorder) DeleteFeeds(ctx, ids interface{}) *gomock.C
 }
 
 // EditEntries mocks base method.
-func (m *MockFeedStore) EditEntries(ctx context.Context, ops []*EntryEditOp) ([]*Entry, error) {
+func (m *MockFeedStore) EditEntries(ctx context.Context, ops []*EntryEditOp) ([]*internal.Entry, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "EditEntries", ctx, ops)
-	ret0, _ := ret[0].([]*Entry)
+	ret0, _ := ret[0].([]*internal.Entry)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -79,10 +80,10 @@ func (mr *MockFeedStoreMockRecorder) EditEntries(ctx, ops interface{}) *gomock.C
 }
 
 // EditFeeds mocks base method.
-func (m *MockFeedStore) EditFeeds(ctx context.Context, ops []*FeedEditOp) ([]*FeedRecord, error) {
+func (m *MockFeedStore) EditFeeds(ctx context.Context, ops []*FeedEditOp) ([]*internal.Feed, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "EditFeeds", ctx, ops)
-	ret0, _ := ret[0].([]*FeedRecord)
+	ret0, _ := ret[0].([]*internal.Feed)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -109,10 +110,10 @@ func (mr *MockFeedStoreMockRecorder) ExportOPML(ctx, title interface{}) *gomock.
 }
 
 // GetEntry mocks base method.
-func (m *MockFeedStore) GetEntry(ctx context.Context, entryID ID) (*Entry, error) {
+func (m *MockFeedStore) GetEntry(ctx context.Context, entryID ID) (*internal.Entry, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetEntry", ctx, entryID)
-	ret0, _ := ret[0].(*Entry)
+	ret0, _ := ret[0].(*internal.Entry)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -155,10 +156,10 @@ func (mr *MockFeedStoreMockRecorder) ImportOPML(ctx, payload interface{}) *gomoc
 }
 
 // ListEntries mocks base method.
-func (m *MockFeedStore) ListEntries(ctx context.Context, feedID ID) ([]*Entry, error) {
+func (m *MockFeedStore) ListEntries(ctx context.Context, feedID ID) ([]*internal.Entry, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ListEntries", ctx, feedID)
-	ret0, _ := ret[0].([]*Entry)
+	ret0, _ := ret[0].([]*internal.Entry)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -170,10 +171,10 @@ func (mr *MockFeedStoreMockRecorder) ListEntries(ctx, feedID interface{}) *gomoc
 }
 
 // ListFeeds mocks base method.
-func (m *MockFeedStore) ListFeeds(ctx context.Context) ([]*FeedRecord, error) {
+func (m *MockFeedStore) ListFeeds(ctx context.Context) ([]*internal.Feed, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ListFeeds", ctx)
-	ret0, _ := ret[0].([]*FeedRecord)
+	ret0, _ := ret[0].([]*internal.Feed)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

@@ -50,7 +50,7 @@ func TestGetGlobalStatsExtendedOk(t *testing.T) {
 			subscribed: "2022-07-18T22:04:37Z",
 			lastPulled: "2022-07-18T22:04:37Z",
 			updated:    toNullString("2022-04-20T16:32:30.760+02:00"),
-			entries: []*Entry{
+			entries: []*EntryRecord{
 				{
 					Title:   "Entry A1",
 					ExtID:   "A1",
@@ -80,7 +80,7 @@ func TestGetGlobalStatsExtendedOk(t *testing.T) {
 			subscribed: "2022-07-18T22:04:45Z",
 			lastPulled: "2022-07-18T22:04:45Z",
 			updated:    toNullString("2022-03-19T16:23:18.600+02:00"),
-			entries: []*Entry{
+			entries: []*EntryRecord{
 				{
 					Title:   "Entry X1",
 					ExtID:   "X1",

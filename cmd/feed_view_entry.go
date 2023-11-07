@@ -43,7 +43,9 @@ func newFeedViewEntryCommand() *cobra.Command {
 				return err
 			}
 
-			fmt.Printf("%s\n", entry.Content.String)
+			if content := entry.Content; content != nil {
+				fmt.Printf("%s\n", *content)
+			}
 
 			return nil
 		},

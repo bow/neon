@@ -6,31 +6,33 @@ package store
 import (
 	"context"
 	"database/sql"
+
+	"github.com/bow/iris/internal"
 )
 
 // EditEntries updates fields of an entry.
 func (s *SQLite) EditEntries(
 	ctx context.Context,
 	ops []*EntryEditOp,
-) ([]*Entry, error) {
+) ([]*internal.Entry, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	updateFunc := func(ctx context.Context, tx *sql.Tx, op *EntryEditOp) (*Entry, error) {
+	updateFunc := func(ctx context.Context, tx *sql.Tx, op *EntryEditOp) (*EntryRecord, error) {
 		if err := setEntryIsRead(ctx, tx, op.ID, op.IsRead); err != nil {
 			return nil, err
 		}
 		return getEntry(ctx, tx, op.ID)
 	}
 
-	var entries = make([]*Entry, len(ops))
+	recs := make([]*EntryRecord, len(ops))
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
 		for i, op := range ops {
-			entry, err := updateFunc(ctx, tx, op)
+			rec, err := updateFunc(ctx, tx, op)
 			if err != nil {
 				return err
 			}
-			entries[i] = entry
+			recs[i] = rec
 		}
 		return nil
 	}
@@ -41,7 +43,8 @@ func (s *SQLite) EditEntries(
 	if err != nil {
 		return nil, fail(err)
 	}
-	return entries, nil
+
+	return toEntries(recs)
 }
 
 var setEntryIsRead = tableFieldSetter[bool](entriesTable, "is_read")

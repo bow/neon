@@ -9,6 +9,8 @@ import (
 	"time"
 
 	"github.com/mmcdole/gofeed"
+
+	"github.com/bow/iris/internal"
 )
 
 // AddFeed adds the given feed into the database.
@@ -19,7 +21,7 @@ func (s *SQLite) AddFeed(
 	desc *string,
 	tags []string,
 	isStarred *bool,
-) (*FeedRecord, error) {
+) (*internal.Feed, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -73,7 +75,7 @@ func (s *SQLite) AddFeed(
 	if err != nil {
 		return nil, fail(err)
 	}
-	return created, nil
+	return toFeed(created)
 }
 
 func upsertFeed(

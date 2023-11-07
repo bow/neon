@@ -51,7 +51,7 @@ func TestDeleteFeedsOkSingle(t *testing.T) {
 			title:   "Feed A",
 			feedURL: "http://a.com/feed.xml",
 			updated: toNullString("2022-03-19T16:23:18.600+02:00"),
-			entries: []*Entry{
+			entries: []*EntryRecord{
 				{Title: "Entry A1"},
 				{Title: "Entry A2"},
 			},
@@ -60,7 +60,7 @@ func TestDeleteFeedsOkSingle(t *testing.T) {
 			title:   "Feed X",
 			feedURL: "http://x.com/feed.xml",
 			updated: toNullString("2022-04-20T16:32:30.760+02:00"),
-			entries: []*Entry{
+			entries: []*EntryRecord{
 				{Title: "Entry X1"},
 			},
 		},
@@ -99,7 +99,7 @@ func TestDeleteFeedsOkMultiple(t *testing.T) {
 			title:   "Feed A",
 			feedURL: "http://a.com/feed.xml",
 			updated: toNullString("2022-03-19T16:23:18.600+02:00"),
-			entries: []*Entry{
+			entries: []*EntryRecord{
 				{Title: "Entry A1"},
 				{Title: "Entry A2"},
 			},
@@ -108,7 +108,7 @@ func TestDeleteFeedsOkMultiple(t *testing.T) {
 			title:   "Feed P",
 			feedURL: "http://p.com/feed.xml",
 			updated: toNullString("2022-04-02T10:16:00.471+02:00"),
-			entries: []*Entry{
+			entries: []*EntryRecord{
 				{Title: "Entry P5"},
 				{Title: "Entry P6"},
 				{Title: "Entry P7"},
@@ -118,7 +118,7 @@ func TestDeleteFeedsOkMultiple(t *testing.T) {
 			title:   "Feed X",
 			feedURL: "http://x.com/feed.xml",
 			updated: toNullString("2022-04-20T16:32:30.760+02:00"),
-			entries: []*Entry{
+			entries: []*EntryRecord{
 				{Title: "Entry X1"},
 			},
 		},
@@ -161,7 +161,7 @@ func TestDeleteFeedsErrHasMissing(t *testing.T) {
 			title:   "Feed A",
 			feedURL: "http://a.com/feed.xml",
 			updated: toNullString("2022-03-19T16:23:18.600+02:00"),
-			entries: []*Entry{
+			entries: []*EntryRecord{
 				{Title: "Entry A1"},
 				{Title: "Entry A2"},
 			},
@@ -170,7 +170,7 @@ func TestDeleteFeedsErrHasMissing(t *testing.T) {
 			title:   "Feed P",
 			feedURL: "http://p.com/feed.xml",
 			updated: toNullString("2022-04-02T10:16:00.471+02:00"),
-			entries: []*Entry{
+			entries: []*EntryRecord{
 				{Title: "Entry P5"},
 				{Title: "Entry P6"},
 				{Title: "Entry P7"},
@@ -180,7 +180,7 @@ func TestDeleteFeedsErrHasMissing(t *testing.T) {
 			title:   "Feed X",
 			feedURL: "http://x.com/feed.xml",
 			updated: toNullString("2022-04-20T16:32:30.760+02:00"),
-			entries: []*Entry{
+			entries: []*EntryRecord{
 				{Title: "Entry X1"},
 			},
 		},

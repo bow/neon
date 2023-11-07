@@ -8,9 +8,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/bow/iris/internal"
 	"github.com/spf13/cobra"
-
-	"github.com/bow/iris/internal/store"
 )
 
 func newFeedListCommand() *cobra.Command {
@@ -44,31 +43,31 @@ func newFeedListCommand() *cobra.Command {
 	return &command
 }
 
-func fmtFeed(feed *store.FeedRecord) string {
+func fmtFeed(feed *internal.Feed) string {
 	var (
 		sb  strings.Builder
 		cat = func(format string, a ...any) { fmt.Fprintf(&sb, format, a...) }
 	)
 
-	var upds string
-	if fu := feed.Updated(); fu != nil {
+	upds := ""
+	if fu := feed.Updated; fu != nil {
 		upds = fmtTime(*fu)
 	}
 
-	var siteURL string
-	if su := feed.SiteURL(); su != nil {
-		siteURL = *su
+	surls := ""
+	if su := feed.SiteURL; su != nil {
+		surls = *su
 	}
 
 	kv := []*struct {
 		k, v string
 	}{
-		{"FeedID", fmt.Sprintf("%d", feed.ID())},
-		{"Last pulled", fmtTime(feed.LastPulled())},
+		{"FeedID", fmt.Sprintf("%d", feed.ID)},
+		{"Last pulled", fmtTime(feed.LastPulled)},
 		{"Updated", upds},
 		{"Unread", fmt.Sprintf("%d/%d", feed.NumEntriesUnread(), feed.NumEntriesTotal())},
-		{"URL", siteURL},
-		{"Tags", fmt.Sprintf("#%s", strings.Join(feed.Tags(), " #"))},
+		{"URL", surls},
+		{"Tags", fmt.Sprintf("#%s", strings.Join(feed.Tags, " #"))},
 	}
 
 	keyMaxLen := 0
@@ -79,7 +78,7 @@ func fmtFeed(feed *store.FeedRecord) string {
 		}
 	}
 
-	cat("\x1b[36m▶\x1b[0m \x1b[4m%s\x1b[0m\n", capText(feed.Title()))
+	cat("\x1b[36m▶\x1b[0m \x1b[4m%s\x1b[0m\n", capText(feed.Title))
 	for _, line := range kv {
 		if line.v == "" {
 			continue

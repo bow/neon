@@ -281,7 +281,7 @@ func (s *testStore) addFeeds(feeds []*FeedRecord) map[string]feedKey {
 				extID = fmt.Sprintf("%s-entry-%d", s.t.Name(), i)
 			}
 			if updateTime.String == "" && !updateTime.Valid {
-				updateTime.String = time.Now().UTC().Format(time.RFC822)
+				updateTime.String = time.Now().UTC().Format(time.RFC3339)
 				updateTime.Valid = true
 			} else {
 				tv, ierr := deserializeTime(&updateTime.String)
@@ -324,7 +324,15 @@ func (s *testStore) addFeedWithURL(url string) {
 	require.NoError(s.t, tx.Commit())
 }
 
-func ts(t *testing.T, value string) *time.Time {
+func mustTimePP(t *testing.T, value *string) *time.Time {
+	t.Helper()
+	if value == nil {
+		return nil
+	}
+	return mustTimeVP(t, *value)
+}
+
+func mustTimeVP(t *testing.T, value string) *time.Time {
 	t.Helper()
 	tv, err := deserializeTime(&value)
 	require.NoError(t, err)

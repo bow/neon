@@ -37,16 +37,16 @@ func TestAddFeedOk(t *testing.T) {
 		Tags:        []string{"tag-1", "tag-2", "tag-3"},
 		IsStarred:   pointer(true),
 	}
-	created := store.NewFeedBuilder().
-		ID(store.ID(5)).
-		Title("feed-title-original").
-		Description(pointer("feed-description-original")).
-		FeedURL("https://foo.com/feed.xml").
-		SiteURL(pointer("https://foo.com")).
-		Subscribed(toTime(t, "2021-07-01T23:33:06.156+02:00")).
-		LastPulled(toTime(t, "2021-07-01T23:33:06.156+02:00")).
-		IsStarred(true).
-		Build()
+	created := &internal.Feed{
+		ID:          store.ID(5),
+		Title:       "feed-title-original",
+		Description: pointer("feed-description-original"),
+		FeedURL:     "https://foo.com/feed.xml",
+		SiteURL:     pointer("https://foo.com"),
+		Subscribed:  mustTimeVV(t, "2021-07-01T23:33:06.156+02:00"),
+		LastPulled:  mustTimeVV(t, "2021-07-01T23:33:06.156+02:00"),
+		IsStarred:   true,
+	}
 
 	str.EXPECT().
 		AddFeed(
@@ -62,11 +62,11 @@ func TestAddFeedOk(t *testing.T) {
 	rsp, err := client.AddFeed(context.Background(), &req)
 	r.NoError(err)
 
-	a.Equal(created.Title(), rsp.Feed.GetTitle())
-	// a.Equal(created.Description.String, *rsp.Feed.Description)
-	// a.Equal(created.SiteURL.String, *rsp.Feed.SiteUrl)
-	// a.Equal(created.FeedURL, rsp.Feed.FeedUrl)
-	// a.Equal(created.IsStarred, rsp.Feed.IsStarred)
+	a.Equal(created.Title, rsp.Feed.GetTitle())
+	a.Equal(created.Description, rsp.Feed.Description)
+	a.Equal(created.SiteURL, rsp.Feed.SiteUrl)
+	a.Equal(created.FeedURL, rsp.Feed.FeedUrl)
+	a.Equal(created.IsStarred, rsp.Feed.IsStarred)
 }
 
 func TestListFeedsOk(t *testing.T) {
@@ -77,23 +77,23 @@ func TestListFeedsOk(t *testing.T) {
 	client, str := setupServerTest(t)
 
 	req := api.ListFeedsRequest{}
-	feeds := []*store.FeedRecord{
-		store.NewFeedBuilder().
-			ID(store.ID(2)).
-			Title("Feed A").
-			FeedURL("http://a.com/feed.xml").
-			Subscribed(toTime(t, "2022-06-22T19:39:38.964+02:00")).
-			LastPulled(toTime(t, "2022-06-22T19:39:38.964+02:00")).
-			Updated(pointer(toTime(t, "2022-03-19T16:23:18.600+02:00"))).
-			Build(),
-		store.NewFeedBuilder().
-			ID(store.ID(3)).
-			Title("Feed X").
-			FeedURL("http://x.com/feed.xml").
-			Subscribed(toTime(t, "2022-06-22T19:39:44.037+02:00")).
-			LastPulled(toTime(t, "2022-06-22T19:39:44.037+02:00")).
-			Updated(pointer(toTime(t, "2022-04-20T16:32:30.760+02:00"))).
-			Build(),
+	feeds := []*internal.Feed{
+		{
+			ID:         store.ID(2),
+			Title:      "Feed A",
+			FeedURL:    "http://a.com/feed.xml",
+			Subscribed: mustTimeVV(t, "2022-06-22T19:39:38.964+02:00"),
+			LastPulled: mustTimeVV(t, "2022-06-22T19:39:38.964+02:00"),
+			Updated:    pointer(mustTimeVV(t, "2022-03-19T16:23:18.600+02:00")),
+		},
+		{
+			ID:         store.ID(3),
+			Title:      "Feed X",
+			FeedURL:    "http://x.com/feed.xml",
+			Subscribed: mustTimeVV(t, "2022-06-22T19:39:44.037+02:00"),
+			LastPulled: mustTimeVV(t, "2022-06-22T19:39:44.037+02:00"),
+			Updated:    pointer(mustTimeVV(t, "2022-04-20T16:32:30.760+02:00")),
+		},
 	}
 
 	str.EXPECT().
@@ -119,25 +119,25 @@ func TestEditFeedsOk(t *testing.T) {
 		{ID: 58, Tags: pointer([]string{"x", "y"})},
 		{ID: 77, IsStarred: pointer(true)},
 	}
-	feeds := []*store.FeedRecord{
-		store.NewFeedBuilder().
-			ID(14).
-			Title("newer").
-			Subscribed(toTime(t, "2022-06-30T00:53:50.200+02:00")).
-			LastPulled(toTime(t, "2022-06-30T00:53:50.200+02:00")).
-			Build(),
-		store.NewFeedBuilder().
-			ID(58).
-			Tags([]string{"x", "y"}).
-			Subscribed(toTime(t, "2022-06-30T00:53:58.135+02:00")).
-			LastPulled(toTime(t, "2022-06-30T00:53:58.135+02:00")).
-			Build(),
-		store.NewFeedBuilder().
-			ID(77).
-			IsStarred(true).
-			Subscribed(toTime(t, "2022-06-30T00:53:59.812+02:00")).
-			LastPulled(toTime(t, "2022-06-30T00:53:59.812+02:00")).
-			Build(),
+	feeds := []*internal.Feed{
+		{
+			ID:         14,
+			Title:      "newer",
+			Subscribed: mustTimeVV(t, "2022-06-30T00:53:50.200+02:00"),
+			LastPulled: mustTimeVV(t, "2022-06-30T00:53:50.200+02:00"),
+		},
+		{
+			ID:         58,
+			Tags:       []string{"x", "y"},
+			Subscribed: mustTimeVV(t, "2022-06-30T00:53:58.135+02:00"),
+			LastPulled: mustTimeVV(t, "2022-06-30T00:53:58.135+02:00"),
+		},
+		{
+			ID:         77,
+			IsStarred:  true,
+			Subscribed: mustTimeVV(t, "2022-06-30T00:53:59.812+02:00"),
+			LastPulled: mustTimeVV(t, "2022-06-30T00:53:59.812+02:00"),
+		},
 	}
 
 	str.EXPECT().
@@ -171,14 +171,14 @@ func TestEditFeedsOk(t *testing.T) {
 
 	r.Len(rsp.Feeds, 3)
 	feed0 := rsp.Feeds[0]
-	a.Equal(feeds[0].ID(), feed0.GetId())
-	a.Equal(feeds[0].Title(), feed0.GetTitle())
+	a.Equal(feeds[0].ID, feed0.GetId())
+	a.Equal(feeds[0].Title, feed0.GetTitle())
 	feed1 := rsp.Feeds[1]
-	a.Equal(feeds[1].ID(), feed1.GetId())
-	a.Equal(feeds[1].Tags(), feed1.GetTags())
+	a.Equal(feeds[1].ID, feed1.GetId())
+	a.Equal(feeds[1].Tags, feed1.GetTags())
 	feed2 := rsp.Feeds[2]
-	a.Equal(feeds[2].ID(), feed2.GetId())
-	a.Equal(feeds[2].IsStarred(), feed2.GetIsStarred())
+	a.Equal(feeds[2].ID, feed2.GetId())
+	a.Equal(feeds[2].IsStarred, feed2.GetIsStarred())
 }
 
 func TestDeleteFeedsOk(t *testing.T) {
@@ -227,31 +227,31 @@ func TestPullFeedsAllOk(t *testing.T) {
 	prs := []store.PullResult{
 		store.NewPullResultFromFeed(
 			pointer("http://a.com/feed.xml"),
-			store.NewFeedBuilder().
-				Title("feed-A").
-				FeedURL("https://a.com/feed.xml").
-				Subscribed(toTime(t, "2021-07-23T17:20:29.499+02:00")).
-				LastPulled(toTime(t, "2021-07-23T17:20:29.499+02:00")).
-				IsStarred(true).
-				Entries([]*store.Entry{
+			&internal.Feed{
+				Title:      "feed-A",
+				FeedURL:    "https://a.com/feed.xml",
+				Subscribed: mustTimeVV(t, "2021-07-23T17:20:29.499+02:00"),
+				LastPulled: mustTimeVV(t, "2021-07-23T17:20:29.499+02:00"),
+				IsStarred:  true,
+				Entries: []*internal.Entry{
 					{Title: "Entry A1", IsRead: false},
 					{Title: "Entry A2", IsRead: false},
-				}).
-				Build(),
+				},
+			},
 		),
 		store.NewPullResultFromFeed(pointer("http://z.com/feed.xml"), nil),
 		store.NewPullResultFromFeed(
 			pointer("http://c.com/feed.xml"),
-			store.NewFeedBuilder().
-				Title("feed-C").
-				FeedURL("https://c.com/feed.xml").
-				Subscribed(toTime(t, "2021-07-23T17:21:11.489+02:00")).
-				LastPulled(toTime(t, "2021-07-23T17:21:11.489+02:00")).
-				IsStarred(false).
-				Entries([]*store.Entry{
+			&internal.Feed{
+				Title:      "feed-C",
+				FeedURL:    "https://c.com/feed.xml",
+				Subscribed: mustTimeVV(t, "2021-07-23T17:21:11.489+02:00"),
+				LastPulled: mustTimeVV(t, "2021-07-23T17:21:11.489+02:00"),
+				IsStarred:  false,
+				Entries: []*internal.Entry{
 					{Title: "Entry C3", IsRead: false},
-				}).
-				Build(),
+				},
+			},
 		),
 	}
 
@@ -323,16 +323,16 @@ func TestPullFeedsSelectedAllOk(t *testing.T) {
 		store.NewPullResultFromFeed(pointer("http://z.com/feed.xml"), nil),
 		store.NewPullResultFromFeed(
 			pointer("http://c.com/feed.xml"),
-			store.NewFeedBuilder().
-				Title("feed-C").
-				FeedURL("https://c.com/feed.xml").
-				Subscribed(toTime(t, "2021-07-23T17:21:11.489+02:00")).
-				LastPulled(toTime(t, "2021-07-23T17:21:11.489+02:00")).
-				IsStarred(false).
-				Entries([]*store.Entry{
+			&internal.Feed{
+				Title:      "feed-C",
+				FeedURL:    "https://c.com/feed.xml",
+				Subscribed: mustTimeVV(t, "2021-07-23T17:21:11.489+02:00"),
+				LastPulled: mustTimeVV(t, "2021-07-23T17:21:11.489+02:00"),
+				IsStarred:  false,
+				Entries: []*internal.Entry{
 					{Title: "Entry C3", IsRead: false},
-				}).
-				Build(),
+				},
+			},
 		),
 	}
 
@@ -397,32 +397,32 @@ func TestPullFeedsErrSomeFeed(t *testing.T) {
 	prs := []store.PullResult{
 		store.NewPullResultFromFeed(
 			pointer("https://a.com/feed.xml"),
-			store.NewFeedBuilder().
-				Title("feed-A").
-				FeedURL("https://a.com/feed.xml").
-				Subscribed(toTime(t, "2021-07-23T17:20:29.499+02:00")).
-				LastPulled(toTime(t, "2021-07-23T17:20:29.499+02:00")).
-				IsStarred(true).
-				Entries([]*store.Entry{
+			&internal.Feed{
+				Title:      "feed-A",
+				FeedURL:    "https://a.com/feed.xml",
+				Subscribed: mustTimeVV(t, "2021-07-23T17:20:29.499+02:00"),
+				LastPulled: mustTimeVV(t, "2021-07-23T17:20:29.499+02:00"),
+				IsStarred:  true,
+				Entries: []*internal.Entry{
 					{Title: "Entry A1", IsRead: false},
 					{Title: "Entry A2", IsRead: false},
-				}).
-				Build(),
+				},
+			},
 		),
 		store.NewPullResultFromError(pointer("https://x.com/feed.xml"), fmt.Errorf("timed out")),
 		store.NewPullResultFromFeed(pointer("https://z.com/feed.xml"), nil),
 		store.NewPullResultFromFeed(
 			pointer("https://c.com/feed.xml"),
-			store.NewFeedBuilder().
-				Title("feed-C").
-				FeedURL("https://c.com/feed.xml").
-				Subscribed(toTime(t, "2021-07-23T17:21:11.489+02:00")).
-				LastPulled(toTime(t, "2021-07-23T17:21:11.489+02:00")).
-				IsStarred(false).
-				Entries([]*store.Entry{
+			&internal.Feed{
+				Title:      "feed-C",
+				FeedURL:    "https://c.com/feed.xml",
+				Subscribed: mustTimeVV(t, "2021-07-23T17:21:11.489+02:00"),
+				LastPulled: mustTimeVV(t, "2021-07-23T17:21:11.489+02:00"),
+				IsStarred:  false,
+				Entries: []*internal.Entry{
 					{Title: "Entry C3", IsRead: false},
-				}).
-				Build(),
+				},
+			},
 		),
 	}
 
@@ -495,31 +495,31 @@ func TestPullFeedsErrNonFeed(t *testing.T) {
 	prs := []store.PullResult{
 		store.NewPullResultFromFeed(
 			pointer("https://a.com/feed.xml"),
-			store.NewFeedBuilder().
-				Title("feed-A").
-				FeedURL("https://a.com/feed.xml").
-				Subscribed(toTime(t, "2021-07-23T17:20:29.499+02:00")).
-				LastPulled(toTime(t, "2021-07-23T17:20:29.499+02:00")).
-				IsStarred(true).
-				Entries([]*store.Entry{
+			&internal.Feed{
+				Title:      "feed-A",
+				FeedURL:    "https://a.com/feed.xml",
+				Subscribed: mustTimeVV(t, "2021-07-23T17:20:29.499+02:00"),
+				LastPulled: mustTimeVV(t, "2021-07-23T17:20:29.499+02:00"),
+				IsStarred:  true,
+				Entries: []*internal.Entry{
 					{Title: "Entry A1", IsRead: false},
 					{Title: "Entry A2", IsRead: false},
-				}).
-				Build(),
+				},
+			},
 		),
 		store.NewPullResultFromFeed(pointer("https://z.com/feed.xml"), nil),
 		store.NewPullResultFromFeed(
 			pointer("https://c.com/feed.xml"),
-			store.NewFeedBuilder().
-				Title("feed-C").
-				FeedURL("https://c.com/feed.xml").
-				Subscribed(toTime(t, "2021-07-23T17:21:11.489+02:00")).
-				LastPulled(toTime(t, "2021-07-23T17:21:11.489+02:00")).
-				IsStarred(false).
-				Entries([]*store.Entry{
+			&internal.Feed{
+				Title:      "feed-C",
+				FeedURL:    "https://c.com/feed.xml",
+				Subscribed: mustTimeVV(t, "2021-07-23T17:21:11.489+02:00"),
+				LastPulled: mustTimeVV(t, "2021-07-23T17:21:11.489+02:00"),
+				IsStarred:  false,
+				Entries: []*internal.Entry{
 					{Title: "Entry C3", IsRead: false},
-				}).
-				Build(),
+				},
+			},
 		),
 		store.NewPullResultFromError(nil, fmt.Errorf("tx error")),
 	}
@@ -578,21 +578,21 @@ func TestListEntriesOk(t *testing.T) {
 	client, str := setupServerTest(t)
 
 	req := api.ListEntriesRequest{FeedId: 2}
-	entries := []*store.Entry{
+	entries := []*internal.Entry{
 		{
 			Title:   "Entry 1",
 			IsRead:  false,
-			Content: wrapNullString("Contents 1."),
+			Content: pointer("Contents 1."),
 		},
 		{
 			Title:   "Entry 2",
 			IsRead:  false,
-			Content: wrapNullString("Contents 2."),
+			Content: pointer("Contents 2."),
 		},
 		{
 			Title:   "Entry 3",
 			IsRead:  true,
-			Content: wrapNullString("Contents 3."),
+			Content: pointer("Contents 3."),
 		},
 	}
 
@@ -618,7 +618,7 @@ func TestEditEntriesOk(t *testing.T) {
 		{ID: 37, IsRead: pointer(true)},
 		{ID: 49, IsRead: pointer(false)},
 	}
-	entries := []*store.Entry{
+	entries := []*internal.Entry{
 		{ID: 37, IsRead: true},
 		{ID: 49, IsRead: false},
 	}
@@ -663,16 +663,16 @@ func TestGetEntryOk(t *testing.T) {
 
 	client, str := setupServerTest(t)
 
-	entry := store.Entry{
+	entry := internal.Entry{
 		ID:        2,
 		FeedID:    3,
 		Title:     "Test Feed Entry",
 		IsRead:    false,
 		ExtID:     "4abaed90-3435-426f-bf95-05c700a503bf",
-		Updated:   wrapNullString("2023-07-12T05:02:23.764+02:00"),
-		Published: wrapNullString("2023-07-12T05:02:23.764+02:00"),
-		Content:   wrapNullString("Hello"),
-		URL:       wrapNullString("http://x.com/posts/test-feed-entry.html"),
+		Updated:   pointer(mustTimeVV(t, "2023-07-12T05:02:23.764+02:00")),
+		Published: pointer(mustTimeVV(t, "2023-07-12T05:02:23.764+02:00")),
+		Content:   pointer("Hello"),
+		URL:       pointer("http://x.com/posts/test-feed-entry.html"),
 	}
 
 	str.EXPECT().
@@ -692,9 +692,9 @@ func TestGetEntryOk(t *testing.T) {
 	a.Equal(entry.Title, re.Title)
 	a.Equal(entry.IsRead, re.IsRead)
 	a.Equal(entry.ExtID, re.ExtId)
-	a.Equal(entry.Description.String, re.GetDescription())
-	a.Equal(entry.Content.String, re.GetContent())
-	a.Equal(entry.URL.String, re.GetUrl())
+	a.Empty(re.GetDescription())
+	a.Equal(*entry.Content, re.GetContent())
+	a.Equal(*entry.URL, re.GetUrl())
 	// TODO: Also test timestamps.
 }
 
@@ -810,7 +810,7 @@ func pointer[T any](value T) *T { return &value }
 
 func wrapNullString(v string) sql.NullString { return sql.NullString{String: v, Valid: v != ""} }
 
-func toTime(t *testing.T, v string) time.Time {
+func mustTimeVV(t *testing.T, v string) time.Time {
 	t.Helper()
 	pv, err := time.Parse(time.RFC3339, v)
 	require.NoError(t, err)

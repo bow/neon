@@ -50,12 +50,12 @@ func TestAddFeedOkMinimal(t *testing.T) {
 	created, err := st.AddFeed(context.Background(), feed.Link, nil, nil, nil, nil)
 	r.NoError(err)
 
-	a.Equal(feed.Title, created.title)
-	a.Equal(feed.Description, created.description.String)
-	a.Equal(feed.Link, created.siteURL.String)
-	a.Equal(feed.FeedLink, created.feedURL)
-	a.Empty([]string(created.tags))
-	a.False(created.isStarred)
+	a.Equal(feed.Title, created.Title)
+	a.Equal(pointer(feed.Description), created.Description)
+	a.Equal(pointer(feed.Link), created.SiteURL)
+	a.Equal(feed.FeedLink, created.FeedURL)
+	a.Empty(created.Tags)
+	a.False(created.IsStarred)
 
 	a.Equal(1, st.countFeeds())
 	a.Equal(0, st.countEntries(feed.FeedLink))
@@ -81,15 +81,15 @@ func TestAddFeedOkExtended(t *testing.T) {
 				Link:            "https://bar.com/entry1.html",
 				Title:           "First Entry",
 				Content:         "This is the first entry.",
-				PublishedParsed: ts(t, "2021-06-18T21:45:26.794+02:00"),
+				PublishedParsed: mustTimeVP(t, "2021-06-18T21:45:26.794+02:00"),
 			},
 			{
 				GUID:            "entry2",
 				Link:            "https://bar.com/entry2.html",
 				Title:           "Second Entry",
 				Content:         "This is the second entry.",
-				PublishedParsed: ts(t, "2021-06-18T22:08:16.526+02:00"),
-				UpdatedParsed:   ts(t, "2021-06-18T22:11:49.094+02:00"),
+				PublishedParsed: mustTimeVP(t, "2021-06-18T22:08:16.526+02:00"),
+				UpdatedParsed:   mustTimeVP(t, "2021-06-18T22:11:49.094+02:00"),
 			},
 		},
 	}
@@ -139,12 +139,12 @@ func TestAddFeedOkExtended(t *testing.T) {
 	)
 	r.NoError(err)
 
-	a.Equal(title, created.title)
-	a.Equal(description, created.description.String)
-	a.Equal(feed.Link, created.siteURL.String)
-	a.Equal(feed.FeedLink, created.feedURL)
-	a.Equal(tags, []string(created.tags))
-	a.True(created.isStarred)
+	a.Equal(title, created.Title)
+	a.Equal(description, *created.Description)
+	a.Equal(pointer(feed.Link), created.SiteURL)
+	a.Equal(feed.FeedLink, created.FeedURL)
+	a.Equal(tags, created.Tags)
+	a.True(created.IsStarred)
 
 	a.Equal(1, st.countFeeds())
 	a.Equal(2, st.countEntries(feed.FeedLink))
@@ -173,15 +173,15 @@ func TestAddFeedOkURLExists(t *testing.T) {
 				Link:            "https://bar.com/entry1.html",
 				Title:           "First Entry",
 				Content:         "This is the first entry.",
-				PublishedParsed: ts(t, "2021-06-18T21:45:26.794+02:00"),
+				PublishedParsed: mustTimeVP(t, "2021-06-18T21:45:26.794+02:00"),
 			},
 			{
 				GUID:            "entry2",
 				Link:            "https://bar.com/entry2.html",
 				Title:           "Second Entry",
 				Content:         "This is the second entry.",
-				PublishedParsed: ts(t, "2021-06-18T22:08:16.526+02:00"),
-				UpdatedParsed:   ts(t, "2021-06-18T22:11:49.094+02:00"),
+				PublishedParsed: mustTimeVP(t, "2021-06-18T22:08:16.526+02:00"),
+				UpdatedParsed:   mustTimeVP(t, "2021-06-18T22:11:49.094+02:00"),
 			},
 		},
 	}
@@ -220,12 +220,12 @@ func TestAddFeedOkURLExists(t *testing.T) {
 	created, err := st.AddFeed(context.Background(), feed.Link, nil, nil, tags, pointer(true))
 	r.NoError(err)
 
-	a.Equal(feed.Title, created.title)
-	a.Equal(feed.Description, created.description.String)
-	a.Equal(feed.Link, created.siteURL.String)
-	a.Equal(feed.FeedLink, created.feedURL)
-	a.Equal(tags, []string(created.tags))
-	a.True(created.isStarred)
+	a.Equal(feed.Title, created.Title)
+	a.Equal(pointer(feed.Description), created.Description)
+	a.Equal(pointer(feed.Link), created.SiteURL)
+	a.Equal(feed.FeedLink, created.FeedURL)
+	a.Equal(tags, created.Tags)
+	a.True(created.IsStarred)
 
 	a.Equal(1, st.countFeeds())
 	a.Equal(2, st.countEntries(feed.FeedLink))
