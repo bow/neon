@@ -75,7 +75,7 @@ func (s *SQLite) AddFeed(
 	if err != nil {
 		return nil, fail(err)
 	}
-	return toFeed(created)
+	return created.toInternal()
 }
 
 func upsertFeed(

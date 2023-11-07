@@ -20,7 +20,7 @@ func (s *SQLite) ExportOPML(ctx context.Context, title *string) ([]byte, error) 
 		if err != nil {
 			return err
 		}
-		feeds, err := toFeeds(recs)
+		feeds, err := feedRecords(recs).toInternal()
 		if err != nil {
 			return err
 		}

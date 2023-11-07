@@ -40,7 +40,7 @@ func (s *SQLite) ListFeeds(ctx context.Context) ([]*internal.Feed, error) {
 	if err != nil {
 		return nil, fail(err)
 	}
-	return toFeeds(feeds)
+	return feedRecords(feeds).toInternal()
 }
 
 func getAllFeeds(ctx context.Context, tx *sql.Tx) ([]*feedRecord, error) {

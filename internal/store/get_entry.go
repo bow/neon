@@ -35,7 +35,7 @@ func (s *SQLite) GetEntry(ctx context.Context, id ID) (*internal.Entry, error) {
 		return nil, fail(err)
 	}
 
-	return toEntry(rec)
+	return rec.toInternal()
 }
 
 func getEntry(ctx context.Context, tx *sql.Tx, entryID ID) (*entryRecord, error) {

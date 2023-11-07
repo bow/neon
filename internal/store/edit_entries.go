@@ -47,7 +47,7 @@ func (s *SQLite) EditEntries(
 		return nil, fail(err)
 	}
 
-	return toEntries(recs)
+	return entryRecords(recs).toInternal()
 }
 
 var setEntryIsRead = tableFieldSetter[bool](entriesTable, "is_read")

@@ -33,5 +33,5 @@ func (s *SQLite) ListEntries(ctx context.Context, feedID ID) ([]*internal.Entry,
 		return nil, fail(err)
 	}
 
-	return toEntries(recs)
+	return entryRecords(recs).toInternal()
 }

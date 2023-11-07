@@ -30,36 +30,7 @@ type feedRecord struct {
 	entries     []*entryRecord
 }
 
-type entryRecord struct {
-	id          ID
-	feedID      ID
-	title       string
-	isRead      bool
-	extID       string
-	updated     sql.NullString
-	published   sql.NullString
-	description sql.NullString
-	content     sql.NullString
-	url         sql.NullString
-}
-
-type statsAggregateRecord struct {
-	numFeeds             uint32
-	numEntries           uint32
-	numEntriesUnread     uint32
-	lastPullTime         string
-	mostRecentUpdateTime sql.NullString
-}
-
-func toFeedID(raw string) (ID, error) {
-	id, err := strconv.ParseUint(raw, 10, 32)
-	if err != nil {
-		return 0, FeedNotFoundError{ID: raw}
-	}
-	return ID(id), nil
-}
-
-func toFeed(rec *feedRecord) (*internal.Feed, error) {
+func (rec *feedRecord) toInternal() (*internal.Feed, error) {
 
 	subt, err := deserializeTime(&rec.subscribed)
 	if err != nil {
@@ -76,7 +47,7 @@ func toFeed(rec *feedRecord) (*internal.Feed, error) {
 			return nil, fmt.Errorf("failed to deserialize Feed.Updated time: %w", err)
 		}
 	}
-	entries, err := toEntries(rec.entries)
+	entries, err := entryRecords(rec.entries).toInternal()
 	if err != nil {
 		return nil, err
 	}
@@ -97,11 +68,13 @@ func toFeed(rec *feedRecord) (*internal.Feed, error) {
 	return &feed, nil
 }
 
-func toFeeds(recs []*feedRecord) ([]*internal.Feed, error) {
+type feedRecords []*feedRecord
+
+func (recs feedRecords) toInternal() ([]*internal.Feed, error) {
 
 	feeds := make([]*internal.Feed, len(recs))
 	for i, rec := range recs {
-		feed, err := toFeed(rec)
+		feed, err := rec.toInternal()
 		if err != nil {
 			return nil, err
 		}
@@ -111,7 +84,20 @@ func toFeeds(recs []*feedRecord) ([]*internal.Feed, error) {
 	return feeds, nil
 }
 
-func toEntry(rec *entryRecord) (*internal.Entry, error) {
+type entryRecord struct {
+	id          ID
+	feedID      ID
+	title       string
+	isRead      bool
+	extID       string
+	updated     sql.NullString
+	published   sql.NullString
+	description sql.NullString
+	content     sql.NullString
+	url         sql.NullString
+}
+
+func (rec *entryRecord) toInternal() (*internal.Entry, error) {
 
 	ut, err := deserializeTime(fromNullString(rec.updated))
 	if err != nil {
@@ -138,11 +124,13 @@ func toEntry(rec *entryRecord) (*internal.Entry, error) {
 	return &entry, nil
 }
 
-func toEntries(recs []*entryRecord) ([]*internal.Entry, error) {
+type entryRecords []*entryRecord
+
+func (recs entryRecords) toInternal() ([]*internal.Entry, error) {
 
 	entries := make([]*internal.Entry, len(recs))
 	for i, rec := range recs {
-		entry, err := toEntry(rec)
+		entry, err := rec.toInternal()
 		if err != nil {
 			return nil, err
 		}
@@ -152,7 +140,15 @@ func toEntries(recs []*entryRecord) ([]*internal.Entry, error) {
 	return entries, nil
 }
 
-func toStats(aggr *statsAggregateRecord) (*internal.Stats, error) {
+type statsAggregateRecord struct {
+	numFeeds             uint32
+	numEntries           uint32
+	numEntriesUnread     uint32
+	lastPullTime         string
+	mostRecentUpdateTime sql.NullString
+}
+
+func (aggr *statsAggregateRecord) toInternal() (*internal.Stats, error) {
 
 	lpt, err := deserializeTime(&aggr.lastPullTime)
 	if err != nil {
@@ -173,6 +169,14 @@ func toStats(aggr *statsAggregateRecord) (*internal.Stats, error) {
 	}
 
 	return &stats, nil
+}
+
+func toFeedID(raw string) (ID, error) {
+	id, err := strconv.ParseUint(raw, 10, 32)
+	if err != nil {
+		return 0, FeedNotFoundError{ID: raw}
+	}
+	return ID(id), nil
 }
 
 // toNullString wraps the given string into an sql.NullString value. An empty string input is
