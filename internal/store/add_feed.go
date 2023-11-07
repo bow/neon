@@ -36,7 +36,7 @@ func (s *SQLite) AddFeed(
 		feed.FeedLink = feedURL
 	}
 
-	var created *FeedRecord
+	var created *feedRecord
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
 
 		now := time.Now()

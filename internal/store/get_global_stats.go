@@ -15,7 +15,7 @@ func (s *SQLite) GetGlobalStats(ctx context.Context) (*internal.Stats, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	aggr := &StatsAggregateRecord{}
+	aggr := &statsAggregateRecord{}
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
 		iaggr, err := getGlobalStats(ctx, tx)
 		if err != nil {
@@ -34,9 +34,9 @@ func (s *SQLite) GetGlobalStats(ctx context.Context) (*internal.Stats, error) {
 	return toStats(aggr)
 }
 
-func getGlobalStats(ctx context.Context, tx *sql.Tx) (*StatsAggregateRecord, error) {
+func getGlobalStats(ctx context.Context, tx *sql.Tx) (*statsAggregateRecord, error) {
 
-	var stats StatsAggregateRecord
+	var stats statsAggregateRecord
 
 	stmt1, err := tx.PrepareContext(
 		ctx,

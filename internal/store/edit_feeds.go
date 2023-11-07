@@ -18,7 +18,7 @@ func (s *SQLite) EditFeeds(
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	updateFunc := func(ctx context.Context, tx *sql.Tx, op *FeedEditOp) (*FeedRecord, error) {
+	updateFunc := func(ctx context.Context, tx *sql.Tx, op *FeedEditOp) (*feedRecord, error) {
 		if err := setFeedTitle(ctx, tx, op.ID, op.Title); err != nil {
 			return nil, err
 		}
@@ -34,7 +34,7 @@ func (s *SQLite) EditFeeds(
 		return getFeed(ctx, tx, op.ID)
 	}
 
-	var feeds = make([]*FeedRecord, len(ops))
+	var feeds = make([]*feedRecord, len(ops))
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
 		for i, op := range ops {
 			feed, err := updateFunc(ctx, tx, op)
@@ -55,7 +55,7 @@ func (s *SQLite) EditFeeds(
 	return toFeeds(feeds)
 }
 
-func getFeed(ctx context.Context, tx *sql.Tx, feedID ID) (*FeedRecord, error) {
+func getFeed(ctx context.Context, tx *sql.Tx, feedID ID) (*feedRecord, error) {
 
 	sql1 := `
 		SELECT
@@ -80,8 +80,8 @@ func getFeed(ctx context.Context, tx *sql.Tx, feedID ID) (*FeedRecord, error) {
 		ORDER BY
 			COALESCE(f.update_time, f.sub_time) DESC
 `
-	scanRow := func(row *sql.Row) (*FeedRecord, error) {
-		var feed FeedRecord
+	scanRow := func(row *sql.Row) (*feedRecord, error) {
+		var feed feedRecord
 		if err := row.Scan(
 			&feed.id,
 			&feed.title,

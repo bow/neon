@@ -40,18 +40,18 @@ func TestPullFeedsAllOkEmptyEntries(t *testing.T) {
 	r := require.New(t)
 	st := newTestStore(t)
 
-	dbFeeds := []*FeedRecord{
+	dbFeeds := []*feedRecord{
 		{
 			title:   "Feed A",
 			feedURL: "http://a.com/feed.xml",
 			updated: toNullString("2022-03-19T16:23:18.600+02:00"),
-			entries: []*EntryRecord{},
+			entries: []*entryRecord{},
 		},
 		{
 			title:   "Feed X",
 			feedURL: "http://x.com/feed.xml",
 			updated: toNullString("2022-04-20T16:32:30.760+02:00"),
-			entries: []*EntryRecord{},
+			entries: []*entryRecord{},
 		},
 	}
 
@@ -100,25 +100,25 @@ func TestPullFeedsAllOkNoNewEntries(t *testing.T) {
 	r := require.New(t)
 	st := newTestStore(t)
 
-	dbFeeds := []*FeedRecord{
+	dbFeeds := []*feedRecord{
 		{
 			title:   "Feed A",
 			feedURL: "http://a.com/feed.xml",
 			updated: toNullString("2022-03-19T16:23:18.600+02:00"),
-			entries: []*EntryRecord{
+			entries: []*entryRecord{
 				{
-					Title:   "Entry A1",
-					ExtID:   "A1",
-					IsRead:  true,
-					Updated: toNullString("2022-07-16T23:39:07.383+02:00"),
-					URL:     toNullString("http://a.com/a1.html"),
+					title:   "Entry A1",
+					extID:   "A1",
+					isRead:  true,
+					updated: toNullString("2022-07-16T23:39:07.383+02:00"),
+					url:     toNullString("http://a.com/a1.html"),
 				},
 				{
-					Title:   "Entry A2",
-					ExtID:   "A2",
-					IsRead:  true,
-					Updated: toNullString("2022-07-16T23:42:24.988+02:00"),
-					URL:     toNullString("http://a.com/a2.html"),
+					title:   "Entry A2",
+					extID:   "A2",
+					isRead:  true,
+					updated: toNullString("2022-07-16T23:42:24.988+02:00"),
+					url:     toNullString("http://a.com/a2.html"),
 				},
 			},
 		},
@@ -126,13 +126,13 @@ func TestPullFeedsAllOkNoNewEntries(t *testing.T) {
 			title:   "Feed X",
 			feedURL: "http://x.com/feed.xml",
 			updated: toNullString("2022-04-20T16:32:30.760+02:00"),
-			entries: []*EntryRecord{
+			entries: []*entryRecord{
 				{
-					Title:   "Entry X1",
-					ExtID:   "X1",
-					IsRead:  true,
-					Updated: toNullString("2022-07-16T23:43:12.759+02:00"),
-					URL:     toNullString("http://x.com/x1.html"),
+					title:   "Entry X1",
+					extID:   "X1",
+					isRead:  true,
+					updated: toNullString("2022-07-16T23:43:12.759+02:00"),
+					url:     toNullString("http://x.com/x1.html"),
 				},
 			},
 		},
@@ -141,23 +141,23 @@ func TestPullFeedsAllOkNoNewEntries(t *testing.T) {
 	st.addFeeds(dbFeeds)
 	r.Equal(2, st.countFeeds())
 
-	pulledFeeds := []*FeedRecord{
+	pulledFeeds := []*feedRecord{
 		{
 			title:   dbFeeds[0].title,
 			feedURL: dbFeeds[0].feedURL,
 			updated: dbFeeds[0].updated,
-			entries: []*EntryRecord{
+			entries: []*entryRecord{
 				{
-					Title:   dbFeeds[0].entries[0].Title,
-					ExtID:   dbFeeds[0].entries[0].ExtID,
-					Updated: dbFeeds[0].entries[0].Updated,
-					URL:     dbFeeds[0].entries[0].URL,
+					title:   dbFeeds[0].entries[0].title,
+					extID:   dbFeeds[0].entries[0].extID,
+					updated: dbFeeds[0].entries[0].updated,
+					url:     dbFeeds[0].entries[0].url,
 				},
 				{
-					Title:   dbFeeds[0].entries[1].Title,
-					ExtID:   dbFeeds[0].entries[1].ExtID,
-					Updated: dbFeeds[0].entries[1].Updated,
-					URL:     dbFeeds[0].entries[1].URL,
+					title:   dbFeeds[0].entries[1].title,
+					extID:   dbFeeds[0].entries[1].extID,
+					updated: dbFeeds[0].entries[1].updated,
+					url:     dbFeeds[0].entries[1].url,
 				},
 			},
 		},
@@ -165,12 +165,12 @@ func TestPullFeedsAllOkNoNewEntries(t *testing.T) {
 			title:   dbFeeds[1].title,
 			feedURL: dbFeeds[1].feedURL,
 			updated: dbFeeds[1].updated,
-			entries: []*EntryRecord{
+			entries: []*entryRecord{
 				{
-					Title:   dbFeeds[1].entries[0].Title,
-					ExtID:   dbFeeds[1].entries[0].ExtID,
-					Updated: dbFeeds[1].entries[0].Updated,
-					URL:     dbFeeds[1].entries[0].URL,
+					title:   dbFeeds[1].entries[0].title,
+					extID:   dbFeeds[1].entries[0].extID,
+					updated: dbFeeds[1].entries[0].updated,
+					url:     dbFeeds[1].entries[0].url,
 				},
 			},
 		},
@@ -218,37 +218,37 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 	r := require.New(t)
 	st := newTestStore(t)
 
-	dbFeeds := []*FeedRecord{
+	dbFeeds := []*feedRecord{
 		{
 			title:      "Feed A",
 			feedURL:    "http://a.com/feed.xml",
 			subscribed: "2022-07-18T22:04:37Z",
 			lastPulled: "2022-07-18T22:04:37Z",
 			updated:    toNullString("2022-03-19T16:23:18.600+02:00"),
-			entries: []*EntryRecord{
+			entries: []*entryRecord{
 				{
 					// This entry should not be returned later; 'updated' remains the same.
-					Title:   "Entry A1",
-					ExtID:   "A1",
-					IsRead:  true,
-					Updated: toNullString("2022-07-16T23:39:07.383+02:00"),
-					URL:     toNullString("http://a.com/a1.html"),
+					title:   "Entry A1",
+					extID:   "A1",
+					isRead:  true,
+					updated: toNullString("2022-07-16T23:39:07.383+02:00"),
+					url:     toNullString("http://a.com/a1.html"),
 				},
 				{
 					// This entry should not be returned later; 'updated' remains the same.
-					Title:   "Entry A2",
-					ExtID:   "A2",
-					IsRead:  false,
-					Updated: toNullString("2022-07-16T23:42:24.988+02:00"),
-					URL:     toNullString("http://a.com/a2.html"),
+					title:   "Entry A2",
+					extID:   "A2",
+					isRead:  false,
+					updated: toNullString("2022-07-16T23:42:24.988+02:00"),
+					url:     toNullString("http://a.com/a2.html"),
 				},
 				{
 					// This entry should be returned later; 'updated' will be changed.
-					Title:   "Entry A3",
-					ExtID:   "A3",
-					IsRead:  true,
-					Updated: toNullString("2022-03-18T22:51:49.404+02:00"),
-					URL:     toNullString("http://a.com/a3.html"),
+					title:   "Entry A3",
+					extID:   "A3",
+					isRead:  true,
+					updated: toNullString("2022-03-18T22:51:49.404+02:00"),
+					url:     toNullString("http://a.com/a3.html"),
 				},
 			},
 		},
@@ -258,14 +258,14 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 			subscribed: "2022-07-18T22:04:45Z",
 			lastPulled: "2022-07-18T22:04:45Z",
 			updated:    toNullString("2022-04-20T16:32:30.760+02:00"),
-			entries: []*EntryRecord{
+			entries: []*entryRecord{
 				{
 					// This entry should not be returned later; 'updated' remains the same.
-					Title:   "Entry X1",
-					ExtID:   "X1",
-					IsRead:  true,
-					Updated: toNullString("2022-07-16T23:43:12.759+02:00"),
-					URL:     toNullString("http://x.com/x1.html"),
+					title:   "Entry X1",
+					extID:   "X1",
+					isRead:  true,
+					updated: toNullString("2022-07-16T23:43:12.759+02:00"),
+					url:     toNullString("http://x.com/x1.html"),
 				},
 			},
 		},
@@ -274,29 +274,29 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 	keys := st.addFeeds(dbFeeds)
 	r.Equal(2, st.countFeeds())
 
-	pulledFeeds := []*FeedRecord{
+	pulledFeeds := []*feedRecord{
 		{
 			title:   dbFeeds[0].title,
 			feedURL: dbFeeds[0].feedURL,
 			updated: toNullString("2022-07-18T22:51:49.404+02:00"),
-			entries: []*EntryRecord{
+			entries: []*entryRecord{
 				{
-					Title:   dbFeeds[0].entries[0].Title,
-					ExtID:   dbFeeds[0].entries[0].ExtID,
-					Updated: dbFeeds[0].entries[0].Updated,
-					URL:     dbFeeds[0].entries[0].URL,
+					title:   dbFeeds[0].entries[0].title,
+					extID:   dbFeeds[0].entries[0].extID,
+					updated: dbFeeds[0].entries[0].updated,
+					url:     dbFeeds[0].entries[0].url,
 				},
 				{
-					Title:   dbFeeds[0].entries[1].Title,
-					ExtID:   dbFeeds[0].entries[1].ExtID,
-					Updated: dbFeeds[0].entries[1].Updated,
-					URL:     dbFeeds[0].entries[1].URL,
+					title:   dbFeeds[0].entries[1].title,
+					extID:   dbFeeds[0].entries[1].extID,
+					updated: dbFeeds[0].entries[1].updated,
+					url:     dbFeeds[0].entries[1].url,
 				},
 				{
-					Title:   dbFeeds[0].entries[2].Title,
-					ExtID:   dbFeeds[0].entries[2].ExtID,
-					Updated: toNullString("2022-07-19T16:23:18.600+02:00"),
-					URL:     dbFeeds[0].entries[2].URL,
+					title:   dbFeeds[0].entries[2].title,
+					extID:   dbFeeds[0].entries[2].extID,
+					updated: toNullString("2022-07-19T16:23:18.600+02:00"),
+					url:     dbFeeds[0].entries[2].url,
 				},
 			},
 		},
@@ -304,18 +304,18 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 			title:   dbFeeds[1].title,
 			feedURL: dbFeeds[1].feedURL,
 			updated: toNullString("2022-07-18T22:21:41.647+02:00"),
-			entries: []*EntryRecord{
+			entries: []*entryRecord{
 				{
-					Title:   dbFeeds[1].entries[0].Title,
-					ExtID:   dbFeeds[1].entries[0].ExtID,
-					Updated: dbFeeds[1].entries[0].Updated,
-					URL:     dbFeeds[1].entries[0].URL,
+					title:   dbFeeds[1].entries[0].title,
+					extID:   dbFeeds[1].entries[0].extID,
+					updated: dbFeeds[1].entries[0].updated,
+					url:     dbFeeds[1].entries[0].url,
 				},
 				{
-					Title:   "Entry X2",
-					ExtID:   "X2",
-					Updated: toNullString("2022-07-18T22:21:41.647+02:00"),
-					URL:     toNullString("http://x.com/x2.html"),
+					title:   "Entry X2",
+					extID:   "X2",
+					updated: toNullString("2022-07-18T22:21:41.647+02:00"),
+					url:     toNullString("http://x.com/x2.html"),
 				},
 			},
 		},
@@ -355,23 +355,23 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 				LastPulled: time.Time{},
 				Entries: []*internal.Entry{
 					{
-						ID:        st.getEntryID(feedURL0, pulledFeeds[0].entries[1].ExtID),
+						ID:        st.getEntryID(feedURL0, pulledFeeds[0].entries[1].extID),
 						FeedID:    keys[pulledFeeds[0].title].ID,
-						Title:     pulledFeeds[0].entries[1].Title,
-						ExtID:     pulledFeeds[0].entries[1].ExtID,
-						Updated:   st.getEntryUpdateTime(feedURL0, pulledFeeds[0].entries[1].ExtID),
-						Published: st.getEntryPubTime(feedURL0, pulledFeeds[0].entries[1].ExtID),
-						URL:       fromNullString(pulledFeeds[0].entries[1].URL),
+						Title:     pulledFeeds[0].entries[1].title,
+						ExtID:     pulledFeeds[0].entries[1].extID,
+						Updated:   st.getEntryUpdateTime(feedURL0, pulledFeeds[0].entries[1].extID),
+						Published: st.getEntryPubTime(feedURL0, pulledFeeds[0].entries[1].extID),
+						URL:       fromNullString(pulledFeeds[0].entries[1].url),
 						IsRead:    false,
 					},
 					{
-						ID:        st.getEntryID(feedURL0, pulledFeeds[0].entries[2].ExtID),
+						ID:        st.getEntryID(feedURL0, pulledFeeds[0].entries[2].extID),
 						FeedID:    keys[pulledFeeds[0].title].ID,
-						Title:     pulledFeeds[0].entries[2].Title,
-						ExtID:     pulledFeeds[0].entries[2].ExtID,
-						Updated:   st.getEntryUpdateTime(feedURL0, pulledFeeds[0].entries[2].ExtID),
-						Published: st.getEntryPubTime(feedURL0, pulledFeeds[0].entries[2].ExtID),
-						URL:       fromNullString(pulledFeeds[0].entries[2].URL),
+						Title:     pulledFeeds[0].entries[2].title,
+						ExtID:     pulledFeeds[0].entries[2].extID,
+						Updated:   st.getEntryUpdateTime(feedURL0, pulledFeeds[0].entries[2].extID),
+						Published: st.getEntryPubTime(feedURL0, pulledFeeds[0].entries[2].extID),
+						URL:       fromNullString(pulledFeeds[0].entries[2].url),
 						IsRead:    false,
 					},
 				},
@@ -390,13 +390,13 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 				LastPulled: time.Time{},
 				Entries: []*internal.Entry{
 					{
-						ID:        st.getEntryID(feedURL1, pulledFeeds[1].entries[1].ExtID),
+						ID:        st.getEntryID(feedURL1, pulledFeeds[1].entries[1].extID),
 						FeedID:    keys[pulledFeeds[1].title].ID,
-						Title:     pulledFeeds[1].entries[1].Title,
-						ExtID:     pulledFeeds[1].entries[1].ExtID,
-						Updated:   st.getEntryUpdateTime(feedURL1, pulledFeeds[1].entries[1].ExtID),
-						Published: st.getEntryPubTime(feedURL1, pulledFeeds[1].entries[1].ExtID),
-						URL:       fromNullString(pulledFeeds[1].entries[1].URL),
+						Title:     pulledFeeds[1].entries[1].title,
+						ExtID:     pulledFeeds[1].entries[1].extID,
+						Updated:   st.getEntryUpdateTime(feedURL1, pulledFeeds[1].entries[1].extID),
+						Published: st.getEntryPubTime(feedURL1, pulledFeeds[1].entries[1].extID),
+						URL:       fromNullString(pulledFeeds[1].entries[1].url),
 						IsRead:    false,
 					},
 				},
@@ -423,7 +423,7 @@ func TestPullFeedsSelectedOkSomeNewEntries(t *testing.T) {
 	r := require.New(t)
 	st := newTestStore(t)
 
-	dbFeeds := []*FeedRecord{
+	dbFeeds := []*feedRecord{
 		// This feed should not be returned later, it is not selected.
 		{
 			title:      "Feed A",
@@ -431,27 +431,27 @@ func TestPullFeedsSelectedOkSomeNewEntries(t *testing.T) {
 			subscribed: "2022-07-18T22:04:37Z",
 			lastPulled: "2022-07-18T22:04:37Z",
 			updated:    toNullString("2022-03-19T16:23:18.600+02:00"),
-			entries: []*EntryRecord{
+			entries: []*entryRecord{
 				{
-					Title:   "Entry A1",
-					ExtID:   "A1",
-					IsRead:  true,
-					Updated: toNullString("2022-07-16T23:39:07.383+02:00"),
-					URL:     toNullString("http://a.com/a1.html"),
+					title:   "Entry A1",
+					extID:   "A1",
+					isRead:  true,
+					updated: toNullString("2022-07-16T23:39:07.383+02:00"),
+					url:     toNullString("http://a.com/a1.html"),
 				},
 				{
-					Title:   "Entry A2",
-					ExtID:   "A2",
-					IsRead:  false,
-					Updated: toNullString("2022-07-16T23:42:24.988+02:00"),
-					URL:     toNullString("http://a.com/a2.html"),
+					title:   "Entry A2",
+					extID:   "A2",
+					isRead:  false,
+					updated: toNullString("2022-07-16T23:42:24.988+02:00"),
+					url:     toNullString("http://a.com/a2.html"),
 				},
 				{
-					Title:   "Entry A3",
-					ExtID:   "A3",
-					IsRead:  true,
-					Updated: toNullString("2022-03-18T22:51:49.404+02:00"),
-					URL:     toNullString("http://a.com/a3.html"),
+					title:   "Entry A3",
+					extID:   "A3",
+					isRead:  true,
+					updated: toNullString("2022-03-18T22:51:49.404+02:00"),
+					url:     toNullString("http://a.com/a3.html"),
 				},
 			},
 		},
@@ -462,14 +462,14 @@ func TestPullFeedsSelectedOkSomeNewEntries(t *testing.T) {
 			subscribed: "2022-07-18T22:04:45Z",
 			lastPulled: "2022-07-18T22:04:45Z",
 			updated:    toNullString("2022-04-20T16:32:30.760+02:00"),
-			entries: []*EntryRecord{
+			entries: []*entryRecord{
 				{
 					// This entry should not be returned later; 'updated' remains the same.
-					Title:   "Entry X1",
-					ExtID:   "X1",
-					IsRead:  true,
-					Updated: toNullString("2022-07-16T23:43:12.759+02:00"),
-					URL:     toNullString("http://x.com/x1.html"),
+					title:   "Entry X1",
+					extID:   "X1",
+					isRead:  true,
+					updated: toNullString("2022-07-16T23:43:12.759+02:00"),
+					url:     toNullString("http://x.com/x1.html"),
 				},
 			},
 		},
@@ -478,22 +478,22 @@ func TestPullFeedsSelectedOkSomeNewEntries(t *testing.T) {
 	keys := st.addFeeds(dbFeeds)
 	r.Equal(2, st.countFeeds())
 
-	pulledFeed := &FeedRecord{
+	pulledFeed := &feedRecord{
 		title:   dbFeeds[1].title,
 		feedURL: dbFeeds[1].feedURL,
 		updated: toNullString("2022-07-18T22:21:41.647+02:00"),
-		entries: []*EntryRecord{
+		entries: []*entryRecord{
 			{
-				Title:   dbFeeds[1].entries[0].Title,
-				ExtID:   dbFeeds[1].entries[0].ExtID,
-				Updated: dbFeeds[1].entries[0].Updated,
-				URL:     dbFeeds[1].entries[0].URL,
+				title:   dbFeeds[1].entries[0].title,
+				extID:   dbFeeds[1].entries[0].extID,
+				updated: dbFeeds[1].entries[0].updated,
+				url:     dbFeeds[1].entries[0].url,
 			},
 			{
-				Title:   "Entry X2",
-				ExtID:   "X2",
-				Updated: toNullString("2022-07-18T22:21:41.647+02:00"),
-				URL:     toNullString("http://x.com/x2.html"),
+				title:   "Entry X2",
+				extID:   "X2",
+				updated: toNullString("2022-07-18T22:21:41.647+02:00"),
+				url:     toNullString("http://x.com/x2.html"),
 			},
 		},
 	}
@@ -524,13 +524,13 @@ func TestPullFeedsSelectedOkSomeNewEntries(t *testing.T) {
 				LastPulled: time.Time{},
 				Entries: []*internal.Entry{
 					{
-						ID:        st.getEntryID(pulledFeed.feedURL, pulledFeed.entries[1].ExtID),
+						ID:        st.getEntryID(pulledFeed.feedURL, pulledFeed.entries[1].extID),
 						FeedID:    keys[pulledFeed.title].ID,
-						Title:     pulledFeed.entries[1].Title,
-						ExtID:     pulledFeed.entries[1].ExtID,
-						Updated:   st.getEntryUpdateTime(pulledFeed.feedURL, pulledFeed.entries[1].ExtID),
-						Published: st.getEntryPubTime(pulledFeed.feedURL, pulledFeed.entries[1].ExtID),
-						URL:       fromNullString(pulledFeed.entries[1].URL),
+						Title:     pulledFeed.entries[1].title,
+						ExtID:     pulledFeed.entries[1].extID,
+						Updated:   st.getEntryUpdateTime(pulledFeed.feedURL, pulledFeed.entries[1].extID),
+						Published: st.getEntryPubTime(pulledFeed.feedURL, pulledFeed.entries[1].extID),
+						URL:       fromNullString(pulledFeed.entries[1].url),
 						IsRead:    false,
 					},
 				},
@@ -561,7 +561,7 @@ func sortPullResultEntries(arr []PullResult) {
 	}
 }
 
-func toGFeed(t *testing.T, feed *FeedRecord) *gofeed.Feed {
+func toGFeed(t *testing.T, feed *feedRecord) *gofeed.Feed {
 	t.Helper()
 	gfeed := gofeed.Feed{
 		Title:    feed.title,
@@ -573,18 +573,18 @@ func toGFeed(t *testing.T, feed *FeedRecord) *gofeed.Feed {
 	}
 	for _, entry := range feed.entries {
 		item := gofeed.Item{
-			GUID:    entry.ExtID,
-			Link:    entry.URL.String,
-			Title:   entry.Title,
-			Content: entry.Content.String,
+			GUID:    entry.extID,
+			Link:    entry.url.String,
+			Title:   entry.title,
+			Content: entry.content.String,
 		}
-		if entry.Published.String != "" {
-			item.Published = entry.Published.String
-			item.PublishedParsed = mustTimeP(t, entry.Published.String)
+		if entry.published.String != "" {
+			item.Published = entry.published.String
+			item.PublishedParsed = mustTimeP(t, entry.published.String)
 		}
-		if entry.Updated.String != "" {
-			item.Updated = entry.Updated.String
-			item.UpdatedParsed = mustTimeP(t, entry.Updated.String)
+		if entry.updated.String != "" {
+			item.Updated = entry.updated.String
+			item.UpdatedParsed = mustTimeP(t, entry.updated.String)
 		}
 		gfeed.Items = append(gfeed.Items, &item)
 	}

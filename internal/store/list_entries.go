@@ -15,7 +15,7 @@ func (s *SQLite) ListEntries(ctx context.Context, feedID ID) ([]*internal.Entry,
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	recs := make([]*EntryRecord, 0)
+	recs := make([]*entryRecord, 0)
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
 		_, err := getFeed(ctx, tx, feedID)
 		if errors.Is(err, sql.ErrNoRows) {

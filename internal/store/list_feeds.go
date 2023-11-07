@@ -14,7 +14,7 @@ func (s *SQLite) ListFeeds(ctx context.Context) ([]*internal.Feed, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	feeds := make([]*FeedRecord, 0)
+	feeds := make([]*feedRecord, 0)
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
 
 		ifeeds, err := getAllFeeds(ctx, tx)
@@ -43,7 +43,7 @@ func (s *SQLite) ListFeeds(ctx context.Context) ([]*internal.Feed, error) {
 	return toFeeds(feeds)
 }
 
-func getAllFeeds(ctx context.Context, tx *sql.Tx) ([]*FeedRecord, error) {
+func getAllFeeds(ctx context.Context, tx *sql.Tx) ([]*feedRecord, error) {
 
 	sql1 := `
 		SELECT
@@ -66,8 +66,8 @@ func getAllFeeds(ctx context.Context, tx *sql.Tx) ([]*FeedRecord, error) {
 		ORDER BY
 			COALESCE(f.update_time, f.sub_time) DESC
 `
-	scanRow := func(rows *sql.Rows) (*FeedRecord, error) {
-		var feed FeedRecord
+	scanRow := func(rows *sql.Rows) (*feedRecord, error) {
+		var feed feedRecord
 		if err := rows.Scan(
 			&feed.id,
 			&feed.title,
@@ -96,7 +96,7 @@ func getAllFeeds(ctx context.Context, tx *sql.Tx) ([]*FeedRecord, error) {
 		return nil, err
 	}
 
-	feeds := make([]*FeedRecord, 0)
+	feeds := make([]*feedRecord, 0)
 	for rows.Next() {
 		feed, err := scanRow(rows)
 		if err != nil {
@@ -113,7 +113,7 @@ func getAllFeedEntries(
 	tx *sql.Tx,
 	feedID ID,
 	isRead *bool,
-) ([]*EntryRecord, error) {
+) ([]*entryRecord, error) {
 
 	sql1 := `
 		SELECT
@@ -135,19 +135,19 @@ func getAllFeedEntries(
 		ORDER BY
 			COALESCE(e.update_time, e.pub_time) DESC
 `
-	scanRow := func(rows *sql.Rows) (*EntryRecord, error) {
-		var entry EntryRecord
+	scanRow := func(rows *sql.Rows) (*entryRecord, error) {
+		var entry entryRecord
 		if err := rows.Scan(
-			&entry.ID,
-			&entry.FeedID,
-			&entry.Title,
-			&entry.IsRead,
-			&entry.ExtID,
-			&entry.Description,
-			&entry.Content,
-			&entry.URL,
-			&entry.Updated,
-			&entry.Published,
+			&entry.id,
+			&entry.feedID,
+			&entry.title,
+			&entry.isRead,
+			&entry.extID,
+			&entry.description,
+			&entry.content,
+			&entry.url,
+			&entry.updated,
+			&entry.published,
 		); err != nil {
 			return nil, err
 		}
@@ -165,7 +165,7 @@ func getAllFeedEntries(
 		return nil, err
 	}
 
-	entries := make([]*EntryRecord, 0)
+	entries := make([]*entryRecord, 0)
 	for rows.Next() {
 		entry, err := scanRow(rows)
 		if err != nil {

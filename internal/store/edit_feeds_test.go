@@ -31,7 +31,7 @@ func TestEditFeedsOkExtended(t *testing.T) {
 	r := require.New(t)
 	st := newTestStore(t)
 
-	dbFeeds := []*FeedRecord{
+	dbFeeds := []*feedRecord{
 		{
 			title:     "Feed A",
 			feedURL:   "http://a.com/feed.xml",

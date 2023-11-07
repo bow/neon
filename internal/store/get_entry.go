@@ -15,7 +15,7 @@ func (s *SQLite) GetEntry(ctx context.Context, entryID ID) (*internal.Entry, err
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	var rec *EntryRecord
+	var rec *entryRecord
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
 		irec, err := getEntry(ctx, tx, entryID)
 		if err != nil {
@@ -38,7 +38,7 @@ func (s *SQLite) GetEntry(ctx context.Context, entryID ID) (*internal.Entry, err
 	return toEntry(rec)
 }
 
-func getEntry(ctx context.Context, tx *sql.Tx, entryID ID) (*EntryRecord, error) {
+func getEntry(ctx context.Context, tx *sql.Tx, entryID ID) (*entryRecord, error) {
 
 	sql1 := `
 		SELECT
@@ -59,19 +59,19 @@ func getEntry(ctx context.Context, tx *sql.Tx, entryID ID) (*EntryRecord, error)
 		ORDER BY
 			COALESCE(e.update_time, e.pub_time) DESC
 `
-	scanRow := func(row *sql.Row) (*EntryRecord, error) {
-		var entry EntryRecord
+	scanRow := func(row *sql.Row) (*entryRecord, error) {
+		var entry entryRecord
 		if err := row.Scan(
-			&entry.ID,
-			&entry.FeedID,
-			&entry.Title,
-			&entry.IsRead,
-			&entry.ExtID,
-			&entry.Description,
-			&entry.Content,
-			&entry.URL,
-			&entry.Updated,
-			&entry.Published,
+			&entry.id,
+			&entry.feedID,
+			&entry.title,
+			&entry.isRead,
+			&entry.extID,
+			&entry.description,
+			&entry.content,
+			&entry.url,
+			&entry.updated,
+			&entry.published,
 		); err != nil {
 			return nil, err
 		}

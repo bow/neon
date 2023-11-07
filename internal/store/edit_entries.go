@@ -18,14 +18,14 @@ func (s *SQLite) EditEntries(
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	updateFunc := func(ctx context.Context, tx *sql.Tx, op *EntryEditOp) (*EntryRecord, error) {
+	updateFunc := func(ctx context.Context, tx *sql.Tx, op *EntryEditOp) (*entryRecord, error) {
 		if err := setEntryIsRead(ctx, tx, op.ID, op.IsRead); err != nil {
 			return nil, err
 		}
 		return getEntry(ctx, tx, op.ID)
 	}
 
-	recs := make([]*EntryRecord, len(ops))
+	recs := make([]*entryRecord, len(ops))
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
 		for i, op := range ops {
 			rec, err := updateFunc(ctx, tx, op)

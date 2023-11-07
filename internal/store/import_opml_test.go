@@ -105,15 +105,15 @@ func TestImportOPMLOkExtended(t *testing.T) {
 	r := require.New(t)
 	st := newTestStore(t)
 
-	dbFeeds := []*FeedRecord{
+	dbFeeds := []*feedRecord{
 		{
 			title:     "Feed BC",
 			feedURL:   "http://bc.com/feed.xml",
 			updated:   toNullString("2022-03-19T16:23:18.600+02:00"),
 			isStarred: false,
-			entries: []*EntryRecord{
-				{Title: "Entry BC1", IsRead: false},
-				{Title: "Entry BC2", IsRead: true},
+			entries: []*entryRecord{
+				{title: "Entry BC1", isRead: false},
+				{title: "Entry BC2", isRead: true},
 			},
 		},
 		{
@@ -121,8 +121,8 @@ func TestImportOPMLOkExtended(t *testing.T) {
 			feedURL:   "http://d.com/feed.xml",
 			updated:   toNullString("2022-04-20T16:32:30.760+02:00"),
 			isStarred: true,
-			entries: []*EntryRecord{
-				{Title: "Entry D1", IsRead: false},
+			entries: []*entryRecord{
+				{title: "Entry D1", isRead: false},
 			},
 			tags: []string{"foo", "baz"},
 		},

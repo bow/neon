@@ -37,34 +37,34 @@ func TestGetGlobalStatsExtendedOk(t *testing.T) {
 	a := assert.New(t)
 	st := newTestStore(t)
 
-	dbFeeds := []*FeedRecord{
+	dbFeeds := []*feedRecord{
 		{
 			title:      "Feed A",
 			feedURL:    "http://a.com/feed.xml",
 			subscribed: "2022-07-18T22:04:37Z",
 			lastPulled: "2022-07-18T22:04:37Z",
 			updated:    toNullString("2022-04-20T16:32:30.760+02:00"),
-			entries: []*EntryRecord{
+			entries: []*entryRecord{
 				{
-					Title:   "Entry A1",
-					ExtID:   "A1",
-					IsRead:  true,
-					Updated: toNullString("2022-07-16T23:39:07.383+02:00"),
-					URL:     toNullString("http://a.com/a1.html"),
+					title:   "Entry A1",
+					extID:   "A1",
+					isRead:  true,
+					updated: toNullString("2022-07-16T23:39:07.383+02:00"),
+					url:     toNullString("http://a.com/a1.html"),
 				},
 				{
-					Title:   "Entry A2",
-					ExtID:   "A2",
-					IsRead:  false,
-					Updated: toNullString("2022-07-16T23:42:24.988+02:00"),
-					URL:     toNullString("http://a.com/a2.html"),
+					title:   "Entry A2",
+					extID:   "A2",
+					isRead:  false,
+					updated: toNullString("2022-07-16T23:42:24.988+02:00"),
+					url:     toNullString("http://a.com/a2.html"),
 				},
 				{
-					Title:   "Entry A3",
-					ExtID:   "A3",
-					IsRead:  true,
-					Updated: toNullString("2022-03-18T22:51:49.404+02:00"),
-					URL:     toNullString("http://a.com/a3.html"),
+					title:   "Entry A3",
+					extID:   "A3",
+					isRead:  true,
+					updated: toNullString("2022-03-18T22:51:49.404+02:00"),
+					url:     toNullString("http://a.com/a3.html"),
 				},
 			},
 		},
@@ -74,13 +74,13 @@ func TestGetGlobalStatsExtendedOk(t *testing.T) {
 			subscribed: "2022-07-18T22:04:45Z",
 			lastPulled: "2022-07-18T22:04:45Z",
 			updated:    toNullString("2022-03-19T16:23:18.600+02:00"),
-			entries: []*EntryRecord{
+			entries: []*entryRecord{
 				{
-					Title:   "Entry X1",
-					ExtID:   "X1",
-					IsRead:  true,
-					Updated: toNullString("2022-07-16T23:43:12.759+02:00"),
-					URL:     toNullString("http://x.com/x1.html"),
+					title:   "Entry X1",
+					extID:   "X1",
+					isRead:  true,
+					updated: toNullString("2022-07-16T23:43:12.759+02:00"),
+					url:     toNullString("http://x.com/x1.html"),
 				},
 			},
 		},

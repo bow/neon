@@ -12,136 +12,10 @@ import (
 	"time"
 
 	"github.com/mmcdole/gofeed"
-	"google.golang.org/protobuf/types/known/timestamppb"
 
 	"github.com/bow/iris/api"
 	"github.com/bow/iris/internal"
-	"github.com/bow/iris/internal/opml"
 )
-
-type FeedRecord struct {
-	id          ID
-	title       string
-	description sql.NullString
-	feedURL     string
-	siteURL     sql.NullString
-	subscribed  string
-	lastPulled  string
-	updated     sql.NullString
-	isStarred   bool
-	tags        jsonArrayString
-	entries     []*EntryRecord
-}
-
-func (f *FeedRecord) Outline() (*opml.Outline, error) {
-	outl := opml.Outline{
-		Text:   f.title,
-		Type:   "rss",
-		XMLURL: f.feedURL,
-	}
-	if f.siteURL.Valid {
-		outl.HTMLURL = pointer(f.siteURL.String)
-	}
-	if f.description.Valid {
-		outl.Description = pointer(f.description.String)
-	}
-	if len(f.tags) > 0 {
-		outl.Categories = opml.Categories(f.tags)
-	}
-	if f.isStarred {
-		outl.IsStarred = &f.isStarred
-	}
-	return &outl, nil
-}
-
-type FeedBuilder struct {
-	id          ID
-	title       string
-	description *string
-	feedURL     string
-	siteURL     *string
-	subscribed  time.Time
-	lastPulled  time.Time
-	updated     *time.Time
-	isStarred   bool
-	tags        []string
-	entries     []*EntryRecord
-}
-
-func NewFeedBuilder() *FeedBuilder {
-	return &FeedBuilder{}
-}
-
-func (b *FeedBuilder) Build() *FeedRecord {
-	return &FeedRecord{
-		id:          b.id,
-		title:       b.title,
-		description: asNullString(b.description),
-		feedURL:     b.feedURL,
-		siteURL:     asNullString(b.siteURL),
-		subscribed:  *serializeTime(&b.subscribed),
-		lastPulled:  *serializeTime(&b.lastPulled),
-		updated:     asNullString(serializeTime(b.updated)),
-		isStarred:   b.isStarred,
-		tags:        jsonArrayString(b.tags),
-		entries:     b.entries,
-	}
-}
-
-func (b *FeedBuilder) ID(value ID) *FeedBuilder {
-	b.id = value
-	return b
-}
-
-func (b *FeedBuilder) Title(value string) *FeedBuilder {
-	b.title = value
-	return b
-}
-
-func (b *FeedBuilder) Description(value *string) *FeedBuilder {
-	b.description = value
-	return b
-}
-
-func (b *FeedBuilder) FeedURL(value string) *FeedBuilder {
-	b.feedURL = value
-	return b
-}
-
-func (b *FeedBuilder) SiteURL(value *string) *FeedBuilder {
-	b.siteURL = value
-	return b
-}
-
-func (b *FeedBuilder) Subscribed(value time.Time) *FeedBuilder {
-	b.subscribed = value
-	return b
-}
-
-func (b *FeedBuilder) LastPulled(value time.Time) *FeedBuilder {
-	b.lastPulled = value
-	return b
-}
-
-func (b *FeedBuilder) Updated(value *time.Time) *FeedBuilder {
-	b.updated = value
-	return b
-}
-
-func (b *FeedBuilder) IsStarred(value bool) *FeedBuilder {
-	b.isStarred = value
-	return b
-}
-
-func (b *FeedBuilder) Tags(value []string) *FeedBuilder {
-	b.tags = value
-	return b
-}
-
-func (b *FeedBuilder) Entries(value []*EntryRecord) *FeedBuilder {
-	b.entries = value
-	return b
-}
 
 type FeedEditOp struct {
 	ID          ID
@@ -161,46 +35,6 @@ func NewFeedEditOp(proto *api.EditFeedsRequest_Op) *FeedEditOp {
 	}
 }
 
-type EntryRecord struct {
-	ID          ID
-	FeedID      ID
-	Title       string
-	IsRead      bool
-	ExtID       string
-	Updated     sql.NullString
-	Published   sql.NullString
-	Description sql.NullString
-	Content     sql.NullString
-	URL         sql.NullString
-}
-
-func (e *EntryRecord) Proto() (*api.Entry, error) {
-	proto := api.Entry{
-		Id:          e.ID,
-		FeedId:      e.FeedID,
-		Title:       e.Title,
-		IsRead:      e.IsRead,
-		ExtId:       e.ExtID,
-		Description: fromNullString(e.Description),
-		Content:     fromNullString(e.Content),
-		Url:         fromNullString(e.URL),
-	}
-
-	var err error
-
-	proto.PubTime, err = toProtoTime(fromNullString(e.Published))
-	if err != nil {
-		return nil, err
-	}
-
-	proto.UpdateTime, err = toProtoTime(fromNullString(e.Updated))
-	if err != nil {
-		return nil, err
-	}
-
-	return &proto, nil
-}
-
 type EntryEditOp struct {
 	ID     ID
 	IsRead *bool
@@ -210,7 +44,34 @@ func NewEntryEditOp(proto *api.EditEntriesRequest_Op) *EntryEditOp {
 	return &EntryEditOp{ID: proto.Id, IsRead: proto.Fields.IsRead}
 }
 
-type StatsAggregateRecord struct {
+type feedRecord struct {
+	id          ID
+	title       string
+	description sql.NullString
+	feedURL     string
+	siteURL     sql.NullString
+	subscribed  string
+	lastPulled  string
+	updated     sql.NullString
+	isStarred   bool
+	tags        jsonArrayString
+	entries     []*entryRecord
+}
+
+type entryRecord struct {
+	id          ID
+	feedID      ID
+	title       string
+	isRead      bool
+	extID       string
+	updated     sql.NullString
+	published   sql.NullString
+	description sql.NullString
+	content     sql.NullString
+	url         sql.NullString
+}
+
+type statsAggregateRecord struct {
 	numFeeds             uint32
 	numEntries           uint32
 	numEntriesUnread     uint32
@@ -226,7 +87,7 @@ func toFeedID(raw string) (ID, error) {
 	return ID(id), nil
 }
 
-func toFeed(rec *FeedRecord) (*internal.Feed, error) {
+func toFeed(rec *feedRecord) (*internal.Feed, error) {
 
 	subt, err := deserializeTime(&rec.subscribed)
 	if err != nil {
@@ -264,7 +125,7 @@ func toFeed(rec *FeedRecord) (*internal.Feed, error) {
 	return &feed, nil
 }
 
-func toFeeds(recs []*FeedRecord) ([]*internal.Feed, error) {
+func toFeeds(recs []*feedRecord) ([]*internal.Feed, error) {
 
 	feeds := make([]*internal.Feed, len(recs))
 	for i, rec := range recs {
@@ -278,34 +139,34 @@ func toFeeds(recs []*FeedRecord) ([]*internal.Feed, error) {
 	return feeds, nil
 }
 
-func toEntry(rec *EntryRecord) (*internal.Entry, error) {
+func toEntry(rec *entryRecord) (*internal.Entry, error) {
 
-	ut, err := deserializeTime(fromNullString(rec.Updated))
+	ut, err := deserializeTime(fromNullString(rec.updated))
 	if err != nil {
 		return nil, fmt.Errorf("failed to deserialize Entry.Updated time: %w", err)
 	}
-	pt, err := deserializeTime(fromNullString(rec.Published))
+	pt, err := deserializeTime(fromNullString(rec.published))
 	if err != nil {
 		return nil, fmt.Errorf("failed to deserialize Entry.Published time: %w", err)
 	}
 
 	entry := internal.Entry{
-		ID:          rec.ID,
-		FeedID:      rec.FeedID,
-		Title:       rec.Title,
-		IsRead:      rec.IsRead,
-		ExtID:       rec.ExtID,
+		ID:          rec.id,
+		FeedID:      rec.feedID,
+		Title:       rec.title,
+		IsRead:      rec.isRead,
+		ExtID:       rec.extID,
 		Updated:     ut,
 		Published:   pt,
-		Description: fromNullString(rec.Description),
-		Content:     fromNullString(rec.Content),
-		URL:         fromNullString(rec.URL),
+		Description: fromNullString(rec.description),
+		Content:     fromNullString(rec.content),
+		URL:         fromNullString(rec.url),
 	}
 
 	return &entry, nil
 }
 
-func toEntries(recs []*EntryRecord) ([]*internal.Entry, error) {
+func toEntries(recs []*entryRecord) ([]*internal.Entry, error) {
 
 	entries := make([]*internal.Entry, len(recs))
 	for i, rec := range recs {
@@ -319,7 +180,7 @@ func toEntries(recs []*EntryRecord) ([]*internal.Entry, error) {
 	return entries, nil
 }
 
-func toStats(aggr *StatsAggregateRecord) (*internal.Stats, error) {
+func toStats(aggr *statsAggregateRecord) (*internal.Stats, error) {
 
 	lpt, err := deserializeTime(&aggr.lastPullTime)
 	if err != nil {
@@ -340,14 +201,6 @@ func toStats(aggr *StatsAggregateRecord) (*internal.Stats, error) {
 	}
 
 	return &stats, nil
-}
-
-// asNullString returns a valid sql.NullString representation of the given string pointer.
-func asNullString(v *string) sql.NullString {
-	if v == nil {
-		return sql.NullString{String: "", Valid: false}
-	}
-	return toNullString(*v)
 }
 
 // toNullString wraps the given string into an sql.NullString value. An empty string input is
@@ -416,17 +269,6 @@ func deserializeTime(v *string) (*time.Time, error) {
 	}
 	upv := pv.UTC()
 	return &upv, nil
-}
-
-func toProtoTime(v *string) (*timestamppb.Timestamp, error) {
-	tv, err := deserializeTime(v)
-	if err != nil {
-		return nil, err
-	}
-	if tv == nil {
-		return nil, nil
-	}
-	return timestamppb.New(*tv), nil
 }
 
 // fromNullString unwraps the given sql.NullString value into a string pointer. If the input value

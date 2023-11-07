@@ -18,22 +18,22 @@ func TestGetEntryOk(t *testing.T) {
 	r := require.New(t)
 	st := newTestStore(t)
 
-	dbFeeds := []*FeedRecord{
+	dbFeeds := []*feedRecord{
 		{
 			title:   "Feed A",
 			feedURL: "http://a.com/feed.xml",
 			updated: toNullString("2022-03-19T16:23:18.600+02:00"),
-			entries: []*EntryRecord{
-				{Title: "Entry A1", IsRead: true},
+			entries: []*entryRecord{
+				{title: "Entry A1", isRead: true},
 			},
 		},
 		{
 			title:   "Feed X",
 			feedURL: "http://x.com/feed.xml",
 			updated: toNullString("2022-04-20T16:32:30.760+02:00"),
-			entries: []*EntryRecord{
-				{Title: "Entry X1", IsRead: false},
-				{Title: "Entry X2", IsRead: true},
+			entries: []*entryRecord{
+				{title: "Entry X1", isRead: false},
+				{title: "Entry X2", isRead: true},
 			},
 		},
 		{

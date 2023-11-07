@@ -224,7 +224,7 @@ func (s *testStore) getEntryPubTime(feedURL string, entryExtID string) *time.Tim
 	return nil
 }
 
-func (s *testStore) addFeeds(feeds []*FeedRecord) map[string]feedKey {
+func (s *testStore) addFeeds(feeds []*feedRecord) map[string]feedKey {
 	s.t.Helper()
 
 	tx := s.tx()
@@ -283,8 +283,8 @@ func (s *testStore) addFeeds(feeds []*FeedRecord) map[string]feedKey {
 		for i, entry := range feed.entries {
 			var (
 				entryID    ID
-				extID      = entry.ExtID
-				updateTime = entry.Updated
+				extID      = entry.extID
+				updateTime = entry.updated
 			)
 			if extID == "" {
 				extID = fmt.Sprintf("%s-entry-%d", s.t.Name(), i)
@@ -301,13 +301,13 @@ func (s *testStore) addFeeds(feeds []*FeedRecord) map[string]feedKey {
 			err = stmt2.QueryRow(
 				feedID,
 				extID,
-				entry.Title,
-				entry.URL,
-				entry.IsRead,
+				entry.title,
+				entry.url,
+				entry.isRead,
 				updateTime,
 			).Scan(&entryID)
 			require.NoError(s.t, err)
-			entries[entry.Title] = entryID
+			entries[entry.title] = entryID
 		}
 
 		keys[feed.title] = feedKey{ID: feedID, Title: feed.title, Entries: entries}
