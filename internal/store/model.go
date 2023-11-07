@@ -32,20 +32,17 @@ type feedRecord struct {
 
 func (rec *feedRecord) feed() (*internal.Feed, error) {
 
-	subt, err := deserializeTime(&rec.subscribed)
+	subt, err := deserializeTime(rec.subscribed)
 	if err != nil {
 		return nil, fmt.Errorf("failed to deserialize Feed.Subscribed time: %w", err)
 	}
-	lpt, err := deserializeTime(&rec.lastPulled)
+	lpt, err := deserializeTime(rec.lastPulled)
 	if err != nil {
 		return nil, err
 	}
-	var upt *time.Time
-	if v := fromNullString(rec.updated); v != nil {
-		upt, err = deserializeTime(v)
-		if err != nil {
-			return nil, fmt.Errorf("failed to deserialize Feed.Updated time: %w", err)
-		}
+	upt, err := deserializeNullTime(rec.updated)
+	if err != nil {
+		return nil, fmt.Errorf("failed to deserialize Feed.Updated time: %w", err)
 	}
 	entries, err := entryRecords(rec.entries).entries()
 	if err != nil {
@@ -99,11 +96,11 @@ type entryRecord struct {
 
 func (rec *entryRecord) entry() (*internal.Entry, error) {
 
-	ut, err := deserializeTime(fromNullString(rec.updated))
+	ut, err := deserializeNullTime(rec.updated)
 	if err != nil {
 		return nil, fmt.Errorf("failed to deserialize Entry.Updated time: %w", err)
 	}
-	pt, err := deserializeTime(fromNullString(rec.published))
+	pt, err := deserializeNullTime(rec.published)
 	if err != nil {
 		return nil, fmt.Errorf("failed to deserialize Entry.Published time: %w", err)
 	}
@@ -150,12 +147,12 @@ type statsAggregateRecord struct {
 
 func (aggr *statsAggregateRecord) stats() (*internal.Stats, error) {
 
-	lpt, err := deserializeTime(&aggr.lastPullTime)
+	lpt, err := deserializeTime(aggr.lastPullTime)
 	if err != nil {
 		return nil, fmt.Errorf("failed to deserialize Stats.LastPullTime: %w", err)
 	}
 
-	mrut, err := deserializeTime(fromNullString(aggr.mostRecentUpdateTime))
+	mrut, err := deserializeNullTime(aggr.mostRecentUpdateTime)
 	if err != nil {
 		return nil, fmt.Errorf("failed to deserialize Stats.MostRecentUpdateTime: %w", err)
 	}
@@ -177,12 +174,6 @@ func toFeedID(raw string) (ID, error) {
 		return 0, FeedNotFoundError{ID: raw}
 	}
 	return ID(id), nil
-}
-
-// toNullString wraps the given string into an sql.NullString value. An empty string input is
-// considered a database NULL value.
-func toNullString(v string) sql.NullString {
-	return sql.NullString{String: v, Valid: v != ""}
 }
 
 func resolveFeedUpdateTime(feed *gofeed.Feed) *time.Time {
@@ -232,14 +223,11 @@ func serializeTime(tv *time.Time) *string {
 	return &ts
 }
 
-func deserializeTime(v *string) (*time.Time, error) {
-	if v == nil {
+func deserializeTime(v string) (*time.Time, error) {
+	if v == "" {
 		return nil, nil
 	}
-	if *v == "" {
-		return nil, nil
-	}
-	pv, err := time.Parse(time.RFC3339, *v)
+	pv, err := time.Parse(time.RFC3339, v)
 	if err != nil {
 		return nil, err
 	}
@@ -247,14 +235,26 @@ func deserializeTime(v *string) (*time.Time, error) {
 	return &upv, nil
 }
 
+func deserializeNullTime(v sql.NullString) (*time.Time, error) {
+	if !v.Valid {
+		return nil, nil
+	}
+	return deserializeTime(v.String)
+}
+
 // fromNullString unwraps the given sql.NullString value into a string pointer. If the input value
 // is NULL (i.e. its `Valid` field is `false`), `nil` is returned.
 func fromNullString(v sql.NullString) *string {
-	if v.Valid {
-		s := v.String
-		return &s
+	if !v.Valid {
+		return nil
 	}
-	return nil
+	return &v.String
+}
+
+// toNullString wraps the given string into an sql.NullString value. An empty string input is
+// considered a database NULL value.
+func toNullString(v string) sql.NullString {
+	return sql.NullString{String: v, Valid: v != ""}
 }
 
 // jsonArrayString is a wrapper type that implements Scan() for database-compatible

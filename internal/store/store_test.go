@@ -143,7 +143,7 @@ func (s *testStore) getFeedSubTime(feedURL string) time.Time {
 	err = stmt1.QueryRow(feedURL, feedURL).Scan(&subTime)
 	require.NoError(s.t, err)
 
-	rv, err := deserializeTime(&subTime)
+	rv, err := deserializeTime(subTime)
 	require.NoError(s.t, err)
 
 	return *rv
@@ -293,7 +293,7 @@ func (s *testStore) addFeeds(feeds []*feedRecord) map[string]feedKey {
 				updateTime.String = time.Now().UTC().Format(time.RFC3339)
 				updateTime.Valid = true
 			} else {
-				tv, ierr := deserializeTime(&updateTime.String)
+				tv, ierr := deserializeTime(updateTime.String)
 				require.NoError(s.t, ierr)
 				updateTime.String = *serializeTime(tv)
 				updateTime.Valid = true
@@ -335,7 +335,7 @@ func (s *testStore) addFeedWithURL(url string) {
 
 func mustTimeP(t *testing.T, value string) *time.Time {
 	t.Helper()
-	tv, err := deserializeTime(&value)
+	tv, err := deserializeTime(value)
 	require.NoError(t, err)
 	return tv
 }
