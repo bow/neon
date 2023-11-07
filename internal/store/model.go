@@ -22,7 +22,7 @@ type feedRecord struct {
 	description sql.NullString
 	feedURL     string
 	siteURL     sql.NullString
-	subscribed  string
+	subscribed  time.Time
 	lastPulled  string
 	updated     sql.NullString
 	isStarred   bool
@@ -32,10 +32,6 @@ type feedRecord struct {
 
 func (rec *feedRecord) feed() (*internal.Feed, error) {
 
-	subt, err := deserializeTime(rec.subscribed)
-	if err != nil {
-		return nil, fmt.Errorf("failed to deserialize Feed.Subscribed time: %w", err)
-	}
 	lpt, err := deserializeTime(rec.lastPulled)
 	if err != nil {
 		return nil, err
@@ -55,7 +51,7 @@ func (rec *feedRecord) feed() (*internal.Feed, error) {
 		Description: fromNullString(rec.description),
 		FeedURL:     rec.feedURL,
 		SiteURL:     fromNullString(rec.siteURL),
-		Subscribed:  *subt,
+		Subscribed:  rec.subscribed,
 		LastPulled:  *lpt,
 		Updated:     upt,
 		IsStarred:   rec.isStarred,

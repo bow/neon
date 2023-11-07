@@ -263,8 +263,8 @@ func (s *testStore) addFeeds(feeds []*feedRecord) map[string]feedKey {
 	for _, feed := range feeds {
 		var feedID ID
 		subTime := feed.subscribed
-		if subTime == "" {
-			subTime = time.Now().UTC().Format(time.RFC3339)
+		if subTime.IsZero() {
+			subTime = time.Now().UTC()
 		}
 		err = stmt1.QueryRow(
 			feed.title,
@@ -331,6 +331,12 @@ func (s *testStore) addFeedWithURL(url string) {
 	_, err = stmt.Exec(s.t.Name(), url, time.Now().UTC().Format(time.RFC3339))
 	require.NoError(s.t, err)
 	require.NoError(s.t, tx.Commit())
+}
+
+func mustTime(t *testing.T, value string) time.Time {
+	t.Helper()
+	tv := mustTimeP(t, value)
+	return *tv
 }
 
 func mustTimeP(t *testing.T, value string) *time.Time {
