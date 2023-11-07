@@ -113,7 +113,7 @@ func TestEditFeedsOk(t *testing.T) {
 	a := assert.New(t)
 	client, str := setupServerTest(t)
 
-	ops := []*store.FeedEditOp{
+	ops := []*internal.FeedEditOp{
 		{ID: 14, Title: pointer("newer")},
 		{ID: 58, Tags: pointer([]string{"x", "y"})},
 		{ID: 77, IsStarred: pointer(true)},
@@ -613,7 +613,7 @@ func TestEditEntriesOk(t *testing.T) {
 	a := assert.New(t)
 	client, str := setupServerTest(t)
 
-	ops := []*store.EntryEditOp{
+	ops := []*internal.EntryEditOp{
 		{ID: 37, IsRead: pointer(true)},
 		{ID: 49, IsRead: pointer(false)},
 	}

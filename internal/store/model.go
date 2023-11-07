@@ -13,36 +13,8 @@ import (
 
 	"github.com/mmcdole/gofeed"
 
-	"github.com/bow/iris/api"
 	"github.com/bow/iris/internal"
 )
-
-type FeedEditOp struct {
-	ID          ID
-	Title       *string
-	Description *string
-	Tags        *[]string
-	IsStarred   *bool
-}
-
-func NewFeedEditOp(proto *api.EditFeedsRequest_Op) *FeedEditOp {
-	return &FeedEditOp{
-		ID:          proto.Id,
-		Title:       proto.Fields.Title,
-		Description: proto.Fields.Description,
-		Tags:        &proto.Fields.Tags,
-		IsStarred:   proto.Fields.IsStarred,
-	}
-}
-
-type EntryEditOp struct {
-	ID     ID
-	IsRead *bool
-}
-
-func NewEntryEditOp(proto *api.EditEntriesRequest_Op) *EntryEditOp {
-	return &EntryEditOp{ID: proto.Id, IsRead: proto.Fields.IsRead}
-}
 
 type feedRecord struct {
 	id          ID

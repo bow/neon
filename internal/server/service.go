@@ -62,11 +62,7 @@ func (svc *service) EditFeeds(
 	req *api.EditFeedsRequest,
 ) (*api.EditFeedsResponse, error) {
 
-	ops := make([]*store.FeedEditOp, len(req.Ops))
-	for i, op := range req.GetOps() {
-		ops[i] = store.NewFeedEditOp(op)
-	}
-
+	ops := fromFeedEditOpPbs(req.GetOps())
 	feeds, err := svc.store.EditFeeds(ctx, ops)
 	if err != nil {
 		return nil, err
@@ -165,11 +161,7 @@ func (svc *service) EditEntries(
 	req *api.EditEntriesRequest,
 ) (*api.EditEntriesResponse, error) {
 
-	ops := make([]*store.EntryEditOp, len(req.Ops))
-	for i, op := range req.GetOps() {
-		ops[i] = store.NewEntryEditOp(op)
-	}
-
+	ops := fromEntryEditOpPbs(req.GetOps())
 	entries, err := svc.store.EditEntries(ctx, ops)
 	if err != nil {
 		return nil, err

@@ -9,6 +9,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/bow/iris/internal"
 )
 
 func TestEditFeedsOkEmpty(t *testing.T) {
@@ -54,7 +56,7 @@ func TestEditFeedsOkExtended(t *testing.T) {
 	a.True(existf("Feed A", false))
 	a.False(existf("Feed X", true))
 
-	ops := []*FeedEditOp{
+	ops := []*internal.FeedEditOp{
 		{ID: keys["Feed A"].ID, Title: pointer("Feed X"), IsStarred: pointer(true)},
 	}
 	feeds, err := st.EditFeeds(context.Background(), ops)

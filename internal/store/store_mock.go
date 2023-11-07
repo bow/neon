@@ -65,7 +65,7 @@ func (mr *MockFeedStoreMockRecorder) DeleteFeeds(ctx, ids interface{}) *gomock.C
 }
 
 // EditEntries mocks base method.
-func (m *MockFeedStore) EditEntries(ctx context.Context, ops []*EntryEditOp) ([]*internal.Entry, error) {
+func (m *MockFeedStore) EditEntries(ctx context.Context, ops []*internal.EntryEditOp) ([]*internal.Entry, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "EditEntries", ctx, ops)
 	ret0, _ := ret[0].([]*internal.Entry)
@@ -80,7 +80,7 @@ func (mr *MockFeedStoreMockRecorder) EditEntries(ctx, ops interface{}) *gomock.C
 }
 
 // EditFeeds mocks base method.
-func (m *MockFeedStore) EditFeeds(ctx context.Context, ops []*FeedEditOp) ([]*internal.Feed, error) {
+func (m *MockFeedStore) EditFeeds(ctx context.Context, ops []*internal.FeedEditOp) ([]*internal.Feed, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "EditFeeds", ctx, ops)
 	ret0, _ := ret[0].([]*internal.Feed)

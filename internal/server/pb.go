@@ -35,6 +35,24 @@ func toFeedPbs(feeds []*internal.Feed) []*api.Feed {
 	return pbs
 }
 
+func fromFeedEditOpPb(pb *api.EditFeedsRequest_Op) *internal.FeedEditOp {
+	return &internal.FeedEditOp{
+		ID:          pb.Id,
+		Title:       pb.Fields.Title,
+		Description: pb.Fields.Description,
+		Tags:        &pb.Fields.Tags,
+		IsStarred:   pb.Fields.IsStarred,
+	}
+}
+
+func fromFeedEditOpPbs(pbs []*api.EditFeedsRequest_Op) []*internal.FeedEditOp {
+	ops := make([]*internal.FeedEditOp, len(pbs))
+	for i, pb := range pbs {
+		ops[i] = fromFeedEditOpPb(pb)
+	}
+	return ops
+}
+
 func toEntryPb(entry *internal.Entry) *api.Entry {
 	return &api.Entry{
 		Id:          entry.ID,
@@ -56,6 +74,18 @@ func toEntryPbs(entries []*internal.Entry) []*api.Entry {
 		pbs[i] = toEntryPb(entry)
 	}
 	return pbs
+}
+
+func fromEntryEditOpPb(pb *api.EditEntriesRequest_Op) *internal.EntryEditOp {
+	return &internal.EntryEditOp{ID: pb.Id, IsRead: pb.Fields.IsRead}
+}
+
+func fromEntryEditOpPbs(pbs []*api.EditEntriesRequest_Op) []*internal.EntryEditOp {
+	ops := make([]*internal.EntryEditOp, len(pbs))
+	for i, pb := range pbs {
+		ops[i] = fromEntryEditOpPb(pb)
+	}
+	return ops
 }
 
 func toStatsPb(stats *internal.Stats) *api.GetStatsResponse_Stats {

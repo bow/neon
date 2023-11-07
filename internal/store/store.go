@@ -31,12 +31,15 @@ type FeedStore interface {
 		tags []string,
 		isStarred *bool,
 	) (addedFeed *internal.Feed, err error)
-	EditFeeds(ctx context.Context, ops []*FeedEditOp) (feeds []*internal.Feed, err error)
+	EditFeeds(ctx context.Context, ops []*internal.FeedEditOp) (feeds []*internal.Feed, err error)
 	ListFeeds(ctx context.Context) (feeds []*internal.Feed, err error)
 	PullFeeds(ctx context.Context, feedIDs []ID) (results <-chan PullResult)
 	DeleteFeeds(ctx context.Context, ids []ID) (err error)
 	ListEntries(ctx context.Context, feedID ID) (entries []*internal.Entry, err error)
-	EditEntries(ctx context.Context, ops []*EntryEditOp) (entries []*internal.Entry, err error)
+	EditEntries(
+		ctx context.Context,
+		ops []*internal.EntryEditOp,
+	) (entries []*internal.Entry, err error)
 	GetEntry(ctx context.Context, entryID ID) (entry *internal.Entry, err error)
 	// TODO: Export OPML structs instead.
 	ExportOPML(ctx context.Context, title *string) (payload []byte, err error)

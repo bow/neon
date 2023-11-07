@@ -9,6 +9,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/bow/iris/internal"
 )
 
 func TestEditEntriesOkEmpty(t *testing.T) {
@@ -56,7 +58,7 @@ func TestEditEntriesOkMinimal(t *testing.T) {
 	a.True(existe("Entry A1", true))
 	a.False(existe("Entry A1", false))
 
-	ops := []*EntryEditOp{
+	ops := []*internal.EntryEditOp{
 		{ID: keys["Feed A"].Entries["Entry A1"], IsRead: pointer(false)},
 	}
 	entries, err := st.EditEntries(context.Background(), ops)
@@ -115,7 +117,7 @@ func TestEditEntriesOkExtended(t *testing.T) {
 	a.True(existe("Entry X1", false))
 	a.False(existe("Entry X1", true))
 
-	setOps := []*EntryEditOp{
+	setOps := []*internal.EntryEditOp{
 		{ID: keys["Feed X"].Entries["Entry X1"], IsRead: pointer(true)},
 		{ID: keys["Feed A"].Entries["Entry A2"], IsRead: pointer(true)},
 	}

@@ -13,12 +13,15 @@ import (
 // EditFeed updates fields of an feed.
 func (s *SQLite) EditFeeds(
 	ctx context.Context,
-	ops []*FeedEditOp,
+	ops []*internal.FeedEditOp,
 ) ([]*internal.Feed, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	updateFunc := func(ctx context.Context, tx *sql.Tx, op *FeedEditOp) (*feedRecord, error) {
+	updateFunc := func(
+		ctx context.Context,
+		tx *sql.Tx, op *internal.FeedEditOp,
+	) (*feedRecord, error) {
 		if err := setFeedTitle(ctx, tx, op.ID, op.Title); err != nil {
 			return nil, err
 		}

@@ -77,6 +77,14 @@ func (f *Feed) Outline() (*opml.Outline, error) {
 	return &outl, nil
 }
 
+type FeedEditOp struct {
+	ID          ID
+	Title       *string
+	Description *string
+	Tags        *[]string
+	IsStarred   *bool
+}
+
 type Entry struct {
 	ID          ID
 	FeedID      ID
@@ -88,6 +96,11 @@ type Entry struct {
 	Description *string
 	Content     *string
 	URL         *string
+}
+
+type EntryEditOp struct {
+	ID     ID
+	IsRead *bool
 }
 
 type Stats struct {

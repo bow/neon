@@ -13,12 +13,15 @@ import (
 // EditEntries updates fields of an entry.
 func (s *SQLite) EditEntries(
 	ctx context.Context,
-	ops []*EntryEditOp,
+	ops []*internal.EntryEditOp,
 ) ([]*internal.Entry, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	updateFunc := func(ctx context.Context, tx *sql.Tx, op *EntryEditOp) (*entryRecord, error) {
+	updateFunc := func(
+		ctx context.Context,
+		tx *sql.Tx, op *internal.EntryEditOp,
+	) (*entryRecord, error) {
 		if err := setEntryIsRead(ctx, tx, op.ID, op.IsRead); err != nil {
 			return nil, err
 		}
