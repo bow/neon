@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"strings"
+	"time"
 
 	"github.com/adrg/xdg"
 	"github.com/spf13/cobra"
@@ -76,4 +77,22 @@ func showBanner(w io.Writer) {
 
 func makeAlias(name string) []string {
 	return []string{name[:1]}
+}
+
+func derefOrEmpty(p *string) string {
+	if p == nil {
+		return ""
+	}
+	return *p
+}
+
+func fmtOrEmpty(p *time.Time) string {
+	if p == nil {
+		return ""
+	}
+	return fmtTime(*p)
+}
+
+func fmtTime(value time.Time) string {
+	return value.Local().Format("2 January 2006 • 15:04 MST")
 }

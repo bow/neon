@@ -61,22 +61,12 @@ func fmtListEntry(entry *internal.Entry) string {
 		cat = func(format string, a ...any) { fmt.Fprintf(&sb, format, a...) }
 	)
 
-	pubs := ""
-	if pub := entry.Published; pub != nil {
-		pubs = pub.Local().Format("2 January 2006 • 15:04 MST")
-	}
-
-	urls := ""
-	if url := entry.URL; url != nil {
-		urls = *url
-	}
-
 	kv := []*struct {
 		k, v string
 	}{
 		{"EntryID", fmt.Sprintf("%d", entry.ID)},
-		{"URL", urls},
-		{"Pub", pubs},
+		{"URL", derefOrEmpty(entry.URL)},
+		{"Pub", fmtOrEmpty(entry.Published)},
 	}
 
 	keyMaxLen := 0

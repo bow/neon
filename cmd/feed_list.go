@@ -6,7 +6,6 @@ package cmd
 import (
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/bow/iris/internal"
 	"github.com/spf13/cobra"
@@ -49,24 +48,14 @@ func fmtFeed(feed *internal.Feed) string {
 		cat = func(format string, a ...any) { fmt.Fprintf(&sb, format, a...) }
 	)
 
-	upds := ""
-	if fu := feed.Updated; fu != nil {
-		upds = fmtTime(*fu)
-	}
-
-	surls := ""
-	if su := feed.SiteURL; su != nil {
-		surls = *su
-	}
-
 	kv := []*struct {
 		k, v string
 	}{
 		{"FeedID", fmt.Sprintf("%d", feed.ID)},
 		{"Last pulled", fmtTime(feed.LastPulled)},
-		{"Updated", upds},
+		{"Updated", fmtOrEmpty(feed.Updated)},
 		{"Unread", fmt.Sprintf("%d/%d", feed.NumEntriesUnread(), feed.NumEntriesTotal())},
-		{"URL", surls},
+		{"URL", derefOrEmpty(feed.SiteURL)},
 		{"Tags", fmt.Sprintf("#%s", strings.Join(feed.Tags, " #"))},
 	}
 
@@ -88,10 +77,6 @@ func fmtFeed(feed *internal.Feed) string {
 	cat("\n")
 
 	return sb.String()
-}
-
-func fmtTime(value time.Time) string {
-	return value.Local().Format("2 January 2006 • 15:04 MST")
 }
 
 const (
