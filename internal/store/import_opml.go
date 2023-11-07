@@ -8,7 +8,7 @@ import (
 	"database/sql"
 	"time"
 
-	"github.com/bow/iris/internal/store/opml"
+	"github.com/bow/iris/internal/opml"
 )
 
 func (s *SQLite) ImportOPML(

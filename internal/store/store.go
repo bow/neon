@@ -40,7 +40,9 @@ type FeedStore interface {
 	ListEntries(ctx context.Context, feedID ID) (entries []*internal.Entry, err error)
 	EditEntries(ctx context.Context, ops []*EntryEditOp) (entries []*internal.Entry, err error)
 	GetEntry(ctx context.Context, entryID ID) (entry *internal.Entry, err error)
+	// TODO: Export OPML structs instead.
 	ExportOPML(ctx context.Context, title *string) (payload []byte, err error)
+	// TODO: Import OPML structs instead.
 	ImportOPML(ctx context.Context, payload []byte) (processed int, imported int, err error)
 	GetGlobalStats(ctx context.Context) (stats *internal.Stats, err error)
 }

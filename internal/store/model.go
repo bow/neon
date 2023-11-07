@@ -14,26 +14,8 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 
 	"github.com/bow/iris/api"
-	"github.com/bow/iris/internal/store/opml"
+	"github.com/bow/iris/internal/opml"
 )
-
-const defaultExportTitle = "iris export"
-
-type Subscription []*FeedRecord
-
-func (sub Subscription) Export(title *string) ([]byte, error) {
-	et := defaultExportTitle
-	if title != nil {
-		et = *title
-	}
-	doc := opml.New(et, time.Now())
-	for _, feed := range sub {
-		if err := doc.AddOutline(feed); err != nil {
-			return nil, err
-		}
-	}
-	return doc.XML()
-}
 
 type FeedRecord struct {
 	id          ID

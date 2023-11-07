@@ -11,7 +11,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/bow/iris/internal/store/opml"
+	"github.com/bow/iris/internal/opml"
 )
 
 func newFeedExportCommand() *cobra.Command {

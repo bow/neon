@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/bow/iris/internal/store/opml"
+	"github.com/bow/iris/internal/opml"
 )
 
 func TestExportOPMLOkEmpty(t *testing.T) {
