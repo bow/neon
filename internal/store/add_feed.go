@@ -111,7 +111,6 @@ func upsertFeed(
 	}
 	defer stmt1.Close()
 
-	sst := serializeTime(subTime)
 	res, err := stmt1.ExecContext(
 		ctx,
 		feedURL,
@@ -119,9 +118,9 @@ func upsertFeed(
 		desc,
 		siteURL,
 		deref(isStarred, false),
-		serializeTime(updateTime),
-		sst,
-		sst, // last_pull_time defaults to sub_time.
+		updateTime,
+		subTime,
+		subTime, // last_pull_time defaults to sub_time.
 	)
 
 	if err == nil {
@@ -248,7 +247,7 @@ func upsertEntries(
 			entry.Title,
 			pointerOrNil(entry.Description),
 			pointerOrNil(entry.Content),
-			serializeTime(resolveEntryPublishedTime(entry)),
+			resolveEntryPublishedTime(entry),
 			updateTime,
 		)
 		if err != nil {

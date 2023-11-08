@@ -103,14 +103,14 @@ type statsAggregateRecord struct {
 	numEntries           uint32
 	numEntriesUnread     uint32
 	lastPullTime         time.Time
-	mostRecentUpdateTime sql.NullString
+	mostRecentUpdateTime sql.NullTime
 }
 
-func (aggr *statsAggregateRecord) stats() (*internal.Stats, error) {
+func (aggr *statsAggregateRecord) stats() *internal.Stats {
 
-	mrut, err := deserializeNullTime(aggr.mostRecentUpdateTime)
-	if err != nil {
-		return nil, fmt.Errorf("failed to deserialize Stats.MostRecentUpdateTime: %w", err)
+	var mrut *time.Time
+	if aggr.mostRecentUpdateTime.Valid {
+		mrut = &aggr.mostRecentUpdateTime.Time
 	}
 
 	stats := internal.Stats{
@@ -121,7 +121,7 @@ func (aggr *statsAggregateRecord) stats() (*internal.Stats, error) {
 		MostRecentUpdateTime: mrut,
 	}
 
-	return &stats, nil
+	return &stats
 }
 
 func toFeedID(raw string) (ID, error) {
@@ -169,33 +169,6 @@ func resolveEntryPublishedTime(entry *gofeed.Item) *time.Time {
 	}
 	// Otherwise use update time.
 	return entry.UpdatedParsed
-}
-
-func serializeTime(tv *time.Time) *string {
-	if tv == nil {
-		return nil
-	}
-	ts := tv.UTC().Format(time.RFC3339)
-	return &ts
-}
-
-func deserializeTime(v string) (*time.Time, error) {
-	if v == "" {
-		return nil, nil
-	}
-	pv, err := time.Parse(time.RFC3339, v)
-	if err != nil {
-		return nil, err
-	}
-	upv := pv.UTC()
-	return &upv, nil
-}
-
-func deserializeNullTime(v sql.NullString) (*time.Time, error) {
-	if !v.Valid {
-		return nil, nil
-	}
-	return deserializeTime(v.String)
 }
 
 // fromNullString unwraps the given sql.NullString value into a string pointer. If the input value

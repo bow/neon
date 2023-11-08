@@ -139,14 +139,11 @@ func (s *testStore) getFeedSubTime(feedURL string) time.Time {
 	stmt1, err := tx.Prepare(`SELECT sub_time FROM feeds WHERE feed_url = ?`)
 	require.NoError(s.t, err)
 
-	var subTime string
+	var subTime time.Time
 	err = stmt1.QueryRow(feedURL, feedURL).Scan(&subTime)
 	require.NoError(s.t, err)
 
-	rv, err := deserializeTime(subTime)
-	require.NoError(s.t, err)
-
-	return *rv
+	return subTime
 }
 
 func (s *testStore) getEntryID(feedURL string, entryExtID string) ID {
@@ -349,6 +346,18 @@ func mustTimeP(t *testing.T, value string) *time.Time {
 	tv, err := deserializeTime(value)
 	require.NoError(t, err)
 	return tv
+}
+
+func deserializeTime(v string) (*time.Time, error) {
+	if v == "" {
+		return nil, nil
+	}
+	pv, err := time.Parse(time.RFC3339Nano, v)
+	if err != nil {
+		return nil, err
+	}
+	upv := pv.UTC()
+	return &upv, nil
 }
 
 func Test_nodup(t *testing.T) {

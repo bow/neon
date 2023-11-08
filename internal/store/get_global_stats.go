@@ -31,7 +31,8 @@ func (s *SQLite) GetGlobalStats(ctx context.Context) (*internal.Stats, error) {
 	if err != nil {
 		return nil, fail(err)
 	}
-	return aggr.stats()
+
+	return aggr.stats(), nil
 }
 
 func getGlobalStats(ctx context.Context, tx *sql.Tx) (*statsAggregateRecord, error) {
