@@ -33,15 +33,19 @@ func ToFeedID(raw string) (ID, error) {
 	return ID(id), nil
 }
 
-type Subscription []*Feed
+type Subscription struct {
+	Title *string
+	Feeds []*Feed
+}
 
-func (sub Subscription) Export(title *string) ([]byte, error) {
-	et := defaultExportTitle
-	if title != nil {
-		et = *title
+func (sub *Subscription) Export() ([]byte, error) {
+	var et = defaultExportTitle
+	if sub.Title != nil {
+		et = *sub.Title
 	}
+
 	doc := opml.New(et, time.Now())
-	for _, feed := range sub {
+	for _, feed := range sub.Feeds {
 		if err := doc.AddOutline(feed); err != nil {
 			return nil, err
 		}

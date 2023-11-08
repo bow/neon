@@ -20,8 +20,11 @@ func (s *SQLite) ExportOPML(ctx context.Context, title *string) ([]byte, error) 
 		if err != nil {
 			return err
 		}
-		feeds := feedRecords(recs).feeds()
-		if payload, err = internal.Subscription(feeds).Export(title); err != nil {
+		sub := internal.Subscription{
+			Title: title,
+			Feeds: feedRecords(recs).feeds(),
+		}
+		if payload, err = sub.Export(); err != nil {
 			return err
 		}
 		return nil
