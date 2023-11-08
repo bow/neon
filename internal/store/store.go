@@ -8,7 +8,6 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"strings"
 	"sync"
 
 	"github.com/golang-migrate/migrate/v4"
@@ -196,22 +195,6 @@ func (s *SQLite) withTx(
 	err = dbFunc(ctx, tx)
 
 	return err
-}
-
-func pointerOrNil(v string) *string {
-	if v == "" || strings.TrimSpace(v) == "" {
-		return nil
-	}
-	return &v
-}
-
-// deref returns the dereferenced pointer value if the pointer is non-nil,
-// otherwise it returns the given default.
-func deref[T any](v *T, def T) T {
-	if v != nil {
-		return *v
-	}
-	return def
 }
 
 type editableTable interface {

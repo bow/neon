@@ -8,6 +8,7 @@ import (
 	"database/sql/driver"
 	"encoding/json"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/mmcdole/gofeed"
@@ -123,6 +124,34 @@ func (aggr *statsAggregateRecord) stats() *internal.Stats {
 	return &stats
 }
 
+// jsonArrayString is a wrapper type that implements Scan() for database-compatible
+// (de)serialization.
+type jsonArrayString []string
+
+// Value implements the database valuer interface for serializing into the database.
+func (arr *jsonArrayString) Value() (driver.Value, error) {
+	if arr == nil {
+		return nil, nil
+	}
+	return json.Marshal([]string(*arr))
+}
+
+// Scan implements the database scanner interface for deserialization out of the database.
+func (arr *jsonArrayString) Scan(value any) error {
+	var bv []byte
+
+	switch v := value.(type) {
+	case []byte:
+		bv = v
+	case string:
+		bv = []byte(v)
+	default:
+		return fmt.Errorf("value of type %T can not be scanned into a string slice", v)
+	}
+
+	return json.Unmarshal(bv, arr)
+}
+
 func resolveFeedUpdateTime(feed *gofeed.Feed) *time.Time {
 	// Use feed value if defined.
 	var latest = feed.UpdatedParsed
@@ -178,30 +207,18 @@ func fromNullTime(v sql.NullTime) *time.Time {
 	return &v.Time
 }
 
-// jsonArrayString is a wrapper type that implements Scan() for database-compatible
-// (de)serialization.
-type jsonArrayString []string
-
-// Value implements the database valuer interface for serializing into the database.
-func (arr *jsonArrayString) Value() (driver.Value, error) {
-	if arr == nil {
-		return nil, nil
+func pointerOrNil(v string) *string {
+	if v == "" || strings.TrimSpace(v) == "" {
+		return nil
 	}
-	return json.Marshal([]string(*arr))
+	return &v
 }
 
-// Scan implements the database scanner interface for deserialization out of the database.
-func (arr *jsonArrayString) Scan(value any) error {
-	var bv []byte
-
-	switch v := value.(type) {
-	case []byte:
-		bv = v
-	case string:
-		bv = []byte(v)
-	default:
-		return fmt.Errorf("value of type %T can not be scanned into a string slice", v)
+// deref returns the dereferenced pointer value if the pointer is non-nil,
+// otherwise it returns the given default.
+func deref[T any](v *T, def T) T {
+	if v != nil {
+		return *v
 	}
-
-	return json.Unmarshal(bv, arr)
+	return def
 }
