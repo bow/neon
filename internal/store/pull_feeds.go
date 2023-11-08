@@ -182,7 +182,8 @@ func pullNewFeedEntries(
 			return pk.err(err)
 		}
 
-		unreadEntries, err := getAllFeedEntries(ctx, tx, pk.feedID, pointer(false))
+		defaultReadStatus := false
+		unreadEntries, err := getAllFeedEntries(ctx, tx, pk.feedID, &defaultReadStatus)
 		if err != nil {
 			return pk.err(err)
 		}

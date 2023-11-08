@@ -214,5 +214,3 @@ func (arr *jsonArrayString) Scan(value any) error {
 
 	return json.Unmarshal(bv, arr)
 }
-
-func pointer[T any](value T) *T { return &value }
