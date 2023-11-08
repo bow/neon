@@ -197,12 +197,7 @@ func pullNewFeedEntries(
 
 		rec.entries = unreadEntries
 
-		feed, err := rec.feed()
-		if err != nil {
-			return pk.err(err)
-		}
-
-		return pk.ok(feed)
+		return pk.ok(rec.feed())
 	}
 
 	ic := make(chan internal.PullResult)

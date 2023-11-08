@@ -565,9 +565,9 @@ func toGFeed(t *testing.T, feed *feedRecord) *gofeed.Feed {
 			Title:   e.title,
 			Content: e.content.String,
 		}
-		if e.published.String != "" {
-			item.Published = e.published.String
-			item.PublishedParsed = mustTimeP(t, e.published.String)
+		if !e.published.Time.IsZero() {
+			item.Published = e.published.Time.UTC().Format(time.RFC3339Nano)
+			item.PublishedParsed = &e.published.Time
 		}
 		if !e.updated.Time.IsZero() {
 			item.Updated = e.updated.Time.UTC().Format(time.RFC3339Nano)

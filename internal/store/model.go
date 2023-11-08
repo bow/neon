@@ -30,14 +30,8 @@ type feedRecord struct {
 	entries     []*entryRecord
 }
 
-func (rec *feedRecord) feed() (*internal.Feed, error) {
-
-	entries, err := entryRecords(rec.entries).entries()
-	if err != nil {
-		return nil, err
-	}
-
-	feed := internal.Feed{
+func (rec *feedRecord) feed() *internal.Feed {
+	return &internal.Feed{
 		ID:          rec.id,
 		Title:       rec.title,
 		Description: fromNullString(rec.description),
@@ -48,25 +42,20 @@ func (rec *feedRecord) feed() (*internal.Feed, error) {
 		Updated:     fromNullTime(rec.updated),
 		IsStarred:   rec.isStarred,
 		Tags:        []string(rec.tags),
-		Entries:     entries,
+		Entries:     entryRecords(rec.entries).entries(),
 	}
-	return &feed, nil
 }
 
 type feedRecords []*feedRecord
 
-func (recs feedRecords) feeds() ([]*internal.Feed, error) {
+func (recs feedRecords) feeds() []*internal.Feed {
 
 	feeds := make([]*internal.Feed, len(recs))
 	for i, rec := range recs {
-		feed, err := rec.feed()
-		if err != nil {
-			return nil, err
-		}
-		feeds[i] = feed
+		feeds[i] = rec.feed()
 	}
 
-	return feeds, nil
+	return feeds
 }
 
 type entryRecord struct {
@@ -76,49 +65,37 @@ type entryRecord struct {
 	isRead      bool
 	extID       string
 	updated     sql.NullTime
-	published   sql.NullString
+	published   sql.NullTime
 	description sql.NullString
 	content     sql.NullString
 	url         sql.NullString
 }
 
-func (rec *entryRecord) entry() (*internal.Entry, error) {
-
-	pt, err := deserializeNullTime(rec.published)
-	if err != nil {
-		return nil, fmt.Errorf("failed to deserialize Entry.Published time: %w", err)
-	}
-
-	entry := internal.Entry{
+func (rec *entryRecord) entry() *internal.Entry {
+	return &internal.Entry{
 		ID:          rec.id,
 		FeedID:      rec.feedID,
 		Title:       rec.title,
 		IsRead:      rec.isRead,
 		ExtID:       rec.extID,
 		Updated:     fromNullTime(rec.updated),
-		Published:   pt,
+		Published:   fromNullTime(rec.published),
 		Description: fromNullString(rec.description),
 		Content:     fromNullString(rec.content),
 		URL:         fromNullString(rec.url),
 	}
-
-	return &entry, nil
 }
 
 type entryRecords []*entryRecord
 
-func (recs entryRecords) entries() ([]*internal.Entry, error) {
+func (recs entryRecords) entries() []*internal.Entry {
 
 	entries := make([]*internal.Entry, len(recs))
 	for i, rec := range recs {
-		entry, err := rec.entry()
-		if err != nil {
-			return nil, err
-		}
-		entries[i] = entry
+		entries[i] = rec.entry()
 	}
 
-	return entries, nil
+	return entries
 }
 
 type statsAggregateRecord struct {

@@ -75,7 +75,8 @@ func (s *SQLite) AddFeed(
 	if err != nil {
 		return nil, fail(err)
 	}
-	return created.feed()
+
+	return created.feed(), nil
 }
 
 func upsertFeed(
