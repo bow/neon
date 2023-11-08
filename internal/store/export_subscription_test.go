@@ -5,16 +5,13 @@ package store
 
 import (
 	"context"
-	"regexp"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-
-	"github.com/bow/iris/internal/opml"
 )
 
-func TestExportOPMLOkEmpty(t *testing.T) {
+func TestExportSubscriptionOkEmpty(t *testing.T) {
 	t.Parallel()
 
 	a := assert.New(t)
@@ -23,13 +20,15 @@ func TestExportOPMLOkEmpty(t *testing.T) {
 
 	r.Equal(0, st.countFeeds())
 
-	payload, err := st.ExportOPML(context.Background(), nil)
-	r.Nil(payload)
+	sub, err := st.ExportSubscription(context.Background(), pointer("export"))
+	r.NoError(err)
+	r.NotNil(sub)
 
-	a.ErrorIs(err, opml.ErrEmptyDocument)
+	a.Equal(pointer("export"), sub.Title)
+	a.Empty(sub.Feeds)
 }
 
-func TestExportOPMLOkExtended(t *testing.T) {
+func TestExportSubscriptionOkExtended(t *testing.T) {
 	t.Parallel()
 
 	a := assert.New(t)
@@ -68,22 +67,25 @@ func TestExportOPMLOkExtended(t *testing.T) {
 	st.addFeeds(dbFeeds)
 	r.Equal(3, st.countFeeds())
 
-	payload, err := st.ExportOPML(context.Background(), pointer("Test Export"))
+	sub, err := st.ExportSubscription(context.Background(), pointer("Test Export"))
 	r.NoError(err)
 
-	a.Regexp(
-		regexp.MustCompile(`<\?xml version="1.0" encoding="UTF-8"\?>
-<opml version="2.0">
-  <head>
-    <title>Test Export</title>
-    <dateCreated>\d+ [A-Z][a-z]+ \d+ \d+:\d+ .+</dateCreated>
-  </head>
-  <body>
-    <outline text="Feed Q" type="rss" xmlUrl="http://q.com/feed.xml" xmlns:iris="https://github.com/bow/iris" iris:isStarred="true"></outline>
-    <outline text="Feed X" type="rss" xmlUrl="http://x.com/feed.xml" category="foo,baz"></outline>
-    <outline text="Feed A" type="rss" xmlUrl="http://a.com/feed.xml"></outline>
-  </body>
-</opml>`),
-		string(payload),
-	)
+	a.NotNil(sub.Title)
+	a.Equal(pointer("Test Export"), sub.Title)
+	a.Len(sub.Feeds, 3)
+
+	a.Equal(sub.Feeds[0].Title, dbFeeds[2].title)
+	a.Equal(sub.Feeds[0].FeedURL, dbFeeds[2].feedURL)
+	a.Equal(sub.Feeds[0].IsStarred, dbFeeds[2].isStarred)
+	a.ElementsMatch(sub.Feeds[0].Tags, dbFeeds[2].tags)
+
+	a.Equal(sub.Feeds[1].Title, dbFeeds[1].title)
+	a.Equal(sub.Feeds[1].FeedURL, dbFeeds[1].feedURL)
+	a.Equal(sub.Feeds[1].IsStarred, dbFeeds[1].isStarred)
+	a.ElementsMatch(sub.Feeds[1].Tags, dbFeeds[1].tags)
+
+	a.Equal(sub.Feeds[2].Title, dbFeeds[0].title)
+	a.Equal(sub.Feeds[2].FeedURL, dbFeeds[0].feedURL)
+	a.Equal(sub.Feeds[2].IsStarred, dbFeeds[0].isStarred)
+	a.ElementsMatch(sub.Feeds[2].Tags, dbFeeds[0].tags)
 }

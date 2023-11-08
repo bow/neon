@@ -87,12 +87,11 @@ type FeedStore interface {
 		err error,
 	)
 
-	// TODO: Export OPML structs instead.
-	ExportOPML(
+	ExportSubscription(
 		ctx context.Context,
-		exportTitle *string,
+		title *string,
 	) (
-		payload []byte,
+		subscription *internal.Subscription,
 		err error,
 	)
 

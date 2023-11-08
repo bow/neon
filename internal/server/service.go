@@ -5,10 +5,13 @@ package server
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/bow/iris/api"
 	"github.com/bow/iris/internal"
 	"github.com/bow/iris/internal/store"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 // service implements the iris service API.
@@ -194,9 +197,15 @@ func (svc *service) ExportOPML(
 	req *api.ExportOPMLRequest,
 ) (*api.ExportOPMLResponse, error) {
 
-	payload, err := svc.store.ExportOPML(ctx, req.Title)
+	sub, err := svc.store.ExportSubscription(ctx, req.Title)
 	if err != nil {
 		return nil, err
+	}
+
+	payload, err := sub.Export()
+	if err != nil {
+		msg := fmt.Errorf("failed to convert subscriptions to OPML: %w", err).Error()
+		return nil, status.Errorf(codes.Internal, msg)
 	}
 
 	rsp := api.ExportOPMLResponse{Payload: payload}

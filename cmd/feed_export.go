@@ -53,15 +53,19 @@ func newFeedExportCommand() *cobra.Command {
 				return err
 			}
 
-			contents, err := str.ExportOPML(cmd.Context(), nil)
+			sub, err := str.ExportSubscription(cmd.Context(), nil)
+			if err != nil {
+				return err
+			}
+
+			payload, err := sub.Export()
 			if err != nil {
 				if errors.Is(err, opml.ErrEmptyDocument) {
 					return fmt.Errorf("nothing to export")
 				}
-				return err
 			}
 
-			_, err = dest.Write(contents)
+			_, err = dest.Write(payload)
 			if err != nil {
 				return err
 			}

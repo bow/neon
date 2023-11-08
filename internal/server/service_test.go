@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"math/rand"
+	"regexp"
 	"sort"
 	"testing"
 	"time"
@@ -704,25 +705,50 @@ func TestExportOPMLOk(t *testing.T) {
 	a := assert.New(t)
 	client, str := setupServerTest(t)
 
-	payload := `<\?xml version="1.0" encoding="UTF-8"\?>
-<opml version="2.0">
-  <head>
-    <title>iris export</title>
-	<dateCreated>Thu, 17 Feb 2022 16:37:19 CET</dateCreated>
-  </head>
-  <body>
-    <outline text="Feed X" type="rss" xmlUrl="http://x.com/feed.xml" category="foo,baz"></outline>
-  </body>
-</opml>`
 	str.EXPECT().
-		ExportOPML(gomock.Any(), nil).
-		Return([]byte(payload), nil)
+		ExportSubscription(gomock.Any(), nil).
+		Return(
+			&internal.Subscription{
+				Title: pointer("iris export"),
+				Feeds: []*internal.Feed{
+					{
+						Title:     "Feed Q",
+						FeedURL:   "http://q.com/feed.xml",
+						IsStarred: true,
+					},
+					{
+						Title:   "Feed X",
+						FeedURL: "http://x.com/feed.xml",
+						Tags:    []string{"foo", "baz"},
+					},
+					{
+						Title:   "Feed A",
+						FeedURL: "http://a.com/feed.xml",
+					},
+				},
+			},
+			nil,
+		)
 
 	req := api.ExportOPMLRequest{}
 	rsp, err := client.ExportOPML(context.Background(), &req)
 	r.NoError(err)
 
-	a.Equal([]byte(payload), rsp.GetPayload())
+	a.Regexp(
+		regexp.MustCompile(`<\?xml version="1.0" encoding="UTF-8"\?>
+<opml version="2.0">
+  <head>
+    <title>iris export</title>
+    <dateCreated>\d+ [A-Z][a-z]+ \d+ \d+:\d+ .+</dateCreated>
+  </head>
+  <body>
+    <outline text="Feed Q" type="rss" xmlUrl="http://q.com/feed.xml" xmlns:iris="https://github.com/bow/iris" iris:isStarred="true"></outline>
+    <outline text="Feed X" type="rss" xmlUrl="http://x.com/feed.xml" category="foo,baz"></outline>
+    <outline text="Feed A" type="rss" xmlUrl="http://a.com/feed.xml"></outline>
+  </body>
+</opml>`),
+		string(rsp.GetPayload()),
+	)
 }
 
 func TestImportOPMLOk(t *testing.T) {

@@ -94,19 +94,19 @@ func (mr *MockFeedStoreMockRecorder) EditFeeds(ctx, ops interface{}) *gomock.Cal
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "EditFeeds", reflect.TypeOf((*MockFeedStore)(nil).EditFeeds), ctx, ops)
 }
 
-// ExportOPML mocks base method.
-func (m *MockFeedStore) ExportOPML(ctx context.Context, exportTitle *string) ([]byte, error) {
+// ExportSubscription mocks base method.
+func (m *MockFeedStore) ExportSubscription(ctx context.Context, title *string) (*internal.Subscription, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ExportOPML", ctx, exportTitle)
-	ret0, _ := ret[0].([]byte)
+	ret := m.ctrl.Call(m, "ExportSubscription", ctx, title)
+	ret0, _ := ret[0].(*internal.Subscription)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// ExportOPML indicates an expected call of ExportOPML.
-func (mr *MockFeedStoreMockRecorder) ExportOPML(ctx, exportTitle interface{}) *gomock.Call {
+// ExportSubscription indicates an expected call of ExportSubscription.
+func (mr *MockFeedStoreMockRecorder) ExportSubscription(ctx, title interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ExportOPML", reflect.TypeOf((*MockFeedStore)(nil).ExportOPML), ctx, exportTitle)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ExportSubscription", reflect.TypeOf((*MockFeedStore)(nil).ExportSubscription), ctx, title)
 }
 
 // GetEntry mocks base method.

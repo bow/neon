@@ -10,31 +10,32 @@ import (
 	"github.com/bow/iris/internal"
 )
 
-func (s *SQLite) ExportOPML(ctx context.Context, title *string) ([]byte, error) {
+func (s *SQLite) ExportSubscription(
+	ctx context.Context,
+	title *string,
+) (*internal.Subscription, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	var payload []byte
+	var sub internal.Subscription
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
 		recs, err := getAllFeeds(ctx, tx)
 		if err != nil {
 			return err
 		}
-		sub := internal.Subscription{
+		isub := internal.Subscription{
 			Title: title,
 			Feeds: feedRecords(recs).feeds(),
 		}
-		if payload, err = sub.Export(); err != nil {
-			return err
-		}
+		sub = isub
 		return nil
 	}
 
-	fail := failF("SQLite.ExportOPML")
+	fail := failF("SQLite.ExportSubscription")
 
 	err := s.withTx(ctx, dbFunc)
 	if err != nil {
 		return nil, fail(err)
 	}
-	return payload, nil
+	return &sub, nil
 }
