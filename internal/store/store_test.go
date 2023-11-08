@@ -13,7 +13,6 @@ import (
 
 	gomock "github.com/golang/mock/gomock"
 	"github.com/rs/zerolog"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -360,64 +359,4 @@ func deserializeTime(v string) (*time.Time, error) {
 	}
 	upv := pv.UTC()
 	return &upv, nil
-}
-
-func Test_nodup(t *testing.T) {
-	t.Parallel()
-
-	tests := []struct {
-		name  string
-		input []ID
-		want  []ID
-	}{
-		{name: "empty input", input: []ID{}, want: []ID{}},
-		{
-			"one item",
-			[]ID{3},
-			[]ID{3},
-		},
-		{
-			"multiple items, no duplicates",
-			[]ID{2, 7, 3},
-			[]ID{2, 7, 3},
-		},
-		{
-			"multiple items, duplicates at start",
-			[]ID{2, 2, 7, 3},
-			[]ID{2, 7, 3},
-		},
-		{
-			"multiple items, duplicates in the middle",
-			[]ID{2, 7, 7, 3},
-			[]ID{2, 7, 3},
-		},
-		{
-			"multiple items, duplicates at end",
-			[]ID{2, 7, 3, 3, 3, 3},
-			[]ID{2, 7, 3},
-		},
-		{
-			"multiple items, duplicates in several places",
-			[]ID{1, 2, 5, 5, 7, 3, 3, 3, 3},
-			[]ID{1, 2, 5, 7, 3},
-		},
-		{
-			"multiple items, duplicates across several places",
-			[]ID{1, 2, 5, 5, 7, 3, 3, 2, 2, 3, 3},
-			[]ID{1, 2, 5, 7, 3},
-		},
-	}
-
-	for _, tt := range tests {
-		tt := tt
-		t.Run(
-			tt.name,
-			func(t *testing.T) {
-				t.Parallel()
-				got := dedup(tt.input)
-				assert.Equal(t, tt.want, got)
-			},
-		)
-	}
-
 }

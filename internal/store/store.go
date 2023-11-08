@@ -198,19 +198,6 @@ func (s *SQLite) withTx(
 	return err
 }
 
-func ToFeedIDs(raw []string) ([]ID, error) {
-	nodup := dedup(raw)
-	ids := make([]ID, 0)
-	for _, item := range nodup {
-		id, err := toFeedID(item)
-		if err != nil {
-			return nil, err
-		}
-		ids = append(ids, id)
-	}
-	return ids, nil
-}
-
 func pointerOrNil(v string) *string {
 	if v == "" || strings.TrimSpace(v) == "" {
 		return nil
@@ -278,19 +265,4 @@ func tableFieldSetter[T any](
 		}
 		return nil
 	}
-}
-
-func dedup[T comparable](values []T) []T {
-	seen := make(map[T]struct{})
-	nodup := make([]T, 0)
-
-	for _, val := range values {
-		if _, exists := seen[val]; exists {
-			continue
-		}
-		seen[val] = struct{}{}
-		nodup = append(nodup, val)
-	}
-
-	return nodup
 }

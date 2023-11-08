@@ -4,12 +4,34 @@
 package internal
 
 import (
+	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/bow/iris/internal/opml"
 )
 
 type ID = uint32
+
+func ToFeedIDs(raw []string) ([]ID, error) {
+	ids := make([]ID, 0)
+	for _, item := range raw {
+		id, err := ToFeedID(item)
+		if err != nil {
+			return nil, err
+		}
+		ids = append(ids, id)
+	}
+	return ids, nil
+}
+
+func ToFeedID(raw string) (ID, error) {
+	id, err := strconv.ParseUint(raw, 10, 32)
+	if err != nil {
+		return 0, fmt.Errorf("feed with ID=%v not found", raw)
+	}
+	return ID(id), nil
+}
 
 type Subscription []*Feed
 

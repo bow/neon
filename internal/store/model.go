@@ -8,7 +8,6 @@ import (
 	"database/sql/driver"
 	"encoding/json"
 	"fmt"
-	"strconv"
 	"time"
 
 	"github.com/mmcdole/gofeed"
@@ -122,14 +121,6 @@ func (aggr *statsAggregateRecord) stats() *internal.Stats {
 	}
 
 	return &stats
-}
-
-func toFeedID(raw string) (ID, error) {
-	id, err := strconv.ParseUint(raw, 10, 32)
-	if err != nil {
-		return 0, FeedNotFoundError{ID: raw}
-	}
-	return ID(id), nil
 }
 
 func resolveFeedUpdateTime(feed *gofeed.Feed) *time.Time {

@@ -14,7 +14,7 @@ func (s *SQLite) DeleteFeeds(ctx context.Context, ids []internal.ID) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	ids = dedup(ids)
+	ids = internal.Dedup(ids)
 
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
 

@@ -24,7 +24,7 @@ func (s *SQLite) PullFeeds(
 		c    = make(chan internal.PullResult)
 		wg   sync.WaitGroup
 	)
-	ids = dedup(ids)
+	ids = internal.Dedup(ids)
 
 	// nolint: unparam
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {

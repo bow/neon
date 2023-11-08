@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/bow/iris/internal/store"
+	"github.com/bow/iris/internal"
 	"github.com/briandowns/spinner"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
@@ -37,7 +37,8 @@ func newFeedPullCommand() *cobra.Command {
 				return err
 			}
 
-			ids, err := store.ToFeedIDs(args)
+			rawIDs := internal.Dedup(args)
+			ids, err := internal.ToFeedIDs(rawIDs)
 			if err != nil {
 				return err
 			}
@@ -45,7 +46,7 @@ func newFeedPullCommand() *cobra.Command {
 			var (
 				errs []error
 				n    int
-				s    = newPullSpinner(ids)
+				s    = newPullSpinner(rawIDs)
 				ch   = str.PullFeeds(cmd.Context(), ids)
 			)
 
@@ -72,17 +73,17 @@ func newFeedPullCommand() *cobra.Command {
 	return &command
 }
 
-func newPullSpinner(ids []uint32) *spinner.Spinner {
+func newPullSpinner(rawIDs []string) *spinner.Spinner {
 	var msg string
-	if nids := len(ids); nids == 0 {
+	if nids := len(rawIDs); nids == 0 {
 		msg = "Pulling all feeds..."
 	} else {
 		if nids == 1 {
-			msg = fmt.Sprintf("Pulling feeds with ID=%d...", ids[0])
+			msg = fmt.Sprintf("Pulling feeds with ID=%v...", rawIDs[0])
 		} else {
 			var elems []string
-			for _, id := range ids {
-				elems = append(elems, fmt.Sprintf("%d", id))
+			for _, rid := range rawIDs {
+				elems = append(elems, fmt.Sprintf("%v", rid))
 			}
 			msg = fmt.Sprintf("Pulling feeds with IDs=[%s]...", strings.Join(elems, ","))
 		}
