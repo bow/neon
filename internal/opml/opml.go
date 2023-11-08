@@ -22,11 +22,11 @@ import (
 )
 
 // Parse parses the given raw OPML document into an OPML struct. Only version 2.0 is supported.
-func Parse(raw []byte) (*OPML, error) {
+func Parse(raw []byte) (*Doc, error) {
 	dec := xml.NewDecoder(bytes.NewReader(raw))
 	dec.CharsetReader = charset.NewReaderLabel
 
-	var doc OPML
+	var doc Doc
 	if err := dec.Decode(&doc); err != nil {
 		return nil, err
 	}
@@ -37,29 +37,29 @@ func Parse(raw []byte) (*OPML, error) {
 	return &doc, nil
 }
 
-// OPML represents the minimal contents of an OPML file required to for storing a subscription list.
-type OPML struct {
+// Doc represents the minimal contents of an OPML file required to for storing a subscription list.
+type Doc struct {
 	XMLName xml.Name `xml:"opml"`
 	Version string   `xml:"version,attr"`
 	Head    Head     `xml:"head"`
 	Body    Body     `xml:"body"`
 }
 
-func New(title string, created time.Time) *OPML {
+func New(title string, created time.Time) *Doc {
 	ts := Timestamp(created)
 	t := &title
 	if title == "" {
 		t = nil
 	}
-	opml := OPML{
+	doc := Doc{
 		Version: "2.0",
 		Head:    Head{Title: t, DateCreated: &ts},
 		Body:    Body{},
 	}
-	return &opml
+	return &doc
 }
 
-func (doc *OPML) AddOutline(outl Outliner) error {
+func (doc *Doc) AddOutline(outl Outliner) error {
 	item, err := outl.Outline()
 	if err != nil {
 		return err
@@ -69,11 +69,11 @@ func (doc *OPML) AddOutline(outl Outliner) error {
 	return nil
 }
 
-func (doc *OPML) Empty() bool {
+func (doc *Doc) Empty() bool {
 	return len(doc.Body.Outlines) == 0
 }
 
-func (doc *OPML) XML() ([]byte, error) {
+func (doc *Doc) XML() ([]byte, error) {
 	if doc.Empty() {
 		return nil, ErrEmptyDocument
 	}
