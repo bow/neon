@@ -102,16 +102,11 @@ type statsAggregateRecord struct {
 	numFeeds             uint32
 	numEntries           uint32
 	numEntriesUnread     uint32
-	lastPullTime         string
+	lastPullTime         time.Time
 	mostRecentUpdateTime sql.NullString
 }
 
 func (aggr *statsAggregateRecord) stats() (*internal.Stats, error) {
-
-	lpt, err := deserializeTime(aggr.lastPullTime)
-	if err != nil {
-		return nil, fmt.Errorf("failed to deserialize Stats.LastPullTime: %w", err)
-	}
 
 	mrut, err := deserializeNullTime(aggr.mostRecentUpdateTime)
 	if err != nil {
@@ -122,7 +117,7 @@ func (aggr *statsAggregateRecord) stats() (*internal.Stats, error) {
 		NumFeeds:             aggr.numFeeds,
 		NumEntries:           aggr.numEntries,
 		NumEntriesUnread:     aggr.numEntriesUnread,
-		LastPullTime:         lpt,
+		LastPullTime:         &aggr.lastPullTime,
 		MostRecentUpdateTime: mrut,
 	}
 

@@ -96,7 +96,7 @@ func (pk pullKey) err(e error) internal.PullResult {
 
 var (
 	setFeedUpdateTime   = tableFieldSetter[time.Time](feedsTable, "update_time")
-	setFeedLastPullTime = tableFieldSetter[string](feedsTable, "last_pull_time")
+	setFeedLastPullTime = tableFieldSetter[time.Time](feedsTable, "last_pull_time")
 )
 
 func getPullKeys(ctx context.Context, tx *sql.Tx, feedIDs []ID) ([]pullKey, error) {
@@ -158,7 +158,7 @@ func pullNewFeedEntries(
 	parser FeedParser,
 ) chan internal.PullResult {
 
-	pullTime := time.Now().UTC().Format(time.RFC3339)
+	pullTime := time.Now().UTC()
 	pullf := func() internal.PullResult {
 
 		gfeed, err := parser.ParseURLWithContext(pk.feedURL, ctx)

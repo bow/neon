@@ -26,7 +26,7 @@ func TestGetGlobalStatsEmptyOk(t *testing.T) {
 	a.Equal(uint32(0), stats.NumFeeds)
 	a.Equal(uint32(0), stats.NumEntries)
 	a.Equal(uint32(0), stats.NumEntriesUnread)
-	a.Nil(stats.LastPullTime)
+	a.True(stats.LastPullTime.IsZero())
 	a.Nil(stats.MostRecentUpdateTime)
 }
 
