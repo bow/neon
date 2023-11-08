@@ -333,6 +333,10 @@ func (s *testStore) addFeedWithURL(url string) {
 	require.NoError(s.t, tx.Commit())
 }
 
+func toNullTime(v time.Time) sql.NullTime {
+	return sql.NullTime{Time: v, Valid: !v.IsZero()}
+}
+
 func mustTime(t *testing.T, value string) time.Time {
 	t.Helper()
 	tv := mustTimeP(t, value)

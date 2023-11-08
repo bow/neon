@@ -37,13 +37,13 @@ func TestGetGlobalStatsExtendedOk(t *testing.T) {
 	a := assert.New(t)
 	st := newTestStore(t)
 
-	dbFeeds := []*feedRecord{
+	dbFeeds := []*feedRecord{ // nolint:dupl
 		{
 			title:      "Feed A",
 			feedURL:    "http://a.com/feed.xml",
 			subscribed: mustTime(t, "2022-07-18T22:04:37Z"),
 			lastPulled: mustTime(t, "2022-07-18T22:04:37Z"),
-			updated:    toNullString("2022-04-20T16:32:30.760+02:00"),
+			updated:    toNullTime(mustTime(t, "2022-04-20T16:32:30.760+02:00")),
 			entries: []*entryRecord{
 				{
 					title:   "Entry A1",
@@ -73,7 +73,7 @@ func TestGetGlobalStatsExtendedOk(t *testing.T) {
 			feedURL:    "http://x.com/feed.xml",
 			subscribed: mustTime(t, "2022-07-18T22:04:45Z"),
 			lastPulled: mustTime(t, "2022-07-18T22:04:45Z"),
-			updated:    toNullString("2022-03-19T16:23:18.600+02:00"),
+			updated:    toNullTime(mustTime(t, "2022-03-19T16:23:18.600+02:00")),
 			entries: []*entryRecord{
 				{
 					title:   "Entry X1",

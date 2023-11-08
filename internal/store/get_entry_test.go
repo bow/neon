@@ -22,7 +22,7 @@ func TestGetEntryOk(t *testing.T) {
 		{
 			title:   "Feed A",
 			feedURL: "http://a.com/feed.xml",
-			updated: toNullString("2022-03-19T16:23:18.600+02:00"),
+			updated: toNullTime(mustTime(t, "2022-03-19T16:23:18.600+02:00")),
 			entries: []*entryRecord{
 				{title: "Entry A1", isRead: true},
 			},
@@ -30,7 +30,7 @@ func TestGetEntryOk(t *testing.T) {
 		{
 			title:   "Feed X",
 			feedURL: "http://x.com/feed.xml",
-			updated: toNullString("2022-04-20T16:32:30.760+02:00"),
+			updated: toNullTime(mustTime(t, "2022-04-20T16:32:30.760+02:00")),
 			entries: []*entryRecord{
 				{title: "Entry X1", isRead: false},
 				{title: "Entry X2", isRead: true},
@@ -39,7 +39,7 @@ func TestGetEntryOk(t *testing.T) {
 		{
 			title:   "Feed B",
 			feedURL: "http://b.com/feed.xml",
-			updated: toNullString("2023-04-09T09:49:22.685+02:00"),
+			updated: toNullTime(mustTime(t, "2023-04-09T09:49:22.685+02:00")),
 		},
 	}
 	keys := st.addFeeds(dbFeeds)

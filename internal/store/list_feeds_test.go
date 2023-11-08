@@ -35,12 +35,12 @@ func TestListFeedsOkExtended(t *testing.T) {
 		{
 			title:   "Feed A",
 			feedURL: "http://a.com/feed.xml",
-			updated: toNullString("2022-03-19T16:23:18.600+02:00"),
+			updated: toNullTime(mustTime(t, "2022-03-19T16:23:18.600+02:00")),
 		},
 		{
 			title:   "Feed X",
 			feedURL: "http://x.com/feed.xml",
-			updated: toNullString("2022-04-20T16:32:30.760+02:00"),
+			updated: toNullTime(mustTime(t, "2022-04-20T16:32:30.760+02:00")),
 		},
 	}
 	st.addFeeds(dbFeeds)

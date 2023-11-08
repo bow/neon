@@ -109,7 +109,7 @@ func TestImportOPMLOkExtended(t *testing.T) {
 		{
 			title:     "Feed BC",
 			feedURL:   "http://bc.com/feed.xml",
-			updated:   toNullString("2022-03-19T16:23:18.600+02:00"),
+			updated:   toNullTime(mustTime(t, "2022-03-19T16:23:18.600+02:00")),
 			isStarred: false,
 			entries: []*entryRecord{
 				{title: "Entry BC1", isRead: false},
@@ -119,7 +119,7 @@ func TestImportOPMLOkExtended(t *testing.T) {
 		{
 			title:     "Feed D",
 			feedURL:   "http://d.com/feed.xml",
-			updated:   toNullString("2022-04-20T16:32:30.760+02:00"),
+			updated:   toNullTime(mustTime(t, "2022-04-20T16:32:30.760+02:00")),
 			isStarred: true,
 			entries: []*entryRecord{
 				{title: "Entry D1", isRead: false},

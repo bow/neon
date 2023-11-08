@@ -44,13 +44,13 @@ func TestPullFeedsAllOkEmptyEntries(t *testing.T) {
 		{
 			title:   "Feed A",
 			feedURL: "http://a.com/feed.xml",
-			updated: toNullString("2022-03-19T16:23:18.600+02:00"),
+			updated: toNullTime(mustTime(t, "2022-03-19T16:23:18.600+02:00")),
 			entries: []*entryRecord{},
 		},
 		{
 			title:   "Feed X",
 			feedURL: "http://x.com/feed.xml",
-			updated: toNullString("2022-04-20T16:32:30.760+02:00"),
+			updated: toNullTime(mustTime(t, "2022-04-20T16:32:30.760+02:00")),
 			entries: []*entryRecord{},
 		},
 	}
@@ -100,7 +100,7 @@ func TestPullFeedsAllOkNoNewEntries(t *testing.T) {
 		{
 			title:   "Feed A",
 			feedURL: "http://a.com/feed.xml",
-			updated: toNullString("2022-03-19T16:23:18.600+02:00"),
+			updated: toNullTime(mustTime(t, "2022-03-19T16:23:18.600+02:00")),
 			entries: []*entryRecord{
 				{
 					title:   "Entry A1",
@@ -121,7 +121,7 @@ func TestPullFeedsAllOkNoNewEntries(t *testing.T) {
 		{
 			title:   "Feed X",
 			feedURL: "http://x.com/feed.xml",
-			updated: toNullString("2022-04-20T16:32:30.760+02:00"),
+			updated: toNullTime(mustTime(t, "2022-04-20T16:32:30.760+02:00")),
 			entries: []*entryRecord{
 				{
 					title:   "Entry X1",
@@ -210,13 +210,13 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 	r := require.New(t)
 	st := newTestStore(t)
 
-	dbFeeds := []*feedRecord{
+	dbFeeds := []*feedRecord{ // nolint:dupl
 		{
 			title:      "Feed A",
 			feedURL:    "http://a.com/feed.xml",
 			subscribed: mustTime(t, "2022-07-18T22:04:37Z"),
 			lastPulled: mustTime(t, "2022-07-18T22:04:37Z"),
-			updated:    toNullString("2022-03-19T16:23:18.600+02:00"),
+			updated:    toNullTime(mustTime(t, "2022-03-19T16:23:18.600+02:00")),
 			entries: []*entryRecord{
 				{
 					// This entry should not be returned later; 'updated' remains the same.
@@ -249,7 +249,7 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 			feedURL:    "http://x.com/feed.xml",
 			subscribed: mustTime(t, "2022-07-18T22:04:45Z"),
 			lastPulled: mustTime(t, "2022-07-18T22:04:45Z"),
-			updated:    toNullString("2022-04-20T16:32:30.760+02:00"),
+			updated:    toNullTime(mustTime(t, "2022-04-20T16:32:30.760+02:00")),
 			entries: []*entryRecord{
 				{
 					// This entry should not be returned later; 'updated' remains the same.
@@ -270,7 +270,7 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 		{
 			title:   dbFeeds[0].title,
 			feedURL: dbFeeds[0].feedURL,
-			updated: toNullString("2022-07-18T22:51:49.404+02:00"),
+			updated: toNullTime(mustTime(t, "2022-07-18T22:51:49.404+02:00")),
 			entries: []*entryRecord{
 				{
 					title:   dbFeeds[0].entries[0].title,
@@ -295,7 +295,7 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 		{
 			title:   dbFeeds[1].title,
 			feedURL: dbFeeds[1].feedURL,
-			updated: toNullString("2022-07-18T22:21:41.647+02:00"),
+			updated: toNullTime(mustTime(t, "2022-07-18T22:21:41.647+02:00")),
 			entries: []*entryRecord{
 				{
 					title:   dbFeeds[1].entries[0].title,
@@ -411,14 +411,14 @@ func TestPullFeedsSelectedOkSomeNewEntries(t *testing.T) {
 	r := require.New(t)
 	st := newTestStore(t)
 
-	dbFeeds := []*feedRecord{
+	dbFeeds := []*feedRecord{ // nolint:dupl
 		// This feed should not be returned later, it is not selected.
 		{
 			title:      "Feed A",
 			feedURL:    "http://a.com/feed.xml",
 			subscribed: mustTime(t, "2022-07-18T22:04:37Z"),
 			lastPulled: mustTime(t, "2022-07-18T22:04:37Z"),
-			updated:    toNullString("2022-03-19T16:23:18.600+02:00"),
+			updated:    toNullTime(mustTime(t, "2022-03-19T16:23:18.600+02:00")),
 			entries: []*entryRecord{
 				{
 					title:   "Entry A1",
@@ -449,7 +449,7 @@ func TestPullFeedsSelectedOkSomeNewEntries(t *testing.T) {
 			feedURL:    "http://x.com/feed.xml",
 			subscribed: mustTime(t, "2022-07-18T22:04:45Z"),
 			lastPulled: mustTime(t, "2022-07-18T22:04:45Z"),
-			updated:    toNullString("2022-04-20T16:32:30.760+02:00"),
+			updated:    toNullTime(mustTime(t, "2022-04-20T16:32:30.760+02:00")),
 			entries: []*entryRecord{
 				{
 					// This entry should not be returned later; 'updated' remains the same.
@@ -469,7 +469,7 @@ func TestPullFeedsSelectedOkSomeNewEntries(t *testing.T) {
 	pulledFeed := &feedRecord{
 		title:   dbFeeds[1].title,
 		feedURL: dbFeeds[1].feedURL,
-		updated: toNullString("2022-07-18T22:21:41.647+02:00"),
+		updated: toNullTime(mustTime(t, "2022-07-18T22:21:41.647+02:00")),
 		entries: []*entryRecord{
 			{
 				title:   dbFeeds[1].entries[0].title,
@@ -553,9 +553,9 @@ func toGFeed(t *testing.T, feed *feedRecord) *gofeed.Feed {
 		Title:    feed.title,
 		FeedLink: feed.feedURL,
 	}
-	if feed.updated.String != "" {
-		gfeed.Updated = feed.updated.String
-		gfeed.UpdatedParsed = mustTimeP(t, feed.updated.String)
+	if !feed.updated.Time.IsZero() {
+		gfeed.Updated = feed.updated.Time.UTC().Format(time.RFC3339Nano)
+		gfeed.UpdatedParsed = &feed.updated.Time
 	}
 	for _, entry := range feed.entries {
 		item := gofeed.Item{

@@ -24,7 +24,7 @@ type feedRecord struct {
 	siteURL     sql.NullString
 	subscribed  time.Time
 	lastPulled  time.Time
-	updated     sql.NullString
+	updated     sql.NullTime
 	isStarred   bool
 	tags        jsonArrayString
 	entries     []*entryRecord
@@ -32,10 +32,6 @@ type feedRecord struct {
 
 func (rec *feedRecord) feed() (*internal.Feed, error) {
 
-	upt, err := deserializeNullTime(rec.updated)
-	if err != nil {
-		return nil, fmt.Errorf("failed to deserialize Feed.Updated time: %w", err)
-	}
 	entries, err := entryRecords(rec.entries).entries()
 	if err != nil {
 		return nil, err
@@ -49,7 +45,7 @@ func (rec *feedRecord) feed() (*internal.Feed, error) {
 		SiteURL:     fromNullString(rec.siteURL),
 		Subscribed:  rec.subscribed,
 		LastPulled:  rec.lastPulled,
-		Updated:     upt,
+		Updated:     fromNullTime(rec.updated),
 		IsStarred:   rec.isStarred,
 		Tags:        []string(rec.tags),
 		Entries:     entries,
@@ -247,6 +243,13 @@ func fromNullString(v sql.NullString) *string {
 // considered a database NULL value.
 func toNullString(v string) sql.NullString {
 	return sql.NullString{String: v, Valid: v != ""}
+}
+
+func fromNullTime(v sql.NullTime) *time.Time {
+	if !v.Valid {
+		return nil
+	}
+	return &v.Time
 }
 
 // jsonArrayString is a wrapper type that implements Scan() for database-compatible

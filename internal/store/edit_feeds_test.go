@@ -37,7 +37,7 @@ func TestEditFeedsOkExtended(t *testing.T) {
 		{
 			title:     "Feed A",
 			feedURL:   "http://a.com/feed.xml",
-			updated:   toNullString("2022-03-19T16:23:18.600+02:00"),
+			updated:   toNullTime(mustTime(t, "2022-03-19T16:23:18.600+02:00")),
 			isStarred: false,
 		},
 	}
