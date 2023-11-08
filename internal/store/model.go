@@ -239,12 +239,6 @@ func fromNullString(v sql.NullString) *string {
 	return &v.String
 }
 
-// toNullString wraps the given string into an sql.NullString value. An empty string input is
-// considered a database NULL value.
-func toNullString(v string) sql.NullString {
-	return sql.NullString{String: v, Valid: v != ""}
-}
-
 func fromNullTime(v sql.NullTime) *time.Time {
 	if !v.Valid {
 		return nil

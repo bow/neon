@@ -333,6 +333,12 @@ func (s *testStore) addFeedWithURL(url string) {
 	require.NoError(s.t, tx.Commit())
 }
 
+// toNullString wraps the given string into an sql.NullString value. An empty string input is
+// considered a database NULL value.
+func toNullString(v string) sql.NullString {
+	return sql.NullString{String: v, Valid: v != ""}
+}
+
 func toNullTime(v time.Time) sql.NullTime {
 	return sql.NullTime{Time: v, Valid: !v.IsZero()}
 }
