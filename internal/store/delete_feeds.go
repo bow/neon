@@ -6,9 +6,11 @@ package store
 import (
 	"context"
 	"database/sql"
+
+	"github.com/bow/iris/internal"
 )
 
-func (s *SQLite) DeleteFeeds(ctx context.Context, ids []ID) error {
+func (s *SQLite) DeleteFeeds(ctx context.Context, ids []internal.ID) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 

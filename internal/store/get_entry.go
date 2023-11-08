@@ -11,7 +11,10 @@ import (
 	"github.com/bow/iris/internal"
 )
 
-func (s *SQLite) GetEntry(ctx context.Context, id ID) (*internal.Entry, error) {
+func (s *SQLite) GetEntry(
+	ctx context.Context,
+	id internal.ID,
+) (*internal.Entry, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 

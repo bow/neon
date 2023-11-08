@@ -52,21 +52,21 @@ type FeedStore interface {
 
 	PullFeeds(
 		ctx context.Context,
-		ids []ID,
+		ids []internal.ID,
 	) (
 		results <-chan internal.PullResult,
 	)
 
 	DeleteFeeds(
 		ctx context.Context,
-		ids []ID,
+		ids []internal.ID,
 	) (
 		err error,
 	)
 
 	ListEntries(
 		ctx context.Context,
-		feedID ID,
+		feedID internal.ID,
 	) (
 		entries []*internal.Entry,
 		err error,
@@ -82,7 +82,7 @@ type FeedStore interface {
 
 	GetEntry(
 		ctx context.Context,
-		id ID,
+		id internal.ID,
 	) (
 		entry *internal.Entry,
 		err error,

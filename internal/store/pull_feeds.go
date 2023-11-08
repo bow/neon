@@ -12,7 +12,10 @@ import (
 	"github.com/bow/iris/internal"
 )
 
-func (s *SQLite) PullFeeds(ctx context.Context, ids []ID) <-chan internal.PullResult {
+func (s *SQLite) PullFeeds(
+	ctx context.Context,
+	ids []internal.ID,
+) <-chan internal.PullResult {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 

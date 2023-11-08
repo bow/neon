@@ -11,7 +11,10 @@ import (
 	"github.com/bow/iris/internal"
 )
 
-func (s *SQLite) ListEntries(ctx context.Context, feedID ID) ([]*internal.Entry, error) {
+func (s *SQLite) ListEntries(
+	ctx context.Context,
+	feedID internal.ID,
+) ([]*internal.Entry, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
