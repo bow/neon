@@ -289,13 +289,8 @@ func (s *testStore) addFeeds(feeds []*feedRecord) map[string]feedKey {
 			if extID == "" {
 				extID = fmt.Sprintf("%s-entry-%d", s.t.Name(), i)
 			}
-			if updateTime.String == "" && !updateTime.Valid {
-				updateTime.String = time.Now().UTC().Format(time.RFC3339)
-				updateTime.Valid = true
-			} else {
-				tv, ierr := deserializeTime(updateTime.String)
-				require.NoError(s.t, ierr)
-				updateTime.String = *serializeTime(tv)
+			if updateTime.Time.IsZero() && !updateTime.Valid {
+				updateTime.Time = time.Now().UTC()
 				updateTime.Valid = true
 			}
 			err = stmt2.QueryRow(

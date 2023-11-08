@@ -238,7 +238,7 @@ func upsertEntries(
 	defer stmt2.Close()
 
 	upsert := func(entry *gofeed.Item, insertStmt, updateStmt *sql.Stmt) error {
-		updateTime := serializeTime(resolveEntryUpdateTime(entry))
+		updateTime := resolveEntryUpdateTime(entry)
 		_, err := insertStmt.ExecContext(
 			ctx,
 			feedID,

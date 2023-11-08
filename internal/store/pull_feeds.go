@@ -95,7 +95,7 @@ func (pk pullKey) err(e error) internal.PullResult {
 }
 
 var (
-	setFeedUpdateTime   = tableFieldSetter[string](feedsTable, "update_time")
+	setFeedUpdateTime   = tableFieldSetter[time.Time](feedsTable, "update_time")
 	setFeedLastPullTime = tableFieldSetter[string](feedsTable, "last_pull_time")
 )
 
@@ -166,7 +166,7 @@ func pullNewFeedEntries(
 			return pk.err(err)
 		}
 
-		updateTime := serializeTime(resolveFeedUpdateTime(gfeed))
+		updateTime := resolveFeedUpdateTime(gfeed)
 		if err = setFeedUpdateTime(ctx, tx, pk.feedID, updateTime); err != nil {
 			return pk.err(err)
 		}

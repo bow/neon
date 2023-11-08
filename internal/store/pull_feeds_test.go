@@ -106,14 +106,14 @@ func TestPullFeedsAllOkNoNewEntries(t *testing.T) {
 					title:   "Entry A1",
 					extID:   "A1",
 					isRead:  true,
-					updated: toNullString("2022-07-16T23:39:07.383+02:00"),
+					updated: toNullTime(mustTime(t, "2022-07-16T23:39:07.383+02:00")),
 					url:     toNullString("http://a.com/a1.html"),
 				},
 				{
 					title:   "Entry A2",
 					extID:   "A2",
 					isRead:  true,
-					updated: toNullString("2022-07-16T23:42:24.988+02:00"),
+					updated: toNullTime(mustTime(t, "2022-07-16T23:42:24.988+02:00")),
 					url:     toNullString("http://a.com/a2.html"),
 				},
 			},
@@ -127,7 +127,7 @@ func TestPullFeedsAllOkNoNewEntries(t *testing.T) {
 					title:   "Entry X1",
 					extID:   "X1",
 					isRead:  true,
-					updated: toNullString("2022-07-16T23:43:12.759+02:00"),
+					updated: toNullTime(mustTime(t, "2022-07-16T23:43:12.759+02:00")),
 					url:     toNullString("http://x.com/x1.html"),
 				},
 			},
@@ -223,7 +223,7 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 					title:   "Entry A1",
 					extID:   "A1",
 					isRead:  true,
-					updated: toNullString("2022-07-16T23:39:07.383+02:00"),
+					updated: toNullTime(mustTime(t, "2022-07-16T23:39:07.383+02:00")),
 					url:     toNullString("http://a.com/a1.html"),
 				},
 				{
@@ -231,7 +231,7 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 					title:   "Entry A2",
 					extID:   "A2",
 					isRead:  false,
-					updated: toNullString("2022-07-16T23:42:24.988+02:00"),
+					updated: toNullTime(mustTime(t, "2022-07-16T23:42:24.988+02:00")),
 					url:     toNullString("http://a.com/a2.html"),
 				},
 				{
@@ -239,7 +239,7 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 					title:   "Entry A3",
 					extID:   "A3",
 					isRead:  true,
-					updated: toNullString("2022-03-18T22:51:49.404+02:00"),
+					updated: toNullTime(mustTime(t, "2022-03-18T22:51:49.404+02:00")),
 					url:     toNullString("http://a.com/a3.html"),
 				},
 			},
@@ -256,7 +256,7 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 					title:   "Entry X1",
 					extID:   "X1",
 					isRead:  true,
-					updated: toNullString("2022-07-16T23:43:12.759+02:00"),
+					updated: toNullTime(mustTime(t, "2022-07-16T23:43:12.759+02:00")),
 					url:     toNullString("http://x.com/x1.html"),
 				},
 			},
@@ -287,7 +287,7 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 				{
 					title:   dbFeeds[0].entries[2].title,
 					extID:   dbFeeds[0].entries[2].extID,
-					updated: toNullString("2022-07-19T16:23:18.600+02:00"),
+					updated: toNullTime(mustTime(t, "2022-07-19T16:23:18.600+02:00")),
 					url:     dbFeeds[0].entries[2].url,
 				},
 			},
@@ -306,7 +306,7 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 				{
 					title:   "Entry X2",
 					extID:   "X2",
-					updated: toNullString("2022-07-18T22:21:41.647+02:00"),
+					updated: toNullTime(mustTime(t, "2022-07-18T22:21:41.647+02:00")),
 					url:     toNullString("http://x.com/x2.html"),
 				},
 			},
@@ -424,21 +424,21 @@ func TestPullFeedsSelectedOkSomeNewEntries(t *testing.T) {
 					title:   "Entry A1",
 					extID:   "A1",
 					isRead:  true,
-					updated: toNullString("2022-07-16T23:39:07.383+02:00"),
+					updated: toNullTime(mustTime(t, "2022-07-16T23:39:07.383+02:00")),
 					url:     toNullString("http://a.com/a1.html"),
 				},
 				{
 					title:   "Entry A2",
 					extID:   "A2",
 					isRead:  false,
-					updated: toNullString("2022-07-16T23:42:24.988+02:00"),
+					updated: toNullTime(mustTime(t, "2022-07-16T23:42:24.988+02:00")),
 					url:     toNullString("http://a.com/a2.html"),
 				},
 				{
 					title:   "Entry A3",
 					extID:   "A3",
 					isRead:  true,
-					updated: toNullString("2022-03-18T22:51:49.404+02:00"),
+					updated: toNullTime(mustTime(t, "2022-03-18T22:51:49.404+02:00")),
 					url:     toNullString("http://a.com/a3.html"),
 				},
 			},
@@ -456,7 +456,7 @@ func TestPullFeedsSelectedOkSomeNewEntries(t *testing.T) {
 					title:   "Entry X1",
 					extID:   "X1",
 					isRead:  true,
-					updated: toNullString("2022-07-16T23:43:12.759+02:00"),
+					updated: toNullTime(mustTime(t, "2022-07-16T23:43:12.759+02:00")),
 					url:     toNullString("http://x.com/x1.html"),
 				},
 			},
@@ -480,7 +480,7 @@ func TestPullFeedsSelectedOkSomeNewEntries(t *testing.T) {
 			{
 				title:   "Entry X2",
 				extID:   "X2",
-				updated: toNullString("2022-07-18T22:21:41.647+02:00"),
+				updated: toNullTime(mustTime(t, "2022-07-18T22:21:41.647+02:00")),
 				url:     toNullString("http://x.com/x2.html"),
 			},
 		},
@@ -558,19 +558,20 @@ func toGFeed(t *testing.T, feed *feedRecord) *gofeed.Feed {
 		gfeed.UpdatedParsed = &feed.updated.Time
 	}
 	for _, entry := range feed.entries {
+		e := entry
 		item := gofeed.Item{
-			GUID:    entry.extID,
-			Link:    entry.url.String,
-			Title:   entry.title,
-			Content: entry.content.String,
+			GUID:    e.extID,
+			Link:    e.url.String,
+			Title:   e.title,
+			Content: e.content.String,
 		}
-		if entry.published.String != "" {
-			item.Published = entry.published.String
-			item.PublishedParsed = mustTimeP(t, entry.published.String)
+		if e.published.String != "" {
+			item.Published = e.published.String
+			item.PublishedParsed = mustTimeP(t, e.published.String)
 		}
-		if entry.updated.String != "" {
-			item.Updated = entry.updated.String
-			item.UpdatedParsed = mustTimeP(t, entry.updated.String)
+		if !e.updated.Time.IsZero() {
+			item.Updated = e.updated.Time.UTC().Format(time.RFC3339Nano)
+			item.UpdatedParsed = &e.updated.Time
 		}
 		gfeed.Items = append(gfeed.Items, &item)
 	}

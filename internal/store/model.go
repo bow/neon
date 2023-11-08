@@ -75,7 +75,7 @@ type entryRecord struct {
 	title       string
 	isRead      bool
 	extID       string
-	updated     sql.NullString
+	updated     sql.NullTime
 	published   sql.NullString
 	description sql.NullString
 	content     sql.NullString
@@ -84,10 +84,6 @@ type entryRecord struct {
 
 func (rec *entryRecord) entry() (*internal.Entry, error) {
 
-	ut, err := deserializeNullTime(rec.updated)
-	if err != nil {
-		return nil, fmt.Errorf("failed to deserialize Entry.Updated time: %w", err)
-	}
 	pt, err := deserializeNullTime(rec.published)
 	if err != nil {
 		return nil, fmt.Errorf("failed to deserialize Entry.Published time: %w", err)
@@ -99,7 +95,7 @@ func (rec *entryRecord) entry() (*internal.Entry, error) {
 		Title:       rec.title,
 		IsRead:      rec.isRead,
 		ExtID:       rec.extID,
-		Updated:     ut,
+		Updated:     fromNullTime(rec.updated),
 		Published:   pt,
 		Description: fromNullString(rec.description),
 		Content:     fromNullString(rec.content),
