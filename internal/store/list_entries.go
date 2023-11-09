@@ -15,8 +15,6 @@ func (s *SQLite) ListEntries(
 	ctx context.Context,
 	feedID internal.ID,
 ) ([]*internal.Entry, error) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
 
 	recs := make([]*entryRecord, 0)
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
@@ -30,6 +28,9 @@ func (s *SQLite) ListEntries(
 	}
 
 	fail := failF("SQLite.ListEntries")
+
+	s.mu.Lock()
+	defer s.mu.Unlock()
 
 	err := s.withTx(ctx, dbFunc)
 	if err != nil {

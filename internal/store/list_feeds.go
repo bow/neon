@@ -11,8 +11,6 @@ import (
 )
 
 func (s *SQLite) ListFeeds(ctx context.Context) ([]*internal.Feed, error) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
 
 	recs := make([]*feedRecord, 0)
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
@@ -36,10 +34,14 @@ func (s *SQLite) ListFeeds(ctx context.Context) ([]*internal.Feed, error) {
 
 	fail := failF("SQLite.ListFeeds")
 
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
 	err := s.withTx(ctx, dbFunc)
 	if err != nil {
 		return nil, fail(err)
 	}
+
 	return feedRecords(recs).feeds(), nil
 }
 

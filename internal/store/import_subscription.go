@@ -20,9 +20,6 @@ func (s *SQLite) ImportSubscription(
 		return 0, 0, nil
 	}
 
-	s.mu.Lock()
-	defer s.mu.Unlock()
-
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
 		now := time.Now()
 
@@ -56,6 +53,9 @@ func (s *SQLite) ImportSubscription(
 	}
 
 	fail := failF("SQLite.ImportSubscription")
+
+	s.mu.Lock()
+	defer s.mu.Unlock()
 
 	err = s.withTx(ctx, dbFunc)
 	if err != nil {

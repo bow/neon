@@ -14,8 +14,6 @@ func (s *SQLite) ExportSubscription(
 	ctx context.Context,
 	title *string,
 ) (*internal.Subscription, error) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
 
 	var sub internal.Subscription
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
@@ -32,6 +30,9 @@ func (s *SQLite) ExportSubscription(
 	}
 
 	fail := failF("SQLite.ExportSubscription")
+
+	s.mu.Lock()
+	defer s.mu.Unlock()
 
 	err := s.withTx(ctx, dbFunc)
 	if err != nil {

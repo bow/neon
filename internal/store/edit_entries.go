@@ -15,8 +15,6 @@ func (s *SQLite) EditEntries(
 	ctx context.Context,
 	ops []*internal.EntryEditOp,
 ) ([]*internal.Entry, error) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
 
 	updateFunc := func(
 		ctx context.Context,
@@ -41,6 +39,9 @@ func (s *SQLite) EditEntries(
 	}
 
 	fail := failF("SQLite.EditEntries")
+
+	s.mu.Lock()
+	defer s.mu.Unlock()
 
 	err := s.withTx(ctx, dbFunc)
 	if err != nil {

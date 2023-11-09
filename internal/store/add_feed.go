@@ -22,8 +22,6 @@ func (s *SQLite) AddFeed(
 	tags []string,
 	isStarred *bool,
 ) (*internal.Feed, error) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
 
 	fail := failF("SQLite.AddFeed")
 
@@ -70,6 +68,9 @@ func (s *SQLite) AddFeed(
 
 		return nil
 	}
+
+	s.mu.Lock()
+	defer s.mu.Unlock()
 
 	err = s.withTx(ctx, dbFunc)
 	if err != nil {

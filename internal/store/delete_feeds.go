@@ -11,10 +11,6 @@ import (
 )
 
 func (s *SQLite) DeleteFeeds(ctx context.Context, ids []internal.ID) error {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-
-	ids = internal.Dedup(ids)
 
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
 
@@ -39,7 +35,7 @@ func (s *SQLite) DeleteFeeds(ctx context.Context, ids []internal.ID) error {
 			return nil
 		}
 
-		for _, id := range ids {
+		for _, id := range internal.Dedup(ids) {
 			if err := deleteFunc(ctx, id); err != nil {
 				return err
 			}
@@ -50,9 +46,13 @@ func (s *SQLite) DeleteFeeds(ctx context.Context, ids []internal.ID) error {
 
 	fail := failF("SQLite.DeleteFeeds")
 
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
 	err := s.withTx(ctx, dbFunc)
 	if err != nil {
 		return fail(err)
 	}
+
 	return nil
 }

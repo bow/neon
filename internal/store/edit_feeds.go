@@ -15,8 +15,6 @@ func (s *SQLite) EditFeeds(
 	ctx context.Context,
 	ops []*internal.FeedEditOp,
 ) ([]*internal.Feed, error) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
 
 	updateFunc := func(
 		ctx context.Context,
@@ -51,10 +49,14 @@ func (s *SQLite) EditFeeds(
 
 	fail := failF("SQLite.EditFeed")
 
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
 	err := s.withTx(ctx, dbFunc)
 	if err != nil {
 		return nil, fail(err)
 	}
+
 	return feedRecords(feeds).feeds(), nil
 }
 

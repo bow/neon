@@ -16,15 +16,12 @@ func (s *SQLite) PullFeeds(
 	ctx context.Context,
 	ids []internal.ID,
 ) <-chan internal.PullResult {
-	s.mu.Lock()
-	defer s.mu.Unlock()
 
 	var (
 		fail = failF("SQLite.PullFeeds")
 		c    = make(chan internal.PullResult)
 		wg   sync.WaitGroup
 	)
-	ids = internal.Dedup(ids)
 
 	// nolint: unparam
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
@@ -35,10 +32,10 @@ func (s *SQLite) PullFeeds(
 			pks []pullKey
 			err error
 		)
-		if len(ids) == 0 {
+		if dedups := internal.Dedup(ids); len(dedups) == 0 {
 			pks, err = getAllPullKeys(ctx, tx)
 		} else {
-			pks, err = getPullKeys(ctx, tx, ids)
+			pks, err = getPullKeys(ctx, tx, dedups)
 		}
 		if err != nil {
 			c <- internal.NewPullResultFromError(nil, fail(err))
@@ -64,6 +61,9 @@ func (s *SQLite) PullFeeds(
 
 		return nil
 	}
+
+	s.mu.Lock()
+	defer s.mu.Unlock()
 
 	go func() {
 		defer func() {

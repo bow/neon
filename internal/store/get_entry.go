@@ -15,8 +15,6 @@ func (s *SQLite) GetEntry(
 	ctx context.Context,
 	id internal.ID,
 ) (*internal.Entry, error) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
 
 	var rec *entryRecord
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
@@ -32,6 +30,9 @@ func (s *SQLite) GetEntry(
 	}
 
 	fail := failF("SQLite.ViewFeed")
+
+	s.mu.Lock()
+	defer s.mu.Unlock()
 
 	err := s.withTx(ctx, dbFunc)
 	if err != nil {

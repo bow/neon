@@ -12,8 +12,6 @@ import (
 )
 
 func (s *SQLite) GetGlobalStats(ctx context.Context) (*internal.Stats, error) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
 
 	aggr := &statsAggregateRecord{}
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
@@ -26,6 +24,9 @@ func (s *SQLite) GetGlobalStats(ctx context.Context) (*internal.Stats, error) {
 	}
 
 	fail := failF("SQLite.GetGlobalStats")
+
+	s.mu.Lock()
+	defer s.mu.Unlock()
 
 	err := s.withTx(ctx, dbFunc)
 	if err != nil {
