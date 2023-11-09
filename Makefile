@@ -139,10 +139,10 @@ lint:  ## Lint the code.
 
 
 .PHONY: mocks
-mocks: internal/store/store_mock.go internal/store/parser_mock.go  ## Generate mocks from interfaces.
+mocks: internal/store/store_mock.go internal/parser_mock.go  ## Generate mocks from interfaces.
 
-internal/store/parser_mock.go: internal/store/parser.go
-	mockgen -source=$< -package=store FeedParser > $@
+internal/parser_mock.go: internal/parser.go
+	mockgen -source=$< -package=internal FeedParser > $@
 
 internal/store/store_mock.go: internal/store/store.go
 	mockgen -source=$< -self_package=github.com/bow/iris/internal/store -package=store FeedStore > $@

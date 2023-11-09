@@ -158,7 +158,7 @@ func pullNewFeedEntries(
 	ctx context.Context,
 	tx *sql.Tx,
 	pk pullKey,
-	parser FeedParser,
+	parser internal.FeedParser,
 ) chan internal.PullResult {
 
 	pullTime := time.Now().UTC()

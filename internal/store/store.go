@@ -115,14 +115,14 @@ type FeedStore interface {
 type SQLite struct {
 	db     *sql.DB
 	mu     sync.RWMutex
-	parser FeedParser
+	parser internal.FeedParser
 }
 
 func NewSQLite(filename string) (*SQLite, error) {
 	return NewSQLiteWithParser(filename, gofeed.NewParser())
 }
 
-func NewSQLiteWithParser(filename string, parser FeedParser) (*SQLite, error) {
+func NewSQLiteWithParser(filename string, parser internal.FeedParser) (*SQLite, error) {
 
 	fail := failF("NewSQLiteStore")
 

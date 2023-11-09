@@ -14,6 +14,8 @@ import (
 	gomock "github.com/golang/mock/gomock"
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/require"
+
+	"github.com/bow/iris/internal"
 )
 
 // feedKey is a helper struct for testing.
@@ -26,7 +28,7 @@ type feedKey struct {
 type testStore struct {
 	*SQLite
 	t      *testing.T
-	parser *MockFeedParser
+	parser *internal.MockFeedParser
 }
 
 func newTestStore(t *testing.T) testStore {
@@ -36,7 +38,7 @@ func newTestStore(t *testing.T) testStore {
 	zerolog.SetGlobalLevel(zerolog.Disabled)
 
 	dbPath := filepath.Join(t.TempDir(), t.Name()+".db")
-	prs := NewMockFeedParser(gomock.NewController(t))
+	prs := internal.NewMockFeedParser(gomock.NewController(t))
 	s, err := NewSQLiteWithParser(dbPath, prs)
 	require.NoError(t, err)
 

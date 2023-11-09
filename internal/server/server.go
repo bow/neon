@@ -125,7 +125,7 @@ type Builder struct {
 	addr      string
 	store     store.FeedStore
 	storePath string
-	parser    store.FeedParser
+	parser    internal.FeedParser
 	logger    zerolog.Logger
 }
 
