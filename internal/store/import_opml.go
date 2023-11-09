@@ -6,6 +6,7 @@ package store
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"time"
 
 	"github.com/bow/iris/internal/opml"
@@ -37,6 +38,9 @@ func (s *SQLite) ImportOPML(
 		now := time.Now()
 
 		for _, outl := range doc.Body.Outlines {
+			if outl.Text == "" {
+				return fmt.Errorf("missing title for feed with URL=%s in OPML document", outl.XMLURL)
+			}
 			feedID, isAdded, ierr := upsertFeed(
 				ctx,
 				tx,
