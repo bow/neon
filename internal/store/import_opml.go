@@ -6,9 +6,9 @@ package store
 import (
 	"context"
 	"database/sql"
-	"fmt"
 	"time"
 
+	"github.com/bow/iris/internal"
 	"github.com/bow/iris/internal/opml"
 )
 
@@ -34,21 +34,24 @@ func (s *SQLite) ImportOPML(
 		return 0, 0, nil
 	}
 
+	sub, err := internal.NewSubscriptionFromOPML(doc)
+	if err != nil {
+		return 0, 0, fail(err)
+	}
+
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
 		now := time.Now()
 
-		for _, outl := range doc.Body.Outlines {
-			if outl.Text == "" {
-				return fmt.Errorf("missing title for feed with URL=%s in OPML document", outl.XMLURL)
-			}
+		for _, feed := range sub.Feeds {
+			f := feed
 			feedID, isAdded, ierr := upsertFeed(
 				ctx,
 				tx,
-				outl.XMLURL,
-				pointerOrNil(outl.Text),
-				outl.Description,
-				outl.HTMLURL,
-				outl.IsStarred,
+				f.FeedURL,
+				pointerOrNil(f.Title),
+				f.Description,
+				f.SiteURL,
+				&f.IsStarred,
 				nil,
 				&now,
 			)
@@ -56,7 +59,7 @@ func (s *SQLite) ImportOPML(
 				return ierr
 			}
 
-			if ierr = addFeedTags(ctx, tx, feedID, outl.Categories); ierr != nil {
+			if ierr = addFeedTags(ctx, tx, feedID, f.Tags); ierr != nil {
 				return ierr
 			}
 			processed++
