@@ -8,6 +8,7 @@ import (
 	"io"
 	"os"
 
+	"github.com/bow/iris/internal"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
@@ -49,7 +50,12 @@ func newFeedImportCommand() *cobra.Command {
 				return err
 			}
 
-			nproc, nimp, err := str.ImportOPML(cmd.Context(), contents)
+			sub, err := internal.NewSubscriptionFromRawOPML(contents)
+			if err != nil {
+				return fmt.Errorf("failed to parse OPML document: %w", err)
+			}
+
+			nproc, nimp, err := str.ImportSubscription(cmd.Context(), sub)
 			if err != nil {
 				return err
 			}

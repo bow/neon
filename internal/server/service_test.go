@@ -758,9 +758,40 @@ func TestImportOPMLOk(t *testing.T) {
 	a := assert.New(t)
 	client, str := setupServerTest(t)
 
-	payload := []byte("payload")
+	payload := []byte(`<?xml version="1.0" encoding="UTF-8"?>
+<opml version="2.0">
+  <head>
+    <title>iris export</title>
+    <dateCreated>Wed, 09 Nov 2023 04:55:19 CET</dateCreated>
+  </head>
+  <body>
+    <outline text="Feed Q" type="rss" xmlUrl="http://q.com/feed.xml" xmlns:iris="https://github.com/bow/iris" iris:isStarred="true"></outline>
+    <outline text="Feed X" type="rss" xmlUrl="http://x.com/feed.xml" category="foo,baz"></outline>
+    <outline text="Feed A" type="rss" xmlUrl="http://a.com/feed.xml"></outline>
+  </body>
+</opml>`)
+
+	sub := internal.Subscription{
+		Feeds: []*internal.Feed{
+			{
+				Title:     "Feed Q",
+				FeedURL:   "http://q.com/feed.xml",
+				IsStarred: true,
+			},
+			{
+				Title:   "Feed X",
+				FeedURL: "http://x.com/feed.xml",
+				Tags:    []string{"foo", "baz"},
+			},
+			{
+				Title:   "Feed A",
+				FeedURL: "http://a.com/feed.xml",
+			},
+		},
+	}
+
 	str.EXPECT().
-		ImportOPML(gomock.Any(), payload).
+		ImportSubscription(gomock.Any(), &sub).
 		Return(3, 2, nil)
 
 	req := api.ImportOPMLRequest{Payload: payload}

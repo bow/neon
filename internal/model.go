@@ -38,6 +38,16 @@ type Subscription struct {
 	Feeds []*Feed
 }
 
+func NewSubscriptionFromRawOPML(payload []byte) (*Subscription, error) {
+
+	doc, err := opml.Parse(payload)
+	if err != nil {
+		return nil, err
+	}
+
+	return NewSubscriptionFromOPML(doc)
+}
+
 func NewSubscriptionFromOPML(doc *opml.Doc) (*Subscription, error) {
 
 	feeds := make([]*Feed, len(doc.Body.Outlines))

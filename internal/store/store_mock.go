@@ -139,20 +139,20 @@ func (mr *MockFeedStoreMockRecorder) GetGlobalStats(ctx interface{}) *gomock.Cal
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGlobalStats", reflect.TypeOf((*MockFeedStore)(nil).GetGlobalStats), ctx)
 }
 
-// ImportOPML mocks base method.
-func (m *MockFeedStore) ImportOPML(ctx context.Context, payload []byte) (int, int, error) {
+// ImportSubscription mocks base method.
+func (m *MockFeedStore) ImportSubscription(ctx context.Context, sub *internal.Subscription) (int, int, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ImportOPML", ctx, payload)
+	ret := m.ctrl.Call(m, "ImportSubscription", ctx, sub)
 	ret0, _ := ret[0].(int)
 	ret1, _ := ret[1].(int)
 	ret2, _ := ret[2].(error)
 	return ret0, ret1, ret2
 }
 
-// ImportOPML indicates an expected call of ImportOPML.
-func (mr *MockFeedStoreMockRecorder) ImportOPML(ctx, payload interface{}) *gomock.Call {
+// ImportSubscription indicates an expected call of ImportSubscription.
+func (mr *MockFeedStoreMockRecorder) ImportSubscription(ctx, sub interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ImportOPML", reflect.TypeOf((*MockFeedStore)(nil).ImportOPML), ctx, payload)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ImportSubscription", reflect.TypeOf((*MockFeedStore)(nil).ImportSubscription), ctx, sub)
 }
 
 // ListEntries mocks base method.

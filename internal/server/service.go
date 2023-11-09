@@ -219,7 +219,15 @@ func (svc *service) ImportOPML(
 	req *api.ImportOPMLRequest,
 ) (*api.ImportOPMLResponse, error) {
 
-	nproc, nimp, err := svc.store.ImportOPML(ctx, req.Payload)
+	payload := req.GetPayload()
+
+	sub, err := internal.NewSubscriptionFromRawOPML(payload)
+	if err != nil {
+		msg := fmt.Errorf("failed to parse OPML: %w", err).Error()
+		return nil, status.Errorf(codes.InvalidArgument, msg)
+	}
+
+	nproc, nimp, err := svc.store.ImportSubscription(ctx, sub)
 	if err != nil {
 		return nil, err
 	}

@@ -21,8 +21,18 @@ import (
 	"golang.org/x/net/html/charset"
 )
 
+var (
+	ErrEmptyPayload  = errors.New("byte payload is empty")
+	ErrEmptyDocument = errors.New("OPML document is empty")
+)
+
 // Parse parses the given raw OPML document into an OPML struct. Only version 2.0 is supported.
 func Parse(raw []byte) (*Doc, error) {
+
+	if len(raw) == 0 {
+		return nil, ErrEmptyPayload
+	}
+
 	dec := xml.NewDecoder(bytes.NewReader(raw))
 	dec.CharsetReader = charset.NewReaderLabel
 
@@ -184,8 +194,6 @@ func (t *Timestamp) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 	ts := tv.Format(time.RFC822)
 	return e.EncodeElement(ts, start)
 }
-
-var ErrEmptyDocument = errors.New("OPML document is empty")
 
 // tsFormats is an array of possible time formats that can be found in an OPML file. These are
 // roughly based on RFC822, with variations in number of digits for day and year, and

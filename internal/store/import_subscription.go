@@ -9,35 +9,19 @@ import (
 	"time"
 
 	"github.com/bow/iris/internal"
-	"github.com/bow/iris/internal/opml"
 )
 
-func (s *SQLite) ImportOPML(
+func (s *SQLite) ImportSubscription(
 	ctx context.Context,
-	payload []byte,
+	sub *internal.Subscription,
 ) (processed int, imported int, err error) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
 
-	if len(payload) == 0 {
-		return 0, 0, ErrEmptyPayload
-	}
-
-	fail := failF("SQLite.ImportOPML")
-
-	doc, err := opml.Parse(payload)
-	if err != nil {
-		return 0, 0, fail(err)
-	}
-
-	if doc.Empty() {
+	if len(sub.Feeds) == 0 {
 		return 0, 0, nil
 	}
 
-	sub, err := internal.NewSubscriptionFromOPML(doc)
-	if err != nil {
-		return 0, 0, fail(err)
-	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
 
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
 		now := time.Now()
@@ -71,9 +55,12 @@ func (s *SQLite) ImportOPML(
 		return nil
 	}
 
+	fail := failF("SQLite.ImportSubscription")
+
 	err = s.withTx(ctx, dbFunc)
 	if err != nil {
 		return 0, 0, fail(err)
 	}
+
 	return processed, imported, nil
 }

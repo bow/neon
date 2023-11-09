@@ -95,10 +95,9 @@ type FeedStore interface {
 		err error,
 	)
 
-	// TODO: Import OPML structs instead.
-	ImportOPML(
+	ImportSubscription(
 		ctx context.Context,
-		payload []byte,
+		sub *internal.Subscription,
 	) (
 		processed int,
 		imported int,

@@ -7,11 +7,12 @@ import (
 	"context"
 	"testing"
 
+	"github.com/bow/iris/internal"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
-func TestImportOPMLErrEmptyPayload(t *testing.T) {
+func TestImportSubscriptionOkNoFeeds(t *testing.T) {
 	t.Parallel()
 
 	a := assert.New(t)
@@ -20,35 +21,9 @@ func TestImportOPMLErrEmptyPayload(t *testing.T) {
 
 	r.Equal(0, st.countFeeds())
 
-	nproc, nimp, err := st.ImportOPML(context.Background(), []byte{})
-	r.Equal(0, nproc)
-	r.Equal(0, nimp)
-	a.EqualError(err, "payload is empty")
+	sub := internal.Subscription{}
 
-	a.Equal(0, st.countFeeds())
-}
-
-func TestImportOPMLOkEmptyOPMLBody(t *testing.T) {
-	t.Parallel()
-
-	a := assert.New(t)
-	r := require.New(t)
-	st := newTestStore(t)
-
-	r.Equal(0, st.countFeeds())
-
-	payload := `<?xml version="1.0" encoding="UTF-8"?>
-<opml version="2.0">
-  <head>
-    <title>mySubscriptions.opml</title>
-    <dateCreated>Sat, 18 Jun 2005 12:11:52 GMT</dateCreated>
-  </head>
-  <body>
-  </body>
-</opml>
-`
-
-	nproc, nimp, err := st.ImportOPML(context.Background(), []byte(payload))
+	nproc, nimp, err := st.ImportSubscription(context.Background(), &sub)
 	r.NoError(err)
 
 	a.Equal(0, nproc)
@@ -56,7 +31,7 @@ func TestImportOPMLOkEmptyOPMLBody(t *testing.T) {
 	a.Equal(0, st.countFeeds())
 }
 
-func TestImportOPMLOkMinimal(t *testing.T) {
+func TestImportSubscriptionOkMinimal(t *testing.T) {
 	t.Parallel()
 
 	a := assert.New(t)
@@ -77,19 +52,13 @@ func TestImportOPMLOkMinimal(t *testing.T) {
 	r.Equal(0, st.countFeeds())
 	a.False(existf())
 
-	payload := `<?xml version="1.0" encoding="UTF-8"?>
-<opml version="2.0">
-  <head>
-    <title>mySubscriptions.opml</title>
-    <dateCreated>Sat, 18 Jun 2005 12:11:52 GMT</dateCreated>
-  </head>
-  <body>
-    <outline text="Feed A" type="rss" xmlUrl="http://a.com/feed.xml"></outline>
-  </body>
-</opml>
-`
+	sub := internal.Subscription{
+		Feeds: []*internal.Feed{
+			{Title: "Feed A", FeedURL: "http://a.com/feed.xml"},
+		},
+	}
 
-	nproc, nimp, err := st.ImportOPML(context.Background(), []byte(payload))
+	nproc, nimp, err := st.ImportSubscription(context.Background(), &sub)
 	r.NoError(err)
 
 	a.Equal(1, nproc)
@@ -98,7 +67,7 @@ func TestImportOPMLOkMinimal(t *testing.T) {
 	a.True(existf())
 }
 
-func TestImportOPMLOkExtended(t *testing.T) {
+func TestImportSubscriptionOkExtended(t *testing.T) {
 	t.Parallel()
 
 	a := assert.New(t)
@@ -150,37 +119,28 @@ func TestImportOPMLOkExtended(t *testing.T) {
 		)
 	}
 
-	payload := `<?xml version="1.0" encoding="UTF-8"?>
-<opml version="2.0">
-  <head>
-    <title>mySubscriptions.opml</title>
-    <dateCreated>Sun, 26 Jun 2005 18:08:31 GMT</dateCreated>
-  </head>
-  <body>
-    <outline
-		text="Feed A"
-		type="rss"
-		xmlUrl="http://a.com/feed.xml"
-		htmlUrl="http://a.com"
-		description="New feed"
-	></outline>
-	<outline
-		text="Feed BC"
-		type="rss"
-		xmlUrl="http://bc.com/feed.xml"
-		description="Updated feed"
-		xmlns:iris="https://github.com/bow/iris"
-		iris:isStarred="true"
-	></outline>
-  </body>
-</opml>
-`
+	sub := internal.Subscription{
+		Feeds: []*internal.Feed{
+			{
+				Title:       "Feed A",
+				FeedURL:     "http://a.com/feed.xml",
+				SiteURL:     pointer("http://a.com"),
+				Description: pointer("New feed"),
+			},
+			{
+				Title:       "Feed BC",
+				FeedURL:     "http://bc.com/feed.xml",
+				Description: pointer("Updated feed"),
+				IsStarred:   true,
+			},
+		},
+	}
 
 	r.Equal(2, st.countFeeds())
 	a.False(existfA())
 	a.False(existfBC())
 
-	nproc, nimp, err := st.ImportOPML(context.Background(), []byte(payload))
+	nproc, nimp, err := st.ImportSubscription(context.Background(), &sub)
 	r.NoError(err)
 
 	a.Equal(2, nproc)
