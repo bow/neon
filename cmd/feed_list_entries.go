@@ -5,7 +5,6 @@ package cmd
 
 import (
 	"fmt"
-	"strconv"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -29,7 +28,7 @@ func newFeedListEntriesCommand() *cobra.Command {
 				return fmt.Errorf("too many arguments")
 			}
 
-			feedID, err := strconv.ParseUint(args[0], 10, 32)
+			feedID, err := internal.ToFeedID(args[0])
 			if err != nil {
 				return err
 			}
@@ -39,7 +38,7 @@ func newFeedListEntriesCommand() *cobra.Command {
 				return err
 			}
 
-			entries, err := db.ListEntries(cmd.Context(), internal.ID(feedID))
+			entries, err := db.ListEntries(cmd.Context(), feedID)
 			if err != nil {
 				return err
 			}
