@@ -18,7 +18,7 @@ import (
 	"google.golang.org/grpc/health/grpc_health_v1"
 
 	"github.com/bow/iris/api"
-	"github.com/bow/iris/internal/store"
+	"github.com/bow/iris/internal"
 )
 
 func defaultTestServerBuilder(t *testing.T) *Builder {
@@ -26,7 +26,7 @@ func defaultTestServerBuilder(t *testing.T) *Builder {
 
 	return NewBuilder().
 		Address("file://" + t.TempDir() + "/iris.socket").
-		Store(store.NewMockFeedStore(gomock.NewController(t))).
+		Store(internal.NewMockFeedStore(gomock.NewController(t))).
 		Logger(zerolog.Nop())
 }
 
@@ -46,7 +46,7 @@ func (tcb *testClientBuilder) DialOpts(opts ...grpc.DialOption) *testClientBuild
 	return tcb
 }
 
-func (tcb *testClientBuilder) ServerStore(str store.FeedStore) *testClientBuilder {
+func (tcb *testClientBuilder) ServerStore(str internal.FeedStore) *testClientBuilder {
 	tcb.serverBuilder = tcb.serverBuilder.Store(str)
 	return tcb
 }
@@ -139,10 +139,10 @@ func newTestClient(
 }
 
 // setupServerTest is a shortcut method for creating server tests through a client.
-func setupServerTest(t *testing.T) (api.IrisClient, *store.MockFeedStore) {
+func setupServerTest(t *testing.T) (api.IrisClient, *internal.MockFeedStore) {
 	t.Helper()
 
-	str := store.NewMockFeedStore(gomock.NewController(t))
+	str := internal.NewMockFeedStore(gomock.NewController(t))
 	clb := newTestClientBuilder(t).ServerStore(str)
 
 	return clb.Build(), str

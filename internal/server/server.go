@@ -40,7 +40,7 @@ type server struct {
 	healthSvc *health.Server
 }
 
-func newServer(lis net.Listener, grpcServer *grpc.Server, str store.FeedStore) *server {
+func newServer(lis net.Listener, grpcServer *grpc.Server, str internal.FeedStore) *server {
 
 	svc := service{store: str}
 	api.RegisterIrisServer(grpcServer, &svc)
@@ -123,7 +123,7 @@ func (s *server) start() <-chan error {
 
 type Builder struct {
 	addr      string
-	store     store.FeedStore
+	store     internal.FeedStore
 	storePath string
 	parser    internal.FeedParser
 	logger    zerolog.Logger
@@ -145,7 +145,7 @@ func (b *Builder) StorePath(path string) *Builder {
 	return b
 }
 
-func (b *Builder) Store(str store.FeedStore) *Builder {
+func (b *Builder) Store(str internal.FeedStore) *Builder {
 	b.store = str
 	b.storePath = ""
 	return b

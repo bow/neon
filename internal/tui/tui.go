@@ -9,11 +9,11 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 
-	"github.com/bow/iris/internal/store"
+	"github.com/bow/iris/internal"
 )
 
 // Show displays a reader for the given datastore.
-func Show(_ store.FeedStore) error {
+func Show(_ internal.FeedStore) error {
 
 	lineForeground := tcell.ColorWhite
 	titleForeground := tcell.ColorBlue

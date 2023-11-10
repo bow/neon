@@ -18,7 +18,7 @@ import (
 type service struct {
 	api.UnimplementedIrisServer
 
-	store store.FeedStore
+	store internal.FeedStore
 }
 
 // AddFeed satisfies the service API.
