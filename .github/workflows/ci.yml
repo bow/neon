@@ -129,7 +129,7 @@ jobs:
       - name: Extract metadata for image
         if: github.event_name != 'pull_request'
         id: meta
-        uses: docker/metadata-action@v4
+        uses: docker/metadata-action@v5
         with:
           images: |
             ghcr.io/${{ github.repository }}
