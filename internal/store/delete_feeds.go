@@ -30,7 +30,7 @@ func (s *SQLite) DeleteFeeds(ctx context.Context, ids []internal.ID) error {
 				return err
 			}
 			if n != int64(1) {
-				return FeedNotFoundError{id}
+				return internal.FeedNotFoundError{ID: id}
 			}
 			return nil
 		}

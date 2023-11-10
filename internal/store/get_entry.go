@@ -21,7 +21,7 @@ func (s *SQLite) GetEntry(
 		irec, err := getEntry(ctx, tx, id)
 		if err != nil {
 			if errors.Is(err, sql.ErrNoRows) {
-				return EntryNotFoundError{id}
+				return internal.EntryNotFoundError{ID: id}
 			}
 			return err
 		}

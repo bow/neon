@@ -8,11 +8,14 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"strings"
 	"sync"
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/mmcdole/gofeed"
 	"github.com/rs/zerolog/log"
+	"modernc.org/sqlite"
+	sqlite3 "modernc.org/sqlite/lib"
 
 	"github.com/bow/iris/internal"
 	"github.com/bow/iris/internal/store/migration"
@@ -111,12 +114,12 @@ type editableTable interface {
 type feedsTableType struct{}
 
 func (t *feedsTableType) name() string            { return "feeds" }
-func (t *feedsTableType) errNotFound(id ID) error { return FeedNotFoundError{id} }
+func (t *feedsTableType) errNotFound(id ID) error { return internal.FeedNotFoundError{ID: id} }
 
 type entriesTableType struct{}
 
 func (t *entriesTableType) name() string            { return "entries" }
-func (t *entriesTableType) errNotFound(id ID) error { return EntryNotFoundError{id} }
+func (t *entriesTableType) errNotFound(id ID) error { return internal.EntryNotFoundError{ID: id} }
 
 var (
 	feedsTable   = &feedsTableType{}
@@ -153,5 +156,26 @@ func tableFieldSetter[T any](
 			return table.errNotFound(id)
 		}
 		return nil
+	}
+}
+
+// isUniqueErr returns true if the given error represents or wraps an SQLite unique constraint
+// violation.
+func isUniqueErr(err error, txtMatch string) bool {
+	serr, matches := err.(*sqlite.Error)
+	if matches {
+		return serr.Code() == sqlite3.SQLITE_CONSTRAINT_UNIQUE &&
+			(txtMatch == "" || strings.Contains(serr.Error(), txtMatch))
+	}
+	if ierr := errors.Unwrap(err); ierr != nil {
+		return isUniqueErr(ierr, txtMatch)
+	}
+	return false
+}
+
+// failF creates a function for wrapping other error functions.
+func failF(funcName string) func(error) error {
+	return func(err error) error {
+		return fmt.Errorf("%s: %w", funcName, err)
 	}
 }

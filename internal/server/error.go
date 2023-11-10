@@ -8,11 +8,10 @@ import (
 	"encoding/xml"
 	"errors"
 
+	"github.com/bow/iris/internal"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-
-	"github.com/bow/iris/internal/store"
 )
 
 func storeErrorUnaryServerInterceptor(
@@ -39,7 +38,7 @@ func unwrapError(err error) (codes.Code, error) {
 		return codes.Unknown, nil
 	}
 	switch cerr := err.(type) {
-	case store.FeedNotFoundError, store.EntryNotFoundError:
+	case internal.FeedNotFoundError, internal.EntryNotFoundError:
 		return codes.NotFound, cerr
 	case xml.UnmarshalError, *xml.SyntaxError:
 		return codes.InvalidArgument, cerr

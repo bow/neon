@@ -20,7 +20,6 @@ import (
 
 	"github.com/bow/iris/api"
 	"github.com/bow/iris/internal"
-	"github.com/bow/iris/internal/store"
 )
 
 func TestAddFeedOk(t *testing.T) {
@@ -208,7 +207,7 @@ func TestDeleteFeedsErrNotFound(t *testing.T) {
 
 	str.EXPECT().
 		DeleteFeeds(gomock.Any(), []internal.ID{1, 9}).
-		Return(fmt.Errorf("wrapped: %w", store.FeedNotFoundError{ID: 9}))
+		Return(fmt.Errorf("wrapped: %w", internal.FeedNotFoundError{ID: 9}))
 
 	req := api.DeleteFeedsRequest{FeedIds: []uint32{1, 9}}
 	rsp, err := client.DeleteFeeds(context.Background(), &req)

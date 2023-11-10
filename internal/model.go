@@ -28,7 +28,7 @@ func ToFeedIDs(raw []string) ([]ID, error) {
 func ToFeedID(raw string) (ID, error) {
 	id, err := strconv.ParseUint(raw, 10, 32)
 	if err != nil {
-		return 0, fmt.Errorf("feed with ID=%v not found", raw)
+		return 0, FeedNotFoundError{ID: raw}
 	}
 	return ID(id), nil
 }

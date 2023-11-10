@@ -20,7 +20,7 @@ func (s *SQLite) ListEntries(
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
 		_, err := getFeed(ctx, tx, feedID)
 		if errors.Is(err, sql.ErrNoRows) {
-			return FeedNotFoundError{feedID}
+			return internal.FeedNotFoundError{ID: feedID}
 		}
 		irecs, err := getAllFeedEntries(ctx, tx, feedID, nil)
 		recs = irecs
