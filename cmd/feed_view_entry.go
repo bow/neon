@@ -9,7 +9,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/bow/iris/internal/store"
+	"github.com/bow/iris/internal"
 )
 
 func newFeedViewEntryCommand() *cobra.Command {
@@ -38,7 +38,7 @@ func newFeedViewEntryCommand() *cobra.Command {
 				return err
 			}
 
-			entry, err := str.GetEntry(cmd.Context(), store.ID(entryID))
+			entry, err := str.GetEntry(cmd.Context(), internal.ID(entryID))
 			if err != nil {
 				return err
 			}

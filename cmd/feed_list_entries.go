@@ -11,7 +11,6 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/bow/iris/internal"
-	"github.com/bow/iris/internal/store"
 )
 
 func newFeedListEntriesCommand() *cobra.Command {
@@ -40,7 +39,7 @@ func newFeedListEntriesCommand() *cobra.Command {
 				return err
 			}
 
-			entries, err := str.ListEntries(cmd.Context(), store.ID(feedID))
+			entries, err := str.ListEntries(cmd.Context(), internal.ID(feedID))
 			if err != nil {
 				return err
 			}

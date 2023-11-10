@@ -38,7 +38,7 @@ func TestAddFeedOk(t *testing.T) {
 		IsStarred:   pointer(true),
 	}
 	created := &internal.Feed{
-		ID:          store.ID(5),
+		ID:          internal.ID(5),
 		Title:       "feed-title-original",
 		Description: pointer("feed-description-original"),
 		FeedURL:     "https://foo.com/feed.xml",
@@ -79,7 +79,7 @@ func TestListFeedsOk(t *testing.T) {
 	req := api.ListFeedsRequest{}
 	feeds := []*internal.Feed{
 		{
-			ID:         store.ID(2),
+			ID:         internal.ID(2),
 			Title:      "Feed A",
 			FeedURL:    "http://a.com/feed.xml",
 			Subscribed: mustTimeVV(t, "2022-06-22T19:39:38.964+02:00"),
@@ -87,7 +87,7 @@ func TestListFeedsOk(t *testing.T) {
 			Updated:    pointer(mustTimeVV(t, "2022-03-19T16:23:18.600+02:00")),
 		},
 		{
-			ID:         store.ID(3),
+			ID:         internal.ID(3),
 			Title:      "Feed X",
 			FeedURL:    "http://x.com/feed.xml",
 			Subscribed: mustTimeVV(t, "2022-06-22T19:39:44.037+02:00"),
@@ -189,7 +189,7 @@ func TestDeleteFeedsOk(t *testing.T) {
 	client, str := setupServerTest(t)
 
 	str.EXPECT().
-		DeleteFeeds(gomock.Any(), []store.ID{1, 9}).
+		DeleteFeeds(gomock.Any(), []internal.ID{1, 9}).
 		Return(nil)
 
 	req := api.DeleteFeedsRequest{FeedIds: []uint32{1, 9}}
@@ -207,7 +207,7 @@ func TestDeleteFeedsErrNotFound(t *testing.T) {
 	client, str := setupServerTest(t)
 
 	str.EXPECT().
-		DeleteFeeds(gomock.Any(), []store.ID{1, 9}).
+		DeleteFeeds(gomock.Any(), []internal.ID{1, 9}).
 		Return(fmt.Errorf("wrapped: %w", store.FeedNotFoundError{ID: 9}))
 
 	req := api.DeleteFeedsRequest{FeedIds: []uint32{1, 9}}
@@ -272,7 +272,7 @@ func TestPullFeedsAllOk(t *testing.T) {
 	}()
 
 	str.EXPECT().
-		PullFeeds(gomock.Any(), []store.ID{}).
+		PullFeeds(gomock.Any(), []internal.ID{}).
 		Return(ch)
 
 	req := api.PullFeedsRequest{}
@@ -353,7 +353,7 @@ func TestPullFeedsSelectedAllOk(t *testing.T) {
 	}()
 
 	str.EXPECT().
-		PullFeeds(gomock.Any(), []store.ID{2, 3}).
+		PullFeeds(gomock.Any(), []internal.ID{2, 3}).
 		Return(ch)
 
 	req := api.PullFeedsRequest{FeedIds: []uint32{2, 3}}
@@ -443,7 +443,7 @@ func TestPullFeedsErrSomeFeed(t *testing.T) {
 	}()
 
 	str.EXPECT().
-		PullFeeds(gomock.Any(), []store.ID{}).
+		PullFeeds(gomock.Any(), []internal.ID{}).
 		Return(ch)
 
 	req := api.PullFeedsRequest{}
@@ -541,7 +541,7 @@ func TestPullFeedsErrNonFeed(t *testing.T) {
 	}()
 
 	str.EXPECT().
-		PullFeeds(gomock.Any(), []store.ID{}).
+		PullFeeds(gomock.Any(), []internal.ID{}).
 		Return(ch)
 
 	req := api.PullFeedsRequest{}
@@ -676,7 +676,7 @@ func TestGetEntryOk(t *testing.T) {
 	}
 
 	str.EXPECT().
-		GetEntry(gomock.Any(), store.ID(2)).
+		GetEntry(gomock.Any(), internal.ID(2)).
 		Return(&entry, nil)
 
 	req := api.GetEntryRequest{Id: 2}

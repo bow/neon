@@ -9,7 +9,6 @@ import (
 
 	"github.com/bow/iris/api"
 	"github.com/bow/iris/internal"
-	"github.com/bow/iris/internal/store"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -82,7 +81,7 @@ func (svc *service) DeleteFeeds(
 	req *api.DeleteFeedsRequest,
 ) (*api.DeleteFeedsResponse, error) {
 
-	ids := make([]store.ID, len(req.GetFeedIds()))
+	ids := make([]internal.ID, len(req.GetFeedIds()))
 	for i, id := range req.GetFeedIds() {
 		ids[i] = id
 	}
@@ -119,7 +118,7 @@ func (svc *service) PullFeeds(
 		return &rsp, nil
 	}
 
-	ids := make([]store.ID, len(req.GetFeedIds()))
+	ids := make([]internal.ID, len(req.GetFeedIds()))
 	for i, id := range req.GetFeedIds() {
 		ids[i] = id
 	}
