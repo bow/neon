@@ -33,12 +33,12 @@ func newFeedViewEntryCommand() *cobra.Command {
 				return err
 			}
 
-			str, err := dataStoreFromCmdCtx(cmd)
+			db, err := dbFromCmdCtx(cmd)
 			if err != nil {
 				return err
 			}
 
-			entry, err := str.GetEntry(cmd.Context(), internal.ID(entryID))
+			entry, err := db.GetEntry(cmd.Context(), internal.ID(entryID))
 			if err != nil {
 				return err
 			}

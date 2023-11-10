@@ -34,12 +34,12 @@ func newFeedListEntriesCommand() *cobra.Command {
 				return err
 			}
 
-			str, err := dataStoreFromCmdCtx(cmd)
+			db, err := dbFromCmdCtx(cmd)
 			if err != nil {
 				return err
 			}
 
-			entries, err := str.ListEntries(cmd.Context(), internal.ID(feedID))
+			entries, err := db.ListEntries(cmd.Context(), internal.ID(feedID))
 			if err != nil {
 				return err
 			}

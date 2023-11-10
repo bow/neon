@@ -22,12 +22,12 @@ func newFeedListCommand() *cobra.Command {
 		DisableFlagsInUseLine: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
 
-			str, err := dataStoreFromCmdCtx(cmd)
+			db, err := dbFromCmdCtx(cmd)
 			if err != nil {
 				return err
 			}
 
-			feeds, err := str.ListFeeds(cmd.Context())
+			feeds, err := db.ListFeeds(cmd.Context())
 			if err != nil {
 				return err
 			}

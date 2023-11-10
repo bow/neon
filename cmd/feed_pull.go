@@ -32,7 +32,7 @@ func newFeedPullCommand() *cobra.Command {
 				return fmt.Errorf("number of specified feeds exceeds %d", numMaxIDs)
 			}
 
-			str, err := dataStoreFromCmdCtx(cmd)
+			db, err := dbFromCmdCtx(cmd)
 			if err != nil {
 				return err
 			}
@@ -47,7 +47,7 @@ func newFeedPullCommand() *cobra.Command {
 				errs []error
 				n    int
 				s    = newPullSpinner(rawIDs)
-				ch   = str.PullFeeds(cmd.Context(), ids)
+				ch   = db.PullFeeds(cmd.Context(), ids)
 			)
 
 			s.Start()

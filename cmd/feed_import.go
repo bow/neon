@@ -45,7 +45,7 @@ func newFeedImportCommand() *cobra.Command {
 				return err
 			}
 
-			str, err := dataStoreFromCmdCtx(cmd)
+			db, err := dbFromCmdCtx(cmd)
 			if err != nil {
 				return err
 			}
@@ -55,7 +55,7 @@ func newFeedImportCommand() *cobra.Command {
 				return fmt.Errorf("failed to parse OPML document: %w", err)
 			}
 
-			nproc, nimp, err := str.ImportSubscription(cmd.Context(), sub)
+			nproc, nimp, err := db.ImportSubscription(cmd.Context(), sub)
 			if err != nil {
 				return err
 			}

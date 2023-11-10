@@ -53,7 +53,7 @@ func dataStorePathToCmdCtx(cmd *cobra.Command, path string) {
 	toCmdContext(cmd, dbPathKey, path)
 }
 
-func dataStoreFromCmdCtx(cmd *cobra.Command) (*store.SQLite, error) {
+func dbFromCmdCtx(cmd *cobra.Command) (*store.SQLite, error) {
 	dbPath, err := fromCmdContext[string](cmd, dbPathKey)
 	if err != nil {
 		return nil, err

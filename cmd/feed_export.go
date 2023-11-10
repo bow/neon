@@ -48,12 +48,12 @@ func newFeedExportCommand() *cobra.Command {
 				}
 			}
 
-			str, err := dataStoreFromCmdCtx(cmd)
+			db, err := dbFromCmdCtx(cmd)
 			if err != nil {
 				return err
 			}
 
-			sub, err := str.ExportSubscription(cmd.Context(), nil)
+			sub, err := db.ExportSubscription(cmd.Context(), nil)
 			if err != nil {
 				return err
 			}
