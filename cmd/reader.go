@@ -6,7 +6,7 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/bow/iris/internal/store"
+	"github.com/bow/iris/internal/database"
 	"github.com/bow/iris/internal/tui"
 )
 
@@ -26,7 +26,7 @@ func newReaderCommand() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			fs, err := store.NewSQLite(dbPath)
+			fs, err := database.NewSQLite(dbPath)
 			if err != nil {
 				return err
 			}

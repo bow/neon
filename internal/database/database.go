@@ -1,7 +1,7 @@
 // Copyright (c) 2022 Wibowo Arindrarto <contact@arindrarto.dev>
 // SPDX-License-Identifier: BSD-3-Clause
 
-package store
+package database
 
 import (
 	"context"
@@ -18,14 +18,14 @@ import (
 	sqlite3 "modernc.org/sqlite/lib"
 
 	"github.com/bow/iris/internal"
-	"github.com/bow/iris/internal/store/migration"
+	"github.com/bow/iris/internal/database/migration"
 )
 
 type ID = uint32
 
 type SQLite struct {
-	db     *sql.DB
 	mu     sync.RWMutex
+	handle *sql.DB
 	parser internal.FeedParser
 }
 
@@ -67,16 +67,16 @@ func NewSQLiteWithParser(filename string, parser internal.FeedParser) (*SQLite, 
 		return nil, fail(err)
 	}
 
-	store := SQLite{db: db, parser: parser}
+	store := SQLite{handle: db, parser: parser}
 
 	return &store, nil
 }
 
-func (s *SQLite) withTx(
+func (db *SQLite) withTx(
 	ctx context.Context,
 	dbFunc func(context.Context, *sql.Tx) error,
 ) (err error) {
-	tx, err := s.db.BeginTx(ctx, nil)
+	tx, err := db.handle.BeginTx(ctx, nil)
 	if err != nil {
 		return err
 	}

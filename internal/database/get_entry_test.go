@@ -1,7 +1,7 @@
 // Copyright (c) 2023 Wibowo Arindrarto <contact@arindrarto.dev>
 // SPDX-License-Identifier: BSD-3-Clause
 
-package store
+package database
 
 import (
 	"context"
@@ -16,7 +16,7 @@ func TestGetEntryOk(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	st := newTestStore(t)
+	db := newTestDB(t)
 
 	dbFeeds := []*feedRecord{
 		{
@@ -42,12 +42,12 @@ func TestGetEntryOk(t *testing.T) {
 			updated: toNullTime(mustTime(t, "2023-04-09T09:49:22.685+02:00")),
 		},
 	}
-	keys := st.addFeeds(dbFeeds)
+	keys := db.addFeeds(dbFeeds)
 
-	r.Equal(3, st.countFeeds())
-	r.Equal(2, st.countEntries(dbFeeds[1].feedURL))
+	r.Equal(3, db.countFeeds())
+	r.Equal(2, db.countEntries(dbFeeds[1].feedURL))
 
-	dbEntry, err := st.GetEntry(
+	dbEntry, err := db.GetEntry(
 		context.Background(),
 		keys[dbFeeds[1].title].Entries["Entry X2"],
 	)
@@ -63,11 +63,11 @@ func TestGetEntryErr(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	st := newTestStore(t)
+	db := newTestDB(t)
 
-	r.Equal(0, st.countFeeds())
+	r.Equal(0, db.countFeeds())
 
-	dbEntry, err := st.GetEntry(context.Background(), 86)
+	dbEntry, err := db.GetEntry(context.Background(), 86)
 	r.Nil(dbEntry)
 	r.Error(err)
 

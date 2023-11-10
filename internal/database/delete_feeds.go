@@ -1,7 +1,7 @@
 // Copyright (c) 2022 Wibowo Arindrarto <contact@arindrarto.dev>
 // SPDX-License-Identifier: BSD-3-Clause
 
-package store
+package database
 
 import (
 	"context"
@@ -10,7 +10,7 @@ import (
 	"github.com/bow/iris/internal"
 )
 
-func (s *SQLite) DeleteFeeds(ctx context.Context, ids []internal.ID) error {
+func (db *SQLite) DeleteFeeds(ctx context.Context, ids []internal.ID) error {
 
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
 
@@ -46,10 +46,10 @@ func (s *SQLite) DeleteFeeds(ctx context.Context, ids []internal.ID) error {
 
 	fail := failF("SQLite.DeleteFeeds")
 
-	s.mu.Lock()
-	defer s.mu.Unlock()
+	db.mu.Lock()
+	defer db.mu.Unlock()
 
-	err := s.withTx(ctx, dbFunc)
+	err := db.withTx(ctx, dbFunc)
 	if err != nil {
 		return fail(err)
 	}

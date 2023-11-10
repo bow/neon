@@ -1,7 +1,7 @@
 // Copyright (c) 2022 Wibowo Arindrarto <contact@arindrarto.dev>
 // SPDX-License-Identifier: BSD-3-Clause
 
-package store
+package database
 
 import (
 	"context"
@@ -11,7 +11,7 @@ import (
 	"github.com/bow/iris/internal"
 )
 
-func (s *SQLite) ImportSubscription(
+func (db *SQLite) ImportSubscription(
 	ctx context.Context,
 	sub *internal.Subscription,
 ) (processed int, imported int, err error) {
@@ -54,10 +54,10 @@ func (s *SQLite) ImportSubscription(
 
 	fail := failF("SQLite.ImportSubscription")
 
-	s.mu.Lock()
-	defer s.mu.Unlock()
+	db.mu.Lock()
+	defer db.mu.Unlock()
 
-	err = s.withTx(ctx, dbFunc)
+	err = db.withTx(ctx, dbFunc)
 	if err != nil {
 		return 0, 0, fail(err)
 	}

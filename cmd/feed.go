@@ -6,7 +6,7 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/bow/iris/internal/store"
+	"github.com/bow/iris/internal/database"
 )
 
 func newFeedCommand() *cobra.Command {
@@ -53,12 +53,12 @@ func dataStorePathToCmdCtx(cmd *cobra.Command, path string) {
 	toCmdContext(cmd, dbPathKey, path)
 }
 
-func dbFromCmdCtx(cmd *cobra.Command) (*store.SQLite, error) {
+func dbFromCmdCtx(cmd *cobra.Command) (*database.SQLite, error) {
 	dbPath, err := fromCmdContext[string](cmd, dbPathKey)
 	if err != nil {
 		return nil, err
 	}
-	str, err := store.NewSQLite(dbPath)
+	str, err := database.NewSQLite(dbPath)
 	if err != nil {
 		return nil, err
 	}

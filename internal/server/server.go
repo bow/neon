@@ -24,7 +24,7 @@ import (
 
 	"github.com/bow/iris/api"
 	"github.com/bow/iris/internal"
-	"github.com/bow/iris/internal/store"
+	"github.com/bow/iris/internal/database"
 )
 
 const (
@@ -178,7 +178,7 @@ func (b *Builder) Build() (*server, error) {
 	str := b.store
 	if sp := b.storePath; sp != "" {
 		log.Info().Str("path", sp).Msgf("initializing data store")
-		if str, err = store.NewSQLiteWithParser(sp, b.parser); err != nil {
+		if str, err = database.NewSQLiteWithParser(sp, b.parser); err != nil {
 			return nil, fmt.Errorf("server build: %w", err)
 		}
 	}

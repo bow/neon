@@ -1,7 +1,7 @@
 // Copyright (c) 2022 Wibowo Arindrarto <contact@arindrarto.dev>
 // SPDX-License-Identifier: BSD-3-Clause
 
-package store
+package database
 
 import (
 	"context"
@@ -14,7 +14,7 @@ import (
 )
 
 // AddFeed adds the given feed into the database.
-func (s *SQLite) AddFeed(
+func (db *SQLite) AddFeed(
 	ctx context.Context,
 	feedURL string,
 	title *string,
@@ -25,7 +25,7 @@ func (s *SQLite) AddFeed(
 
 	fail := failF("SQLite.AddFeed")
 
-	feed, err := s.parser.ParseURLWithContext(feedURL, ctx)
+	feed, err := db.parser.ParseURLWithContext(feedURL, ctx)
 	if err != nil {
 		return nil, fail(err)
 	}
@@ -69,10 +69,10 @@ func (s *SQLite) AddFeed(
 		return nil
 	}
 
-	s.mu.Lock()
-	defer s.mu.Unlock()
+	db.mu.Lock()
+	defer db.mu.Unlock()
 
-	err = s.withTx(ctx, dbFunc)
+	err = db.withTx(ctx, dbFunc)
 	if err != nil {
 		return nil, fail(err)
 	}

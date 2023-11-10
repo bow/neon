@@ -1,7 +1,7 @@
 // Copyright (c) 2022 Wibowo Arindrarto <contact@arindrarto.dev>
 // SPDX-License-Identifier: BSD-3-Clause
 
-package store
+package database
 
 import (
 	"context"
@@ -21,15 +21,15 @@ func TestPullFeedsAllOkEmptyDB(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	st := newTestStore(t)
+	db := newTestDB(t)
 
-	r.Equal(0, st.countFeeds())
+	r.Equal(0, db.countFeeds())
 
-	st.parser.EXPECT().
+	db.parser.EXPECT().
 		ParseURLWithContext(gomock.Any(), gomock.Any()).
 		MaxTimes(0)
 
-	c := st.PullFeeds(context.Background(), nil)
+	c := db.PullFeeds(context.Background(), nil)
 	a.Empty(c)
 }
 
@@ -38,7 +38,7 @@ func TestPullFeedsAllOkEmptyEntries(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	st := newTestStore(t)
+	db := newTestDB(t)
 
 	dbFeeds := []*feedRecord{
 		{
@@ -55,20 +55,20 @@ func TestPullFeedsAllOkEmptyEntries(t *testing.T) {
 		},
 	}
 
-	st.addFeeds(dbFeeds)
-	r.Equal(2, st.countFeeds())
+	db.addFeeds(dbFeeds)
+	r.Equal(2, db.countFeeds())
 
-	st.parser.EXPECT().
+	db.parser.EXPECT().
 		ParseURLWithContext(dbFeeds[0].feedURL, gomock.Any()).
 		MaxTimes(1).
 		Return(toGFeed(t, dbFeeds[0]), nil)
 
-	st.parser.EXPECT().
+	db.parser.EXPECT().
 		ParseURLWithContext(dbFeeds[1].feedURL, gomock.Any()).
 		MaxTimes(1).
 		Return(toGFeed(t, dbFeeds[1]), nil)
 
-	c := st.PullFeeds(context.Background(), nil)
+	c := db.PullFeeds(context.Background(), nil)
 
 	got := make([]internal.PullResult, 0)
 	for res := range c {
@@ -94,7 +94,7 @@ func TestPullFeedsAllOkNoNewEntries(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	st := newTestStore(t)
+	db := newTestDB(t)
 
 	dbFeeds := []*feedRecord{
 		{
@@ -134,8 +134,8 @@ func TestPullFeedsAllOkNoNewEntries(t *testing.T) {
 		},
 	}
 
-	st.addFeeds(dbFeeds)
-	r.Equal(2, st.countFeeds())
+	db.addFeeds(dbFeeds)
+	r.Equal(2, db.countFeeds())
 
 	pulledFeeds := []*feedRecord{
 		{
@@ -172,17 +172,17 @@ func TestPullFeedsAllOkNoNewEntries(t *testing.T) {
 		},
 	}
 
-	st.parser.EXPECT().
+	db.parser.EXPECT().
 		ParseURLWithContext(dbFeeds[0].feedURL, gomock.Any()).
 		MaxTimes(1).
 		Return(toGFeed(t, pulledFeeds[0]), nil)
 
-	st.parser.EXPECT().
+	db.parser.EXPECT().
 		ParseURLWithContext(dbFeeds[1].feedURL, gomock.Any()).
 		MaxTimes(1).
 		Return(toGFeed(t, pulledFeeds[1]), nil)
 
-	c := st.PullFeeds(context.Background(), nil)
+	c := db.PullFeeds(context.Background(), nil)
 
 	got := make([]internal.PullResult, 0)
 	for res := range c {
@@ -208,7 +208,7 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	st := newTestStore(t)
+	db := newTestDB(t)
 
 	dbFeeds := []*feedRecord{ // nolint:dupl
 		{
@@ -263,8 +263,8 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 		},
 	}
 
-	keys := st.addFeeds(dbFeeds)
-	r.Equal(2, st.countFeeds())
+	keys := db.addFeeds(dbFeeds)
+	r.Equal(2, db.countFeeds())
 
 	pulledFeeds := []*feedRecord{
 		{
@@ -313,17 +313,17 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 		},
 	}
 
-	st.parser.EXPECT().
+	db.parser.EXPECT().
 		ParseURLWithContext(dbFeeds[0].feedURL, gomock.Any()).
 		MaxTimes(1).
 		Return(toGFeed(t, pulledFeeds[0]), nil)
 
-	st.parser.EXPECT().
+	db.parser.EXPECT().
 		ParseURLWithContext(dbFeeds[1].feedURL, gomock.Any()).
 		MaxTimes(1).
 		Return(toGFeed(t, pulledFeeds[1]), nil)
 
-	c := st.PullFeeds(context.Background(), nil)
+	c := db.PullFeeds(context.Background(), nil)
 
 	got := make([]internal.PullResult, 0)
 	for res := range c {
@@ -340,27 +340,27 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 				ID:         keys[pulledFeeds[0].title].ID,
 				Title:      pulledFeeds[0].title,
 				FeedURL:    pulledFeeds[0].feedURL,
-				Updated:    st.getFeedUpdateTime(feedURL0),
-				Subscribed: st.getFeedSubTime(feedURL0),
+				Updated:    db.getFeedUpdateTime(feedURL0),
+				Subscribed: db.getFeedSubTime(feedURL0),
 				LastPulled: time.Time{},
 				Entries: []*internal.Entry{
 					{
-						ID:        st.getEntryID(feedURL0, pulledFeeds[0].entries[1].extID),
+						ID:        db.getEntryID(feedURL0, pulledFeeds[0].entries[1].extID),
 						FeedID:    keys[pulledFeeds[0].title].ID,
 						Title:     pulledFeeds[0].entries[1].title,
 						ExtID:     pulledFeeds[0].entries[1].extID,
-						Updated:   st.getEntryUpdateTime(feedURL0, pulledFeeds[0].entries[1].extID),
-						Published: st.getEntryPubTime(feedURL0, pulledFeeds[0].entries[1].extID),
+						Updated:   db.getEntryUpdateTime(feedURL0, pulledFeeds[0].entries[1].extID),
+						Published: db.getEntryPubTime(feedURL0, pulledFeeds[0].entries[1].extID),
 						URL:       fromNullString(pulledFeeds[0].entries[1].url),
 						IsRead:    false,
 					},
 					{
-						ID:        st.getEntryID(feedURL0, pulledFeeds[0].entries[2].extID),
+						ID:        db.getEntryID(feedURL0, pulledFeeds[0].entries[2].extID),
 						FeedID:    keys[pulledFeeds[0].title].ID,
 						Title:     pulledFeeds[0].entries[2].title,
 						ExtID:     pulledFeeds[0].entries[2].extID,
-						Updated:   st.getEntryUpdateTime(feedURL0, pulledFeeds[0].entries[2].extID),
-						Published: st.getEntryPubTime(feedURL0, pulledFeeds[0].entries[2].extID),
+						Updated:   db.getEntryUpdateTime(feedURL0, pulledFeeds[0].entries[2].extID),
+						Published: db.getEntryPubTime(feedURL0, pulledFeeds[0].entries[2].extID),
 						URL:       fromNullString(pulledFeeds[0].entries[2].url),
 						IsRead:    false,
 					},
@@ -373,17 +373,17 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 				ID:         keys[pulledFeeds[1].title].ID,
 				Title:      pulledFeeds[1].title,
 				FeedURL:    pulledFeeds[1].feedURL,
-				Updated:    st.getFeedUpdateTime(feedURL1),
-				Subscribed: st.getFeedSubTime(feedURL1),
+				Updated:    db.getFeedUpdateTime(feedURL1),
+				Subscribed: db.getFeedSubTime(feedURL1),
 				LastPulled: time.Time{},
 				Entries: []*internal.Entry{
 					{
-						ID:        st.getEntryID(feedURL1, pulledFeeds[1].entries[1].extID),
+						ID:        db.getEntryID(feedURL1, pulledFeeds[1].entries[1].extID),
 						FeedID:    keys[pulledFeeds[1].title].ID,
 						Title:     pulledFeeds[1].entries[1].title,
 						ExtID:     pulledFeeds[1].entries[1].extID,
-						Updated:   st.getEntryUpdateTime(feedURL1, pulledFeeds[1].entries[1].extID),
-						Published: st.getEntryPubTime(feedURL1, pulledFeeds[1].entries[1].extID),
+						Updated:   db.getEntryUpdateTime(feedURL1, pulledFeeds[1].entries[1].extID),
+						Published: db.getEntryPubTime(feedURL1, pulledFeeds[1].entries[1].extID),
 						URL:       fromNullString(pulledFeeds[1].entries[1].url),
 						IsRead:    false,
 					},
@@ -409,7 +409,7 @@ func TestPullFeedsSelectedOkSomeNewEntries(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	st := newTestStore(t)
+	db := newTestDB(t)
 
 	dbFeeds := []*feedRecord{ // nolint:dupl
 		// This feed should not be returned later, it is not selected.
@@ -463,8 +463,8 @@ func TestPullFeedsSelectedOkSomeNewEntries(t *testing.T) {
 		},
 	}
 
-	keys := st.addFeeds(dbFeeds)
-	r.Equal(2, st.countFeeds())
+	keys := db.addFeeds(dbFeeds)
+	r.Equal(2, db.countFeeds())
 
 	pulledFeed := &feedRecord{
 		title:   dbFeeds[1].title,
@@ -486,12 +486,12 @@ func TestPullFeedsSelectedOkSomeNewEntries(t *testing.T) {
 		},
 	}
 
-	st.parser.EXPECT().
+	db.parser.EXPECT().
 		ParseURLWithContext(dbFeeds[1].feedURL, gomock.Any()).
 		MaxTimes(1).
 		Return(toGFeed(t, pulledFeed), nil)
 
-	c := st.PullFeeds(context.Background(), []ID{keys[pulledFeed.title].ID})
+	c := db.PullFeeds(context.Background(), []ID{keys[pulledFeed.title].ID})
 
 	got := make([]internal.PullResult, 0)
 	for res := range c {
@@ -505,17 +505,17 @@ func TestPullFeedsSelectedOkSomeNewEntries(t *testing.T) {
 				ID:         keys[pulledFeed.title].ID,
 				Title:      pulledFeed.title,
 				FeedURL:    pulledFeed.feedURL,
-				Updated:    st.getFeedUpdateTime(pulledFeed.feedURL),
-				Subscribed: st.getFeedSubTime(pulledFeed.feedURL),
+				Updated:    db.getFeedUpdateTime(pulledFeed.feedURL),
+				Subscribed: db.getFeedSubTime(pulledFeed.feedURL),
 				LastPulled: time.Time{},
 				Entries: []*internal.Entry{
 					{
-						ID:        st.getEntryID(pulledFeed.feedURL, pulledFeed.entries[1].extID),
+						ID:        db.getEntryID(pulledFeed.feedURL, pulledFeed.entries[1].extID),
 						FeedID:    keys[pulledFeed.title].ID,
 						Title:     pulledFeed.entries[1].title,
 						ExtID:     pulledFeed.entries[1].extID,
-						Updated:   st.getEntryUpdateTime(pulledFeed.feedURL, pulledFeed.entries[1].extID),
-						Published: st.getEntryPubTime(pulledFeed.feedURL, pulledFeed.entries[1].extID),
+						Updated:   db.getEntryUpdateTime(pulledFeed.feedURL, pulledFeed.entries[1].extID),
+						Published: db.getEntryPubTime(pulledFeed.feedURL, pulledFeed.entries[1].extID),
 						URL:       fromNullString(pulledFeed.entries[1].url),
 						IsRead:    false,
 					},

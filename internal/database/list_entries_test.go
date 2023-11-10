@@ -1,7 +1,7 @@
 // Copyright (c) 2023 Wibowo Arindrarto <contact@arindrarto.dev>
 // SPDX-License-Identifier: BSD-3-Clause
 
-package store
+package database
 
 import (
 	"context"
@@ -16,7 +16,7 @@ func TestListEntriesOkMinimal(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	st := newTestStore(t)
+	db := newTestDB(t)
 
 	dbFeeds := []*feedRecord{
 		{
@@ -25,12 +25,12 @@ func TestListEntriesOkMinimal(t *testing.T) {
 			updated: toNullTime(mustTime(t, "2022-03-19T16:23:18.600+02:00")),
 		},
 	}
-	keys := st.addFeeds(dbFeeds)
+	keys := db.addFeeds(dbFeeds)
 
-	r.Equal(1, st.countFeeds())
-	r.Equal(0, st.countEntries(dbFeeds[0].feedURL))
+	r.Equal(1, db.countFeeds())
+	r.Equal(0, db.countEntries(dbFeeds[0].feedURL))
 
-	entries, err := st.ListEntries(context.Background(), keys[dbFeeds[0].title].ID)
+	entries, err := db.ListEntries(context.Background(), keys[dbFeeds[0].title].ID)
 	r.NoError(err)
 
 	a.Len(entries, 0)
@@ -41,7 +41,7 @@ func TestListEntriesOkExtended(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	st := newTestStore(t)
+	db := newTestDB(t)
 
 	dbFeeds := []*feedRecord{
 		{
@@ -67,12 +67,12 @@ func TestListEntriesOkExtended(t *testing.T) {
 			updated: toNullTime(mustTime(t, "2023-04-09T09:49:22.685+02:00")),
 		},
 	}
-	keys := st.addFeeds(dbFeeds)
+	keys := db.addFeeds(dbFeeds)
 
-	r.Equal(3, st.countFeeds())
-	r.Equal(2, st.countEntries(dbFeeds[1].feedURL))
+	r.Equal(3, db.countFeeds())
+	r.Equal(2, db.countEntries(dbFeeds[1].feedURL))
 
-	entries, err := st.ListEntries(context.Background(), keys[dbFeeds[1].title].ID)
+	entries, err := db.ListEntries(context.Background(), keys[dbFeeds[1].title].ID)
 	r.NoError(err)
 
 	a.Len(entries, 2)
@@ -83,7 +83,7 @@ func TestListEntriesErrFeedIDNotFound(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	st := newTestStore(t)
+	db := newTestDB(t)
 
 	dbFeeds := []*feedRecord{
 		{
@@ -109,12 +109,12 @@ func TestListEntriesErrFeedIDNotFound(t *testing.T) {
 			updated: toNullTime(mustTime(t, "2023-04-09T09:49:22.685+02:00")),
 		},
 	}
-	st.addFeeds(dbFeeds)
+	db.addFeeds(dbFeeds)
 
-	r.Equal(3, st.countFeeds())
-	r.Equal(2, st.countEntries(dbFeeds[1].feedURL))
+	r.Equal(3, db.countFeeds())
+	r.Equal(2, db.countEntries(dbFeeds[1].feedURL))
 
-	entries, err := st.ListEntries(context.Background(), 404)
+	entries, err := db.ListEntries(context.Background(), 404)
 	r.Len(entries, 0)
 
 	a.EqualError(err, "SQLite.ListEntries: feed with ID=404 not found")

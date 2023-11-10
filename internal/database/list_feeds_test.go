@@ -1,7 +1,7 @@
 // Copyright (c) 2022 Wibowo Arindrarto <contact@arindrarto.dev>
 // SPDX-License-Identifier: BSD-3-Clause
 
-package store
+package database
 
 import (
 	"context"
@@ -16,9 +16,9 @@ func TestListFeedsOkMinimal(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	st := newTestStore(t)
+	db := newTestDB(t)
 
-	feeds, err := st.ListFeeds(context.Background())
+	feeds, err := db.ListFeeds(context.Background())
 	r.NoError(err)
 
 	a.Empty(feeds)
@@ -29,7 +29,7 @@ func TestListFeedsOkExtended(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	st := newTestStore(t)
+	db := newTestDB(t)
 
 	dbFeeds := []*feedRecord{
 		{
@@ -43,11 +43,11 @@ func TestListFeedsOkExtended(t *testing.T) {
 			updated: toNullTime(mustTime(t, "2022-04-20T16:32:30.760+02:00")),
 		},
 	}
-	st.addFeeds(dbFeeds)
+	db.addFeeds(dbFeeds)
 
-	r.Equal(2, st.countFeeds())
+	r.Equal(2, db.countFeeds())
 
-	feeds, err := st.ListFeeds(context.Background())
+	feeds, err := db.ListFeeds(context.Background())
 	r.NoError(err)
 	r.NotEmpty(feeds)
 

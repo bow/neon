@@ -1,7 +1,7 @@
 // Copyright (c) 2023 Wibowo Arindrarto <contact@arindrarto.dev>
 // SPDX-License-Identifier: BSD-3-Clause
 
-package store
+package database
 
 import (
 	"context"
@@ -17,9 +17,9 @@ func TestGetGlobalStatsEmptyOk(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	st := newTestStore(t)
+	db := newTestDB(t)
 
-	stats, err := st.GetGlobalStats(context.Background())
+	stats, err := db.GetGlobalStats(context.Background())
 	r.NoError(err)
 	r.NotNil(stats)
 
@@ -35,7 +35,7 @@ func TestGetGlobalStatsExtendedOk(t *testing.T) {
 
 	r := require.New(t)
 	a := assert.New(t)
-	st := newTestStore(t)
+	db := newTestDB(t)
 
 	dbFeeds := []*feedRecord{ // nolint:dupl
 		{
@@ -85,10 +85,10 @@ func TestGetGlobalStatsExtendedOk(t *testing.T) {
 			},
 		},
 	}
-	_ = st.addFeeds(dbFeeds)
-	r.Equal(2, st.countFeeds())
+	_ = db.addFeeds(dbFeeds)
+	r.Equal(2, db.countFeeds())
 
-	stats, err := st.GetGlobalStats(context.Background())
+	stats, err := db.GetGlobalStats(context.Background())
 	r.NoError(err)
 	r.NotNil(stats)
 

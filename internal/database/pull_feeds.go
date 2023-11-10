@@ -1,7 +1,7 @@
 // Copyright (c) 2022 Wibowo Arindrarto <contact@arindrarto.dev>
 // SPDX-License-Identifier: BSD-3-Clause
 
-package store
+package database
 
 import (
 	"context"
@@ -12,7 +12,7 @@ import (
 	"github.com/bow/iris/internal"
 )
 
-func (s *SQLite) PullFeeds(
+func (db *SQLite) PullFeeds(
 	ctx context.Context,
 	ids []internal.ID,
 ) <-chan internal.PullResult {
@@ -48,7 +48,7 @@ func (s *SQLite) PullFeeds(
 
 		chs := make([]<-chan internal.PullResult, len(pks))
 		for i, pk := range pks {
-			chs[i] = pullNewFeedEntries(ctx, tx, pk, s.parser)
+			chs[i] = pullNewFeedEntries(ctx, tx, pk, db.parser)
 		}
 
 		for pr := range merge(chs) {
@@ -62,8 +62,8 @@ func (s *SQLite) PullFeeds(
 		return nil
 	}
 
-	s.mu.Lock()
-	defer s.mu.Unlock()
+	db.mu.Lock()
+	defer db.mu.Unlock()
 
 	go func() {
 		defer func() {
@@ -71,7 +71,7 @@ func (s *SQLite) PullFeeds(
 			close(c)
 		}()
 		wg.Add(1)
-		err := s.withTx(ctx, dbFunc)
+		err := db.withTx(ctx, dbFunc)
 		if err != nil {
 			c <- internal.NewPullResultFromError(nil, fail(err))
 		}

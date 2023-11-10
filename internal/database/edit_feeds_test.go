@@ -1,7 +1,7 @@
 // Copyright (c) 2022 Wibowo Arindrarto <contact@arindrarto.dev>
 // SPDX-License-Identifier: BSD-3-Clause
 
-package store
+package database
 
 import (
 	"context"
@@ -18,9 +18,9 @@ func TestEditFeedsOkEmpty(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	st := newTestStore(t)
+	db := newTestDB(t)
 
-	feeds, err := st.EditFeeds(context.Background(), nil)
+	feeds, err := db.EditFeeds(context.Background(), nil)
 	r.NoError(err)
 
 	a.Empty(feeds)
@@ -31,7 +31,7 @@ func TestEditFeedsOkExtended(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	st := newTestStore(t)
+	db := newTestDB(t)
 
 	dbFeeds := []*feedRecord{
 		{
@@ -41,12 +41,12 @@ func TestEditFeedsOkExtended(t *testing.T) {
 			isStarred: false,
 		},
 	}
-	keys := st.addFeeds(dbFeeds)
+	keys := db.addFeeds(dbFeeds)
 
-	r.Equal(1, st.countFeeds())
+	r.Equal(1, db.countFeeds())
 
 	existf := func(title string, isStarred bool) bool {
-		return st.rowExists(
+		return db.rowExists(
 			`SELECT * FROM feeds WHERE title = ? AND is_starred = ?`,
 			title,
 			isStarred,
@@ -59,7 +59,7 @@ func TestEditFeedsOkExtended(t *testing.T) {
 	ops := []*internal.FeedEditOp{
 		{ID: keys["Feed A"].ID, Title: pointer("Feed X"), IsStarred: pointer(true)},
 	}
-	feeds, err := st.EditFeeds(context.Background(), ops)
+	feeds, err := db.EditFeeds(context.Background(), ops)
 	r.NoError(err)
 
 	a.Len(feeds, 1)

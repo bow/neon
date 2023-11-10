@@ -1,7 +1,7 @@
 // Copyright (c) 2022 Wibowo Arindrarto <contact@arindrarto.dev>
 // SPDX-License-Identifier: BSD-3-Clause
 
-package store
+package database
 
 import (
 	"context"
@@ -11,7 +11,7 @@ import (
 )
 
 // EditFeed updates fields of an feed.
-func (s *SQLite) EditFeeds(
+func (db *SQLite) EditFeeds(
 	ctx context.Context,
 	ops []*internal.FeedEditOp,
 ) ([]*internal.Feed, error) {
@@ -49,10 +49,10 @@ func (s *SQLite) EditFeeds(
 
 	fail := failF("SQLite.EditFeed")
 
-	s.mu.Lock()
-	defer s.mu.Unlock()
+	db.mu.Lock()
+	defer db.mu.Unlock()
 
-	err := s.withTx(ctx, dbFunc)
+	err := db.withTx(ctx, dbFunc)
 	if err != nil {
 		return nil, fail(err)
 	}

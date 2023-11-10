@@ -1,7 +1,7 @@
 // Copyright (c) 2022 Wibowo Arindrarto <contact@arindrarto.dev>
 // SPDX-License-Identifier: BSD-3-Clause
 
-package store
+package database
 
 import (
 	"context"
@@ -18,7 +18,7 @@ func TestAddFeedOkMinimal(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	st := newTestStore(t)
+	db := newTestDB(t)
 
 	feed := gofeed.Feed{
 		Title:       "feed-title",
@@ -27,12 +27,12 @@ func TestAddFeedOkMinimal(t *testing.T) {
 		FeedLink:    "https://bar.com/feed.xml",
 	}
 
-	st.parser.EXPECT().
+	db.parser.EXPECT().
 		ParseURLWithContext(feed.Link, gomock.Any()).
 		Return(&feed, nil)
 
 	existf := func() bool {
-		return st.rowExists(
+		return db.rowExists(
 			feedExistSQL,
 			feed.Title,
 			feed.Description,
@@ -42,12 +42,12 @@ func TestAddFeedOkMinimal(t *testing.T) {
 		)
 	}
 
-	a.Equal(0, st.countFeeds())
-	a.Equal(0, st.countEntries(feed.FeedLink))
-	a.Equal(0, st.countFeedTags())
+	a.Equal(0, db.countFeeds())
+	a.Equal(0, db.countEntries(feed.FeedLink))
+	a.Equal(0, db.countFeedTags())
 	a.False(existf())
 
-	created, err := st.AddFeed(context.Background(), feed.Link, nil, nil, nil, nil)
+	created, err := db.AddFeed(context.Background(), feed.Link, nil, nil, nil, nil)
 	r.NoError(err)
 
 	a.Equal(feed.Title, created.Title)
@@ -57,9 +57,9 @@ func TestAddFeedOkMinimal(t *testing.T) {
 	a.Empty(created.Tags)
 	a.False(created.IsStarred)
 
-	a.Equal(1, st.countFeeds())
-	a.Equal(0, st.countEntries(feed.FeedLink))
-	a.Equal(0, st.countFeedTags())
+	a.Equal(1, db.countFeeds())
+	a.Equal(0, db.countEntries(feed.FeedLink))
+	a.Equal(0, db.countFeedTags())
 	a.True(existf())
 }
 
@@ -68,7 +68,7 @@ func TestAddFeedOkExtended(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	st := newTestStore(t)
+	db := newTestDB(t)
 
 	feed := gofeed.Feed{
 		Title:       "feed-title-original",
@@ -100,12 +100,12 @@ func TestAddFeedOkExtended(t *testing.T) {
 		isStarred   = true
 	)
 
-	st.parser.EXPECT().
+	db.parser.EXPECT().
 		ParseURLWithContext(feed.Link, gomock.Any()).
 		Return(&feed, nil)
 
 	existf1 := func() bool {
-		return st.rowExists(
+		return db.rowExists(
 			feedExistSQL,
 			feed.Title,
 			feed.Description,
@@ -115,21 +115,21 @@ func TestAddFeedOkExtended(t *testing.T) {
 		)
 	}
 	existf2 := func() bool {
-		return st.rowExists(feedExistSQL, title, description, feed.FeedLink, feed.Link, true)
+		return db.rowExists(feedExistSQL, title, description, feed.FeedLink, feed.Link, true)
 	}
 	existe := func(item *gofeed.Item) bool {
-		return st.rowExists(feedEntryExistSQL, feed.FeedLink, item.Title, item.Link)
+		return db.rowExists(feedEntryExistSQL, feed.FeedLink, item.Title, item.Link)
 	}
 
-	a.Equal(0, st.countFeeds())
-	a.Equal(0, st.countEntries(feed.FeedLink))
-	a.Equal(0, st.countFeedTags())
+	a.Equal(0, db.countFeeds())
+	a.Equal(0, db.countEntries(feed.FeedLink))
+	a.Equal(0, db.countFeedTags())
 	a.False(existf1())
 	a.False(existf2())
 	a.False(existe(feed.Items[0]))
 	a.False(existe(feed.Items[1]))
 
-	created, err := st.AddFeed(
+	created, err := db.AddFeed(
 		context.Background(),
 		feed.Link,
 		&title,
@@ -146,9 +146,9 @@ func TestAddFeedOkExtended(t *testing.T) {
 	a.Equal(tags, created.Tags)
 	a.True(created.IsStarred)
 
-	a.Equal(1, st.countFeeds())
-	a.Equal(2, st.countEntries(feed.FeedLink))
-	a.Equal(3, st.countFeedTags())
+	a.Equal(1, db.countFeeds())
+	a.Equal(2, db.countEntries(feed.FeedLink))
+	a.Equal(3, db.countFeedTags())
 	a.False(existf1())
 	a.True(existf2())
 	a.True(existe(feed.Items[0]))
@@ -160,7 +160,7 @@ func TestAddFeedOkURLExists(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	st := newTestStore(t)
+	db := newTestDB(t)
 
 	feed := gofeed.Feed{
 		Title:       "feed-title",
@@ -190,14 +190,14 @@ func TestAddFeedOkURLExists(t *testing.T) {
 		isStarred = true
 	)
 
-	st.parser.EXPECT().
+	db.parser.EXPECT().
 		ParseURLWithContext(feed.Link, gomock.Any()).
 		Return(&feed, nil)
 
-	st.addFeedWithURL(feed.FeedLink)
+	db.addFeedWithURL(feed.FeedLink)
 
 	existf := func() bool {
-		return st.rowExists(
+		return db.rowExists(
 			feedExistSQL,
 			feed.Title,
 			feed.Description,
@@ -207,17 +207,17 @@ func TestAddFeedOkURLExists(t *testing.T) {
 		)
 	}
 	existe := func(item *gofeed.Item) bool {
-		return st.rowExists(feedEntryExistSQL, feed.FeedLink, item.Title, item.Link)
+		return db.rowExists(feedEntryExistSQL, feed.FeedLink, item.Title, item.Link)
 	}
 
-	a.Equal(1, st.countFeeds())
-	a.Equal(0, st.countEntries(feed.FeedLink))
-	a.Equal(0, st.countFeedTags())
+	a.Equal(1, db.countFeeds())
+	a.Equal(0, db.countEntries(feed.FeedLink))
+	a.Equal(0, db.countFeedTags())
 	a.False(existf())
 	a.False(existe(feed.Items[0]))
 	a.False(existe(feed.Items[1]))
 
-	created, err := st.AddFeed(context.Background(), feed.Link, nil, nil, tags, pointer(true))
+	created, err := db.AddFeed(context.Background(), feed.Link, nil, nil, tags, pointer(true))
 	r.NoError(err)
 
 	a.Equal(feed.Title, created.Title)
@@ -227,9 +227,9 @@ func TestAddFeedOkURLExists(t *testing.T) {
 	a.Equal(tags, created.Tags)
 	a.True(created.IsStarred)
 
-	a.Equal(1, st.countFeeds())
-	a.Equal(2, st.countEntries(feed.FeedLink))
-	a.Equal(1, st.countFeedTags())
+	a.Equal(1, db.countFeeds())
+	a.Equal(2, db.countEntries(feed.FeedLink))
+	a.Equal(1, db.countFeedTags())
 	a.True(existf())
 	a.True(existe(feed.Items[0]))
 	a.True(existe(feed.Items[1]))

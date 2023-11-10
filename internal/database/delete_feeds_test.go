@@ -1,7 +1,7 @@
 // Copyright (c) 2022 Wibowo Arindrarto <contact@arindrarto.dev>
 // SPDX-License-Identifier: BSD-3-Clause
 
-package store
+package database
 
 import (
 	"context"
@@ -16,7 +16,7 @@ func TestDeleteFeedsOkEmpty(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	st := newTestStore(t)
+	db := newTestDB(t)
 
 	dbFeeds := []*feedRecord{
 		{
@@ -30,13 +30,13 @@ func TestDeleteFeedsOkEmpty(t *testing.T) {
 			updated: toNullTime(mustTime(t, "2022-04-20T16:32:30.760+02:00")),
 		},
 	}
-	st.addFeeds(dbFeeds)
-	r.Equal(2, st.countFeeds())
+	db.addFeeds(dbFeeds)
+	r.Equal(2, db.countFeeds())
 
-	err := st.DeleteFeeds(context.Background(), []ID{})
+	err := db.DeleteFeeds(context.Background(), []ID{})
 	r.NoError(err)
 
-	a.Equal(2, st.countFeeds())
+	a.Equal(2, db.countFeeds())
 }
 
 func TestDeleteFeedsOkSingle(t *testing.T) {
@@ -44,7 +44,7 @@ func TestDeleteFeedsOkSingle(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	st := newTestStore(t)
+	db := newTestDB(t)
 
 	dbFeeds := []*feedRecord{
 		{
@@ -65,23 +65,23 @@ func TestDeleteFeedsOkSingle(t *testing.T) {
 			},
 		},
 	}
-	keys := st.addFeeds(dbFeeds)
-	r.Equal(2, st.countFeeds())
-	a.Equal(2, st.countEntries(dbFeeds[0].feedURL))
-	a.Equal(1, st.countEntries(dbFeeds[1].feedURL))
+	keys := db.addFeeds(dbFeeds)
+	r.Equal(2, db.countFeeds())
+	a.Equal(2, db.countEntries(dbFeeds[0].feedURL))
+	a.Equal(1, db.countEntries(dbFeeds[1].feedURL))
 
 	existf := func(title string) bool {
-		return st.rowExists(`SELECT * FROM feeds WHERE title = ?`, title)
+		return db.rowExists(`SELECT * FROM feeds WHERE title = ?`, title)
 	}
 
 	a.True(existf("Feed A"))
 	a.True(existf("Feed X"))
 
-	err := st.DeleteFeeds(context.Background(), []ID{keys["Feed X"].ID})
+	err := db.DeleteFeeds(context.Background(), []ID{keys["Feed X"].ID})
 	r.NoError(err)
-	a.Equal(1, st.countFeeds())
-	a.Equal(2, st.countEntries(dbFeeds[0].feedURL))
-	a.Equal(0, st.countEntries(dbFeeds[1].feedURL))
+	a.Equal(1, db.countFeeds())
+	a.Equal(2, db.countEntries(dbFeeds[0].feedURL))
+	a.Equal(0, db.countEntries(dbFeeds[1].feedURL))
 
 	a.True(existf("Feed A"))
 	a.False(existf("Feed X"))
@@ -92,7 +92,7 @@ func TestDeleteFeedsOkMultiple(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	st := newTestStore(t)
+	db := newTestDB(t)
 
 	dbFeeds := []*feedRecord{
 		{
@@ -123,26 +123,26 @@ func TestDeleteFeedsOkMultiple(t *testing.T) {
 			},
 		},
 	}
-	keys := st.addFeeds(dbFeeds)
-	r.Equal(3, st.countFeeds())
-	a.Equal(2, st.countEntries(dbFeeds[0].feedURL))
-	a.Equal(3, st.countEntries(dbFeeds[1].feedURL))
-	a.Equal(1, st.countEntries(dbFeeds[2].feedURL))
+	keys := db.addFeeds(dbFeeds)
+	r.Equal(3, db.countFeeds())
+	a.Equal(2, db.countEntries(dbFeeds[0].feedURL))
+	a.Equal(3, db.countEntries(dbFeeds[1].feedURL))
+	a.Equal(1, db.countEntries(dbFeeds[2].feedURL))
 
 	existf := func(title string) bool {
-		return st.rowExists(`SELECT * FROM feeds WHERE title = ?`, title)
+		return db.rowExists(`SELECT * FROM feeds WHERE title = ?`, title)
 	}
 
 	a.True(existf("Feed A"))
 	a.True(existf("Feed P"))
 	a.True(existf("Feed X"))
 
-	err := st.DeleteFeeds(context.Background(), []ID{keys["Feed A"].ID, keys["Feed P"].ID})
+	err := db.DeleteFeeds(context.Background(), []ID{keys["Feed A"].ID, keys["Feed P"].ID})
 	r.NoError(err)
-	a.Equal(1, st.countFeeds())
-	a.Equal(0, st.countEntries(dbFeeds[0].feedURL))
-	a.Equal(0, st.countEntries(dbFeeds[1].feedURL))
-	a.Equal(1, st.countEntries(dbFeeds[2].feedURL))
+	a.Equal(1, db.countFeeds())
+	a.Equal(0, db.countEntries(dbFeeds[0].feedURL))
+	a.Equal(0, db.countEntries(dbFeeds[1].feedURL))
+	a.Equal(1, db.countEntries(dbFeeds[2].feedURL))
 
 	a.False(existf("Feed A"))
 	a.False(existf("Feed P"))
@@ -154,7 +154,7 @@ func TestDeleteFeedsErrHasMissing(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	st := newTestStore(t)
+	db := newTestDB(t)
 
 	dbFeeds := []*feedRecord{
 		{
@@ -185,27 +185,27 @@ func TestDeleteFeedsErrHasMissing(t *testing.T) {
 			},
 		},
 	}
-	keys := st.addFeeds(dbFeeds)
-	r.Equal(3, st.countFeeds())
-	a.Equal(2, st.countEntries(dbFeeds[0].feedURL))
-	a.Equal(3, st.countEntries(dbFeeds[1].feedURL))
-	a.Equal(1, st.countEntries(dbFeeds[2].feedURL))
+	keys := db.addFeeds(dbFeeds)
+	r.Equal(3, db.countFeeds())
+	a.Equal(2, db.countEntries(dbFeeds[0].feedURL))
+	a.Equal(3, db.countEntries(dbFeeds[1].feedURL))
+	a.Equal(1, db.countEntries(dbFeeds[2].feedURL))
 
 	existf := func(title string) bool {
-		return st.rowExists(`SELECT * FROM feeds WHERE title = ?`, title)
+		return db.rowExists(`SELECT * FROM feeds WHERE title = ?`, title)
 	}
 
 	a.True(existf("Feed A"))
 	a.True(existf("Feed P"))
 	a.True(existf("Feed X"))
 
-	err := st.DeleteFeeds(context.Background(), []ID{keys["Feed A"].ID, 99})
+	err := db.DeleteFeeds(context.Background(), []ID{keys["Feed A"].ID, 99})
 	a.EqualError(err, "SQLite.DeleteFeeds: feed with ID=99 not found")
 
-	r.Equal(3, st.countFeeds())
-	a.Equal(2, st.countEntries(dbFeeds[0].feedURL))
-	a.Equal(3, st.countEntries(dbFeeds[1].feedURL))
-	a.Equal(1, st.countEntries(dbFeeds[2].feedURL))
+	r.Equal(3, db.countFeeds())
+	a.Equal(2, db.countEntries(dbFeeds[0].feedURL))
+	a.Equal(3, db.countEntries(dbFeeds[1].feedURL))
+	a.Equal(1, db.countEntries(dbFeeds[2].feedURL))
 
 	a.True(existf("Feed A"))
 	a.True(existf("Feed P"))

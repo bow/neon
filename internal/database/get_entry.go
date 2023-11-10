@@ -1,7 +1,7 @@
 // Copyright (c) 2023 Wibowo Arindrarto <contact@arindrarto.dev>
 // SPDX-License-Identifier: BSD-3-Clause
 
-package store
+package database
 
 import (
 	"context"
@@ -11,7 +11,7 @@ import (
 	"github.com/bow/iris/internal"
 )
 
-func (s *SQLite) GetEntry(
+func (db *SQLite) GetEntry(
 	ctx context.Context,
 	id internal.ID,
 ) (*internal.Entry, error) {
@@ -31,10 +31,10 @@ func (s *SQLite) GetEntry(
 
 	fail := failF("SQLite.ViewFeed")
 
-	s.mu.Lock()
-	defer s.mu.Unlock()
+	db.mu.Lock()
+	defer db.mu.Unlock()
 
-	err := s.withTx(ctx, dbFunc)
+	err := db.withTx(ctx, dbFunc)
 	if err != nil {
 		return nil, fail(err)
 	}

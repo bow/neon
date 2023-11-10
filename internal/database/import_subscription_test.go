@@ -1,7 +1,7 @@
 // Copyright (c) 2022 Wibowo Arindrarto <contact@arindrarto.dev>
 // SPDX-License-Identifier: BSD-3-Clause
 
-package store
+package database
 
 import (
 	"context"
@@ -17,18 +17,18 @@ func TestImportSubscriptionOkNoFeeds(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	st := newTestStore(t)
+	db := newTestDB(t)
 
-	r.Equal(0, st.countFeeds())
+	r.Equal(0, db.countFeeds())
 
 	sub := internal.Subscription{}
 
-	nproc, nimp, err := st.ImportSubscription(context.Background(), &sub)
+	nproc, nimp, err := db.ImportSubscription(context.Background(), &sub)
 	r.NoError(err)
 
 	a.Equal(0, nproc)
 	a.Equal(0, nimp)
-	a.Equal(0, st.countFeeds())
+	a.Equal(0, db.countFeeds())
 }
 
 func TestImportSubscriptionOkMinimal(t *testing.T) {
@@ -36,10 +36,10 @@ func TestImportSubscriptionOkMinimal(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	st := newTestStore(t)
+	db := newTestDB(t)
 
 	existf := func() bool {
-		return st.rowExists(
+		return db.rowExists(
 			feedExistSQL,
 			"Feed A",
 			nil,
@@ -49,7 +49,7 @@ func TestImportSubscriptionOkMinimal(t *testing.T) {
 		)
 	}
 
-	r.Equal(0, st.countFeeds())
+	r.Equal(0, db.countFeeds())
 	a.False(existf())
 
 	sub := internal.Subscription{
@@ -58,12 +58,12 @@ func TestImportSubscriptionOkMinimal(t *testing.T) {
 		},
 	}
 
-	nproc, nimp, err := st.ImportSubscription(context.Background(), &sub)
+	nproc, nimp, err := db.ImportSubscription(context.Background(), &sub)
 	r.NoError(err)
 
 	a.Equal(1, nproc)
 	a.Equal(1, nimp)
-	a.Equal(1, st.countFeeds())
+	a.Equal(1, db.countFeeds())
 	a.True(existf())
 }
 
@@ -72,7 +72,7 @@ func TestImportSubscriptionOkExtended(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	st := newTestStore(t)
+	db := newTestDB(t)
 
 	dbFeeds := []*feedRecord{
 		{
@@ -96,10 +96,10 @@ func TestImportSubscriptionOkExtended(t *testing.T) {
 			tags: []string{"foo", "baz"},
 		},
 	}
-	st.addFeeds(dbFeeds)
+	db.addFeeds(dbFeeds)
 
 	existfA := func() bool {
-		return st.rowExists(
+		return db.rowExists(
 			feedExistSQL,
 			"Feed A",
 			"New feed",
@@ -109,7 +109,7 @@ func TestImportSubscriptionOkExtended(t *testing.T) {
 		)
 	}
 	existfBC := func() bool {
-		return st.rowExists(
+		return db.rowExists(
 			feedExistSQL,
 			"Feed BC",
 			"Updated feed",
@@ -136,16 +136,16 @@ func TestImportSubscriptionOkExtended(t *testing.T) {
 		},
 	}
 
-	r.Equal(2, st.countFeeds())
+	r.Equal(2, db.countFeeds())
 	a.False(existfA())
 	a.False(existfBC())
 
-	nproc, nimp, err := st.ImportSubscription(context.Background(), &sub)
+	nproc, nimp, err := db.ImportSubscription(context.Background(), &sub)
 	r.NoError(err)
 
 	a.Equal(2, nproc)
 	a.Equal(1, nimp)
-	a.Equal(3, st.countFeeds())
+	a.Equal(3, db.countFeeds())
 	a.True(existfA())
 	a.True(existfBC())
 }

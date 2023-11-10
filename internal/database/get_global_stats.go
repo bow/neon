@@ -1,7 +1,7 @@
 // Copyright (c) 2023 Wibowo Arindrarto <contact@arindrarto.dev>
 // SPDX-License-Identifier: BSD-3-Clause
 
-package store
+package database
 
 import (
 	"context"
@@ -11,7 +11,7 @@ import (
 	"github.com/bow/iris/internal"
 )
 
-func (s *SQLite) GetGlobalStats(ctx context.Context) (*internal.Stats, error) {
+func (db *SQLite) GetGlobalStats(ctx context.Context) (*internal.Stats, error) {
 
 	aggr := &statsAggregateRecord{}
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
@@ -25,10 +25,10 @@ func (s *SQLite) GetGlobalStats(ctx context.Context) (*internal.Stats, error) {
 
 	fail := failF("SQLite.GetGlobalStats")
 
-	s.mu.Lock()
-	defer s.mu.Unlock()
+	db.mu.Lock()
+	defer db.mu.Unlock()
 
-	err := s.withTx(ctx, dbFunc)
+	err := db.withTx(ctx, dbFunc)
 	if err != nil {
 		return nil, fail(err)
 	}

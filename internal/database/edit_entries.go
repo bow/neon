@@ -1,7 +1,7 @@
 // Copyright (c) 2022 Wibowo Arindrarto <contact@arindrarto.dev>
 // SPDX-License-Identifier: BSD-3-Clause
 
-package store
+package database
 
 import (
 	"context"
@@ -11,7 +11,7 @@ import (
 )
 
 // EditEntries updates fields of an entry.
-func (s *SQLite) EditEntries(
+func (db *SQLite) EditEntries(
 	ctx context.Context,
 	ops []*internal.EntryEditOp,
 ) ([]*internal.Entry, error) {
@@ -40,10 +40,10 @@ func (s *SQLite) EditEntries(
 
 	fail := failF("SQLite.EditEntries")
 
-	s.mu.Lock()
-	defer s.mu.Unlock()
+	db.mu.Lock()
+	defer db.mu.Unlock()
 
-	err := s.withTx(ctx, dbFunc)
+	err := db.withTx(ctx, dbFunc)
 	if err != nil {
 		return nil, fail(err)
 	}

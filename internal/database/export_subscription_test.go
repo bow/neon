@@ -1,7 +1,7 @@
 // Copyright (c) 2022 Wibowo Arindrarto <contact@arindrarto.dev>
 // SPDX-License-Identifier: BSD-3-Clause
 
-package store
+package database
 
 import (
 	"context"
@@ -16,11 +16,11 @@ func TestExportSubscriptionOkEmpty(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	st := newTestStore(t)
+	db := newTestDB(t)
 
-	r.Equal(0, st.countFeeds())
+	r.Equal(0, db.countFeeds())
 
-	sub, err := st.ExportSubscription(context.Background(), pointer("export"))
+	sub, err := db.ExportSubscription(context.Background(), pointer("export"))
 	r.NoError(err)
 	r.NotNil(sub)
 
@@ -33,7 +33,7 @@ func TestExportSubscriptionOkExtended(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	st := newTestStore(t)
+	db := newTestDB(t)
 
 	dbFeeds := []*feedRecord{
 		{
@@ -64,10 +64,10 @@ func TestExportSubscriptionOkExtended(t *testing.T) {
 			},
 		},
 	}
-	st.addFeeds(dbFeeds)
-	r.Equal(3, st.countFeeds())
+	db.addFeeds(dbFeeds)
+	r.Equal(3, db.countFeeds())
 
-	sub, err := st.ExportSubscription(context.Background(), pointer("Test Export"))
+	sub, err := db.ExportSubscription(context.Background(), pointer("Test Export"))
 	r.NoError(err)
 
 	a.NotNil(sub.Title)

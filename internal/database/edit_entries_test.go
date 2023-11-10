@@ -1,7 +1,7 @@
 // Copyright (c) 2022 Wibowo Arindrarto <contact@arindrarto.dev>
 // SPDX-License-Identifier: BSD-3-Clause
 
-package store
+package database
 
 import (
 	"context"
@@ -18,9 +18,9 @@ func TestEditEntriesOkEmpty(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	st := newTestStore(t)
+	db := newTestDB(t)
 
-	entries, err := st.EditEntries(context.Background(), nil)
+	entries, err := db.EditEntries(context.Background(), nil)
 	r.NoError(err)
 
 	a.Empty(entries)
@@ -31,7 +31,7 @@ func TestEditEntriesOkMinimal(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	st := newTestStore(t)
+	db := newTestDB(t)
 
 	dbFeeds := []*feedRecord{
 		{
@@ -43,12 +43,12 @@ func TestEditEntriesOkMinimal(t *testing.T) {
 			},
 		},
 	}
-	keys := st.addFeeds(dbFeeds)
+	keys := db.addFeeds(dbFeeds)
 
-	r.Equal(1, st.countFeeds())
+	r.Equal(1, db.countFeeds())
 
 	existe := func(title string, isRead bool) bool {
-		return st.rowExists(
+		return db.rowExists(
 			`SELECT * FROM entries e WHERE e.title = ? AND e.is_read = ?`,
 			title,
 			isRead,
@@ -61,7 +61,7 @@ func TestEditEntriesOkMinimal(t *testing.T) {
 	ops := []*internal.EntryEditOp{
 		{ID: keys["Feed A"].Entries["Entry A1"], IsRead: pointer(false)},
 	}
-	entries, err := st.EditEntries(context.Background(), ops)
+	entries, err := db.EditEntries(context.Background(), ops)
 	r.NoError(err)
 
 	a.Len(entries, 1)
@@ -75,7 +75,7 @@ func TestEditEntriesOkExtended(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	st := newTestStore(t)
+	db := newTestDB(t)
 
 	dbFeeds := []*feedRecord{
 		{
@@ -96,12 +96,12 @@ func TestEditEntriesOkExtended(t *testing.T) {
 			},
 		},
 	}
-	keys := st.addFeeds(dbFeeds)
+	keys := db.addFeeds(dbFeeds)
 
-	r.Equal(2, st.countFeeds())
+	r.Equal(2, db.countFeeds())
 
 	existe := func(title string, isRead bool) bool {
-		return st.rowExists(
+		return db.rowExists(
 			`SELECT * FROM entries e WHERE e.title = ? AND e.is_read = ?`,
 			title,
 			isRead,
@@ -121,7 +121,7 @@ func TestEditEntriesOkExtended(t *testing.T) {
 		{ID: keys["Feed X"].Entries["Entry X1"], IsRead: pointer(true)},
 		{ID: keys["Feed A"].Entries["Entry A2"], IsRead: pointer(true)},
 	}
-	entries, err := st.EditEntries(context.Background(), setOps)
+	entries, err := db.EditEntries(context.Background(), setOps)
 	r.NoError(err)
 
 	a.Len(entries, 2)
