@@ -12,7 +12,7 @@ require (
 	github.com/mmcdole/gofeed v1.2.1
 	github.com/rivo/tview v0.0.0-20231024211518-8b7bcf9883df
 	github.com/rs/zerolog v1.31.0
-	github.com/spf13/cobra v1.7.0
+	github.com/spf13/cobra v1.8.0
 	github.com/spf13/viper v1.17.0
 	github.com/stretchr/testify v1.8.4
 	golang.org/x/net v0.17.0
