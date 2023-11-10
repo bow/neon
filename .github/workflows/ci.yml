@@ -124,7 +124,7 @@ jobs:
 
       - name: Setup docker buildx
         if: github.event_name != 'pull_request'
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
 
       - name: Extract metadata for image
         if: github.event_name != 'pull_request'
