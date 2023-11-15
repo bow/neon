@@ -4,7 +4,9 @@
 package tui
 
 import (
+	"context"
 	"fmt"
+	"time"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
@@ -13,10 +15,12 @@ import (
 )
 
 // Show displays a reader for the given datastore.
-func Show(_ internal.FeedStore) error {
+func Show(db internal.FeedStore) error {
 
 	lineForeground := tcell.ColorWhite
 	titleForeground := tcell.ColorBlue
+	versionForeground := tcell.ColorGray
+	lastPullForeground := tcell.ColorGray
 	wideViewMinWidth := 150
 
 	newFeedsPane := func(withBottomBorder bool) *tview.Box {
@@ -40,13 +44,38 @@ func Show(_ internal.FeedStore) error {
 		AddItem(newVerticalDivider(lineForeground), 0, 1, 1, 1, 0, wideViewMinWidth, false).
 		AddItem(newEntriesPane(), 0, 2, 1, 1, 0, wideViewMinWidth, false)
 
+	stats, err := db.GetGlobalStats(context.Background())
+	if err != nil {
+		return err
+	}
+
+	footer := tview.NewFlex().
+		SetDirection(tview.FlexColumn).
+		// TODO: Refresh values when requested.
+		AddItem(
+			tview.NewTextView().
+				SetTextAlign(tview.AlignLeft).
+				SetTextColor(lastPullForeground).
+				SetText(
+					fmt.Sprintf("Last pulled %s", stats.LastPullTime.Local().Format(time.RFC822)),
+				),
+			0, 2, false,
+		).
+		AddItem(
+			tview.NewTextView().
+				SetTextAlign(tview.AlignRight).
+				SetTextColor(versionForeground).
+				SetText(fmt.Sprintf("iris v%s", internal.Version())),
+			0, 1, false,
+		)
+
 	root := tview.NewGrid().
 		SetRows(2, 0, 1).
 		SetBorders(false).
 		AddItem(newPlaceholderSection("<header>"), 0, 0, 1, 1, 0, 0, false).
 		AddItem(wideReadingGrid, 1, 0, 1, 1, 0, wideViewMinWidth, false).
 		AddItem(narrowReadingGrid, 1, 0, 1, 1, 0, 0, false).
-		AddItem(newPlaceholderSection("<footer>"), 2, 0, 1, 1, 0, 0, false)
+		AddItem(footer, 2, 0, 1, 1, 0, 0, false)
 
 	app := tview.NewApplication()
 
