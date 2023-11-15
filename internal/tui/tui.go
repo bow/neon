@@ -68,10 +68,15 @@ func newPane(
 			}
 		}
 
+		var displayed string
+		if text != "" {
+			displayed = fmt.Sprintf(" %s ", text)
+		}
+
 		// Write the title text.
 		tview.Print(
 			screen,
-			fmt.Sprintf(" %s ", text),
+			displayed,
 			x+titleLeftPad,
 			y,
 			width-2,
