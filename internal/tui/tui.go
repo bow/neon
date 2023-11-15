@@ -17,23 +17,36 @@ func Show(_ internal.FeedStore) error {
 
 	lineForeground := tcell.ColorWhite
 	titleForeground := tcell.ColorBlue
+	wideViewMinWidth := 150
 
-	feedsPane := newPane("Feeds", titleForeground, lineForeground, 1)
-	entriesPane := newPane("Entries", titleForeground, lineForeground, 1)
+	newFeedsPane := func(withBottomBorder bool) *tview.Box {
+		return newPane("Feeds", titleForeground, lineForeground, 1, withBottomBorder)
+	}
 
-	readingSection := tview.NewGrid().
-		SetColumns(30, 1, 0).
+	newEntriesPane := func() *tview.Box {
+		return newPane("Entries", titleForeground, lineForeground, 1, true)
+	}
+
+	narrowReadingGrid := tview.NewGrid().
+		SetRows(-1, -2).
 		SetBorders(false).
-		AddItem(feedsPane, 0, 0, 1, 1, 0, 0, false).
-		AddItem(newVerticalDivider(lineForeground), 0, 1, 1, 1, 0, 0, false).
-		AddItem(entriesPane, 0, 2, 1, 1, 0, 0, false)
+		AddItem(newFeedsPane(false), 0, 0, 1, 1, 0, 0, false).
+		AddItem(newEntriesPane(), 1, 0, 1, 1, 0, 0, false)
+
+	wideReadingGrid := tview.NewGrid().
+		SetColumns(45, 1, 0).
+		SetBorders(false).
+		AddItem(newFeedsPane(true), 0, 0, 1, 1, 0, wideViewMinWidth, false).
+		AddItem(newVerticalDivider(lineForeground), 0, 1, 1, 1, 0, wideViewMinWidth, false).
+		AddItem(newEntriesPane(), 0, 2, 1, 1, 0, wideViewMinWidth, false)
 
 	root := tview.NewGrid().
 		SetRows(2, 0, 1).
 		SetBorders(false).
-		AddItem(newPlaceholderSection("<header>"), 0, 0, 1, 2, 0, 0, false).
-		AddItem(readingSection, 1, 0, 1, 2, 0, 0, false).
-		AddItem(newPlaceholderSection("<footer>"), 2, 0, 1, 2, 0, 0, false)
+		AddItem(newPlaceholderSection("<header>"), 0, 0, 1, 1, 0, 0, false).
+		AddItem(wideReadingGrid, 1, 0, 1, 1, 0, wideViewMinWidth, false).
+		AddItem(narrowReadingGrid, 1, 0, 1, 1, 0, 0, false).
+		AddItem(newPlaceholderSection("<footer>"), 2, 0, 1, 1, 0, 0, false)
 
 	app := tview.NewApplication()
 
@@ -54,17 +67,24 @@ func newPane(
 	text string,
 	textForeground, lineForeground tcell.Color,
 	titleLeftPad int,
+	withBottomBorder bool,
 ) *tview.Box {
 
 	lineStyle := tcell.StyleDefault.Foreground(lineForeground).Background(tcell.ColorBlack)
 
+	hBorderF := func(screen tcell.Screen, cx, cy int) {
+		screen.SetContent(cx, cy, tview.BoxDrawingsLightHorizontal, nil, lineStyle)
+	}
+
 	drawf := func(screen tcell.Screen, x int, y int, width int, height int) (int, int, int, int) {
 
-		// Draw a top and bottom borders.
-		ys := []int{y, y + height - 1}
-		for _, cy := range ys {
+		// Draw top and optionally bottom borders.
+		for cx := x; cx < x+width; cx++ {
+			hBorderF(screen, cx, y)
+		}
+		if withBottomBorder {
 			for cx := x; cx < x+width; cx++ {
-				screen.SetContent(cx, cy, tview.BoxDrawingsLightHorizontal, nil, lineStyle)
+				hBorderF(screen, cx, y+height-1)
 			}
 		}
 
