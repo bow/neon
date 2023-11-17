@@ -6,7 +6,6 @@ package tui
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
@@ -21,6 +20,7 @@ func Show(db internal.FeedStore) error {
 	titleForeground := tcell.ColorBlue
 	versionForeground := tcell.ColorGray
 	lastPullForeground := tcell.ColorGray
+	statsForeground := tcell.ColorDarkGoldenrod
 	wideViewMinWidth := 150
 
 	newFeedsPane := func(withBottomBorder bool) *tview.Box {
@@ -49,25 +49,26 @@ func Show(db internal.FeedStore) error {
 		return err
 	}
 
+	unreadInfo := tview.NewTextView().
+		SetTextColor(statsForeground).
+		SetText(fmt.Sprintf("%d unread entries", stats.NumEntriesUnread))
+
+	lastPullInfo := tview.NewTextView().
+		SetTextColor(lastPullForeground).
+		SetText(
+			fmt.Sprintf("Pulled %s", stats.LastPullTime.Local().Format("02/Jan/06 15:04")),
+		)
+
+	versionInfo := tview.NewTextView().
+		SetTextColor(versionForeground).
+		SetText(fmt.Sprintf("iris v%s", internal.Version()))
+
 	footer := tview.NewFlex().
 		SetDirection(tview.FlexColumn).
 		// TODO: Refresh values when requested.
-		AddItem(
-			tview.NewTextView().
-				SetTextAlign(tview.AlignLeft).
-				SetTextColor(lastPullForeground).
-				SetText(
-					fmt.Sprintf("Last pulled %s", stats.LastPullTime.Local().Format(time.RFC822)),
-				),
-			0, 2, false,
-		).
-		AddItem(
-			tview.NewTextView().
-				SetTextAlign(tview.AlignRight).
-				SetTextColor(versionForeground).
-				SetText(fmt.Sprintf("iris v%s", internal.Version())),
-			0, 1, false,
-		)
+		AddItem(lastPullInfo.SetTextAlign(tview.AlignLeft), 0, 1, false).
+		AddItem(unreadInfo.SetTextAlign(tview.AlignCenter), 0, 1, false).
+		AddItem(versionInfo.SetTextAlign(tview.AlignRight), 0, 1, false)
 
 	root := tview.NewGrid().
 		SetRows(2, 0, 1).
