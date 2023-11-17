@@ -49,6 +49,10 @@ func Show(db internal.FeedStore) error {
 		return err
 	}
 
+	header := tview.NewFlex().
+		SetDirection(tview.FlexColumn).
+		AddItem(tview.NewTextView().SetTextAlign(tview.AlignRight), 0, 1, false)
+
 	unreadInfo := tview.NewTextView().
 		SetTextColor(statsForeground).
 		SetText(fmt.Sprintf("%d unread entries", stats.NumEntriesUnread))
@@ -71,9 +75,9 @@ func Show(db internal.FeedStore) error {
 		AddItem(versionInfo.SetTextAlign(tview.AlignRight), 0, 1, false)
 
 	root := tview.NewGrid().
-		SetRows(2, 0, 1).
+		SetRows(1, 0, 1).
 		SetBorders(false).
-		AddItem(newPlaceholderSection("<header>"), 0, 0, 1, 1, 0, 0, false).
+		AddItem(header, 0, 0, 1, 1, 0, 0, false).
 		AddItem(wideReadingGrid, 1, 0, 1, 1, 0, wideViewMinWidth, false).
 		AddItem(narrowReadingGrid, 1, 0, 1, 1, 0, 0, false).
 		AddItem(footer, 2, 0, 1, 1, 0, 0, false)
@@ -85,12 +89,6 @@ func Show(db internal.FeedStore) error {
 	}
 
 	return nil
-}
-
-func newPlaceholderSection(text string) tview.Primitive {
-	return tview.NewTextView().
-		SetTextAlign(tview.AlignLeft).
-		SetText(fmt.Sprintf(" %s", text))
 }
 
 func newPane(
