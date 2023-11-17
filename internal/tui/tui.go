@@ -49,10 +49,6 @@ func Show(db internal.FeedStore) error {
 		return err
 	}
 
-	header := tview.NewFlex().
-		SetDirection(tview.FlexColumn).
-		AddItem(tview.NewTextView().SetTextAlign(tview.AlignRight), 0, 1, false)
-
 	unreadInfo := tview.NewTextView().
 		SetTextColor(statsForeground).
 		SetText(fmt.Sprintf("%d unread entries", stats.NumEntriesUnread))
@@ -75,20 +71,18 @@ func Show(db internal.FeedStore) error {
 		AddItem(versionInfo.SetTextAlign(tview.AlignRight), 0, 1, false)
 
 	root := tview.NewGrid().
-		SetRows(1, 0, 1).
+		SetRows(0, 1).
 		SetBorders(false)
 
 	// Narrow layout, less than 100px wide.
 	root.
-		AddItem(header, 0, 0, 1, 1, 0, 0, false).
-		AddItem(narrowReadingGrid, 1, 0, 1, 1, 0, 0, false).
-		AddItem(footer, 2, 0, 1, 1, 0, 0, false)
+		AddItem(narrowReadingGrid, 0, 0, 1, 1, 0, 0, false).
+		AddItem(footer, 1, 0, 1, 1, 0, 0, false)
 
 	// Wide layout, width of 100px or more.
 	root.
-		AddItem(header, 0, 0, 1, 1, 0, wideViewMinWidth, false).
-		AddItem(wideReadingGrid, 1, 0, 1, 1, 0, wideViewMinWidth, false).
-		AddItem(footer, 2, 0, 1, 1, 0, wideViewMinWidth, false)
+		AddItem(wideReadingGrid, 0, 0, 1, 1, 0, wideViewMinWidth, false).
+		AddItem(footer, 1, 0, 1, 1, 0, wideViewMinWidth, false)
 
 	app := tview.NewApplication()
 
