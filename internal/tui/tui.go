@@ -76,11 +76,19 @@ func Show(db internal.FeedStore) error {
 
 	root := tview.NewGrid().
 		SetRows(1, 0, 1).
-		SetBorders(false).
+		SetBorders(false)
+
+	// Narrow layout, less than 100px wide.
+	root.
 		AddItem(header, 0, 0, 1, 1, 0, 0, false).
-		AddItem(wideReadingGrid, 1, 0, 1, 1, 0, wideViewMinWidth, false).
 		AddItem(narrowReadingGrid, 1, 0, 1, 1, 0, 0, false).
 		AddItem(footer, 2, 0, 1, 1, 0, 0, false)
+
+	// Wide layout, width of 100px or more.
+	root.
+		AddItem(header, 0, 0, 1, 1, 0, wideViewMinWidth, false).
+		AddItem(wideReadingGrid, 1, 0, 1, 1, 0, wideViewMinWidth, false).
+		AddItem(footer, 2, 0, 1, 1, 0, wideViewMinWidth, false)
 
 	app := tview.NewApplication()
 
