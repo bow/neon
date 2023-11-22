@@ -21,7 +21,19 @@ func Show(db internal.FeedStore) error {
 	versionForeground := tcell.ColorGray
 	lastPullForeground := tcell.ColorGray
 	statsForeground := tcell.ColorDarkGoldenrod
+	helpTitleForeground := tcell.ColorYellow
+	helpBorderLineForeground := tcell.ColorGray
+
+	tview.Borders.HorizontalFocus = tview.Borders.Horizontal
+	tview.Borders.VerticalFocus = tview.Borders.Vertical
+	tview.Borders.TopLeftFocus = tview.Borders.TopLeft
+	tview.Borders.TopRightFocus = tview.Borders.TopRight
+	tview.Borders.BottomLeftFocus = tview.Borders.BottomLeft
+	tview.Borders.BottomRightFocus = tview.Borders.BottomRight
+
 	wideViewMinWidth := 150
+
+	root := tview.NewPages()
 
 	newFeedsPane := func(withBottomBorder bool) *tview.Box {
 		return newPane("Feeds", titleForeground, lineForeground, 1, withBottomBorder)
@@ -70,21 +82,52 @@ func Show(db internal.FeedStore) error {
 		AddItem(unreadInfo.SetTextAlign(tview.AlignCenter), 0, 1, false).
 		AddItem(versionInfo.SetTextAlign(tview.AlignRight), 0, 1, false)
 
-	root := tview.NewGrid().
+	mainPage := tview.NewGrid().
 		SetRows(0, 1).
 		SetBorders(false)
 
 	// Narrow layout, less than 100px wide.
-	root.
+	mainPage.
 		AddItem(narrowReadingGrid, 0, 0, 1, 1, 0, 0, false).
 		AddItem(footer, 1, 0, 1, 1, 0, 0, false)
 
 	// Wide layout, width of 100px or more.
-	root.
+	mainPage.
 		AddItem(wideReadingGrid, 0, 0, 1, 1, 0, wideViewMinWidth, false).
 		AddItem(footer, 1, 0, 1, 1, 0, wideViewMinWidth, false)
 
-	app := tview.NewApplication()
+	helpPage := tview.NewFrame(nil).
+		SetBorder(true).
+		SetBorderColor(helpBorderLineForeground).
+		SetTitle(" Help ").
+		SetTitleColor(helpTitleForeground)
+
+	root.
+		AddAndSwitchToPage("main", mainPage, true).
+		AddPage(
+			"help",
+			tview.NewGrid().
+				SetColumns(0, 64, 0).
+				SetRows(0, 22, 0).
+				AddItem(helpPage, 1, 1, 1, 1, 0, 0, true),
+			true,
+			false,
+		)
+
+	app := tview.NewApplication().
+		SetInputCapture(
+			func(event *tcell.EventKey) *tcell.EventKey {
+				if event.Rune() == 'h' {
+					if fp, _ := root.GetFrontPage(); fp == "help" {
+						root.HidePage("help")
+					} else {
+						root.ShowPage("help")
+					}
+					return nil
+				}
+				return event
+			},
+		)
 
 	if err := app.SetRoot(root, true).EnableMouse(true).Run(); err != nil {
 		panic(err)
