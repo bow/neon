@@ -114,7 +114,8 @@ func Show(db internal.FeedStore) error {
 			false,
 		)
 
-	app := tview.NewApplication().
+	app := tview.NewApplication()
+	app.
 		SetInputCapture(
 			func(event *tcell.EventKey) *tcell.EventKey {
 				if event.Rune() == 'h' {
@@ -124,6 +125,8 @@ func Show(db internal.FeedStore) error {
 						root.ShowPage("help")
 					}
 					return nil
+				} else if event.Rune() == 'q' {
+					app.Stop()
 				}
 				return event
 			},
