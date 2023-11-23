@@ -43,18 +43,16 @@ func Show(db internal.FeedStore) error {
 		return newPane("Entries", titleForeground, lineForeground, 1, true)
 	}
 
-	narrowReadingGrid := tview.NewGrid().
-		SetRows(-1, -2).
-		SetBorders(false).
-		AddItem(newFeedsPane(false), 0, 0, 1, 1, 0, 0, false).
-		AddItem(newEntriesPane(), 1, 0, 1, 1, 0, 0, false)
+	narrowFlex := tview.NewFlex().
+		SetDirection(tview.FlexRow).
+		AddItem(newFeedsPane(false), 0, 1, false).
+		AddItem(newEntriesPane(), 0, 2, false)
 
-	wideReadingGrid := tview.NewGrid().
-		SetColumns(45, 1, 0).
-		SetBorders(false).
-		AddItem(newFeedsPane(true), 0, 0, 1, 1, 0, wideViewMinWidth, false).
-		AddItem(newVerticalDivider(lineForeground), 0, 1, 1, 1, 0, wideViewMinWidth, false).
-		AddItem(newEntriesPane(), 0, 2, 1, 1, 0, wideViewMinWidth, false)
+	wideFlex := tview.NewFlex().
+		SetDirection(tview.FlexColumn).
+		AddItem(newFeedsPane(true), 45, 0, false).
+		AddItem(newVerticalDivider(lineForeground), 1, 0, false).
+		AddItem(newEntriesPane(), 0, 1, false)
 
 	stats, err := db.GetGlobalStats(context.Background())
 	if err != nil {
@@ -83,18 +81,20 @@ func Show(db internal.FeedStore) error {
 		AddItem(versionInfo.SetTextAlign(tview.AlignRight), 0, 1, false)
 
 	mainPage := tview.NewGrid().
+		SetColumns(0).
 		SetRows(0, 1).
-		SetBorders(false)
+		SetBorders(false).
+		AddItem(footer, 1, 0, 1, 1, 0, 0, false)
 
 	// Narrow layout, less than 100px wide.
 	mainPage.
-		AddItem(narrowReadingGrid, 0, 0, 1, 1, 0, 0, false).
-		AddItem(footer, 1, 0, 1, 1, 0, 0, false)
+		AddItem(narrowFlex, 0, 0, 1, 1, 0, 0, false).
+		AddItem(narrowFlex, 0, 0, 0, 0, 0, wideViewMinWidth, false)
 
 	// Wide layout, width of 100px or more.
 	mainPage.
-		AddItem(wideReadingGrid, 0, 0, 1, 1, 0, wideViewMinWidth, false).
-		AddItem(footer, 1, 0, 1, 1, 0, wideViewMinWidth, false)
+		AddItem(wideFlex, 0, 0, 1, 1, 0, wideViewMinWidth, false).
+		AddItem(wideFlex, 0, 0, 0, 0, 0, 0, false)
 
 	helpPage := tview.NewFrame(nil).
 		SetBorder(true).
