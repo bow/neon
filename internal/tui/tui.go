@@ -147,33 +147,41 @@ func newPane(
 
 	lineStyle := tcell.StyleDefault.Foreground(lineForeground).Background(tcell.ColorBlack)
 
-	drawf := func(screen tcell.Screen, x int, y int, width int, height int) (int, int, int, int) {
-
-		// Draw top and optionally bottom borders.
-		for cx := x; cx < x+width; cx++ {
-			screen.SetContent(cx, y, tview.BoxDrawingsLightHorizontal, nil, lineStyle)
-		}
-
-		var displayed string
-		if text != "" {
-			displayed = fmt.Sprintf(" %s ", text)
-		}
-
-		// Write the title text.
-		tview.Print(
-			screen,
-			displayed,
-			x+titleLeftPad,
-			y,
-			width-2,
-			tview.AlignLeft,
-			textForeground,
-		)
-
-		return x + 1, y + 1, width - 2, height - 1
+	var unfocused, focused string
+	if text != "" {
+		unfocused = fmt.Sprintf(" %s ", text)
+		focused = fmt.Sprintf(" [::b]%s[::-] ", text)
 	}
 
-	box := tview.NewBox().SetDrawFunc(drawf)
+	makedrawf := func(
+		title string,
+	) func(screen tcell.Screen, x int, y int, width int, height int) (int, int, int, int) {
+
+		return func(screen tcell.Screen, x int, y int, width int, height int) (int, int, int, int) {
+			// Draw top and optionally bottom borders.
+			for cx := x; cx < x+width; cx++ {
+				screen.SetContent(cx, y, tview.BoxDrawingsLightHorizontal, nil, lineStyle)
+			}
+
+			// Write the title text.
+			tview.Print(
+				screen,
+				title,
+				x+titleLeftPad,
+				y,
+				width-2,
+				tview.AlignLeft,
+				textForeground,
+			)
+
+			return x + 1, y + 1, width - 2, height - 1
+		}
+	}
+
+	box := tview.NewBox().SetDrawFunc(makedrawf(unfocused))
+
+	box.SetFocusFunc(func() { box.SetDrawFunc(makedrawf(focused)) })
+	box.SetBlurFunc(func() { box.SetDrawFunc(makedrawf(unfocused)) })
 
 	return box
 }
