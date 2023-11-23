@@ -35,24 +35,26 @@ func Show(db internal.FeedStore) error {
 
 	root := tview.NewPages()
 
-	newFeedsPane := func(withBottomBorder bool) *tview.Box {
-		return newPane("Feeds", titleForeground, lineForeground, 1, withBottomBorder)
-	}
-
-	newEntriesPane := func() *tview.Box {
-		return newPane("Entries", titleForeground, lineForeground, 1, true)
-	}
+	feedsPane := newPane("Feeds", titleForeground, lineForeground, 1)
+	entriesPane := newPane("Entries", titleForeground, lineForeground, 1)
 
 	narrowFlex := tview.NewFlex().
 		SetDirection(tview.FlexRow).
-		AddItem(newFeedsPane(false), 0, 1, false).
-		AddItem(newEntriesPane(), 0, 2, false)
+		AddItem(feedsPane, 0, 1, false).
+		AddItem(entriesPane, 0, 2, false).
+		AddItem(newNarrowFooterBorder(lineForeground), 1, 0, false)
 
 	wideFlex := tview.NewFlex().
-		SetDirection(tview.FlexColumn).
-		AddItem(newFeedsPane(true), 45, 0, false).
-		AddItem(newVerticalDivider(lineForeground), 1, 0, false).
-		AddItem(newEntriesPane(), 0, 1, false)
+		SetDirection(tview.FlexRow).
+		AddItem(
+			tview.NewFlex().
+				SetDirection(tview.FlexColumn).
+				AddItem(feedsPane, 45, 0, false).
+				AddItem(newPaneDivider(lineForeground), 1, 0, false).
+				AddItem(entriesPane, 0, 1, false),
+			0, 1, false,
+		).
+		AddItem(newWideFooterBorder(lineForeground, 45), 1, 0, false)
 
 	stats, err := db.GetGlobalStats(context.Background())
 	if err != nil {
@@ -86,15 +88,13 @@ func Show(db internal.FeedStore) error {
 		SetBorders(false).
 		AddItem(footer, 1, 0, 1, 1, 0, 0, false)
 
-	// Narrow layout, less than 100px wide.
+	// Narrow layout.
 	mainPage.
-		AddItem(narrowFlex, 0, 0, 1, 1, 0, 0, false).
-		AddItem(narrowFlex, 0, 0, 0, 0, 0, wideViewMinWidth, false)
+		AddItem(narrowFlex, 0, 0, 1, 1, 0, 0, false)
 
-	// Wide layout, width of 100px or more.
+	// Wide layout.
 	mainPage.
-		AddItem(wideFlex, 0, 0, 1, 1, 0, wideViewMinWidth, false).
-		AddItem(wideFlex, 0, 0, 0, 0, 0, 0, false)
+		AddItem(wideFlex, 0, 0, 1, 1, 0, wideViewMinWidth, false)
 
 	helpPage := tview.NewFrame(nil).
 		SetBorder(true).
@@ -143,25 +143,15 @@ func newPane(
 	text string,
 	textForeground, lineForeground tcell.Color,
 	titleLeftPad int,
-	withBottomBorder bool,
 ) *tview.Box {
 
 	lineStyle := tcell.StyleDefault.Foreground(lineForeground).Background(tcell.ColorBlack)
-
-	hBorderF := func(screen tcell.Screen, cx, cy int) {
-		screen.SetContent(cx, cy, tview.BoxDrawingsLightHorizontal, nil, lineStyle)
-	}
 
 	drawf := func(screen tcell.Screen, x int, y int, width int, height int) (int, int, int, int) {
 
 		// Draw top and optionally bottom borders.
 		for cx := x; cx < x+width; cx++ {
-			hBorderF(screen, cx, y)
-		}
-		if withBottomBorder {
-			for cx := x; cx < x+width; cx++ {
-				hBorderF(screen, cx, y+height-1)
-			}
+			screen.SetContent(cx, y, tview.BoxDrawingsLightHorizontal, nil, lineStyle)
 		}
 
 		var displayed string
@@ -188,7 +178,7 @@ func newPane(
 	return box
 }
 
-func newVerticalDivider(lineForeground tcell.Color) *tview.Box {
+func newPaneDivider(lineForeground tcell.Color) *tview.Box {
 
 	style := tcell.StyleDefault.Foreground(lineForeground).Background(tcell.ColorBlack)
 
@@ -196,11 +186,49 @@ func newVerticalDivider(lineForeground tcell.Color) *tview.Box {
 
 		screen.SetContent(x, y, tview.BoxDrawingsLightDownAndHorizontal, nil, style)
 
-		for cy := y + 1; cy < y+height-1; cy++ {
+		for cy := y + 1; cy < y+height; cy++ {
 			screen.SetContent(x, cy, tview.BoxDrawingsLightVertical, nil, style)
 		}
 
-		screen.SetContent(x, y+height-1, tview.BoxDrawingsLightUpAndHorizontal, nil, style)
+		return x + 1, y + 1, width - 2, height - 1
+	}
+
+	divider := tview.NewBox().SetBorder(false).SetDrawFunc(drawf)
+
+	return divider
+}
+
+func newNarrowFooterBorder(lineForeground tcell.Color) *tview.Box {
+
+	style := tcell.StyleDefault.Foreground(lineForeground).Background(tcell.ColorBlack)
+
+	drawf := func(screen tcell.Screen, x int, y int, width int, height int) (int, int, int, int) {
+
+		for cx := x; cx < x+width; cx++ {
+			screen.SetContent(cx, y, tview.BoxDrawingsLightHorizontal, nil, style)
+		}
+
+		return x + 1, y + 1, width - 2, height - 1
+	}
+
+	divider := tview.NewBox().SetBorder(false).SetDrawFunc(drawf)
+
+	return divider
+}
+
+func newWideFooterBorder(lineForeground tcell.Color, branch int) *tview.Box {
+
+	style := tcell.StyleDefault.Foreground(lineForeground).Background(tcell.ColorBlack)
+
+	drawf := func(screen tcell.Screen, x int, y int, width int, height int) (int, int, int, int) {
+
+		for cx := x; cx < x+width; cx++ {
+			if cx == branch {
+				screen.SetContent(cx, y, tview.BoxDrawingsLightUpAndHorizontal, nil, style)
+			} else {
+				screen.SetContent(cx, y, tview.BoxDrawingsLightHorizontal, nil, style)
+			}
+		}
 
 		return x + 1, y + 1, width - 2, height - 1
 	}
