@@ -21,7 +21,7 @@ func Show(db internal.FeedStore) error {
 	versionForeground := tcell.ColorGray
 	lastPullForeground := tcell.ColorGray
 	statsForeground := tcell.ColorDarkGoldenrod
-	helpTitleForeground := tcell.ColorYellow
+	helpTitleForeground := tcell.ColorAqua
 	helpBorderLineForeground := tcell.ColorGray
 
 	tview.Borders.HorizontalFocus = tview.Borders.Horizontal
@@ -99,8 +99,12 @@ func Show(db internal.FeedStore) error {
 	helpPage := tview.NewFrame(nil).
 		SetBorder(true).
 		SetBorderColor(helpBorderLineForeground).
-		SetTitle(" Help ").
+		SetTitle(" [::b]Help[::-] ").
 		SetTitleColor(helpTitleForeground)
+
+	helpPage.
+		SetFocusFunc(func() { helpPage.SetTitle(" [::b]Help[::-] ") }).
+		SetBlurFunc(func() { helpPage.SetTitle(" Help ") })
 
 	root.
 		AddAndSwitchToPage("main", mainPage, true).
