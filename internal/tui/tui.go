@@ -96,23 +96,58 @@ func Show(db internal.FeedStore) error {
 	mainPage.
 		AddItem(wideFlex, 0, 0, 1, 1, 0, wideViewMinWidth, false)
 
-	helpPage := tview.NewFrame(nil).
-		SetBorder(true).
-		SetBorderColor(helpBorderLineForeground).
-		SetTitle(" [::b]Help[::-] ").
-		SetTitleColor(helpTitleForeground)
+	help1 := tview.NewTextView().
+		SetDynamicColors(true).
+		SetText(`[aqua]Feeds pane[-]
+[yellow]j[-]: Next item
+[yellow]k[-]: Previous item
+[yellow]p[-]: Pull current feed
+[yellow]P[-]: Pull all feeds
+[yellow]R[-]: Mark all entries in current feed read
+[yellow]s[-]: Star / unstar feed
+[yellow]a[-]: Add feed
+[yellow]e[-]: Edit feed
+[yellow]d[-]: Delete feed
 
-	helpPage.
-		SetFocusFunc(func() { helpPage.SetTitle(" [::b]Help[::-] ") }).
-		SetBlurFunc(func() { helpPage.SetTitle(" Help ") })
+[aqua]Entries pane[-]
+[yellow]j[-]: Next entry
+[yellow]k[-]: Previous entry
+[yellow]r[-]: Mark current entry read
+[yellow]u[-]: Mark current entry unread
+[yellow]b[-]: Add / remove current entry from bookmarks
+
+[aqua]Content pane[-]
+[yellow]j[-]: Scroll down
+[yellow]k[-]: Scroll up
+[yellow]g[-]: Go to top
+[yellow]G[-]: Go to bottom
+
+[aqua]Global[-]
+[yellow]1[-]    : Switch to the feeds pane
+[yellow]2[-]    : Switch to the entries pane
+[yellow]3[-]    : Switch to the content pane
+[yellow]Tab[-]  : Switch to next pane
+[yellow]S-Tab[-]: Switch to previous pane
+[yellow]X[-]    : Export feeds to OPML
+[yellow]I[-]    : Import feeds from OPML
+[yellow]h[-]    : Toggle this help
+[yellow]q[-]    : Quit reader`)
+
+	helpPage := tview.NewFrame(help1).
+		SetBorders(1, 1, 0, 0, 2, 2)
+
+	helpPage.SetBorder(true).
+		SetBorderColor(helpBorderLineForeground).
+		SetTitle(" Keys ").
+		SetTitleColor(helpTitleForeground)
 
 	root.
 		AddAndSwitchToPage("main", mainPage, true).
 		AddPage(
 			"help",
 			tview.NewGrid().
-				SetColumns(0, 64, 0).
-				SetRows(0, 22, 0).
+				SetColumns(0, 50, 0).
+				SetRows(0, 38, 0).
 				AddItem(helpPage, 1, 1, 1, 1, 0, 0, true),
 			true,
 			false,
