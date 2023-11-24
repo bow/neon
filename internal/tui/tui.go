@@ -35,8 +35,8 @@ func Show(db internal.FeedStore) error {
 
 	root := tview.NewPages()
 
-	feedsPane := newPane("Feeds", titleForeground, lineForeground, 1)
-	entriesPane := newPane("Entries", titleForeground, lineForeground, 1)
+	feedsPane := newPane("Feeds", titleForeground, lineForeground)
+	entriesPane := newPane("Entries", titleForeground, lineForeground)
 
 	narrowFlex := tview.NewFlex().
 		SetDirection(tview.FlexRow).
@@ -178,7 +178,6 @@ func Show(db internal.FeedStore) error {
 func newPane(
 	text string,
 	textForeground, lineForeground tcell.Color,
-	titleLeftPad int,
 ) *tview.Box {
 
 	lineStyle := tcell.StyleDefault.Foreground(lineForeground).Background(tcell.ColorBlack)
@@ -186,11 +185,12 @@ func newPane(
 	var unfocused, focused string
 	if text != "" {
 		unfocused = fmt.Sprintf(" %s ", text)
-		focused = fmt.Sprintf(" [::b]%s[::-] ", text)
+		focused = fmt.Sprintf(" • %s ", text)
 	}
 
 	makedrawf := func(
 		title string,
+		leftPad int,
 	) func(screen tcell.Screen, x int, y int, width int, height int) (int, int, int, int) {
 
 		return func(screen tcell.Screen, x int, y int, width int, height int) (int, int, int, int) {
@@ -203,7 +203,7 @@ func newPane(
 			tview.Print(
 				screen,
 				title,
-				x+titleLeftPad,
+				x+leftPad,
 				y,
 				width-2,
 				tview.AlignLeft,
@@ -214,10 +214,10 @@ func newPane(
 		}
 	}
 
-	box := tview.NewBox().SetDrawFunc(makedrawf(unfocused))
+	box := tview.NewBox().SetDrawFunc(makedrawf(unfocused, 3))
 
-	box.SetFocusFunc(func() { box.SetDrawFunc(makedrawf(focused)) })
-	box.SetBlurFunc(func() { box.SetDrawFunc(makedrawf(unfocused)) })
+	box.SetFocusFunc(func() { box.SetDrawFunc(makedrawf(focused, 1)) })
+	box.SetBlurFunc(func() { box.SetDrawFunc(makedrawf(unfocused, 3)) })
 
 	return box
 }
