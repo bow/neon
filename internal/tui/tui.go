@@ -143,7 +143,7 @@ func Show(db internal.FeedStore) error {
 [yellow]S-Tab[-]: Switch to previous pane
 [yellow]X[-]    : Export feeds to OPML
 [yellow]I[-]    : Import feeds from OPML
-[yellow]h[-]    : Toggle this help
+[yellow]h|?[-]  : Toggle this help
 [yellow]q[-]    : Quit reader`)
 
 	helpPage := tview.NewFrame(help1).
@@ -170,14 +170,15 @@ func Show(db internal.FeedStore) error {
 	app.
 		SetInputCapture(
 			func(event *tcell.EventKey) *tcell.EventKey {
-				if event.Rune() == 'h' {
+				er := event.Rune()
+				if er == 'h' || er == '?' {
 					if fp, _ := root.GetFrontPage(); fp == "help" {
 						root.HidePage("help")
 					} else {
 						root.ShowPage("help")
 					}
 					return nil
-				} else if event.Rune() == 'q' {
+				} else if er == 'q' {
 					app.Stop()
 				}
 				return event
