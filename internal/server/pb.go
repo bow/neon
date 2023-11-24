@@ -55,16 +55,17 @@ func fromFeedEditOpPbs(pbs []*api.EditFeedsRequest_Op) []*internal.FeedEditOp {
 
 func toEntryPb(entry *internal.Entry) *api.Entry {
 	return &api.Entry{
-		Id:          entry.ID,
-		FeedId:      entry.FeedID,
-		Title:       entry.Title,
-		IsRead:      entry.IsRead,
-		ExtId:       entry.ExtID,
-		Description: entry.Description,
-		Content:     entry.Content,
-		Url:         entry.URL,
-		PubTime:     toTimestampPb(entry.Published),
-		UpdateTime:  toTimestampPb(entry.Updated),
+		Id:           entry.ID,
+		FeedId:       entry.FeedID,
+		Title:        entry.Title,
+		IsRead:       entry.IsRead,
+		IsBookmarked: entry.IsBookmarked,
+		ExtId:        entry.ExtID,
+		Description:  entry.Description,
+		Content:      entry.Content,
+		Url:          entry.URL,
+		PubTime:      toTimestampPb(entry.Published),
+		UpdateTime:   toTimestampPb(entry.Updated),
 	}
 }
 
