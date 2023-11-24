@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS
   , last_pull_time TIMESTAMP NOT NULL
   -- feeds must be unique by its feed URL.
   , UNIQUE(feed_url)
-);
+  );
 
 CREATE TABLE IF NOT EXISTS
   -- feed_tags lists all user-defined feed tags.
@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS
   , name TEXT NOT NULL CHECK(length(name) > 0)
   -- feed tag must be unique by value, which is case-sensitive.
   , UNIQUE(name)
-);
+  );
 
 CREATE TABLE IF NOT EXISTS
   -- entries contains all entries linked to a given feed.
@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS
   -- entries are unique by its external ID, for a specific feed.
   , UNIQUE(feed_id, external_id)
   , FOREIGN KEY(feed_id) REFERENCES feeds(id) ON DELETE CASCADE
-);
+  );
 CREATE INDEX IF NOT EXISTS entries_feed_id ON entries(feed_id);
 CREATE INDEX IF NOT EXISTS entries_external_id ON entries(external_id);
 
@@ -78,4 +78,4 @@ CREATE TABLE IF NOT EXISTS
   , PRIMARY KEY (feed_id, feed_tag_id)
   , FOREIGN KEY(feed_id) REFERENCES feeds(id) ON DELETE CASCADE
   , FOREIGN KEY(feed_tag_id) REFERENCES feed_tags(id) ON DELETE CASCADE
-);
+  );

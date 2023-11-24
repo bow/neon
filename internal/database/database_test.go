@@ -229,14 +229,14 @@ func (db *testDB) addFeeds(feeds []*feedRecord) map[string]feedKey {
 	stmt1, err := tx.Prepare(`
 		INSERT INTO
 			feeds(
-				title,
-				feed_url,
-				site_url,
-				description,
-				is_starred,
-				sub_time,
-				last_pull_time,
-				update_time
+				title
+				, feed_url
+				, site_url
+				, description
+				, is_starred
+				, sub_time
+				, last_pull_time
+				, update_time
 			)
 			VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 		RETURNING
@@ -245,12 +245,12 @@ func (db *testDB) addFeeds(feeds []*feedRecord) map[string]feedKey {
 	require.NoError(db.t, err)
 	stmt2, err := tx.Prepare(`
 		INSERT INTO entries(
-			feed_id,
-			external_id,
-			title,
-			url,
-			is_read,
-			update_time
+			feed_id
+			, external_id
+			, title
+			, url
+			, is_read
+			, update_time
 		)
 		VALUES (?, ?, ?, ?, ?, ?)
 		RETURNING id

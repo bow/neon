@@ -44,8 +44,8 @@ func getGlobalStats(ctx context.Context, tx *sql.Tx) (*statsAggregateRecord, err
 		ctx,
 		`
 			SELECT
-				COUNT(DISTINCT f.id) AS num_feeds,
-				COUNT(DISTINCT e.id) AS num_entries
+				COUNT(DISTINCT f.id) AS num_feeds
+				, COUNT(DISTINCT e.id) AS num_entries
 			FROM
 				feeds f
 				INNER JOIN entries e ON f.id = e.feed_id

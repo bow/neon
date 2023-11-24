@@ -46,16 +46,16 @@ func getEntry(ctx context.Context, tx *sql.Tx, entryID ID) (*entryRecord, error)
 
 	sql1 := `
 		SELECT
-			e.id AS id,
-			e.feed_id AS feed_id,
-			e.title AS title,
-			e.is_read AS is_read,
-			e.external_id AS ext_id,
-			e.description AS description,
-			e.content AS content,
-			e.url AS url,
-			e.update_time AS update_time,
-			e.pub_time AS pub_time
+			e.id AS id
+			, e.feed_id AS feed_id
+			, e.title AS title
+			, e.is_read AS is_read
+			, e.external_id AS ext_id
+			, e.description AS description
+			, e.content AS content
+			, e.url AS url
+			, e.update_time AS update_time
+			, e.pub_time AS pub_time
 		FROM
 			entries e
 		WHERE

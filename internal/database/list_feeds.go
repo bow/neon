@@ -49,16 +49,16 @@ func getAllFeeds(ctx context.Context, tx *sql.Tx) ([]*feedRecord, error) {
 
 	sql1 := `
 		SELECT
-			f.id AS id,
-			f.title AS title,
-			f.description AS description,
-			f.feed_url AS feed_url,
-			f.site_url AS site_url,
-			f.is_starred AS is_starred,
-			f.sub_time AS sub_time,
-			f.last_pull_time AS last_pull_time,
-			f.update_time AS update_time,
-			json_group_array(fc.name) FILTER (WHERE fc.name IS NOT NULL) AS tags
+			f.id AS id
+			, f.title AS title
+			, f.description AS description
+			, f.feed_url AS feed_url
+			, f.site_url AS site_url
+			, f.is_starred AS is_starred
+			, f.sub_time AS sub_time
+			, f.last_pull_time AS last_pull_time
+			, f.update_time AS update_time
+			, json_group_array(fc.name) FILTER (WHERE fc.name IS NOT NULL) AS tags
 		FROM
 			feeds f
 			LEFT JOIN feeds_x_feed_tags fxfc ON fxfc.feed_id = f.id
@@ -119,16 +119,16 @@ func getAllFeedEntries(
 
 	sql1 := `
 		SELECT
-			e.id AS id,
-			e.feed_id AS feed_id,
-			e.title AS title,
-			e.is_read AS is_read,
-			e.external_id AS ext_id,
-			e.description AS description,
-			e.content AS content,
-			e.url AS url,
-			e.update_time AS update_time,
-			e.pub_time AS pub_time
+			e.id AS id
+			, e.feed_id AS feed_id
+			, e.title AS title
+			, e.is_read AS is_read
+			, e.external_id AS ext_id
+			, e.description AS description
+			, e.content AS content
+			, e.url AS url
+			, e.update_time AS update_time
+			, e.pub_time AS pub_time
 		FROM
 			entries e
 		WHERE

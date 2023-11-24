@@ -95,14 +95,14 @@ func upsertFeed(
 	sql1 := `
 		INSERT INTO
 			feeds(
-				feed_url,
-				title,
-				description,
-				site_url,
-				is_starred,
-				update_time,
-				sub_time,
-				last_pull_time
+				feed_url
+				, title
+				, description
+				, site_url
+				, is_starred
+				, update_time
+				, sub_time
+				, last_pull_time
 			)
 			VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 `
@@ -199,14 +199,14 @@ func upsertEntries(
 	sql1 := `
 		INSERT INTO
 			entries(
-				feed_id,
-				external_id,
-				url,
-				title,
-				description,
-				content,
-				pub_time,
-				update_time
+				feed_id
+				, external_id
+				, url
+				, title
+				, description
+				, content
+				, pub_time
+				, update_time
 			)
 			VALUES(?, ?, ?, ?, ?, ?, ?, ?)
 `

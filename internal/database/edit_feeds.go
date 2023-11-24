@@ -64,16 +64,16 @@ func getFeed(ctx context.Context, tx *sql.Tx, feedID ID) (*feedRecord, error) {
 
 	sql1 := `
 		SELECT
-			f.id AS id,
-			f.title AS title,
-			f.description AS description,
-			f.feed_url AS feed_url,
-			f.site_url AS site_url,
-			f.is_starred AS is_starred,
-			f.sub_time AS sub_time,
-			f.update_time AS update_time,
-			f.last_pull_time AS last_pull_time,
-			json_group_array(fc.name) FILTER (WHERE fc.name IS NOT NULL) AS tags
+			f.id AS id
+			, f.title AS title
+			, f.description AS description
+			, f.feed_url AS feed_url
+			, f.site_url AS site_url
+			, f.is_starred AS is_starred
+			, f.sub_time AS sub_time
+			, f.update_time AS update_time
+			, f.last_pull_time AS last_pull_time
+			, json_group_array(fc.name) FILTER (WHERE fc.name IS NOT NULL) AS tags
 		FROM
 			feeds f
 			LEFT JOIN feeds_x_feed_tags fxfc ON fxfc.feed_id = f.id
