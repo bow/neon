@@ -9,6 +9,7 @@ import (
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
+	"golang.org/x/term"
 
 	"github.com/bow/iris/internal"
 )
@@ -97,13 +98,19 @@ func Show(db internal.FeedStore) error {
 		SetBorders(false).
 		AddItem(footer, 1, 0, 1, 1, 0, 0, false)
 
-	// Narrow layout.
-	mainPage.
-		AddItem(narrowFlex, 0, 0, 1, 1, 0, 0, false)
-
-	// Wide layout.
-	mainPage.
-		AddItem(wideFlex, 0, 0, 1, 1, 0, wideViewMinWidth, false)
+	// FIXME: Remove this workaround that makes display unresponsive
+	//        when https://github.com/rivo/tview/issues/921 is resolved.
+	width, _, err := term.GetSize(0)
+	if err != nil {
+		return err
+	}
+	if width < wideViewMinWidth {
+		// Narrow layout.
+		mainPage.AddItem(narrowFlex, 0, 0, 1, 1, 0, 0, false)
+	} else {
+		// Wide layout.
+		mainPage.AddItem(wideFlex, 0, 0, 1, 1, 0, 0, false)
+	}
 
 	help1 := tview.NewTextView().
 		SetDynamicColors(true).
