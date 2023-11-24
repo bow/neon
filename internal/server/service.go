@@ -147,7 +147,7 @@ func (svc *service) ListEntries(
 	req *api.ListEntriesRequest,
 ) (*api.ListEntriesResponse, error) {
 
-	entries, err := svc.store.ListEntries(ctx, req.GetFeedIds(), nil)
+	entries, err := svc.store.ListEntries(ctx, req.GetFeedIds(), req.IsBookmarked)
 	if err != nil {
 		return nil, err
 	}

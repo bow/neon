@@ -576,27 +576,30 @@ func TestListEntriesOk(t *testing.T) {
 	a := assert.New(t)
 	client, str := setupServerTest(t)
 
-	req := api.ListEntriesRequest{FeedIds: []internal.ID{2}}
+	req := api.ListEntriesRequest{FeedIds: []internal.ID{2}, IsBookmarked: pointer(true)}
 	entries := []*internal.Entry{
 		{
-			Title:   "Entry 1",
-			IsRead:  false,
-			Content: pointer("Contents 1."),
+			Title:        "Entry 1",
+			IsRead:       false,
+			IsBookmarked: true,
+			Content:      pointer("Contents 1."),
 		},
 		{
-			Title:   "Entry 2",
-			IsRead:  false,
-			Content: pointer("Contents 2."),
+			Title:        "Entry 2",
+			IsRead:       false,
+			IsBookmarked: true,
+			Content:      pointer("Contents 2."),
 		},
 		{
-			Title:   "Entry 3",
-			IsRead:  true,
-			Content: pointer("Contents 3."),
+			Title:        "Entry 3",
+			IsRead:       true,
+			IsBookmarked: true,
+			Content:      pointer("Contents 3."),
 		},
 	}
 
 	str.EXPECT().
-		ListEntries(gomock.Any(), req.GetFeedIds(), nil).
+		ListEntries(gomock.Any(), req.GetFeedIds(), req.IsBookmarked).
 		Return(entries, nil)
 
 	rsp, err := client.ListEntries(context.Background(), &req)
