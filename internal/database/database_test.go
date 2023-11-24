@@ -250,9 +250,10 @@ func (db *testDB) addFeeds(feeds []*feedRecord) map[string]feedKey {
 			, title
 			, url
 			, is_read
+			, is_bookmarked
 			, update_time
 		)
-		VALUES (?, ?, ?, ?, ?, ?)
+		VALUES (?, ?, ?, ?, ?, ?, ?)
 		RETURNING id
 	`)
 	require.NoError(db.t, err)
@@ -297,6 +298,7 @@ func (db *testDB) addFeeds(feeds []*feedRecord) map[string]feedKey {
 				entry.title,
 				entry.url,
 				entry.isRead,
+				entry.isBookmarked,
 				updateTime,
 			).Scan(&entryID)
 			require.NoError(db.t, err)

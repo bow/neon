@@ -59,30 +59,32 @@ func (recs feedRecords) feeds() []*internal.Feed {
 }
 
 type entryRecord struct {
-	id          ID
-	feedID      ID
-	title       string
-	isRead      bool
-	extID       string
-	updated     sql.NullTime
-	published   sql.NullTime
-	description sql.NullString
-	content     sql.NullString
-	url         sql.NullString
+	id           ID
+	feedID       ID
+	title        string
+	isRead       bool
+	isBookmarked bool
+	extID        string
+	updated      sql.NullTime
+	published    sql.NullTime
+	description  sql.NullString
+	content      sql.NullString
+	url          sql.NullString
 }
 
 func (rec *entryRecord) entry() *internal.Entry {
 	return &internal.Entry{
-		ID:          rec.id,
-		FeedID:      rec.feedID,
-		Title:       rec.title,
-		IsRead:      rec.isRead,
-		ExtID:       rec.extID,
-		Updated:     fromNullTime(rec.updated),
-		Published:   fromNullTime(rec.published),
-		Description: fromNullString(rec.description),
-		Content:     fromNullString(rec.content),
-		URL:         fromNullString(rec.url),
+		ID:           rec.id,
+		FeedID:       rec.feedID,
+		Title:        rec.title,
+		IsRead:       rec.isRead,
+		IsBookmarked: rec.isBookmarked,
+		ExtID:        rec.extID,
+		Updated:      fromNullTime(rec.updated),
+		Published:    fromNullTime(rec.published),
+		Description:  fromNullString(rec.description),
+		Content:      fromNullString(rec.content),
+		URL:          fromNullString(rec.url),
 	}
 }
 

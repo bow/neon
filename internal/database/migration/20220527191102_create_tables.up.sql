@@ -61,6 +61,8 @@ CREATE TABLE IF NOT EXISTS
   , update_time TIMESTAMP NULL
   -- is_read indicates whether the entry has been read or not.
   , is_read BOOLEAN NOT NULL DEFAULT false
+  -- is_bookmarked indicates the bookmark status of the entry.
+  , is_bookmarked BOOLEAN NOT NULL DEFAULT false
   -- entries are unique by its external ID, for a specific feed.
   , UNIQUE(feed_id, external_id)
   , FOREIGN KEY(feed_id) REFERENCES feeds(id) ON DELETE CASCADE
