@@ -167,8 +167,9 @@ type Entry struct {
 }
 
 type EntryEditOp struct {
-	ID     ID
-	IsRead *bool
+	ID           ID
+	IsRead       *bool
+	IsBookmarked *bool
 }
 
 type Stats struct {

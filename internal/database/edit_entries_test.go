@@ -83,8 +83,8 @@ func TestEditEntriesOkExtended(t *testing.T) {
 			feedURL: "http://a.com/feed.xml",
 			updated: toNullTime(mustTime(t, "2022-03-19T16:23:18.600+02:00")),
 			entries: []*entryRecord{
-				{title: "Entry A1", isRead: false},
-				{title: "Entry A2", isRead: false},
+				{title: "Entry A1", isRead: false, isBookmarked: false},
+				{title: "Entry A2", isRead: false, isBookmarked: true},
 			},
 		},
 		{
@@ -92,7 +92,7 @@ func TestEditEntriesOkExtended(t *testing.T) {
 			feedURL: "http://x.com/feed.xml",
 			updated: toNullTime(mustTime(t, "2022-04-20T16:32:30.760+02:00")),
 			entries: []*entryRecord{
-				{title: "Entry X1", isRead: false},
+				{title: "Entry X1", isRead: false, isBookmarked: false},
 			},
 		},
 	}
@@ -100,25 +100,26 @@ func TestEditEntriesOkExtended(t *testing.T) {
 
 	r.Equal(2, db.countFeeds())
 
-	existe := func(title string, isRead bool) bool {
+	existe := func(title string, isRead, isBookmarked bool) bool {
 		return db.rowExists(
-			`SELECT * FROM entries e WHERE e.title = ? AND e.is_read = ?`,
+			`SELECT * FROM entries e WHERE e.title = ? AND e.is_read = ? AND e.is_bookmarked = ?`,
 			title,
 			isRead,
+			isBookmarked,
 		)
 	}
 
-	a.True(existe("Entry A1", false))
-	a.False(existe("Entry A1", true))
+	a.True(existe("Entry A1", false, false))
+	a.False(existe("Entry A1", true, true))
 
-	a.True(existe("Entry A2", false))
-	a.False(existe("Entry A2", true))
+	a.True(existe("Entry A2", false, true))
+	a.False(existe("Entry A2", true, true))
 
-	a.True(existe("Entry X1", false))
-	a.False(existe("Entry X1", true))
+	a.True(existe("Entry X1", false, false))
+	a.False(existe("Entry X1", true, true))
 
 	setOps := []*internal.EntryEditOp{
-		{ID: keys["Feed X"].Entries["Entry X1"], IsRead: pointer(true)},
+		{ID: keys["Feed X"].Entries["Entry X1"], IsRead: pointer(true), IsBookmarked: pointer(true)},
 		{ID: keys["Feed A"].Entries["Entry A2"], IsRead: pointer(true)},
 	}
 	entries, err := db.EditEntries(context.Background(), setOps)
@@ -126,12 +127,12 @@ func TestEditEntriesOkExtended(t *testing.T) {
 
 	a.Len(entries, 2)
 
-	a.True(existe("Entry A1", false))
-	a.False(existe("Entry A1", true))
+	a.True(existe("Entry A1", false, false))
+	a.False(existe("Entry A1", true, true))
 
-	a.False(existe("Entry A2", false))
-	a.True(existe("Entry A2", true))
+	a.False(existe("Entry A2", false, true))
+	a.True(existe("Entry A2", true, true))
 
-	a.False(existe("Entry X1", false))
-	a.True(existe("Entry X1", true))
+	a.False(existe("Entry X1", false, false))
+	a.True(existe("Entry X1", true, true))
 }

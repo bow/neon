@@ -23,6 +23,9 @@ func (db *SQLite) EditEntries(
 		if err := setEntryIsRead(ctx, tx, op.ID, op.IsRead); err != nil {
 			return nil, err
 		}
+		if err := setEntryIsBookmarked(ctx, tx, op.ID, op.IsBookmarked); err != nil {
+			return nil, err
+		}
 		return getEntry(ctx, tx, op.ID)
 	}
 
@@ -51,4 +54,7 @@ func (db *SQLite) EditEntries(
 	return entryRecords(recs).entries(), nil
 }
 
-var setEntryIsRead = tableFieldSetter[bool](entriesTable, "is_read")
+var (
+	setEntryIsRead       = tableFieldSetter[bool](entriesTable, "is_read")
+	setEntryIsBookmarked = tableFieldSetter[bool](entriesTable, "is_bookmarked")
+)
