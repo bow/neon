@@ -35,9 +35,10 @@ func Show(db internal.FeedStore) error {
 
 	root := tview.NewPages()
 
-	feedsPane := newPane("Feeds", titleForeground, lineForeground)
-	entriesPane := newPane("Entries", titleForeground, lineForeground)
-	contentPane := newPane("", titleForeground, lineForeground)
+	topLeftBorderTip := tview.BoxDrawingsLightVerticalAndRight
+	feedsPane := newPane("Feeds", titleForeground, lineForeground, nil)
+	entriesPane := newPane("Entries", titleForeground, lineForeground, nil)
+	contentPane := newPane("", titleForeground, lineForeground, &topLeftBorderTip)
 
 	narrowFlex := tview.NewFlex().
 		SetDirection(tview.FlexRow).
@@ -186,6 +187,7 @@ func Show(db internal.FeedStore) error {
 func newPane(
 	text string,
 	textForeground, lineForeground tcell.Color,
+	topLeftBorderTip *rune,
 ) *tview.Box {
 
 	lineStyle := tcell.StyleDefault.Foreground(lineForeground).Background(tcell.ColorBlack)
@@ -207,6 +209,9 @@ func newPane(
 			// Draw top and optionally bottom borders.
 			for cx := x; cx < x+width; cx++ {
 				screen.SetContent(cx, y, tview.BoxDrawingsLightHorizontal, nil, lineStyle)
+			}
+			if topLeftBorderTip != nil {
+				screen.SetContent(x-1, y, *topLeftBorderTip, nil, lineStyle)
 			}
 
 			// Write the title text.
