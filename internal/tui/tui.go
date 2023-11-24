@@ -218,24 +218,22 @@ func Show(db internal.FeedStore) error { //nolint:revive
 			if fp == mainPageName {
 				target := 0
 				if event.Modifiers()&tcell.ModAlt != 0 {
-					if foc == nil || foc == mainPage {
+					switch foc {
+					case nil, mainPage, feedsPane:
 						target = 2
-					} else if foc == feedsPane {
-						target = 2
-					} else if foc == entriesPane {
+					case entriesPane:
 						target = 0
-					} else if foc == contentPane {
+					case contentPane:
 						target = 1
 					}
 				} else {
-					if foc == nil || foc == mainPage {
+					switch foc {
+					case nil, mainPage, contentPane:
 						target = 0
-					} else if foc == feedsPane {
-						target = 1
-					} else if foc == entriesPane {
+					case entriesPane:
 						target = 2
-					} else if foc == contentPane {
-						target = 0
+					case feedsPane:
+						target = 1
 					}
 				}
 				app.SetFocus(panesOrder[target])
