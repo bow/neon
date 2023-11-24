@@ -38,7 +38,7 @@ func newFeedListEntriesCommand() *cobra.Command {
 				return err
 			}
 
-			entries, err := db.ListEntries(cmd.Context(), feedID)
+			entries, err := db.ListEntries(cmd.Context(), []internal.ID{feedID})
 			if err != nil {
 				return err
 			}

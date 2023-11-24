@@ -50,7 +50,7 @@ type FeedStore interface {
 
 	ListEntries(
 		ctx context.Context,
-		feedID ID,
+		feedIDs []ID,
 	) (
 		entries []*Entry,
 		err error,

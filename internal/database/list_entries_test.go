@@ -25,12 +25,12 @@ func TestListEntriesOkMinimal(t *testing.T) {
 			updated: toNullTime(mustTime(t, "2022-03-19T16:23:18.600+02:00")),
 		},
 	}
-	keys := db.addFeeds(dbFeeds)
+	db.addFeeds(dbFeeds)
 
 	r.Equal(1, db.countFeeds())
 	r.Equal(0, db.countEntries(dbFeeds[0].feedURL))
 
-	entries, err := db.ListEntries(context.Background(), keys[dbFeeds[0].title].ID)
+	entries, err := db.ListEntries(context.Background(), nil)
 	r.NoError(err)
 
 	a.Len(entries, 0)
@@ -72,13 +72,13 @@ func TestListEntriesOkExtended(t *testing.T) {
 	r.Equal(3, db.countFeeds())
 	r.Equal(2, db.countEntries(dbFeeds[1].feedURL))
 
-	entries, err := db.ListEntries(context.Background(), keys[dbFeeds[1].title].ID)
+	entries, err := db.ListEntries(context.Background(), []ID{keys[dbFeeds[1].title].ID})
 	r.NoError(err)
 
 	a.Len(entries, 2)
 }
 
-func TestListEntriesErrFeedIDNotFound(t *testing.T) {
+func TestListEntriesOkEmpty(t *testing.T) {
 	t.Parallel()
 
 	a := assert.New(t)
@@ -114,8 +114,8 @@ func TestListEntriesErrFeedIDNotFound(t *testing.T) {
 	r.Equal(3, db.countFeeds())
 	r.Equal(2, db.countEntries(dbFeeds[1].feedURL))
 
-	entries, err := db.ListEntries(context.Background(), 404)
-	r.Len(entries, 0)
+	entries, err := db.ListEntries(context.Background(), []ID{404})
+	r.NoError(err)
 
-	a.EqualError(err, "SQLite.ListEntries: feed with ID=404 not found")
+	a.Len(entries, 0)
 }
