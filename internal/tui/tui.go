@@ -170,12 +170,23 @@ func Show(db internal.FeedStore) error { //nolint:revive
 
 	app := tview.NewApplication()
 
+	panesMap := map[rune]*tview.Box{
+		'1': feedsPane,
+		'2': entriesPane,
+		'3': contentPane,
+	}
+
 	eventHandler := func(event *tcell.EventKey) *tcell.EventKey {
 
 		switch event.Key() { // nolint:exhaustive
 
 		case tcell.KeyRune:
-			switch event.Rune() { // nolint:exhaustive
+			switch r := event.Rune(); r { // nolint:exhaustive
+			case '1', '2', '3':
+				if fp, _ := root.GetFrontPage(); fp == "main" {
+					app.SetFocus(panesMap[r])
+				}
+
 			case 'h', '?':
 				if fp, _ := root.GetFrontPage(); fp == "help" {
 					root.HidePage("help")
