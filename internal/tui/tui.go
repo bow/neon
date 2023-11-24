@@ -99,28 +99,25 @@ func Show(db internal.FeedStore) error {
 	help1 := tview.NewTextView().
 		SetDynamicColors(true).
 		SetText(`[aqua]Feeds pane[-]
-[yellow]j[-]: Next item
-[yellow]k[-]: Previous item
-[yellow]p[-]: Pull current feed
-[yellow]P[-]: Pull all feeds
-[yellow]R[-]: Mark all entries in current feed read
-[yellow]s[-]: Star / unstar feed
-[yellow]a[-]: Add feed
-[yellow]e[-]: Edit feed
-[yellow]d[-]: Delete feed
+[yellow]j/k[-]: Next / previous item
+[yellow]p[-]  : Pull current feed
+[yellow]P[-]  : Pull all feeds
+[yellow]R[-]  : Mark all entries in current feed read
+[yellow]s[-]  : Star / unstar feed
+[yellow]a[-]  : Add feed
+[yellow]e[-]  : Edit feed
+[yellow]d[-]  : Delete feed
 
 [aqua]Entries pane[-]
-[yellow]j[-]: Next entry
-[yellow]k[-]: Previous entry
-[yellow]r[-]: Mark current entry read
-[yellow]u[-]: Mark current entry unread
-[yellow]b[-]: Add / remove current entry from bookmarks
+[yellow]j/k[-]: Next / previous entry
+[yellow]r[-]  : Mark current entry read
+[yellow]u[-]  : Mark current entry unread
+[yellow]b[-]  : Add / remove current entry from bookmarks
 
 [aqua]Content pane[-]
-[yellow]j[-]: Scroll down
-[yellow]k[-]: Scroll up
-[yellow]g[-]: Go to top
-[yellow]G[-]: Go to bottom
+[yellow]j/k[-]: Scroll down / up
+[yellow]g[-]  : Go to top
+[yellow]G[-]  : Go to bottom
 
 [aqua]Global[-]
 [yellow]1[-]    : Switch to the feeds pane
@@ -146,8 +143,8 @@ func Show(db internal.FeedStore) error {
 		AddPage(
 			"help",
 			tview.NewGrid().
-				SetColumns(0, 50, 0).
-				SetRows(0, 38, 0).
+				SetColumns(0, 55, 0).
+				SetRows(0, 35, 0).
 				AddItem(helpPage, 1, 1, 1, 1, 0, 0, true),
 			true,
 			false,
