@@ -141,7 +141,7 @@ func Show(db internal.FeedStore) error { //nolint:revive
 [yellow]2[-]    : Switch to the entries pane
 [yellow]3[-]    : Switch to the content pane
 [yellow]Tab[-]  : Switch to next pane
-[yellow]S-Tab[-]: Switch to previous pane
+[yellow]A-Tab[-]: Switch to previous pane
 [yellow]X[-]    : Export feeds to OPML
 [yellow]I[-]    : Import feeds from OPML
 [yellow]Esc[-]  : Unset current focus or close open frame
@@ -175,10 +175,12 @@ func Show(db internal.FeedStore) error { //nolint:revive
 		'2': entriesPane,
 		'3': contentPane,
 	}
+	panesOrder := []*tview.Box{feedsPane, entriesPane, contentPane}
 
 	eventHandler := func(event *tcell.EventKey) *tcell.EventKey {
 
 		var (
+			foc   = app.GetFocus()
 			fp, _ = root.GetFrontPage()
 			key   = event.Key()
 			r     = event.Rune()
@@ -206,6 +208,34 @@ func Show(db internal.FeedStore) error { //nolint:revive
 				app.Stop()
 				return nil
 			}
+
+		case tcell.KeyTab:
+			if fp == "main" {
+				target := 0
+				if event.Modifiers()&tcell.ModAlt != 0 {
+					if foc == nil || foc == mainPage {
+						target = 2
+					} else if foc == feedsPane {
+						target = 2
+					} else if foc == entriesPane {
+						target = 0
+					} else if foc == contentPane {
+						target = 1
+					}
+				} else {
+					if foc == nil || foc == mainPage {
+						target = 0
+					} else if foc == feedsPane {
+						target = 1
+					} else if foc == entriesPane {
+						target = 2
+					} else if foc == contentPane {
+						target = 0
+					}
+				}
+				app.SetFocus(panesOrder[target])
+			}
+			return nil
 
 		case tcell.KeyEscape:
 			switch fp {
