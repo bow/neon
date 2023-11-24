@@ -134,7 +134,7 @@ message DeleteFeedsRequest {
 message DeleteFeedsResponse {}
 
 message ListEntriesRequest {
-  uint32 feed_id = 1;
+  repeated uint32 feed_ids = 1;
 }
 
 message ListEntriesResponse {
