@@ -186,7 +186,7 @@ func pullNewFeedEntries(
 		}
 
 		defaultReadStatus := false
-		unreadEntries, err := getAllFeedEntries(ctx, tx, pk.feedID, &defaultReadStatus)
+		unreadEntries, err := getEntries(ctx, tx, []ID{pk.feedID}, &defaultReadStatus, nil)
 		if err != nil {
 			return pk.err(err)
 		}

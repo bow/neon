@@ -21,7 +21,7 @@ func (db *SQLite) ListFeeds(ctx context.Context) ([]*internal.Feed, error) {
 		}
 		for _, ifeed := range irecs {
 			ifeed := ifeed
-			entries, err := getAllFeedEntries(ctx, tx, ifeed.id, nil)
+			entries, err := getEntries(ctx, tx, []ID{ifeed.id}, nil, nil)
 			if err != nil {
 				return err
 			}
@@ -108,74 +108,4 @@ func getAllFeeds(ctx context.Context, tx *sql.Tx) ([]*feedRecord, error) {
 	}
 
 	return feeds, nil
-}
-
-func getAllFeedEntries(
-	ctx context.Context,
-	tx *sql.Tx,
-	feedID ID,
-	isRead *bool,
-) ([]*entryRecord, error) {
-
-	sql1 := `
-		SELECT
-			e.id AS id
-			, e.feed_id AS feed_id
-			, e.title AS title
-			, e.is_read AS is_read
-			, e.is_bookmarked AS is_bookmarked
-			, e.external_id AS ext_id
-			, e.description AS description
-			, e.content AS content
-			, e.url AS url
-			, e.update_time AS update_time
-			, e.pub_time AS pub_time
-		FROM
-			entries e
-		WHERE
-			e.feed_id = $1
-			AND COALESCE(e.is_read = $2, true)
-		ORDER BY
-			COALESCE(e.update_time, e.pub_time) DESC
-`
-	scanRow := func(rows *sql.Rows) (*entryRecord, error) {
-		var entry entryRecord
-		if err := rows.Scan(
-			&entry.id,
-			&entry.feedID,
-			&entry.title,
-			&entry.isRead,
-			&entry.isBookmarked,
-			&entry.extID,
-			&entry.description,
-			&entry.content,
-			&entry.url,
-			&entry.updated,
-			&entry.published,
-		); err != nil {
-			return nil, err
-		}
-		return &entry, nil
-	}
-
-	stmt1, err := tx.PrepareContext(ctx, sql1)
-	if err != nil {
-		return nil, err
-	}
-	defer stmt1.Close()
-
-	rows, err := stmt1.QueryContext(ctx, feedID, isRead)
-	if err != nil {
-		return nil, err
-	}
-
-	entries := make([]*entryRecord, 0)
-	for rows.Next() {
-		entry, err := scanRow(rows)
-		if err != nil {
-			return nil, err
-		}
-		entries = append(entries, entry)
-	}
-	return entries, nil
 }
