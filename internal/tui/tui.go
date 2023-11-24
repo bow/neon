@@ -156,10 +156,15 @@ func Show(db internal.FeedStore) error { //nolint:revive
 		SetTitle(" Keys ").
 		SetTitleColor(helpTitleForeground)
 
+	const (
+		mainPageName = "main"
+		helpPageName = "help"
+	)
+
 	root.
-		AddAndSwitchToPage("main", mainPage, true).
+		AddAndSwitchToPage(mainPageName, mainPage, true).
 		AddPage(
-			"help",
+			helpPageName,
 			tview.NewGrid().
 				SetColumns(0, 55, 0).
 				SetRows(0, 36, 0).
@@ -191,16 +196,16 @@ func Show(db internal.FeedStore) error { //nolint:revive
 		case tcell.KeyRune:
 			switch r { // nolint:exhaustive
 			case '1', '2', '3':
-				if fp == "main" {
+				if fp == mainPageName {
 					app.SetFocus(panesMap[r])
 				}
 				return nil
 
 			case 'h', '?':
-				if fp == "help" {
-					root.HidePage("help")
+				if fp == helpPageName {
+					root.HidePage(helpPageName)
 				} else {
-					root.ShowPage("help")
+					root.ShowPage(helpPageName)
 				}
 				return nil
 
@@ -210,7 +215,7 @@ func Show(db internal.FeedStore) error { //nolint:revive
 			}
 
 		case tcell.KeyTab:
-			if fp == "main" {
+			if fp == mainPageName {
 				target := 0
 				if event.Modifiers()&tcell.ModAlt != 0 {
 					if foc == nil || foc == mainPage {
@@ -239,10 +244,10 @@ func Show(db internal.FeedStore) error { //nolint:revive
 
 		case tcell.KeyEscape:
 			switch fp {
-			case "help":
-				root.HidePage("help")
+			case helpPageName:
+				root.HidePage(helpPageName)
 				return nil
-			case "main":
+			case mainPageName:
 				app.SetFocus(nil)
 				return nil
 			}
