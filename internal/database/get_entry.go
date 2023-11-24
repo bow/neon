@@ -29,7 +29,7 @@ func (db *SQLite) GetEntry(
 		return nil
 	}
 
-	fail := failF("SQLite.ViewFeed")
+	fail := failF("SQLite.GetEntry")
 
 	db.mu.Lock()
 	defer db.mu.Unlock()

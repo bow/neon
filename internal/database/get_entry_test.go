@@ -71,5 +71,5 @@ func TestGetEntryErr(t *testing.T) {
 	r.Nil(dbEntry)
 	r.Error(err)
 
-	a.EqualError(err, "SQLite.ViewFeed: entry with ID=86 not found")
+	a.EqualError(err, "SQLite.GetEntry: entry with ID=86 not found")
 }
