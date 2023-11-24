@@ -178,17 +178,24 @@ func Show(db internal.FeedStore) error { //nolint:revive
 
 	eventHandler := func(event *tcell.EventKey) *tcell.EventKey {
 
-		switch event.Key() { // nolint:exhaustive
+		var (
+			fp, _ = root.GetFrontPage()
+			key   = event.Key()
+			r     = event.Rune()
+		)
+
+		switch key { // nolint:exhaustive
 
 		case tcell.KeyRune:
-			switch r := event.Rune(); r { // nolint:exhaustive
+			switch r { // nolint:exhaustive
 			case '1', '2', '3':
-				if fp, _ := root.GetFrontPage(); fp == "main" {
+				if fp == "main" {
 					app.SetFocus(panesMap[r])
 				}
+				return nil
 
 			case 'h', '?':
-				if fp, _ := root.GetFrontPage(); fp == "help" {
+				if fp == "help" {
 					root.HidePage("help")
 				} else {
 					root.ShowPage("help")
@@ -201,9 +208,9 @@ func Show(db internal.FeedStore) error { //nolint:revive
 			}
 
 		case tcell.KeyEscape:
-			switch fp, _ := root.GetFrontPage(); fp {
+			switch fp {
 			case "help":
-				root.HidePage(fp)
+				root.HidePage("help")
 				return nil
 			case "main":
 				app.SetFocus(nil)
