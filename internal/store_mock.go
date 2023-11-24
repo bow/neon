@@ -155,18 +155,18 @@ func (mr *MockFeedStoreMockRecorder) ImportSubscription(ctx, sub interface{}) *g
 }
 
 // ListEntries mocks base method.
-func (m *MockFeedStore) ListEntries(ctx context.Context, feedIDs []ID) ([]*Entry, error) {
+func (m *MockFeedStore) ListEntries(ctx context.Context, feedIDs []ID, isBookmarked *bool) ([]*Entry, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ListEntries", ctx, feedIDs)
+	ret := m.ctrl.Call(m, "ListEntries", ctx, feedIDs, isBookmarked)
 	ret0, _ := ret[0].([]*Entry)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ListEntries indicates an expected call of ListEntries.
-func (mr *MockFeedStoreMockRecorder) ListEntries(ctx, feedIDs interface{}) *gomock.Call {
+func (mr *MockFeedStoreMockRecorder) ListEntries(ctx, feedIDs, isBookmarked interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListEntries", reflect.TypeOf((*MockFeedStore)(nil).ListEntries), ctx, feedIDs)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListEntries", reflect.TypeOf((*MockFeedStore)(nil).ListEntries), ctx, feedIDs, isBookmarked)
 }
 
 // ListFeeds mocks base method.

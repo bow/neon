@@ -596,7 +596,7 @@ func TestListEntriesOk(t *testing.T) {
 	}
 
 	str.EXPECT().
-		ListEntries(gomock.Any(), req.GetFeedIds()).
+		ListEntries(gomock.Any(), req.GetFeedIds(), nil).
 		Return(entries, nil)
 
 	rsp, err := client.ListEntries(context.Background(), &req)

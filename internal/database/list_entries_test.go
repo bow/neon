@@ -30,7 +30,7 @@ func TestListEntriesOkMinimal(t *testing.T) {
 	r.Equal(1, db.countFeeds())
 	r.Equal(0, db.countEntries(dbFeeds[0].feedURL))
 
-	entries, err := db.ListEntries(context.Background(), nil)
+	entries, err := db.ListEntries(context.Background(), nil, nil)
 	r.NoError(err)
 
 	a.Len(entries, 0)
@@ -57,8 +57,9 @@ func TestListEntriesOkExtended(t *testing.T) {
 			feedURL: "http://x.com/feed.xml",
 			updated: toNullTime(mustTime(t, "2022-04-20T16:32:30.760+02:00")),
 			entries: []*entryRecord{
-				{title: "Entry X1", isRead: false},
-				{title: "Entry X2", isRead: true},
+				{title: "Entry X1", isRead: false, isBookmarked: false},
+				{title: "Entry X2", isRead: true, isBookmarked: false},
+				{title: "Entry X3", isRead: true, isBookmarked: true},
 			},
 		},
 		{
@@ -70,12 +71,16 @@ func TestListEntriesOkExtended(t *testing.T) {
 	keys := db.addFeeds(dbFeeds)
 
 	r.Equal(3, db.countFeeds())
-	r.Equal(2, db.countEntries(dbFeeds[1].feedURL))
+	r.Equal(3, db.countEntries(dbFeeds[1].feedURL))
 
-	entries, err := db.ListEntries(context.Background(), []ID{keys[dbFeeds[1].title].ID})
+	entries, err := db.ListEntries(
+		context.Background(),
+		[]ID{keys[dbFeeds[1].title].ID},
+		pointer(true),
+	)
 	r.NoError(err)
 
-	a.Len(entries, 2)
+	a.Len(entries, 1)
 }
 
 func TestListEntriesOkEmpty(t *testing.T) {
@@ -114,7 +119,7 @@ func TestListEntriesOkEmpty(t *testing.T) {
 	r.Equal(3, db.countFeeds())
 	r.Equal(2, db.countEntries(dbFeeds[1].feedURL))
 
-	entries, err := db.ListEntries(context.Background(), []ID{404})
+	entries, err := db.ListEntries(context.Background(), []ID{404}, nil)
 	r.NoError(err)
 
 	a.Len(entries, 0)

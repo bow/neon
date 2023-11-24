@@ -51,6 +51,7 @@ type FeedStore interface {
 	ListEntries(
 		ctx context.Context,
 		feedIDs []ID,
+		isBookmarked *bool,
 	) (
 		entries []*Entry,
 		err error,

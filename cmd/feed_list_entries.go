@@ -38,7 +38,8 @@ func newFeedListEntriesCommand() *cobra.Command {
 				return err
 			}
 
-			entries, err := db.ListEntries(cmd.Context(), []internal.ID{feedID})
+			// TODO: Add 'bookmark' flag to CLI.
+			entries, err := db.ListEntries(cmd.Context(), []internal.ID{feedID}, nil)
 			if err != nil {
 				return err
 			}

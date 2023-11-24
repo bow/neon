@@ -14,11 +14,12 @@ import (
 func (db *SQLite) ListEntries(
 	ctx context.Context,
 	feedIDs []internal.ID,
+	isBookmarked *bool,
 ) ([]*internal.Entry, error) {
 
 	recs := make([]*entryRecord, 0)
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
-		irecs, err := getEntries(ctx, tx, feedIDs, nil)
+		irecs, err := getEntries(ctx, tx, feedIDs, nil, isBookmarked)
 		if err != nil {
 			return err
 		}
@@ -44,6 +45,7 @@ func getEntries(
 	tx *sql.Tx,
 	feedIDs []ID,
 	isRead *bool,
+	isBookmarked *bool,
 ) ([]*entryRecord, error) {
 
 	sql1 := `
@@ -64,6 +66,7 @@ func getEntries(
 		WHERE
 			COALESCE(e.feed_id IN (SELECT value FROM json_each($1)), true)
 			AND COALESCE(e.is_read = $2, true)
+			AND COALESCE(e.is_bookmarked = $3, true)
 		ORDER BY
 			COALESCE(e.update_time, e.pub_time) DESC
 `
@@ -103,7 +106,7 @@ func getEntries(
 		feedIDsJSON = string(s)
 	}
 
-	rows, err := stmt1.QueryContext(ctx, feedIDsJSON, isRead)
+	rows, err := stmt1.QueryContext(ctx, feedIDsJSON, isRead, isBookmarked)
 	if err != nil {
 		return nil, err
 	}
