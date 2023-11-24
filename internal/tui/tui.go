@@ -37,11 +37,13 @@ func Show(db internal.FeedStore) error {
 
 	feedsPane := newPane("Feeds", titleForeground, lineForeground)
 	entriesPane := newPane("Entries", titleForeground, lineForeground)
+	contentPane := newPane("", titleForeground, lineForeground)
 
 	narrowFlex := tview.NewFlex().
 		SetDirection(tview.FlexRow).
-		AddItem(feedsPane, 0, 1, false).
-		AddItem(entriesPane, 0, 2, false).
+		AddItem(feedsPane, 0, 3, false).
+		AddItem(entriesPane, 0, 4, false).
+		AddItem(contentPane, 0, 5, false).
 		AddItem(newNarrowFooterBorder(lineForeground), 1, 0, false)
 
 	wideFlex := tview.NewFlex().
@@ -51,7 +53,13 @@ func Show(db internal.FeedStore) error {
 				SetDirection(tview.FlexColumn).
 				AddItem(feedsPane, 45, 0, false).
 				AddItem(newPaneDivider(lineForeground), 1, 0, false).
-				AddItem(entriesPane, 0, 1, false),
+				AddItem(
+					tview.NewFlex().
+						SetDirection(tview.FlexRow).
+						AddItem(entriesPane, 0, 1, false).
+						AddItem(contentPane, 0, 2, false),
+					0, 1, false,
+				),
 			0, 1, false,
 		).
 		AddItem(newWideFooterBorder(lineForeground, 45), 1, 0, false)
@@ -186,6 +194,8 @@ func newPane(
 	if text != "" {
 		unfocused = fmt.Sprintf(" %s ", text)
 		focused = fmt.Sprintf(" • %s ", text)
+	} else {
+		focused = " • "
 	}
 
 	makedrawf := func(
