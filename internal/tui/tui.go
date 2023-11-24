@@ -169,35 +169,41 @@ func Show(db internal.FeedStore) error { //nolint:revive
 		)
 
 	app := tview.NewApplication()
-	app.
-		SetInputCapture(
-			func(event *tcell.EventKey) *tcell.EventKey {
-				ek := event.Key()
-				er := event.Rune()
 
-				if ek == tcell.KeyRune {
-					if er == 'h' || er == '?' {
-						if fp, _ := root.GetFrontPage(); fp == "help" {
-							root.HidePage("help")
-						} else {
-							root.ShowPage("help")
-						}
-						return nil
-					} else if er == 'q' {
-						app.Stop()
-					}
-				} else if ek == tcell.KeyEscape {
-					switch fp, _ := root.GetFrontPage(); fp {
-					case "help":
-						root.HidePage(fp)
-					case "main":
-						app.SetFocus(nil)
-					}
+	eventHandler := func(event *tcell.EventKey) *tcell.EventKey {
+
+		switch event.Key() { // nolint:exhaustive
+
+		case tcell.KeyRune:
+			switch event.Rune() { // nolint:exhaustive
+			case 'h', '?':
+				if fp, _ := root.GetFrontPage(); fp == "help" {
+					root.HidePage("help")
+				} else {
+					root.ShowPage("help")
 				}
+				return nil
 
-				return event
-			},
-		)
+			case 'q':
+				app.Stop()
+				return nil
+			}
+
+		case tcell.KeyEscape:
+			switch fp, _ := root.GetFrontPage(); fp {
+			case "help":
+				root.HidePage(fp)
+				return nil
+			case "main":
+				app.SetFocus(nil)
+				return nil
+			}
+		}
+
+		return event
+	}
+
+	app.SetInputCapture(eventHandler)
 
 	if err := app.SetRoot(root, true).EnableMouse(true).Run(); err != nil {
 		panic(err)
