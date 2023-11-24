@@ -15,7 +15,8 @@ import (
 )
 
 // Show displays a reader for the given datastore.
-func Show(db internal.FeedStore) error {
+// TODO: Refactor and split UI components.
+func Show(db internal.FeedStore) error { //nolint:revive
 
 	lineForeground := tcell.ColorWhite
 	titleForeground := tcell.ColorBlue
@@ -143,6 +144,7 @@ func Show(db internal.FeedStore) error {
 [yellow]S-Tab[-]: Switch to previous pane
 [yellow]X[-]    : Export feeds to OPML
 [yellow]I[-]    : Import feeds from OPML
+[yellow]Esc[-]  : Unset current focus or close open frame
 [yellow]h|?[-]  : Toggle this help
 [yellow]q[-]    : Quit reader`)
 
@@ -160,7 +162,7 @@ func Show(db internal.FeedStore) error {
 			"help",
 			tview.NewGrid().
 				SetColumns(0, 55, 0).
-				SetRows(0, 35, 0).
+				SetRows(0, 36, 0).
 				AddItem(helpPage, 1, 1, 1, 1, 0, 0, true),
 			true,
 			false,
@@ -170,17 +172,29 @@ func Show(db internal.FeedStore) error {
 	app.
 		SetInputCapture(
 			func(event *tcell.EventKey) *tcell.EventKey {
+				ek := event.Key()
 				er := event.Rune()
-				if er == 'h' || er == '?' {
-					if fp, _ := root.GetFrontPage(); fp == "help" {
-						root.HidePage("help")
-					} else {
-						root.ShowPage("help")
+
+				if ek == tcell.KeyRune {
+					if er == 'h' || er == '?' {
+						if fp, _ := root.GetFrontPage(); fp == "help" {
+							root.HidePage("help")
+						} else {
+							root.ShowPage("help")
+						}
+						return nil
+					} else if er == 'q' {
+						app.Stop()
 					}
-					return nil
-				} else if er == 'q' {
-					app.Stop()
+				} else if ek == tcell.KeyEscape {
+					switch fp, _ := root.GetFrontPage(); fp {
+					case "help":
+						root.HidePage(fp)
+					case "main":
+						app.SetFocus(nil)
+					}
 				}
+
 				return event
 			},
 		)
