@@ -614,11 +614,11 @@ func TestEditEntriesOk(t *testing.T) {
 	client, str := setupServerTest(t)
 
 	ops := []*internal.EntryEditOp{
-		{ID: 37, IsRead: pointer(true)},
+		{ID: 37, IsRead: pointer(true), IsBookmarked: pointer(true)},
 		{ID: 49, IsRead: pointer(false)},
 	}
 	entries := []*internal.Entry{
-		{ID: 37, IsRead: true},
+		{ID: 37, IsRead: true, IsBookmarked: true},
 		{ID: 49, IsRead: false},
 	}
 
@@ -631,7 +631,8 @@ func TestEditEntriesOk(t *testing.T) {
 			{
 				Id: 37,
 				Fields: &api.EditEntriesRequest_Op_Fields{
-					IsRead: pointer(true),
+					IsRead:       pointer(true),
+					IsBookmarked: pointer(true),
 				},
 			},
 			{
@@ -649,9 +650,11 @@ func TestEditEntriesOk(t *testing.T) {
 	entry0 := rsp.Entries[0]
 	a.Equal(entries[0].ID, entry0.Id)
 	a.Equal(entries[0].IsRead, entry0.IsRead)
+	a.Equal(entries[0].IsBookmarked, entry0.IsBookmarked)
 	entry1 := rsp.Entries[1]
 	a.Equal(entries[1].ID, entry1.Id)
 	a.Equal(entries[1].IsRead, entry1.IsRead)
+	a.Equal(entries[1].IsBookmarked, entry1.IsBookmarked)
 }
 
 func TestGetEntryOk(t *testing.T) {

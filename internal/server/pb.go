@@ -78,7 +78,11 @@ func toEntryPbs(entries []*internal.Entry) []*api.Entry {
 }
 
 func fromEntryEditOpPb(pb *api.EditEntriesRequest_Op) *internal.EntryEditOp {
-	return &internal.EntryEditOp{ID: pb.Id, IsRead: pb.Fields.IsRead}
+	return &internal.EntryEditOp{
+		ID:           pb.Id,
+		IsRead:       pb.Fields.IsRead,
+		IsBookmarked: pb.Fields.IsBookmarked,
+	}
 }
 
 func fromEntryEditOpPbs(pbs []*api.EditEntriesRequest_Op) []*internal.EntryEditOp {
