@@ -185,69 +185,96 @@ func Show(db internal.FeedStore) error { //nolint:revive
 	eventHandler := func(event *tcell.EventKey) *tcell.EventKey {
 
 		var (
-			foc   = app.GetFocus()
-			fp, _ = root.GetFrontPage()
-			key   = event.Key()
-			r     = event.Rune()
+			focused  = app.GetFocus()
+			front, _ = root.GetFrontPage()
+			key      = event.Key()
+			keyr     = event.Rune()
 		)
 
-		switch key { // nolint:exhaustive
+		switch focused { // nolint:exhaustive
 
-		case tcell.KeyRune:
-			switch r { // nolint:exhaustive
-			case '1', '2', '3':
-				if fp == mainPageName {
-					app.SetFocus(panesMap[r])
+		case feedsPane:
+			if keyr == 'P' {
+				// TODO: Add animation in footer?
+				ch := db.PullFeeds(context.Background(), []internal.ID{})
+				// TODO: Add ok / fail status in ...?
+				for pr := range ch {
+					if err := pr.Error(); err != nil {
+						panic(err)
+					}
+				}
+				stats, err := db.GetGlobalStats(context.Background())
+				if err != nil {
+					panic(err)
+				}
+				unreadInfo.SetText(fmt.Sprintf("%d unread entries", stats.NumEntriesUnread))
+				lastPullInfo.SetText(
+					fmt.Sprintf(
+						"Pulled %s", stats.LastPullTime.Local().Format("02/Jan/06 15:04"),
+					),
+				)
+				return nil
+			}
+
+		default:
+			switch key { // nolint:exhaustive
+
+			case tcell.KeyRune:
+				switch keyr { // nolint:exhaustive
+				case '1', '2', '3':
+					if front == mainPageName {
+						app.SetFocus(panesMap[keyr])
+					}
+					return nil
+
+				case 'h', '?':
+					if front == helpPageName {
+						root.HidePage(helpPageName)
+					} else {
+						root.ShowPage(helpPageName)
+					}
+					return nil
+
+				case 'q':
+					app.Stop()
+					return nil
+				}
+
+			case tcell.KeyTab:
+				if front == mainPageName {
+					target := 0
+					if event.Modifiers()&tcell.ModAlt != 0 {
+						switch focused {
+						case nil, mainPage, feedsPane:
+							target = 2
+						case entriesPane:
+							target = 0
+						case contentPane:
+							target = 1
+						}
+					} else {
+						switch focused {
+						case nil, mainPage, contentPane:
+							target = 0
+						case entriesPane:
+							target = 2
+						case feedsPane:
+							target = 1
+						}
+					}
+					app.SetFocus(panesOrder[target])
 				}
 				return nil
 
-			case 'h', '?':
-				if fp == helpPageName {
+			case tcell.KeyEscape:
+				switch front {
+				case helpPageName:
 					root.HidePage(helpPageName)
-				} else {
-					root.ShowPage(helpPageName)
+					return nil
+				case mainPageName:
+					app.SetFocus(nil)
+					return nil
 				}
-				return nil
-
-			case 'q':
-				app.Stop()
-				return nil
-			}
-
-		case tcell.KeyTab:
-			if fp == mainPageName {
-				target := 0
-				if event.Modifiers()&tcell.ModAlt != 0 {
-					switch foc {
-					case nil, mainPage, feedsPane:
-						target = 2
-					case entriesPane:
-						target = 0
-					case contentPane:
-						target = 1
-					}
-				} else {
-					switch foc {
-					case nil, mainPage, contentPane:
-						target = 0
-					case entriesPane:
-						target = 2
-					case feedsPane:
-						target = 1
-					}
-				}
-				app.SetFocus(panesOrder[target])
-			}
-			return nil
-
-		case tcell.KeyEscape:
-			switch fp {
-			case helpPageName:
-				root.HidePage(helpPageName)
-				return nil
-			case mainPageName:
-				app.SetFocus(nil)
-				return nil
 			}
 		}
 
