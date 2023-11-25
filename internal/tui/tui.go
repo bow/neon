@@ -40,13 +40,13 @@ func Show(db internal.FeedStore) error { //nolint:revive
 	topLeftBorderTip := tview.BoxDrawingsLightVerticalAndRight
 	feedsPane := newPane("Feeds", titleForeground, lineForeground, nil)
 	entriesPane := newPane("Entries", titleForeground, lineForeground, nil)
-	contentPane := newPane("", titleForeground, lineForeground, &topLeftBorderTip)
+	readingPane := newPane("", titleForeground, lineForeground, &topLeftBorderTip)
 
 	narrowFlex := tview.NewFlex().
 		SetDirection(tview.FlexRow).
 		AddItem(feedsPane, 0, 3, false).
 		AddItem(entriesPane, 0, 4, false).
-		AddItem(contentPane, 0, 5, false).
+		AddItem(readingPane, 0, 5, false).
 		AddItem(newNarrowFooterBorder(lineForeground), 1, 0, false)
 
 	wideFlex := tview.NewFlex().
@@ -60,7 +60,7 @@ func Show(db internal.FeedStore) error { //nolint:revive
 					tview.NewFlex().
 						SetDirection(tview.FlexRow).
 						AddItem(entriesPane, 0, 1, false).
-						AddItem(contentPane, 0, 2, false),
+						AddItem(readingPane, 0, 2, false),
 					0, 1, false,
 				),
 			0, 1, false,
@@ -131,7 +131,7 @@ func Show(db internal.FeedStore) error { //nolint:revive
 [yellow]u[-]  : Mark current entry unread
 [yellow]b[-]  : Add / remove current entry from bookmarks
 
-[aqua]Content pane[-]
+[aqua]Reading pane[-]
 [yellow]j/k[-]: Scroll down / up
 [yellow]g[-]  : Go to top
 [yellow]G[-]  : Go to bottom
@@ -139,7 +139,7 @@ func Show(db internal.FeedStore) error { //nolint:revive
 [aqua]Global[-]
 [yellow]1|F[-]  : Switch to the feeds pane
 [yellow]2|E[-]  : Switch to the entries pane
-[yellow]3|C[-]  : Switch to the content pane
+[yellow]3|R[-]  : Switch to the reading pane
 [yellow]Tab[-]  : Switch to next pane
 [yellow]A-Tab[-]: Switch to previous pane
 [yellow]X[-]    : Export feeds to OPML
@@ -180,10 +180,10 @@ func Show(db internal.FeedStore) error { //nolint:revive
 		'F': feedsPane,
 		'2': entriesPane,
 		'E': entriesPane,
-		'3': contentPane,
-		'C': contentPane,
+		'3': readingPane,
+		'R': readingPane,
 	}
-	panesOrder := []*tview.Box{feedsPane, entriesPane, contentPane}
+	panesOrder := []*tview.Box{feedsPane, entriesPane, readingPane}
 
 	eventHandler := func(event *tcell.EventKey) *tcell.EventKey {
 
@@ -224,7 +224,7 @@ func Show(db internal.FeedStore) error { //nolint:revive
 
 			case tcell.KeyRune:
 				switch keyr { // nolint:exhaustive
-				case '1', '2', '3', 'F', 'E', 'C':
+				case '1', '2', '3', 'F', 'E', 'R':
 					if front == mainPageName {
 						app.SetFocus(panesMap[keyr])
 					}
@@ -252,12 +252,12 @@ func Show(db internal.FeedStore) error { //nolint:revive
 							target = 2
 						case entriesPane:
 							target = 0
-						case contentPane:
+						case readingPane:
 							target = 1
 						}
 					} else {
 						switch focused {
-						case nil, mainPage, contentPane:
+						case nil, mainPage, readingPane:
 							target = 0
 						case entriesPane:
 							target = 2
