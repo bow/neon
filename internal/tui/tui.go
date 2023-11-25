@@ -137,9 +137,9 @@ func Show(db internal.FeedStore) error { //nolint:revive
 [yellow]G[-]  : Go to bottom
 
 [aqua]Global[-]
-[yellow]1[-]    : Switch to the feeds pane
-[yellow]2[-]    : Switch to the entries pane
-[yellow]3[-]    : Switch to the content pane
+[yellow]1|F[-]  : Switch to the feeds pane
+[yellow]2|E[-]  : Switch to the entries pane
+[yellow]3|C[-]  : Switch to the content pane
 [yellow]Tab[-]  : Switch to next pane
 [yellow]A-Tab[-]: Switch to previous pane
 [yellow]X[-]    : Export feeds to OPML
@@ -177,8 +177,11 @@ func Show(db internal.FeedStore) error { //nolint:revive
 
 	panesMap := map[rune]*tview.Box{
 		'1': feedsPane,
+		'F': feedsPane,
 		'2': entriesPane,
+		'E': entriesPane,
 		'3': contentPane,
+		'C': contentPane,
 	}
 	panesOrder := []*tview.Box{feedsPane, entriesPane, contentPane}
 
@@ -221,7 +224,7 @@ func Show(db internal.FeedStore) error { //nolint:revive
 
 			case tcell.KeyRune:
 				switch keyr { // nolint:exhaustive
-				case '1', '2', '3':
+				case '1', '2', '3', 'F', 'E', 'C':
 					if front == mainPageName {
 						app.SetFocus(panesMap[keyr])
 					}
