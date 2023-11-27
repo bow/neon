@@ -17,22 +17,29 @@ import (
 // TODO: Refactor and split UI components.
 func Show(db internal.FeedStore) error { //nolint:revive
 
-	lineForeground := tcell.ColorWhite
-	titleForeground := tcell.ColorBlue
-	versionForeground := tcell.ColorGray
-	lastPullForeground := tcell.ColorGray
-	statsForeground := tcell.ColorDarkGoldenrod
-	helpTitleForeground := tcell.ColorAqua
-	helpBorderLineForeground := tcell.ColorGray
+	var (
+		feedsPaneTitle   = "Feeds"
+		entriesPaneTitle = "Entries"
+		readingPaneTitle = ""
+		helpPopupTitle   = "Keys"
 
-	wideViewMinWidth := 150
+		lineForeground           = tcell.ColorWhite
+		titleForeground          = tcell.ColorBlue
+		versionForeground        = tcell.ColorGray
+		lastPullForeground       = tcell.ColorGray
+		statsForeground          = tcell.ColorDarkGoldenrod
+		popupTitleForeground     = tcell.ColorAqua
+		helpBorderLineForeground = tcell.ColorGray
+
+		wideViewMinWidth = 150
+	)
 
 	root := tview.NewPages()
 
 	topLeftBorderTip := tview.BoxDrawingsLightVerticalAndRight
-	feedsPane := newPane("Feeds", titleForeground, lineForeground, nil)
-	entriesPane := newPane("Entries", titleForeground, lineForeground, nil)
-	readingPane := newPane("", titleForeground, lineForeground, &topLeftBorderTip)
+	feedsPane := newPane(feedsPaneTitle, titleForeground, lineForeground, nil)
+	entriesPane := newPane(entriesPaneTitle, titleForeground, lineForeground, nil)
+	readingPane := newPane(readingPaneTitle, titleForeground, lineForeground, &topLeftBorderTip)
 
 	narrowFlex := tview.NewFlex().
 		SetDirection(tview.FlexRow).
@@ -137,8 +144,8 @@ func Show(db internal.FeedStore) error { //nolint:revive
 
 	helpPage.SetBorder(true).
 		SetBorderColor(helpBorderLineForeground).
-		SetTitle(" Keys ").
-		SetTitleColor(helpTitleForeground)
+		SetTitle(fmt.Sprintf(" %s ", helpPopupTitle)).
+		SetTitleColor(popupTitleForeground)
 
 	const (
 		mainPageName = "main"
