@@ -16,7 +16,7 @@ import (
 
 // Show displays a reader for the given datastore.
 // TODO: Refactor and split UI components.
-func Show(db internal.FeedStore) error { //nolint:revive
+func Show(store internal.FeedStore) error { //nolint:revive
 
 	theme := DefaultTheme
 
@@ -52,31 +52,31 @@ func Show(db internal.FeedStore) error { //nolint:revive
 		).
 		AddItem(newWideFooterBorder(theme, 45), 1, 0, false)
 
-	stats, err := db.GetGlobalStats(context.Background())
+	stats, err := store.GetGlobalStats(context.Background())
 	if err != nil {
 		return err
 	}
 
-	unreadInfo := tview.NewTextView().
+	unreadWidget := tview.NewTextView().
 		SetTextColor(theme.StatsForeground).
 		SetText(fmt.Sprintf("%d unread entries", stats.NumEntriesUnread))
 
-	lastPullInfo := tview.NewTextView().
+	lastPullWidget := tview.NewTextView().
 		SetTextColor(theme.LastPullForeground).
 		SetText(
 			fmt.Sprintf("Pulled %s", stats.LastPullTime.Local().Format("02/Jan/06 15:04")),
 		)
 
-	versionInfo := tview.NewTextView().
+	versionWidget := tview.NewTextView().
 		SetTextColor(theme.VersionForeground).
 		SetText(fmt.Sprintf("iris v%s", internal.Version()))
 
 	footer := tview.NewFlex().
 		SetDirection(tview.FlexColumn).
 		// TODO: Refresh values when requested.
-		AddItem(lastPullInfo.SetTextAlign(tview.AlignLeft), 0, 1, false).
-		AddItem(unreadInfo.SetTextAlign(tview.AlignCenter), 0, 1, false).
-		AddItem(versionInfo.SetTextAlign(tview.AlignRight), 0, 1, false)
+		AddItem(lastPullWidget.SetTextAlign(tview.AlignLeft), 0, 1, false).
+		AddItem(unreadWidget.SetTextAlign(tview.AlignCenter), 0, 1, false).
+		AddItem(versionWidget.SetTextAlign(tview.AlignRight), 0, 1, false)
 
 	mainPage := tview.NewGrid().
 		SetColumns(0).
@@ -90,7 +90,7 @@ func Show(db internal.FeedStore) error { //nolint:revive
 	// Wide layout.
 	mainPage.AddItem(wideFlex, 0, 0, 1, 1, 0, theme.WideViewMinWidth, false)
 
-	help1 := tview.NewTextView().
+	helpWidget := tview.NewTextView().
 		SetDynamicColors(true).
 		SetText(`[aqua]Feeds pane[-]
 [yellow]j/k[-]: Next / previous item
@@ -125,7 +125,7 @@ func Show(db internal.FeedStore) error { //nolint:revive
 [yellow]h|?[-]  : Toggle this help
 [yellow]q[-]    : Quit reader`)
 
-	helpPage := tview.NewFrame(help1).
+	helpPage := tview.NewFrame(helpWidget).
 		SetBorders(1, 1, 0, 0, 2, 2)
 
 	helpPage.SetBorder(true).
@@ -177,19 +177,19 @@ func Show(db internal.FeedStore) error { //nolint:revive
 		case feedsPane:
 			if keyr == 'P' {
 				// TODO: Add animation in footer?
-				ch := db.PullFeeds(context.Background(), []internal.ID{})
+				ch := store.PullFeeds(context.Background(), []internal.ID{})
 				// TODO: Add ok / fail status in ...?
 				for pr := range ch {
 					if err := pr.Error(); err != nil {
 						panic(err)
 					}
 				}
-				stats, err := db.GetGlobalStats(context.Background())
+				stats, err := store.GetGlobalStats(context.Background())
 				if err != nil {
 					panic(err)
 				}
-				unreadInfo.SetText(fmt.Sprintf("%d unread entries", stats.NumEntriesUnread))
-				lastPullInfo.SetText(
+				unreadWidget.SetText(fmt.Sprintf("%d unread entries", stats.NumEntriesUnread))
+				lastPullWidget.SetText(
 					fmt.Sprintf(
 						"Pulled %s", stats.LastPullTime.Local().Format("02/Jan/06 15:04"),
 					),
