@@ -6,6 +6,7 @@ package tui
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
@@ -129,7 +130,7 @@ func Show(db internal.FeedStore) error { //nolint:revive
 
 	helpPage.SetBorder(true).
 		SetBorderColor(theme.PopupBorderForeground).
-		SetTitle(fmt.Sprintf(" %s ", theme.HelpPopupTitle)).
+		SetTitle(makeTitle(theme.HelpPopupTitle)).
 		SetTitleColor(theme.PopupTitleForeground)
 
 	const (
@@ -328,10 +329,10 @@ func newPane(
 
 	var unfocused, focused string
 	if title != "" {
-		unfocused = fmt.Sprintf(" %s ", title)
-		focused = fmt.Sprintf(" • %s ", title)
+		unfocused = makeTitle(title)
+		focused = makeTitle(fmt.Sprintf("• %s", title))
 	} else {
-		focused = " • "
+		focused = makeTitle("•")
 	}
 
 	makedrawf := func(
@@ -435,4 +436,22 @@ func newWideFooterBorder(theme *Theme, branch int) *tview.Box {
 	divider := tview.NewBox().SetBorder(false).SetDrawFunc(drawf)
 
 	return divider
+}
+
+var makeTitle = makeStringPadder(1)
+
+func makeStringPadder(padding int) func(string) string {
+	if padding <= 0 {
+		return func(text string) string { return text }
+	}
+	var sb strings.Builder
+	for i := 0; i < padding; i++ {
+		sb.WriteString(" ")
+	}
+	sb.WriteString("%s")
+	for i := 0; i < padding; i++ {
+		sb.WriteString(" ")
+	}
+	fmtString := sb.String()
+	return func(text string) string { return fmt.Sprintf(fmtString, text) }
 }
