@@ -25,13 +25,6 @@ func Show(db internal.FeedStore) error { //nolint:revive
 	helpTitleForeground := tcell.ColorAqua
 	helpBorderLineForeground := tcell.ColorGray
 
-	tview.Borders.HorizontalFocus = tview.Borders.Horizontal
-	tview.Borders.VerticalFocus = tview.Borders.Vertical
-	tview.Borders.TopLeftFocus = tview.Borders.TopLeft
-	tview.Borders.TopRightFocus = tview.Borders.TopRight
-	tview.Borders.BottomLeftFocus = tview.Borders.BottomLeft
-	tview.Borders.BottomRightFocus = tview.Borders.BottomRight
-
 	wideViewMinWidth := 150
 
 	root := tview.NewPages()
@@ -282,6 +275,16 @@ func Show(db internal.FeedStore) error { //nolint:revive
 	}
 
 	return nil
+}
+
+// TODO: Consider moving to theme.
+func init() {
+	tview.Borders.HorizontalFocus = tview.Borders.Horizontal
+	tview.Borders.VerticalFocus = tview.Borders.Vertical
+	tview.Borders.TopLeftFocus = tview.Borders.TopLeft
+	tview.Borders.TopRightFocus = tview.Borders.TopRight
+	tview.Borders.BottomLeftFocus = tview.Borders.BottomLeft
+	tview.Borders.BottomRightFocus = tview.Borders.BottomRight
 }
 
 func newPane(
