@@ -17,36 +17,21 @@ import (
 // TODO: Refactor and split UI components.
 func Show(db internal.FeedStore) error { //nolint:revive
 
-	var (
-		feedsPaneTitle   = "Feeds"
-		entriesPaneTitle = "Entries"
-		readingPaneTitle = ""
-		helpPopupTitle   = "Keys"
-
-		lineForeground           = tcell.ColorWhite
-		titleForeground          = tcell.ColorBlue
-		versionForeground        = tcell.ColorGray
-		lastPullForeground       = tcell.ColorGray
-		statsForeground          = tcell.ColorDarkGoldenrod
-		popupTitleForeground     = tcell.ColorAqua
-		helpBorderLineForeground = tcell.ColorGray
-
-		wideViewMinWidth = 150
-	)
+	theme := DefaultTheme
 
 	root := tview.NewPages()
 
 	topLeftBorderTip := tview.BoxDrawingsLightVerticalAndRight
-	feedsPane := newPane(feedsPaneTitle, titleForeground, lineForeground, nil)
-	entriesPane := newPane(entriesPaneTitle, titleForeground, lineForeground, nil)
-	readingPane := newPane(readingPaneTitle, titleForeground, lineForeground, &topLeftBorderTip)
+	feedsPane := newPane(theme.FeedsPaneTitle, theme, nil)
+	entriesPane := newPane(theme.EntriesPaneTitle, theme, nil)
+	readingPane := newPane(theme.ReadingPaneTitle, theme, &topLeftBorderTip)
 
 	narrowFlex := tview.NewFlex().
 		SetDirection(tview.FlexRow).
 		AddItem(feedsPane, 0, 3, false).
 		AddItem(entriesPane, 0, 4, false).
 		AddItem(readingPane, 0, 5, false).
-		AddItem(newNarrowFooterBorder(lineForeground), 1, 0, false)
+		AddItem(newNarrowFooterBorder(theme), 1, 0, false)
 
 	wideFlex := tview.NewFlex().
 		SetDirection(tview.FlexRow).
@@ -54,7 +39,7 @@ func Show(db internal.FeedStore) error { //nolint:revive
 			tview.NewFlex().
 				SetDirection(tview.FlexColumn).
 				AddItem(feedsPane, 45, 0, false).
-				AddItem(newPaneDivider(lineForeground), 1, 0, false).
+				AddItem(newPaneDivider(theme), 1, 0, false).
 				AddItem(
 					tview.NewFlex().
 						SetDirection(tview.FlexRow).
@@ -64,7 +49,7 @@ func Show(db internal.FeedStore) error { //nolint:revive
 				),
 			0, 1, false,
 		).
-		AddItem(newWideFooterBorder(lineForeground, 45), 1, 0, false)
+		AddItem(newWideFooterBorder(theme, 45), 1, 0, false)
 
 	stats, err := db.GetGlobalStats(context.Background())
 	if err != nil {
@@ -72,17 +57,17 @@ func Show(db internal.FeedStore) error { //nolint:revive
 	}
 
 	unreadInfo := tview.NewTextView().
-		SetTextColor(statsForeground).
+		SetTextColor(theme.StatsForeground).
 		SetText(fmt.Sprintf("%d unread entries", stats.NumEntriesUnread))
 
 	lastPullInfo := tview.NewTextView().
-		SetTextColor(lastPullForeground).
+		SetTextColor(theme.LastPullForeground).
 		SetText(
 			fmt.Sprintf("Pulled %s", stats.LastPullTime.Local().Format("02/Jan/06 15:04")),
 		)
 
 	versionInfo := tview.NewTextView().
-		SetTextColor(versionForeground).
+		SetTextColor(theme.VersionForeground).
 		SetText(fmt.Sprintf("iris v%s", internal.Version()))
 
 	footer := tview.NewFlex().
@@ -102,7 +87,7 @@ func Show(db internal.FeedStore) error { //nolint:revive
 	mainPage.AddItem(narrowFlex, 0, 0, 1, 1, 0, 0, false)
 
 	// Wide layout.
-	mainPage.AddItem(wideFlex, 0, 0, 1, 1, 0, wideViewMinWidth, false)
+	mainPage.AddItem(wideFlex, 0, 0, 1, 1, 0, theme.WideViewMinWidth, false)
 
 	help1 := tview.NewTextView().
 		SetDynamicColors(true).
@@ -143,9 +128,9 @@ func Show(db internal.FeedStore) error { //nolint:revive
 		SetBorders(1, 1, 0, 0, 2, 2)
 
 	helpPage.SetBorder(true).
-		SetBorderColor(helpBorderLineForeground).
-		SetTitle(fmt.Sprintf(" %s ", helpPopupTitle)).
-		SetTitleColor(popupTitleForeground)
+		SetBorderColor(theme.PopupBorderForeground).
+		SetTitle(fmt.Sprintf(" %s ", theme.HelpPopupTitle)).
+		SetTitleColor(theme.PopupTitleForeground)
 
 	const (
 		mainPageName = "main"
@@ -285,6 +270,42 @@ func Show(db internal.FeedStore) error { //nolint:revive
 	return nil
 }
 
+type Theme struct {
+	FeedsPaneTitle   string
+	EntriesPaneTitle string
+	ReadingPaneTitle string
+	HelpPopupTitle   string
+
+	Background            tcell.Color
+	BorderForeground      tcell.Color
+	TitleForeground       tcell.Color
+	VersionForeground     tcell.Color
+	LastPullForeground    tcell.Color
+	StatsForeground       tcell.Color
+	PopupTitleForeground  tcell.Color
+	PopupBorderForeground tcell.Color
+
+	WideViewMinWidth int
+}
+
+var DefaultTheme = &Theme{
+	FeedsPaneTitle:   "Feeds",
+	EntriesPaneTitle: "Entries",
+	ReadingPaneTitle: "",
+	HelpPopupTitle:   "Keys",
+
+	Background:            tcell.ColorBlack,
+	BorderForeground:      tcell.ColorWhite,
+	TitleForeground:       tcell.ColorBlue,
+	VersionForeground:     tcell.ColorGray,
+	LastPullForeground:    tcell.ColorGray,
+	StatsForeground:       tcell.ColorDarkGoldenrod,
+	PopupBorderForeground: tcell.ColorGray,
+	PopupTitleForeground:  tcell.ColorAqua,
+
+	WideViewMinWidth: 150,
+}
+
 // TODO: Consider moving to theme.
 func init() {
 	tview.Borders.HorizontalFocus = tview.Borders.Horizontal
@@ -296,17 +317,19 @@ func init() {
 }
 
 func newPane(
-	text string,
-	textForeground, lineForeground tcell.Color,
+	title string,
+	theme *Theme,
 	topLeftBorderTip *rune,
 ) *tview.Box {
 
-	lineStyle := tcell.StyleDefault.Foreground(lineForeground).Background(tcell.ColorBlack)
+	lineStyle := tcell.StyleDefault.
+		Background(theme.Background).
+		Foreground(theme.BorderForeground)
 
 	var unfocused, focused string
-	if text != "" {
-		unfocused = fmt.Sprintf(" %s ", text)
-		focused = fmt.Sprintf(" • %s ", text)
+	if title != "" {
+		unfocused = fmt.Sprintf(" %s ", title)
+		focused = fmt.Sprintf(" • %s ", title)
 	} else {
 		focused = " • "
 	}
@@ -333,7 +356,7 @@ func newPane(
 				y,
 				width-2,
 				tview.AlignLeft,
-				textForeground,
+				theme.TitleForeground,
 			)
 
 			return x + 1, y + 1, width - 2, height - 1
@@ -348,9 +371,11 @@ func newPane(
 	return box
 }
 
-func newPaneDivider(lineForeground tcell.Color) *tview.Box {
+func newPaneDivider(theme *Theme) *tview.Box {
 
-	style := tcell.StyleDefault.Foreground(lineForeground).Background(tcell.ColorBlack)
+	style := tcell.StyleDefault.
+		Background(theme.Background).
+		Foreground(theme.BorderForeground)
 
 	drawf := func(screen tcell.Screen, x int, y int, width int, height int) (int, int, int, int) {
 
@@ -368,9 +393,11 @@ func newPaneDivider(lineForeground tcell.Color) *tview.Box {
 	return divider
 }
 
-func newNarrowFooterBorder(lineForeground tcell.Color) *tview.Box {
+func newNarrowFooterBorder(theme *Theme) *tview.Box {
 
-	style := tcell.StyleDefault.Foreground(lineForeground).Background(tcell.ColorBlack)
+	style := tcell.StyleDefault.
+		Background(theme.Background).
+		Foreground(theme.BorderForeground)
 
 	drawf := func(screen tcell.Screen, x int, y int, width int, height int) (int, int, int, int) {
 
@@ -386,9 +413,11 @@ func newNarrowFooterBorder(lineForeground tcell.Color) *tview.Box {
 	return divider
 }
 
-func newWideFooterBorder(lineForeground tcell.Color, branch int) *tview.Box {
+func newWideFooterBorder(theme *Theme, branch int) *tview.Box {
 
-	style := tcell.StyleDefault.Foreground(lineForeground).Background(tcell.ColorBlack)
+	style := tcell.StyleDefault.
+		Background(theme.Background).
+		Foreground(theme.BorderForeground)
 
 	drawf := func(screen tcell.Screen, x int, y int, width int, height int) (int, int, int, int) {
 
