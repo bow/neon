@@ -176,6 +176,7 @@ func Show(db internal.FeedStore) error { //nolint:revive
 	}
 	panesOrder := []*tview.Box{feedsPane, entriesPane, readingPane}
 
+	// nolint:exhaustive
 	eventHandler := func(event *tcell.EventKey) *tcell.EventKey {
 
 		var (
@@ -185,7 +186,7 @@ func Show(db internal.FeedStore) error { //nolint:revive
 			keyr     = event.Rune()
 		)
 
-		switch focused { // nolint:exhaustive
+		switch focused {
 
 		case feedsPane:
 			if keyr == 'P' {
@@ -211,10 +212,10 @@ func Show(db internal.FeedStore) error { //nolint:revive
 			}
 
 		default:
-			switch key { // nolint:exhaustive
+			switch key {
 
 			case tcell.KeyRune:
-				switch keyr { // nolint:exhaustive
+				switch keyr {
 				case '1', '2', '3', 'F', 'E', 'R':
 					if front == mainPageName {
 						app.SetFocus(panesMap[keyr])
