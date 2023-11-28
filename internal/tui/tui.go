@@ -316,14 +316,14 @@ func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 			switch keyr {
 			case 'P':
 				// TODO: Add animation in footer?
-				ch := r.store.PullFeeds(context.Background(), []internal.ID{})
+				ch := r.store.PullFeeds(r.ctx, []internal.ID{})
 				// TODO: Add ok / fail status in ...?
 				for pr := range ch {
 					if err := pr.Error(); err != nil {
 						panic(err)
 					}
 				}
-				stats, err := r.store.GetGlobalStats(context.Background())
+				stats, err := r.store.GetGlobalStats(r.ctx)
 				if err != nil {
 					panic(err)
 				}
