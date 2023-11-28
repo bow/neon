@@ -205,9 +205,62 @@ func (r *Reader) setupHelpPage() {
 	r.helpPage = helpPage
 }
 
-// nolint:revive
+// nolint:revive,exhaustive
 func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
-	// nolint:exhaustive
+
+	defaultHandler := func(
+		event *tcell.EventKey,
+		key tcell.Key,
+		keyr rune,
+		front string,
+		focused tview.Primitive,
+	) *tcell.EventKey {
+
+		switch key {
+
+		case tcell.KeyRune:
+			switch keyr {
+			case '1', '2', '3', 'F', 'E', 'R':
+				if front == r.mainPageName {
+					target := r.getFocusTarget(keyr)
+					r.app.SetFocus(target)
+				}
+				return nil
+
+			case 'h', '?':
+				if front == r.helpPageName {
+					r.root.HidePage(r.helpPageName)
+				} else {
+					r.root.ShowPage(r.helpPageName)
+				}
+				return nil
+
+			case 'q':
+				r.app.Stop()
+				return nil
+			}
+
+		case tcell.KeyTab:
+			if front == r.mainPageName {
+				reverse := event.Modifiers()&tcell.ModAlt != 0
+				target := r.getAdjacentFocusTarget(focused, reverse)
+				r.app.SetFocus(target)
+			}
+			return nil
+
+		case tcell.KeyEscape:
+			switch front {
+			case r.helpPageName:
+				r.root.HidePage(r.helpPageName)
+			case r.mainPageName:
+				r.app.SetFocus(nil)
+			}
+			return nil
+		}
+
+		return event
+	}
+
 	return func(event *tcell.EventKey) *tcell.EventKey {
 		var (
 			focused  = r.app.GetFocus()
@@ -215,11 +268,11 @@ func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 			key      = event.Key()
 			keyr     = event.Rune()
 		)
-
 		switch focused {
 
 		case r.feedsPane:
-			if keyr == 'P' {
+			switch keyr {
+			case 'P':
 				// TODO: Add animation in footer?
 				ch := r.store.PullFeeds(context.Background(), []internal.ID{})
 				// TODO: Add ok / fail status in ...?
@@ -235,53 +288,14 @@ func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 				r.setUnreadEntries(stats.NumEntriesUnread)
 				r.setLastPullTime(stats.LastPullTime)
 				return nil
+
+			default:
+				return defaultHandler(event, key, keyr, front, focused)
 			}
 
 		default:
-			switch key {
-
-			case tcell.KeyRune:
-				switch keyr {
-				case '1', '2', '3', 'F', 'E', 'R':
-					if front == r.mainPageName {
-						target := r.getFocusTarget(keyr)
-						r.app.SetFocus(target)
-					}
-					return nil
-
-				case 'h', '?':
-					if front == r.helpPageName {
-						r.root.HidePage(r.helpPageName)
-					} else {
-						r.root.ShowPage(r.helpPageName)
-					}
-					return nil
-
-				case 'q':
-					r.app.Stop()
-					return nil
-				}
-
-			case tcell.KeyTab:
-				if front == r.mainPageName {
-					reverse := event.Modifiers()&tcell.ModAlt != 0
-					target := r.getAdjacentFocusTarget(focused, reverse)
-					r.app.SetFocus(target)
-				}
-				return nil
-
-			case tcell.KeyEscape:
-				switch front {
-				case r.helpPageName:
-					r.root.HidePage(r.helpPageName)
-				case r.mainPageName:
-					r.app.SetFocus(nil)
-				}
-				return nil
-			}
+			return defaultHandler(event, key, keyr, front, focused)
 		}
-
-		return event
 	}
 }
 
