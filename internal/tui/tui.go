@@ -177,16 +177,16 @@ func (r *Reader) setupHelpPage() {
 [yellow]G[-]  : Go to bottom
 
 [aqua]Global[-]
-[yellow]1|F[-]  : Toggle feeds pane focus
-[yellow]2|E[-]  : Toggle entries pane focus
-[yellow]3|R[-]  : Toggle reading pane focus
-[yellow]Tab[-]  : Switch to next pane
-[yellow]A-Tab[-]: Switch to previous pane
-[yellow]X[-]    : Export feeds to OPML
-[yellow]I[-]    : Import feeds from OPML
-[yellow]Esc[-]  : Unset current focus or close open frame
-[yellow]h|?[-]  : Toggle this help
-[yellow]q[-]    : Quit reader`)
+[yellow]1,F[-]     : Toggle feeds pane focus
+[yellow]2,E[-]     : Toggle entries pane focus
+[yellow]3,R[-]     : Toggle reading pane focus
+[yellow]Tab[-]     : Switch to next pane
+[yellow]Alt-Tab[-] : Switch to previous pane
+[yellow]X[-]       : Export feeds to OPML
+[yellow]I[-]       : Import feeds from OPML
+[yellow]Esc[-]     : Unset current focus or close open frame
+[yellow]h,?[-]     : Toggle this help
+[yellow]q,Ctrl-C[-]: Quit reader`)
 
 	helpFrame := tview.NewFrame(helpWidget).SetBorders(1, 1, 0, 0, 2, 2)
 
