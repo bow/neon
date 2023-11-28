@@ -250,8 +250,8 @@ func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 		case tcell.KeyRune:
 			switch keyr {
 			case '1', '2', '3', 'F', 'E', 'R':
-				if front == r.helpPageName {
-					r.root.HidePage(r.helpPageName)
+				if front != r.mainPageName {
+					r.root.HidePage(front)
 					front = r.mainPageName
 				}
 				if front == r.mainPageName {
@@ -292,8 +292,8 @@ func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 			}
 
 		case tcell.KeyTab:
-			if front == r.helpPageName {
-				r.root.HidePage(r.helpPageName)
+			if front != r.mainPageName {
+				r.root.HidePage(front)
 				front = r.mainPageName
 			}
 			if front == r.mainPageName {
