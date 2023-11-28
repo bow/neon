@@ -15,6 +15,12 @@ import (
 	"github.com/bow/iris/internal"
 )
 
+const (
+	mainPageName    = "main"
+	helpPageName    = "help"
+	versionPageName = "version"
+)
+
 type Reader struct {
 	ctx   context.Context
 	store internal.FeedStore
@@ -22,13 +28,10 @@ type Reader struct {
 
 	app *tview.Application
 
-	root            *tview.Pages
-	mainPage        *tview.Grid
-	mainPageName    string
-	helpPage        *tview.Grid
-	helpPageName    string
-	versionPage     *tview.Grid
-	versionPageName string
+	root        *tview.Pages
+	mainPage    *tview.Grid
+	helpPage    *tview.Grid
+	versionPage *tview.Grid
 
 	feedsPane   *tview.Box
 	entriesPane *tview.Box
@@ -53,10 +56,6 @@ func NewReader(ctx context.Context, store internal.FeedStore, theme *Theme) *Rea
 		root:  tview.NewPages(),
 		app:   tview.NewApplication(),
 
-		mainPageName:    "main",
-		helpPageName:    "help",
-		versionPageName: "version",
-
 		makeTitle: makeStringPadder(1),
 	}
 
@@ -65,9 +64,9 @@ func NewReader(ctx context.Context, store internal.FeedStore, theme *Theme) *Rea
 	reader.setupVersionPage()
 
 	reader.root.
-		AddAndSwitchToPage(reader.mainPageName, reader.mainPage, true).
-		AddPage(reader.helpPageName, reader.helpPage, true, false).
-		AddPage(reader.versionPageName, reader.versionPage, true, false)
+		AddAndSwitchToPage(mainPageName, reader.mainPage, true).
+		AddPage(helpPageName, reader.helpPage, true, false).
+		AddPage(versionPageName, reader.versionPage, true, false)
 
 	reader.root.SetInputCapture(reader.keyHandler())
 	reader.app.SetRoot(reader.root, true).EnableMouse(true)
@@ -243,11 +242,11 @@ func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 		case tcell.KeyRune:
 			switch keyr {
 			case '1', '2', '3', 'F', 'E', 'R':
-				if front != r.mainPageName {
+				if front != mainPageName {
 					r.root.HidePage(front)
-					front = r.mainPageName
+					front = mainPageName
 				}
-				if front == r.mainPageName {
+				if front == mainPageName {
 					target := r.getFocusTarget(keyr)
 					if target != r.app.GetFocus() {
 						r.app.SetFocus(target)
@@ -258,24 +257,24 @@ func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 				return nil
 
 			case 'v':
-				if front == r.versionPageName {
+				if front == versionPageName {
 					r.root.HidePage(front)
 				} else {
-					if front != r.mainPageName {
+					if front != mainPageName {
 						r.root.HidePage(front)
 					}
-					r.root.ShowPage(r.versionPageName)
+					r.root.ShowPage(versionPageName)
 				}
 				return nil
 
 			case 'h', '?':
-				if front == r.helpPageName {
+				if front == helpPageName {
 					r.root.HidePage(front)
 				} else {
-					if front != r.mainPageName {
+					if front != mainPageName {
 						r.root.HidePage(front)
 					}
-					r.root.ShowPage(r.helpPageName)
+					r.root.ShowPage(helpPageName)
 				}
 				return nil
 
@@ -285,11 +284,11 @@ func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 			}
 
 		case tcell.KeyTab:
-			if front != r.mainPageName {
+			if front != mainPageName {
 				r.root.HidePage(front)
-				front = r.mainPageName
+				front = mainPageName
 			}
-			if front == r.mainPageName {
+			if front == mainPageName {
 				reverse := event.Modifiers()&tcell.ModAlt != 0
 				target := r.getAdjacentFocusTarget(focused, reverse)
 				r.app.SetFocus(target)
@@ -298,9 +297,9 @@ func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 
 		case tcell.KeyEscape:
 			switch front {
-			case r.helpPageName:
-				r.root.HidePage(r.helpPageName)
-			case r.mainPageName, "":
+			case helpPageName:
+				r.root.HidePage(helpPageName)
+			case mainPageName, "":
 				r.app.SetFocus(r.root)
 			}
 			return nil
