@@ -31,7 +31,9 @@ func newReaderCommand() *cobra.Command {
 				return err
 			}
 
-			return tui.Show(fs)
+			app := tui.NewReader(cmd.Context(), fs, nil)
+
+			return app.Show()
 		},
 	}
 

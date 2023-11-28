@@ -7,6 +7,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
@@ -14,25 +15,88 @@ import (
 	"github.com/bow/iris/internal"
 )
 
-// Show displays a reader for the given datastore.
-// TODO: Refactor and split UI components.
-func Show(store internal.FeedStore) error { //nolint:revive
+type Reader struct {
+	ctx   context.Context
+	store internal.FeedStore
+	theme *Theme
 
-	theme := DefaultTheme
+	app *tview.Application
 
-	root := tview.NewPages()
+	root         *tview.Pages
+	mainPage     *tview.Grid
+	mainPageName string
+	helpPage     *tview.Grid
+	helpPageName string
 
-	topLeftBorderTip := tview.BoxDrawingsLightVerticalAndRight
-	feedsPane := newPane(theme.FeedsPaneTitle, theme, nil)
-	entriesPane := newPane(theme.EntriesPaneTitle, theme, nil)
-	readingPane := newPane(theme.ReadingPaneTitle, theme, &topLeftBorderTip)
+	feedsPane   *tview.Box
+	entriesPane *tview.Box
+	readingPane *tview.Box
+
+	unreadWidget   *tview.TextView
+	lastPullWidget *tview.TextView
+	footer         *tview.Flex
+
+	helpWidget *tview.TextView
+	helpFrame  *tview.Frame
+
+	makeTitle func(string) string
+}
+
+func NewReader(ctx context.Context, store internal.FeedStore, theme *Theme) *Reader {
+
+	if theme == nil {
+		theme = DefaultTheme
+	}
+
+	reader := Reader{
+		ctx:   ctx,
+		store: store,
+		theme: theme,
+		root:  tview.NewPages(),
+		app:   tview.NewApplication(),
+
+		mainPageName: "main",
+		helpPageName: "help",
+
+		makeTitle: makeStringPadder(1),
+	}
+
+	reader.setupMainPage()
+	reader.setupHelpPage()
+
+	reader.root.
+		AddAndSwitchToPage(reader.mainPageName, reader.mainPage, true).
+		AddPage(reader.helpPageName, reader.helpPage, true, false)
+
+	reader.root.SetInputCapture(reader.keyHandler())
+	reader.app.SetRoot(reader.root, true).EnableMouse(true)
+
+	return &reader
+}
+
+func (r *Reader) Show() error {
+	stats, err := r.store.GetGlobalStats(r.ctx)
+	if err != nil {
+		return err
+	}
+	r.setUnreadEntries(stats.NumEntriesUnread)
+	r.setLastPullTime(stats.LastPullTime)
+
+	return r.app.Run()
+}
+
+func (r *Reader) setupMainPage() {
+
+	feedsPane := r.newPane(r.theme.FeedsPaneTitle, false)
+	entriesPane := r.newPane(r.theme.EntriesPaneTitle, false)
+	readingPane := r.newPane(r.theme.ReadingPaneTitle, true)
 
 	narrowFlex := tview.NewFlex().
 		SetDirection(tview.FlexRow).
 		AddItem(feedsPane, 0, 3, false).
 		AddItem(entriesPane, 0, 4, false).
 		AddItem(readingPane, 0, 5, false).
-		AddItem(newNarrowFooterBorder(theme), 1, 0, false)
+		AddItem(r.newNarrowFooterBorder(), 1, 0, false)
 
 	wideFlex := tview.NewFlex().
 		SetDirection(tview.FlexRow).
@@ -40,7 +104,7 @@ func Show(store internal.FeedStore) error { //nolint:revive
 			tview.NewFlex().
 				SetDirection(tview.FlexColumn).
 				AddItem(feedsPane, 45, 0, false).
-				AddItem(newPaneDivider(theme), 1, 0, false).
+				AddItem(r.newPaneDivider(), 1, 0, false).
 				AddItem(
 					tview.NewFlex().
 						SetDirection(tview.FlexRow).
@@ -50,45 +114,44 @@ func Show(store internal.FeedStore) error { //nolint:revive
 				),
 			0, 1, false,
 		).
-		AddItem(newWideFooterBorder(theme, 45), 1, 0, false)
+		AddItem(r.newWideFooterBorder(45), 1, 0, false)
 
-	stats, err := store.GetGlobalStats(context.Background())
-	if err != nil {
-		return err
-	}
+	lastPullWidget := tview.NewTextView().SetTextColor(r.theme.LastPullForeground).
+		SetTextAlign(tview.AlignLeft)
 
-	unreadWidget := tview.NewTextView().
-		SetTextColor(theme.StatsForeground).
-		SetText(fmt.Sprintf("%d unread entries", stats.NumEntriesUnread))
+	unreadWidget := tview.NewTextView().SetTextColor(r.theme.StatsForeground).
+		SetTextAlign(tview.AlignCenter)
 
-	lastPullWidget := tview.NewTextView().
-		SetTextColor(theme.LastPullForeground).
-		SetText(
-			fmt.Sprintf("Pulled %s", stats.LastPullTime.Local().Format("02/Jan/06 15:04")),
-		)
-
-	versionWidget := tview.NewTextView().
-		SetTextColor(theme.VersionForeground).
+	versionWidget := tview.NewTextView().SetTextColor(r.theme.VersionForeground).
+		SetTextAlign(tview.AlignRight).
 		SetText(fmt.Sprintf("iris v%s", internal.Version()))
 
 	footer := tview.NewFlex().
 		SetDirection(tview.FlexColumn).
-		// TODO: Refresh values when requested.
-		AddItem(lastPullWidget.SetTextAlign(tview.AlignLeft), 0, 1, false).
-		AddItem(unreadWidget.SetTextAlign(tview.AlignCenter), 0, 1, false).
-		AddItem(versionWidget.SetTextAlign(tview.AlignRight), 0, 1, false)
+		AddItem(lastPullWidget, 0, 1, false).
+		AddItem(unreadWidget, 0, 1, false).
+		AddItem(versionWidget, 0, 1, false)
 
 	mainPage := tview.NewGrid().
 		SetColumns(0).
 		SetRows(0, 1).
 		SetBorders(false).
+		AddItem(narrowFlex, 0, 0, 1, 1, 0, 0, false).
+		AddItem(wideFlex, 0, 0, 1, 1, 0, r.theme.WideViewMinWidth, false).
 		AddItem(footer, 1, 0, 1, 1, 0, 0, false)
 
-	// Narrow layout.
-	mainPage.AddItem(narrowFlex, 0, 0, 1, 1, 0, 0, false)
+	r.feedsPane = feedsPane
+	r.entriesPane = entriesPane
+	r.readingPane = readingPane
 
-	// Wide layout.
-	mainPage.AddItem(wideFlex, 0, 0, 1, 1, 0, theme.WideViewMinWidth, false)
+	r.unreadWidget = unreadWidget
+	r.lastPullWidget = lastPullWidget
+	r.footer = footer
+
+	r.mainPage = mainPage
+}
+
+func (r *Reader) setupHelpPage() {
 
 	helpWidget := tview.NewTextView().
 		SetDynamicColors(true).
@@ -125,75 +188,52 @@ func Show(store internal.FeedStore) error { //nolint:revive
 [yellow]h|?[-]  : Toggle this help
 [yellow]q[-]    : Quit reader`)
 
-	helpPage := tview.NewFrame(helpWidget).
-		SetBorders(1, 1, 0, 0, 2, 2)
+	helpFrame := tview.NewFrame(helpWidget).SetBorders(1, 1, 0, 0, 2, 2)
 
-	helpPage.SetBorder(true).
-		SetBorderColor(theme.PopupBorderForeground).
-		SetTitle(makeTitle(theme.HelpPopupTitle)).
-		SetTitleColor(theme.PopupTitleForeground)
+	helpFrame.SetBorder(true).
+		SetBorderColor(r.theme.PopupBorderForeground).
+		SetTitle(makeTitle(r.theme.HelpPopupTitle)).
+		SetTitleColor(r.theme.PopupTitleForeground)
 
-	const (
-		mainPageName = "main"
-		helpPageName = "help"
-	)
+	helpPage := tview.NewGrid().
+		SetColumns(0, 55, 0).
+		SetRows(0, 36, 0).
+		AddItem(helpFrame, 1, 1, 1, 1, 0, 0, true)
 
-	root.
-		AddAndSwitchToPage(mainPageName, mainPage, true).
-		AddPage(
-			helpPageName,
-			tview.NewGrid().
-				SetColumns(0, 55, 0).
-				SetRows(0, 36, 0).
-				AddItem(helpPage, 1, 1, 1, 1, 0, 0, true),
-			true,
-			false,
-		)
+	r.helpWidget = helpWidget
+	r.helpFrame = helpFrame
+	r.helpPage = helpPage
+}
 
-	app := tview.NewApplication()
-
-	panesMap := map[rune]*tview.Box{
-		'1': feedsPane,
-		'F': feedsPane,
-		'2': entriesPane,
-		'E': entriesPane,
-		'3': readingPane,
-		'R': readingPane,
-	}
-	panesOrder := []*tview.Box{feedsPane, entriesPane, readingPane}
-
+// nolint:revive
+func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 	// nolint:exhaustive
-	eventHandler := func(event *tcell.EventKey) *tcell.EventKey {
-
+	return func(event *tcell.EventKey) *tcell.EventKey {
 		var (
-			focused  = app.GetFocus()
-			front, _ = root.GetFrontPage()
+			focused  = r.app.GetFocus()
+			front, _ = r.root.GetFrontPage()
 			key      = event.Key()
 			keyr     = event.Rune()
 		)
 
 		switch focused {
 
-		case feedsPane:
+		case r.feedsPane:
 			if keyr == 'P' {
 				// TODO: Add animation in footer?
-				ch := store.PullFeeds(context.Background(), []internal.ID{})
+				ch := r.store.PullFeeds(context.Background(), []internal.ID{})
 				// TODO: Add ok / fail status in ...?
 				for pr := range ch {
 					if err := pr.Error(); err != nil {
 						panic(err)
 					}
 				}
-				stats, err := store.GetGlobalStats(context.Background())
+				stats, err := r.store.GetGlobalStats(context.Background())
 				if err != nil {
 					panic(err)
 				}
-				unreadWidget.SetText(fmt.Sprintf("%d unread entries", stats.NumEntriesUnread))
-				lastPullWidget.SetText(
-					fmt.Sprintf(
-						"Pulled %s", stats.LastPullTime.Local().Format("02/Jan/06 15:04"),
-					),
-				)
+				r.setUnreadEntries(stats.NumEntriesUnread)
+				r.setLastPullTime(stats.LastPullTime)
 				return nil
 			}
 
@@ -203,72 +243,199 @@ func Show(store internal.FeedStore) error { //nolint:revive
 			case tcell.KeyRune:
 				switch keyr {
 				case '1', '2', '3', 'F', 'E', 'R':
-					if front == mainPageName {
-						app.SetFocus(panesMap[keyr])
+					if front == r.mainPageName {
+						target := r.getFocusTarget(keyr)
+						r.app.SetFocus(target)
 					}
 					return nil
 
 				case 'h', '?':
-					if front == helpPageName {
-						root.HidePage(helpPageName)
+					if front == r.helpPageName {
+						r.root.HidePage(r.helpPageName)
 					} else {
-						root.ShowPage(helpPageName)
+						r.root.ShowPage(r.helpPageName)
 					}
 					return nil
 
 				case 'q':
-					app.Stop()
+					r.app.Stop()
 					return nil
 				}
 
 			case tcell.KeyTab:
-				if front == mainPageName {
-					target := 0
-					if event.Modifiers()&tcell.ModAlt != 0 {
-						switch focused {
-						case nil, mainPage, feedsPane:
-							target = 2
-						case entriesPane:
-							target = 0
-						case readingPane:
-							target = 1
-						}
-					} else {
-						switch focused {
-						case nil, mainPage, readingPane:
-							target = 0
-						case entriesPane:
-							target = 2
-						case feedsPane:
-							target = 1
-						}
-					}
-					app.SetFocus(panesOrder[target])
+				if front == r.mainPageName {
+					reverse := event.Modifiers()&tcell.ModAlt != 0
+					target := r.getAdjacentFocusTarget(focused, reverse)
+					r.app.SetFocus(target)
 				}
 				return nil
 
 			case tcell.KeyEscape:
 				switch front {
-				case helpPageName:
-					root.HidePage(helpPageName)
-					return nil
-				case mainPageName:
-					app.SetFocus(nil)
-					return nil
+				case r.helpPageName:
+					r.root.HidePage(r.helpPageName)
+				case r.mainPageName:
+					r.app.SetFocus(nil)
 				}
+				return nil
 			}
 		}
 
 		return event
 	}
+}
 
-	app.SetInputCapture(eventHandler)
+func (r *Reader) getFocusTarget(keyr rune) tview.Primitive {
+	var target tview.Primitive
+	switch keyr { // nolint:exhaustive
+	case '1', 'F':
+		target = r.feedsPane
+	case '2', 'E':
+		target = r.entriesPane
+	case '3', 'R':
+		target = r.readingPane
+	default:
+		panic(fmt.Sprintf("unexpected key: %c", keyr))
+	}
+	return target
+}
 
-	if err := app.SetRoot(root, true).EnableMouse(true).Run(); err != nil {
-		panic(err)
+func (r *Reader) setUnreadEntries(count uint32) {
+	r.unreadWidget.
+		SetText(fmt.Sprintf("%d unread entries", count))
+}
+
+func (r *Reader) setLastPullTime(value *time.Time) {
+	r.lastPullWidget.
+		SetText(fmt.Sprintf("Pulled %s", value.Local().Format("02/Jan/06 15:04")))
+}
+
+func (r *Reader) getAdjacentFocusTarget(
+	current tview.Primitive,
+	reverse bool,
+) tview.Primitive {
+	targets := []*tview.Box{r.feedsPane, r.entriesPane, r.readingPane}
+	idx := 0
+	if reverse {
+		switch current {
+		case nil, r.mainPage, r.feedsPane:
+			idx = 2
+		case r.entriesPane:
+			idx = 0
+		case r.readingPane:
+			idx = 1
+		}
+	} else {
+		switch current {
+		case nil, r.mainPage, r.readingPane:
+			idx = 0
+		case r.entriesPane:
+			idx = 2
+		case r.feedsPane:
+			idx = 1
+		}
+	}
+	return targets[idx]
+}
+
+func (r *Reader) newPane(title string, addTopLeftBorderTip bool) *tview.Box {
+
+	var (
+		unfocused, focused string
+		lineStyle          = r.theme.lineStyle()
+	)
+
+	if title != "" {
+		unfocused = makeTitle(title)
+		focused = makeTitle(fmt.Sprintf("• %s", title))
+	} else {
+		focused = makeTitle("•")
 	}
 
-	return nil
+	makedrawf := func(
+		title string,
+		leftPad int,
+	) func(screen tcell.Screen, x int, y int, width int, height int) (int, int, int, int) {
+
+		return func(screen tcell.Screen, x int, y int, width int, height int) (int, int, int, int) {
+			// Draw top and optionally bottom borders.
+			for cx := x; cx < x+width; cx++ {
+				screen.SetContent(cx, y, tview.BoxDrawingsLightHorizontal, nil, lineStyle)
+			}
+			if addTopLeftBorderTip {
+				screen.SetContent(x-1, y, tview.BoxDrawingsLightVerticalAndRight, nil, lineStyle)
+			}
+
+			// Write the title text.
+			tview.Print(
+				screen,
+				title,
+				x+leftPad,
+				y,
+				width-2,
+				tview.AlignLeft,
+				r.theme.TitleForeground,
+			)
+
+			return x + 1, y + 1, width - 2, height - 1
+		}
+	}
+
+	box := tview.NewBox().SetDrawFunc(makedrawf(unfocused, 3))
+
+	box.SetFocusFunc(func() { box.SetDrawFunc(makedrawf(focused, 1)) })
+	box.SetBlurFunc(func() { box.SetDrawFunc(makedrawf(unfocused, 3)) })
+
+	return box
+}
+
+func (r *Reader) newPaneDivider() *tview.Box {
+
+	style := r.theme.lineStyle()
+	drawf := func(screen tcell.Screen, x int, y int, width int, height int) (int, int, int, int) {
+
+		screen.SetContent(x, y, tview.BoxDrawingsLightDownAndHorizontal, nil, style)
+		for cy := y + 1; cy < y+height; cy++ {
+			screen.SetContent(x, cy, tview.BoxDrawingsLightVertical, nil, style)
+		}
+		return x + 1, y + 1, width - 2, height - 1
+	}
+
+	return tview.NewBox().SetBorder(false).SetDrawFunc(drawf)
+}
+
+func (r *Reader) newNarrowFooterBorder() *tview.Box {
+
+	style := r.theme.lineStyle()
+	drawf := func(screen tcell.Screen, x int, y int, width int, height int) (int, int, int, int) {
+
+		for cx := x; cx < x+width; cx++ {
+			screen.SetContent(cx, y, tview.BoxDrawingsLightHorizontal, nil, style)
+		}
+		return x + 1, y + 1, width - 2, height - 1
+	}
+
+	return tview.NewBox().SetBorder(false).SetDrawFunc(drawf)
+}
+
+func (r *Reader) newWideFooterBorder(branchPoint int) *tview.Box {
+
+	style := r.theme.lineStyle()
+
+	drawf := func(screen tcell.Screen, x int, y int, width int, height int) (int, int, int, int) {
+
+		for cx := x; cx < x+width; cx++ {
+			if cx == branchPoint {
+				screen.SetContent(cx, y, tview.BoxDrawingsLightUpAndHorizontal, nil, style)
+			} else {
+				screen.SetContent(cx, y, tview.BoxDrawingsLightHorizontal, nil, style)
+			}
+		}
+
+		return x + 1, y + 1, width - 2, height - 1
+	}
+
+	return tview.NewBox().SetBorder(false).SetDrawFunc(drawf)
 }
 
 type Theme struct {
@@ -287,6 +454,12 @@ type Theme struct {
 	PopupBorderForeground tcell.Color
 
 	WideViewMinWidth int
+}
+
+func (theme *Theme) lineStyle() tcell.Style {
+	return tcell.StyleDefault.
+		Background(theme.Background).
+		Foreground(theme.BorderForeground)
 }
 
 var DefaultTheme = &Theme{
@@ -315,127 +488,6 @@ func init() {
 	tview.Borders.TopRightFocus = tview.Borders.TopRight
 	tview.Borders.BottomLeftFocus = tview.Borders.BottomLeft
 	tview.Borders.BottomRightFocus = tview.Borders.BottomRight
-}
-
-func newPane(
-	title string,
-	theme *Theme,
-	topLeftBorderTip *rune,
-) *tview.Box {
-
-	lineStyle := tcell.StyleDefault.
-		Background(theme.Background).
-		Foreground(theme.BorderForeground)
-
-	var unfocused, focused string
-	if title != "" {
-		unfocused = makeTitle(title)
-		focused = makeTitle(fmt.Sprintf("• %s", title))
-	} else {
-		focused = makeTitle("•")
-	}
-
-	makedrawf := func(
-		title string,
-		leftPad int,
-	) func(screen tcell.Screen, x int, y int, width int, height int) (int, int, int, int) {
-
-		return func(screen tcell.Screen, x int, y int, width int, height int) (int, int, int, int) {
-			// Draw top and optionally bottom borders.
-			for cx := x; cx < x+width; cx++ {
-				screen.SetContent(cx, y, tview.BoxDrawingsLightHorizontal, nil, lineStyle)
-			}
-			if topLeftBorderTip != nil {
-				screen.SetContent(x-1, y, *topLeftBorderTip, nil, lineStyle)
-			}
-
-			// Write the title text.
-			tview.Print(
-				screen,
-				title,
-				x+leftPad,
-				y,
-				width-2,
-				tview.AlignLeft,
-				theme.TitleForeground,
-			)
-
-			return x + 1, y + 1, width - 2, height - 1
-		}
-	}
-
-	box := tview.NewBox().SetDrawFunc(makedrawf(unfocused, 3))
-
-	box.SetFocusFunc(func() { box.SetDrawFunc(makedrawf(focused, 1)) })
-	box.SetBlurFunc(func() { box.SetDrawFunc(makedrawf(unfocused, 3)) })
-
-	return box
-}
-
-func newPaneDivider(theme *Theme) *tview.Box {
-
-	style := tcell.StyleDefault.
-		Background(theme.Background).
-		Foreground(theme.BorderForeground)
-
-	drawf := func(screen tcell.Screen, x int, y int, width int, height int) (int, int, int, int) {
-
-		screen.SetContent(x, y, tview.BoxDrawingsLightDownAndHorizontal, nil, style)
-
-		for cy := y + 1; cy < y+height; cy++ {
-			screen.SetContent(x, cy, tview.BoxDrawingsLightVertical, nil, style)
-		}
-
-		return x + 1, y + 1, width - 2, height - 1
-	}
-
-	divider := tview.NewBox().SetBorder(false).SetDrawFunc(drawf)
-
-	return divider
-}
-
-func newNarrowFooterBorder(theme *Theme) *tview.Box {
-
-	style := tcell.StyleDefault.
-		Background(theme.Background).
-		Foreground(theme.BorderForeground)
-
-	drawf := func(screen tcell.Screen, x int, y int, width int, height int) (int, int, int, int) {
-
-		for cx := x; cx < x+width; cx++ {
-			screen.SetContent(cx, y, tview.BoxDrawingsLightHorizontal, nil, style)
-		}
-
-		return x + 1, y + 1, width - 2, height - 1
-	}
-
-	divider := tview.NewBox().SetBorder(false).SetDrawFunc(drawf)
-
-	return divider
-}
-
-func newWideFooterBorder(theme *Theme, branch int) *tview.Box {
-
-	style := tcell.StyleDefault.
-		Background(theme.Background).
-		Foreground(theme.BorderForeground)
-
-	drawf := func(screen tcell.Screen, x int, y int, width int, height int) (int, int, int, int) {
-
-		for cx := x; cx < x+width; cx++ {
-			if cx == branch {
-				screen.SetContent(cx, y, tview.BoxDrawingsLightUpAndHorizontal, nil, style)
-			} else {
-				screen.SetContent(cx, y, tview.BoxDrawingsLightHorizontal, nil, style)
-			}
-		}
-
-		return x + 1, y + 1, width - 2, height - 1
-	}
-
-	divider := tview.NewBox().SetBorder(false).SetDrawFunc(drawf)
-
-	return divider
 }
 
 var makeTitle = makeStringPadder(1)
