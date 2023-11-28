@@ -252,8 +252,8 @@ func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 			switch front {
 			case r.helpPageName:
 				r.root.HidePage(r.helpPageName)
-			case r.mainPageName:
-				r.app.SetFocus(nil)
+			case r.mainPageName, "":
+				r.app.SetFocus(r.root)
 			}
 			return nil
 		}
