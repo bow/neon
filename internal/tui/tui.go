@@ -6,7 +6,6 @@ package tui
 import (
 	"context"
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/gdamore/tcell/v2"
@@ -39,8 +38,6 @@ type Reader struct {
 
 	unreadWidget   *tview.TextView
 	lastPullWidget *tview.TextView
-
-	makeTitle func(string) string
 }
 
 func NewReader(ctx context.Context, store internal.FeedStore, theme *Theme) *Reader {
@@ -55,8 +52,6 @@ func NewReader(ctx context.Context, store internal.FeedStore, theme *Theme) *Rea
 		theme: theme,
 		root:  tview.NewPages(),
 		app:   tview.NewApplication(),
-
-		makeTitle: makeStringPadder(1),
 	}
 
 	reader.setupMainPage()
@@ -187,7 +182,7 @@ func (r *Reader) setupHelpPage() {
 
 	helpFrame.SetBorder(true).
 		SetBorderColor(r.theme.PopupBorderForeground).
-		SetTitle(makeTitle(r.theme.HelpPopupTitle)).
+		SetTitle(r.makeTitle(r.theme.HelpPopupTitle)).
 		SetTitleColor(r.theme.PopupTitleForeground)
 
 	helpPage := tview.NewGrid().
@@ -215,7 +210,7 @@ func (r *Reader) setupVersionPage() {
 
 	versionFrame.SetBorder(true).
 		SetBorderColor(r.theme.PopupBorderForeground).
-		SetTitle(makeTitle("iris feed reader")).
+		SetTitle(r.makeTitle("iris feed reader")).
 		SetTitleColor(r.theme.PopupTitleForeground)
 
 	versionPage := tview.NewGrid().
@@ -407,10 +402,10 @@ func (r *Reader) newPane(title string, addTopLeftBorderTip bool) *tview.Box {
 	)
 
 	if title != "" {
-		unfocused = makeTitle(title)
-		focused = makeTitle(fmt.Sprintf("• %s", title))
+		unfocused = r.makeTitle(title)
+		focused = r.makeTitle(fmt.Sprintf("• %s", title))
 	} else {
-		focused = makeTitle("•")
+		focused = r.makeTitle("•")
 	}
 
 	makedrawf := func(
@@ -499,6 +494,10 @@ func (r *Reader) newWideFooterBorder(branchPoint int) *tview.Box {
 	return tview.NewBox().SetBorder(false).SetDrawFunc(drawf)
 }
 
+func (r *Reader) makeTitle(text string) string {
+	return fmt.Sprintf(" %s ", text)
+}
+
 type Theme struct {
 	FeedsPaneTitle   string
 	EntriesPaneTitle string
@@ -549,22 +548,4 @@ func init() {
 	tview.Borders.TopRightFocus = tview.Borders.TopRight
 	tview.Borders.BottomLeftFocus = tview.Borders.BottomLeft
 	tview.Borders.BottomRightFocus = tview.Borders.BottomRight
-}
-
-var makeTitle = makeStringPadder(1)
-
-func makeStringPadder(padding int) func(string) string {
-	if padding <= 0 {
-		return func(text string) string { return text }
-	}
-	var sb strings.Builder
-	for i := 0; i < padding; i++ {
-		sb.WriteString(" ")
-	}
-	sb.WriteString("%s")
-	for i := 0; i < padding; i++ {
-		sb.WriteString(" ")
-	}
-	fmtString := sb.String()
-	return func(text string) string { return fmt.Sprintf(fmtString, text) }
 }
