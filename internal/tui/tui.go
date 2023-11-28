@@ -22,11 +22,13 @@ type Reader struct {
 
 	app *tview.Application
 
-	root         *tview.Pages
-	mainPage     *tview.Grid
-	mainPageName string
-	helpPage     *tview.Grid
-	helpPageName string
+	root            *tview.Pages
+	mainPage        *tview.Grid
+	mainPageName    string
+	helpPage        *tview.Grid
+	helpPageName    string
+	versionPage     *tview.Grid
+	versionPageName string
 
 	feedsPane   *tview.Box
 	entriesPane *tview.Box
@@ -55,18 +57,21 @@ func NewReader(ctx context.Context, store internal.FeedStore, theme *Theme) *Rea
 		root:  tview.NewPages(),
 		app:   tview.NewApplication(),
 
-		mainPageName: "main",
-		helpPageName: "help",
+		mainPageName:    "main",
+		helpPageName:    "help",
+		versionPageName: "version",
 
 		makeTitle: makeStringPadder(1),
 	}
 
 	reader.setupMainPage()
 	reader.setupHelpPage()
+	reader.setupVersionPage()
 
 	reader.root.
 		AddAndSwitchToPage(reader.mainPageName, reader.mainPage, true).
-		AddPage(reader.helpPageName, reader.helpPage, true, false)
+		AddPage(reader.helpPageName, reader.helpPage, true, false).
+		AddPage(reader.versionPageName, reader.versionPage, true, false)
 
 	reader.root.SetInputCapture(reader.keyHandler())
 	reader.app.SetRoot(reader.root, true).EnableMouse(true)
@@ -116,21 +121,16 @@ func (r *Reader) setupMainPage() {
 		).
 		AddItem(r.newWideFooterBorder(45), 1, 0, false)
 
-	lastPullWidget := tview.NewTextView().SetTextColor(r.theme.LastPullForeground).
+	unreadWidget := tview.NewTextView().SetTextColor(r.theme.StatsForeground).
 		SetTextAlign(tview.AlignLeft)
 
-	unreadWidget := tview.NewTextView().SetTextColor(r.theme.StatsForeground).
-		SetTextAlign(tview.AlignCenter)
-
-	versionWidget := tview.NewTextView().SetTextColor(r.theme.VersionForeground).
-		SetTextAlign(tview.AlignRight).
-		SetText(fmt.Sprintf("iris v%s", internal.Version()))
+	lastPullWidget := tview.NewTextView().SetTextColor(r.theme.LastPullForeground).
+		SetTextAlign(tview.AlignRight)
 
 	footer := tview.NewFlex().
 		SetDirection(tview.FlexColumn).
-		AddItem(lastPullWidget, 0, 1, false).
 		AddItem(unreadWidget, 0, 1, false).
-		AddItem(versionWidget, 0, 1, false)
+		AddItem(lastPullWidget, 0, 1, false)
 
 	mainPage := tview.NewGrid().
 		SetColumns(0).
@@ -185,6 +185,7 @@ func (r *Reader) setupHelpPage() {
 [yellow]X[-]       : Export feeds to OPML
 [yellow]I[-]       : Import feeds from OPML
 [yellow]Esc[-]     : Unset current focus or close open frame
+[yellow]v[-]       : Toggle version info
 [yellow]h,?[-]     : Toggle this help
 [yellow]q,Ctrl-C[-]: Quit reader`)
 
@@ -197,12 +198,40 @@ func (r *Reader) setupHelpPage() {
 
 	helpPage := tview.NewGrid().
 		SetColumns(0, 55, 0).
-		SetRows(0, 36, 0).
+		SetRows(0, 37, 0).
 		AddItem(helpFrame, 1, 1, 1, 1, 0, 0, true)
 
 	r.helpWidget = helpWidget
 	r.helpFrame = helpFrame
 	r.helpPage = helpPage
+}
+
+func (r *Reader) setupVersionPage() {
+
+	versionWidget := tview.NewTextView().
+		SetDynamicColors(true).
+		SetText(fmt.Sprintf(`[yellow]Version[-]   : %s
+[yellow]Git commit[-]: %s
+[yellow]Build time[-]: %s
+`,
+			internal.Version(),
+			internal.GitCommit(),
+			internal.BuildTime(),
+		))
+
+	versionFrame := tview.NewFrame(versionWidget).SetBorders(1, 1, 0, 0, 2, 2)
+
+	versionFrame.SetBorder(true).
+		SetBorderColor(r.theme.PopupBorderForeground).
+		SetTitle(makeTitle("iris feed reader")).
+		SetTitleColor(r.theme.PopupTitleForeground)
+
+	versionPage := tview.NewGrid().
+		SetColumns(0, 65, 0).
+		SetRows(-1, 7, -3).
+		AddItem(versionFrame, 1, 1, 1, 1, 0, 0, true)
+
+	r.versionPage = versionPage
 }
 
 // nolint:revive,exhaustive
@@ -235,10 +264,24 @@ func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 				}
 				return nil
 
+			case 'v':
+				if front == r.versionPageName {
+					r.root.HidePage(front)
+				} else {
+					if front == r.helpPageName {
+						r.root.HidePage(front)
+					}
+					r.root.ShowPage(r.versionPageName)
+				}
+				return nil
+
 			case 'h', '?':
 				if front == r.helpPageName {
-					r.root.HidePage(r.helpPageName)
+					r.root.HidePage(front)
 				} else {
+					if front == r.versionPageName {
+						r.root.HidePage(front)
+					}
 					r.root.ShowPage(r.helpPageName)
 				}
 				return nil
