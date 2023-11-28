@@ -249,6 +249,10 @@ func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 			}
 
 		case tcell.KeyTab:
+			if front == r.helpPageName {
+				r.root.HidePage(r.helpPageName)
+				front = r.mainPageName
+			}
 			if front == r.mainPageName {
 				reverse := event.Modifiers()&tcell.ModAlt != 0
 				target := r.getAdjacentFocusTarget(focused, reverse)
@@ -340,21 +344,21 @@ func (r *Reader) getAdjacentFocusTarget(
 	idx := 0
 	if reverse {
 		switch current {
-		case nil, r.mainPage, r.feedsPane:
-			idx = 2
 		case r.entriesPane:
 			idx = 0
 		case r.readingPane:
 			idx = 1
+		default:
+			idx = 2
 		}
 	} else {
 		switch current {
-		case nil, r.mainPage, r.readingPane:
-			idx = 0
 		case r.entriesPane:
 			idx = 2
 		case r.feedsPane:
 			idx = 1
+		default:
+			idx = 0
 		}
 	}
 	return targets[idx]
