@@ -177,9 +177,9 @@ func (r *Reader) setupHelpPage() {
 [yellow]G[-]  : Go to bottom
 
 [aqua]Global[-]
-[yellow]1|F[-]  : Switch to the feeds pane
-[yellow]2|E[-]  : Switch to the entries pane
-[yellow]3|R[-]  : Switch to the reading pane
+[yellow]1|F[-]  : Toggle feeds pane focus
+[yellow]2|E[-]  : Toggle entries pane focus
+[yellow]3|R[-]  : Toggle reading pane focus
 [yellow]Tab[-]  : Switch to next pane
 [yellow]A-Tab[-]: Switch to previous pane
 [yellow]X[-]    : Export feeds to OPML
@@ -227,7 +227,11 @@ func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 				}
 				if front == r.mainPageName {
 					target := r.getFocusTarget(keyr)
-					r.app.SetFocus(target)
+					if target != r.app.GetFocus() {
+						r.app.SetFocus(target)
+					} else {
+						r.app.SetFocus(r.root)
+					}
 				}
 				return nil
 
