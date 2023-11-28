@@ -36,10 +36,6 @@ type Reader struct {
 
 	unreadWidget   *tview.TextView
 	lastPullWidget *tview.TextView
-	footer         *tview.Flex
-
-	helpWidget *tview.TextView
-	helpFrame  *tview.Frame
 
 	makeTitle func(string) string
 }
@@ -146,7 +142,6 @@ func (r *Reader) setupMainPage() {
 
 	r.unreadWidget = unreadWidget
 	r.lastPullWidget = lastPullWidget
-	r.footer = footer
 
 	r.mainPage = mainPage
 }
@@ -201,8 +196,6 @@ func (r *Reader) setupHelpPage() {
 		SetRows(0, 37, 0).
 		AddItem(helpFrame, 1, 1, 1, 1, 0, 0, true)
 
-	r.helpWidget = helpWidget
-	r.helpFrame = helpFrame
 	r.helpPage = helpPage
 }
 
