@@ -221,6 +221,10 @@ func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 		case tcell.KeyRune:
 			switch keyr {
 			case '1', '2', '3', 'F', 'E', 'R':
+				if front == r.helpPageName {
+					r.root.HidePage(r.helpPageName)
+					front = r.mainPageName
+				}
 				if front == r.mainPageName {
 					target := r.getFocusTarget(keyr)
 					r.app.SetFocus(target)
