@@ -268,7 +268,7 @@ func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 				if front == r.versionPageName {
 					r.root.HidePage(front)
 				} else {
-					if front == r.helpPageName {
+					if front != r.mainPageName {
 						r.root.HidePage(front)
 					}
 					r.root.ShowPage(r.versionPageName)
@@ -279,7 +279,7 @@ func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 				if front == r.helpPageName {
 					r.root.HidePage(front)
 				} else {
-					if front == r.versionPageName {
+					if front != r.mainPageName {
 						r.root.HidePage(front)
 					}
 					r.root.ShowPage(r.helpPageName)
