@@ -17,11 +17,13 @@ import (
 const (
 	mainPageName    = "main"
 	helpPageName    = "help"
+	statsPageName   = "stats"
 	versionPageName = "version"
 
 	pulledIcon = "▼"
 
-	dateFormat = "02/Jan/06 15:04"
+	shortDateFormat = "02/Jan/06 15:04"
+	longDateFormat  = "2 January 2006 - 15:04:05 MST"
 )
 
 type Reader struct {
@@ -34,6 +36,7 @@ type Reader struct {
 	root        *tview.Pages
 	mainPage    *tview.Grid
 	helpPage    *tview.Grid
+	statsPage   *tview.Grid
 	versionPage *tview.Grid
 
 	feedsPane   *tview.Box
@@ -43,6 +46,8 @@ type Reader struct {
 	unreadWidget       *tview.TextView
 	lastPullTextWidget *tview.TextView
 	lastPullIconWidget *tview.TextView
+
+	statsCache *internal.Stats
 }
 
 func NewReader(ctx context.Context, store internal.FeedStore, theme *Theme) *Reader {
@@ -61,11 +66,13 @@ func NewReader(ctx context.Context, store internal.FeedStore, theme *Theme) *Rea
 
 	reader.setupMainPage()
 	reader.setupHelpPage()
+	reader.setupStatsPage()
 	reader.setupVersionPage()
 
 	reader.root.
 		AddAndSwitchToPage(mainPageName, reader.mainPage, true).
 		AddPage(helpPageName, reader.helpPage, true, false).
+		AddPage(statsPageName, reader.statsPage, true, false).
 		AddPage(versionPageName, reader.versionPage, true, false)
 
 	reader.root.SetInputCapture(reader.keyHandler())
@@ -129,12 +136,12 @@ func (r *Reader) setupMainPage() {
 	lastPullFlex := tview.NewFlex().
 		SetDirection(tview.FlexColumn).
 		AddItem(lastPullIconWidget, 1, 0, false).
-		AddItem(lastPullTextWidget, len(dateFormat)+1, 0, true)
+		AddItem(lastPullTextWidget, len(shortDateFormat)+1, 0, true)
 
 	footer := tview.NewFlex().
 		SetDirection(tview.FlexColumn).
 		AddItem(unreadWidget, 0, 1, false).
-		AddItem(lastPullFlex, len(dateFormat)+2, 1, false)
+		AddItem(lastPullFlex, len(shortDateFormat)+2, 1, false)
 
 	mainPage := tview.NewGrid().
 		SetColumns(0).
@@ -189,6 +196,7 @@ func (r *Reader) setupHelpPage() {
 [yellow]X[-]       : Export feeds to OPML
 [yellow]I[-]       : Import feeds from OPML
 [yellow]Esc[-]     : Unset current focus or close open frame
+[yellow]s[-]       : Toggle stats info
 [yellow]v[-]       : Toggle version info
 [yellow]h,?[-]     : Toggle this help
 [yellow]q,Ctrl-C[-]: Quit reader`)
@@ -202,10 +210,54 @@ func (r *Reader) setupHelpPage() {
 
 	helpPage := tview.NewGrid().
 		SetColumns(0, 55, 0).
-		SetRows(0, 37, 0).
+		SetRows(0, 38, 0).
 		AddItem(helpFrame, 1, 1, 1, 1, 0, 0, true)
 
 	r.helpPage = helpPage
+}
+
+func (r *Reader) setupStatsPage() {
+
+	if r.statsCache == nil {
+		stats, err := r.store.GetGlobalStats(r.ctx)
+		if err != nil {
+			panic(err)
+		}
+		r.statsCache = stats
+	}
+
+	statsWidget := tview.NewTextView().
+		SetDynamicColors(true).
+		SetText(
+			fmt.Sprintf(`[aqua]Feeds[-]
+[yellow]Total[-]: %d
+
+[aqua]Entries[-]
+[yellow]Unread[-]: %d
+[yellow]Total[-] : %d
+
+[aqua]Last pulled[-]
+%s`,
+				r.statsCache.NumFeeds,
+				r.statsCache.NumEntries,
+				r.statsCache.NumEntriesUnread,
+				r.statsCache.LastPullTime.Format(longDateFormat),
+			),
+		)
+
+	statsFrame := tview.NewFrame(statsWidget).SetBorders(1, 1, 0, 0, 2, 2)
+
+	statsFrame.SetBorder(true).
+		SetBorderColor(r.theme.PopupBorderForeground).
+		SetTitle(r.makeTitle("Stats")).
+		SetTitleColor(r.theme.PopupTitleForeground)
+
+	statsPage := tview.NewGrid().
+		SetColumns(0, 37, 0).
+		SetRows(-1, 13, -3).
+		AddItem(statsFrame, 1, 1, 1, 1, 0, 0, true)
+
+	r.statsPage = statsPage
 }
 
 func (r *Reader) setupVersionPage() {
@@ -266,6 +318,17 @@ func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 				}
 				return nil
 
+			case 's':
+				if front == statsPageName {
+					r.root.HidePage(front)
+				} else {
+					if front != mainPageName {
+						r.root.HidePage(front)
+					}
+					r.root.ShowPage(statsPageName)
+				}
+				return nil
+
 			case 'v':
 				if front == versionPageName {
 					r.root.HidePage(front)
@@ -307,7 +370,7 @@ func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 
 		case tcell.KeyEscape:
 			switch front {
-			case helpPageName, versionPageName:
+			case helpPageName, statsPageName, versionPageName:
 				r.root.HidePage(front)
 			case mainPageName, "":
 				r.app.SetFocus(r.root)
@@ -342,6 +405,7 @@ func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 				if err != nil {
 					panic(err)
 				}
+				r.statsCache = stats
 				r.setUnreadEntries(stats.NumEntriesUnread)
 				r.setLastPullTime(stats.LastPullTime)
 				return nil
@@ -381,7 +445,7 @@ func (r *Reader) setLastPullIcon() {
 }
 
 func (r *Reader) setLastPullTime(value *time.Time) {
-	r.lastPullTextWidget.SetText(value.Local().Format(dateFormat))
+	r.lastPullTextWidget.SetText(value.Local().Format(shortDateFormat))
 }
 
 func (r *Reader) getAdjacentFocusTarget(
