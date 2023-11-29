@@ -264,15 +264,21 @@ func (r *Reader) setupVersionPage() {
 
 	commit := internal.GitCommit()
 
+	var buildTime = internal.BuildTime()
+	buildTimeVal, err := time.Parse(time.RFC3339, buildTime)
+	if err == nil {
+		buildTime = buildTimeVal.Format(longDateFormat)
+	}
+
 	versionWidget := tview.NewTextView().
 		SetDynamicColors(true).
 		SetText(fmt.Sprintf(`[yellow]Version[-]   : %s
-[yellow]Build time[-]: %s
 [yellow]Git commit[-]: %s
+[yellow]Build time[-]: %s
 `,
 			internal.Version(),
-			internal.BuildTime(),
 			commit,
+			buildTime,
 		))
 
 	versionFrame := tview.NewFrame(versionWidget).SetBorders(1, 1, 0, 0, 2, 2)
