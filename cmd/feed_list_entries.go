@@ -13,7 +13,14 @@ import (
 )
 
 func newFeedListEntriesCommand() *cobra.Command {
-	var name = "list-entries"
+	var (
+		name = "list-entries"
+		v    = newViper(name)
+	)
+
+	const (
+		bookmarkedKey = "bookmarked"
+	)
 
 	command := cobra.Command{
 		Use:                   fmt.Sprintf("%s FEED-ID", name),
@@ -28,6 +35,11 @@ func newFeedListEntriesCommand() *cobra.Command {
 				return fmt.Errorf("too many arguments")
 			}
 
+			var isBookmarked *bool = nil
+			if value := v.GetBool(bookmarkedKey); value {
+				isBookmarked = &value
+			}
+
 			feedID, err := internal.ToFeedID(args[0])
 			if err != nil {
 				return err
@@ -38,8 +50,7 @@ func newFeedListEntriesCommand() *cobra.Command {
 				return err
 			}
 
-			// TODO: Add 'bookmark' flag to CLI.
-			entries, err := db.ListEntries(cmd.Context(), []internal.ID{feedID}, nil)
+			entries, err := db.ListEntries(cmd.Context(), []internal.ID{feedID}, isBookmarked)
 			if err != nil {
 				return err
 			}
@@ -49,6 +60,14 @@ func newFeedListEntriesCommand() *cobra.Command {
 
 			return nil
 		},
+	}
+
+	flags := command.Flags()
+
+	flags.BoolP(bookmarkedKey, "b", false, "list only bookmarked entries")
+
+	if err := v.BindPFlags(flags); err != nil {
+		panic(err)
 	}
 
 	return &command
