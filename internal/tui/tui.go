@@ -18,6 +18,10 @@ const (
 	mainPageName    = "main"
 	helpPageName    = "help"
 	versionPageName = "version"
+
+	pulledIcon = "▼"
+
+	dateFormat = "02/Jan/06 15:04"
 )
 
 type Reader struct {
@@ -36,8 +40,9 @@ type Reader struct {
 	entriesPane *tview.Box
 	readingPane *tview.Box
 
-	unreadWidget   *tview.TextView
-	lastPullWidget *tview.TextView
+	unreadWidget       *tview.TextView
+	lastPullTextWidget *tview.TextView
+	lastPullIconWidget *tview.TextView
 }
 
 func NewReader(ctx context.Context, store internal.FeedStore, theme *Theme) *Reader {
@@ -76,6 +81,7 @@ func (r *Reader) Show() error {
 	}
 	r.setUnreadEntries(stats.NumEntriesUnread)
 	r.setLastPullTime(stats.LastPullTime)
+	r.setLastPullIcon()
 
 	return r.app.Run()
 }
@@ -114,13 +120,21 @@ func (r *Reader) setupMainPage() {
 	unreadWidget := tview.NewTextView().SetTextColor(r.theme.StatsForeground).
 		SetTextAlign(tview.AlignLeft)
 
-	lastPullWidget := tview.NewTextView().SetTextColor(r.theme.LastPullForeground).
+	lastPullIconWidget := tview.NewTextView().SetTextColor(r.theme.LastPullForeground).
+		SetTextAlign(tview.AlignCenter)
+
+	lastPullTextWidget := tview.NewTextView().SetTextColor(r.theme.LastPullForeground).
 		SetTextAlign(tview.AlignRight)
+
+	lastPullFlex := tview.NewFlex().
+		SetDirection(tview.FlexColumn).
+		AddItem(lastPullIconWidget, 1, 0, false).
+		AddItem(lastPullTextWidget, len(dateFormat)+1, 0, true)
 
 	footer := tview.NewFlex().
 		SetDirection(tview.FlexColumn).
 		AddItem(unreadWidget, 0, 1, false).
-		AddItem(lastPullWidget, 0, 1, false)
+		AddItem(lastPullFlex, len(dateFormat)+2, 1, false)
 
 	mainPage := tview.NewGrid().
 		SetColumns(0).
@@ -135,7 +149,8 @@ func (r *Reader) setupMainPage() {
 	r.readingPane = readingPane
 
 	r.unreadWidget = unreadWidget
-	r.lastPullWidget = lastPullWidget
+	r.lastPullTextWidget = lastPullTextWidget
+	r.lastPullIconWidget = lastPullIconWidget
 
 	r.mainPage = mainPage
 }
@@ -361,9 +376,12 @@ func (r *Reader) setUnreadEntries(count uint32) {
 		SetText(fmt.Sprintf("%d unread entries", count))
 }
 
+func (r *Reader) setLastPullIcon() {
+	r.lastPullIconWidget.SetText(pulledIcon)
+}
+
 func (r *Reader) setLastPullTime(value *time.Time) {
-	r.lastPullWidget.
-		SetText(fmt.Sprintf("Pulled %s", value.Local().Format("02/Jan/06 15:04")))
+	r.lastPullTextWidget.SetText(value.Local().Format(dateFormat))
 }
 
 func (r *Reader) getAdjacentFocusTarget(
