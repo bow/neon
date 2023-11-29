@@ -307,8 +307,8 @@ func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 
 		case tcell.KeyEscape:
 			switch front {
-			case helpPageName:
-				r.root.HidePage(helpPageName)
+			case helpPageName, versionPageName:
+				r.root.HidePage(front)
 			case mainPageName, "":
 				r.app.SetFocus(r.root)
 			}
