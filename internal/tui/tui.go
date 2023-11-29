@@ -262,15 +262,17 @@ func (r *Reader) setupStatsPage() {
 
 func (r *Reader) setupVersionPage() {
 
+	commit := internal.GitCommit()
+
 	versionWidget := tview.NewTextView().
 		SetDynamicColors(true).
 		SetText(fmt.Sprintf(`[yellow]Version[-]   : %s
-[yellow]Git commit[-]: %s
 [yellow]Build time[-]: %s
+[yellow]Git commit[-]: %s
 `,
 			internal.Version(),
-			internal.GitCommit(),
 			internal.BuildTime(),
+			commit,
 		))
 
 	versionFrame := tview.NewFrame(versionWidget).SetBorders(1, 1, 0, 0, 2, 2)
@@ -281,7 +283,7 @@ func (r *Reader) setupVersionPage() {
 		SetTitleColor(r.theme.PopupTitleForeground)
 
 	versionPage := tview.NewGrid().
-		SetColumns(0, 65, 0).
+		SetColumns(0, len(commit)+len("Git commit:")+7, 0).
 		SetRows(-1, 7, -3).
 		AddItem(versionFrame, 1, 1, 1, 1, 0, 0, true)
 
