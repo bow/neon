@@ -7,6 +7,7 @@ import (
 	"bufio"
 	"context"
 	"fmt"
+	"os"
 	"strings"
 	"time"
 
@@ -31,9 +32,10 @@ const (
 )
 
 type Reader struct {
-	ctx   context.Context
-	store internal.FeedStore
-	theme *Theme
+	ctx      context.Context
+	store    internal.FeedStore
+	theme    *Theme
+	initPath string
 
 	app *tview.Application
 
@@ -95,13 +97,21 @@ func (r *Reader) Show() error {
 	if stats.NumFeeds > 0 {
 		r.setLastPullTime(stats.LastPullTime)
 		r.setLastPullIcon()
-	} else {
-		// TODO: Consider adding specific flag to indicate first time reader (not iris) use.
-		msg := "Welcome to iris. For help, press 'h' or go to https://github.com/bow/iris."
-		r.setNormalStatus(msg)
+	}
+	if initialized := r.isInitialized(); initialized != nil {
+		if !*initialized {
+			msg := "Welcome to iris. For help, press 'h' or go to https://github.com/bow/iris."
+			r.setNormalStatus(msg)
+			defer r.initialize()
+		}
 	}
 
 	return r.app.Run()
+}
+
+func (r *Reader) WithInitPath(path string) *Reader {
+	r.initPath = path
+	return r
 }
 
 func (r *Reader) setupMainPage() {
@@ -647,6 +657,22 @@ func (r *Reader) newWideStatusBarBorder(branchPoint int) *tview.Box {
 
 func (r *Reader) makeTitle(text string) string {
 	return fmt.Sprintf(" %s ", text)
+}
+
+func (r *Reader) isInitialized() *bool {
+	if r.initPath == "" {
+		return nil
+	}
+	exists := true
+	_, err := os.Stat(r.initPath)
+	if err != nil {
+		exists = false
+	}
+	return &exists
+}
+
+func (r *Reader) initialize() {
+	os.Create(r.initPath) // nolint:errcheck
 }
 
 type Theme struct {

@@ -4,8 +4,13 @@
 package cmd
 
 import (
+	"os"
+	"path/filepath"
+
+	"github.com/adrg/xdg"
 	"github.com/spf13/cobra"
 
+	"github.com/bow/iris/internal"
 	"github.com/bow/iris/internal/database"
 	"github.com/bow/iris/internal/tui"
 )
@@ -22,6 +27,11 @@ func newReaderCommand() *cobra.Command {
 		Short:   "Open a feed reader",
 		RunE: func(cmd *cobra.Command, args []string) error {
 
+			initPath, err := readerInitPath()
+			if err != nil {
+				return err
+			}
+
 			dbPath, err := resolveDBPath(v.GetString(dbPathKey))
 			if err != nil {
 				return err
@@ -31,7 +41,8 @@ func newReaderCommand() *cobra.Command {
 				return err
 			}
 
-			app := tui.NewReader(cmd.Context(), fs, nil)
+			app := tui.NewReader(cmd.Context(), fs, nil).
+				WithInitPath(initPath)
 
 			return app.Show()
 		},
@@ -46,4 +57,18 @@ func newReaderCommand() *cobra.Command {
 	}
 
 	return &command
+}
+
+func readerInitPath() (string, error) {
+	stateDir := filepath.Join(xdg.StateHome, internal.AppName())
+	_, err := os.Stat(stateDir)
+	if err != nil {
+		if !os.IsNotExist(err) {
+			return "", err
+		}
+		if err := os.MkdirAll(stateDir, os.ModeDir|0o700); err != nil {
+			return "", err
+		}
+	}
+	return filepath.Join(stateDir, "reader.initialized"), nil
 }
