@@ -46,6 +46,8 @@ type Reader struct {
 	statusWidget       *tview.TextView
 	lastPullTextWidget *tview.TextView
 	lastPullIconWidget *tview.TextView
+	statusVisible      bool
+	footer             *tview.Flex
 
 	statsCache *internal.Stats
 }
@@ -158,6 +160,8 @@ func (r *Reader) setupMainPage() {
 	r.statusWidget = statusWidget
 	r.lastPullTextWidget = lastPullTextWidget
 	r.lastPullIconWidget = lastPullIconWidget
+	r.footer = footer
+	r.statusVisible = true
 
 	r.mainPage = mainPage
 }
@@ -193,6 +197,7 @@ func (r *Reader) setupHelpPage() {
 [yellow]3,R[-]     : Toggle reading pane focus
 [yellow]Tab[-]     : Switch to next pane
 [yellow]Alt-Tab[-] : Switch to previous pane
+[yellow]s[-]       : Toggle status bar
 [yellow]X[-]       : Export feeds to OPML
 [yellow]I[-]       : Import feeds from OPML
 [yellow]Esc[-]     : Unset current focus or close open frame
@@ -210,7 +215,7 @@ func (r *Reader) setupHelpPage() {
 
 	helpPage := tview.NewGrid().
 		SetColumns(0, 55, 0).
-		SetRows(0, 38, 0).
+		SetRows(0, 39, 0).
 		AddItem(helpFrame, 1, 1, 1, 1, 0, 0, true)
 
 	r.helpPage = helpPage
@@ -348,6 +353,10 @@ func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 				}
 				return nil
 
+			case 's':
+				r.toggleFooter()
+				return nil
+
 			case 'h', '?':
 				if front == helpPageName {
 					r.root.HidePage(front)
@@ -453,6 +462,19 @@ func (r *Reader) getFocusTarget(keyr rune) tview.Primitive {
 		panic(fmt.Sprintf("unexpected key: %c", keyr))
 	}
 	return target
+}
+
+func (r *Reader) toggleFooter() {
+	if r.statusVisible {
+		r.mainPage.
+			RemoveItem(r.footer).
+			SetRows(0)
+	} else {
+		r.mainPage.
+			SetRows(0, 1).
+			AddItem(r.footer, 1, 0, 1, 1, 0, 0, false)
+	}
+	r.statusVisible = !r.statusVisible
 }
 
 func (r *Reader) setNormalStatus(text string, a ...any) {
