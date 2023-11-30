@@ -92,8 +92,14 @@ func (r *Reader) Show() error {
 	if err != nil {
 		return err
 	}
-	r.setLastPullTime(stats.LastPullTime)
-	r.setLastPullIcon()
+	if stats.NumFeeds > 0 {
+		r.setLastPullTime(stats.LastPullTime)
+		r.setLastPullIcon()
+	} else {
+		// TODO: Consider adding specific flag to indicate first time reader (not iris) use.
+		msg := "Welcome to iris. For help, press 'h' or go to https://github.com/bow/iris."
+		r.setNormalStatus(msg)
+	}
 
 	return r.app.Run()
 }
