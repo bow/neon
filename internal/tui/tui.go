@@ -43,7 +43,7 @@ type Reader struct {
 	entriesPane *tview.Box
 	readingPane *tview.Box
 
-	unreadWidget       *tview.TextView
+	statusWidget       *tview.TextView
 	lastPullTextWidget *tview.TextView
 	lastPullIconWidget *tview.TextView
 
@@ -86,7 +86,6 @@ func (r *Reader) Show() error {
 	if err != nil {
 		return err
 	}
-	r.setUnreadEntries(stats.NumEntriesUnread)
 	r.setLastPullTime(stats.LastPullTime)
 	r.setLastPullIcon()
 
@@ -124,14 +123,15 @@ func (r *Reader) setupMainPage() {
 		).
 		AddItem(r.newWideFooterBorder(45), 1, 0, false)
 
-	unreadWidget := tview.NewTextView().SetTextColor(r.theme.StatsForeground).
-		SetTextAlign(tview.AlignLeft)
+	statusWidget := tview.NewTextView().SetTextAlign(tview.AlignLeft).
+		SetChangedFunc(func() { r.app.Draw() })
 
 	lastPullIconWidget := tview.NewTextView().SetTextColor(r.theme.LastPullForeground).
 		SetTextAlign(tview.AlignCenter)
 
 	lastPullTextWidget := tview.NewTextView().SetTextColor(r.theme.LastPullForeground).
-		SetTextAlign(tview.AlignRight)
+		SetTextAlign(tview.AlignRight).
+		SetChangedFunc(func() { r.app.Draw() })
 
 	lastPullFlex := tview.NewFlex().
 		SetDirection(tview.FlexColumn).
@@ -140,7 +140,7 @@ func (r *Reader) setupMainPage() {
 
 	footer := tview.NewFlex().
 		SetDirection(tview.FlexColumn).
-		AddItem(unreadWidget, 0, 1, false).
+		AddItem(statusWidget, 0, 1, false).
 		AddItem(lastPullFlex, len(shortDateFormat)+2, 1, false)
 
 	mainPage := tview.NewGrid().
@@ -155,7 +155,7 @@ func (r *Reader) setupMainPage() {
 	r.entriesPane = entriesPane
 	r.readingPane = readingPane
 
-	r.unreadWidget = unreadWidget
+	r.statusWidget = statusWidget
 	r.lastPullTextWidget = lastPullTextWidget
 	r.lastPullIconWidget = lastPullIconWidget
 
@@ -401,21 +401,33 @@ func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 		case r.feedsPane:
 			switch keyr {
 			case 'P':
-				// TODO: Add animation in footer?
-				ch := r.store.PullFeeds(r.ctx, []internal.ID{})
-				// TODO: Add ok / fail status in ...?
-				for pr := range ch {
-					if err := pr.Error(); err != nil {
+
+				// TODO: Consider wrapping footer as own primitive.
+				r.setNormalStatus("Pulling feeds")
+				go func() {
+					var count int
+					ch := r.store.PullFeeds(r.ctx, []internal.ID{})
+					for pr := range ch {
+						if err := pr.Error(); err != nil {
+							// TODO: Add ok / fail status in ...?
+							panic(err)
+						}
+						r.setNormalStatus("Pulling: %s done", pr.URL())
+						count++
+					}
+					if count > 1 {
+						r.setNormalStatus("Pulled %d feeds successfully", count)
+					} else {
+						r.setNormalStatus("Pulled %d feed successfully", count)
+					}
+
+					stats, err := r.store.GetGlobalStats(r.ctx)
+					if err != nil {
 						panic(err)
 					}
-				}
-				stats, err := r.store.GetGlobalStats(r.ctx)
-				if err != nil {
-					panic(err)
-				}
-				r.statsCache = stats
-				r.setUnreadEntries(stats.NumEntriesUnread)
-				r.setLastPullTime(stats.LastPullTime)
+					r.statsCache = stats
+					r.setLastPullTime(stats.LastPullTime)
+				}()
 				return nil
 
 			default:
@@ -443,9 +455,15 @@ func (r *Reader) getFocusTarget(keyr rune) tview.Primitive {
 	return target
 }
 
-func (r *Reader) setUnreadEntries(count uint32) {
-	r.unreadWidget.
-		SetText(fmt.Sprintf("%d unread entries", count))
+func (r *Reader) setNormalStatus(text string, a ...any) {
+	r.statusWidget.
+		SetTextColor(r.theme.StatusNormalForeground).
+		Clear()
+	if len(a) > 0 {
+		fmt.Fprintf(r.statusWidget, "%s\n", fmt.Sprintf(text, a...))
+	} else {
+		fmt.Fprintf(r.statusWidget, "%s\n", text)
+	}
 }
 
 func (r *Reader) setLastPullIcon() {
@@ -594,14 +612,14 @@ type Theme struct {
 	ReadingPaneTitle string
 	HelpPopupTitle   string
 
-	Background            tcell.Color
-	BorderForeground      tcell.Color
-	TitleForeground       tcell.Color
-	VersionForeground     tcell.Color
-	LastPullForeground    tcell.Color
-	StatsForeground       tcell.Color
-	PopupTitleForeground  tcell.Color
-	PopupBorderForeground tcell.Color
+	Background             tcell.Color
+	BorderForeground       tcell.Color
+	TitleForeground        tcell.Color
+	VersionForeground      tcell.Color
+	LastPullForeground     tcell.Color
+	StatusNormalForeground tcell.Color
+	PopupTitleForeground   tcell.Color
+	PopupBorderForeground  tcell.Color
 
 	WideViewMinWidth int
 }
@@ -618,14 +636,14 @@ var DefaultTheme = &Theme{
 	ReadingPaneTitle: "",
 	HelpPopupTitle:   "Keys",
 
-	Background:            tcell.ColorBlack,
-	BorderForeground:      tcell.ColorWhite,
-	TitleForeground:       tcell.ColorBlue,
-	VersionForeground:     tcell.ColorGray,
-	LastPullForeground:    tcell.ColorGray,
-	StatsForeground:       tcell.ColorDarkGoldenrod,
-	PopupBorderForeground: tcell.ColorGray,
-	PopupTitleForeground:  tcell.ColorAqua,
+	Background:             tcell.ColorBlack,
+	BorderForeground:       tcell.ColorWhite,
+	TitleForeground:        tcell.ColorBlue,
+	VersionForeground:      tcell.ColorGray,
+	LastPullForeground:     tcell.ColorGray,
+	StatusNormalForeground: tcell.ColorDarkGoldenrod,
+	PopupBorderForeground:  tcell.ColorGray,
+	PopupTitleForeground:   tcell.ColorAqua,
 
 	WideViewMinWidth: 150,
 }
