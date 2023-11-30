@@ -58,16 +58,12 @@ type Reader struct {
 	statsCache *internal.Stats
 }
 
-func NewReader(ctx context.Context, store internal.FeedStore, theme *Theme) *Reader {
-
-	if theme == nil {
-		theme = DefaultTheme
-	}
+func NewReader(ctx context.Context, store internal.FeedStore) *Reader {
 
 	reader := Reader{
 		ctx:   ctx,
 		store: store,
-		theme: theme,
+		theme: DarkTheme,
 		root:  tview.NewPages(),
 		app:   tview.NewApplication(),
 	}
@@ -699,7 +695,7 @@ func (theme *Theme) lineStyle() tcell.Style {
 		Foreground(theme.BorderForeground)
 }
 
-var DefaultTheme = &Theme{
+var DarkTheme = &Theme{
 	FeedsPaneTitle:   "Feeds",
 	EntriesPaneTitle: "Entries",
 	ReadingPaneTitle: "",
