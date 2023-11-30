@@ -146,12 +146,12 @@ func (r *Reader) setupMainPage() {
 		AddItem(lastPullFlex, len(shortDateFormat)+2, 1, false)
 
 	mainPage := tview.NewGrid().
-		SetColumns(0).
-		SetRows(0, 1).
+		SetRows(0).
 		SetBorders(false).
 		AddItem(narrowFlex, 0, 0, 1, 1, 0, 0, false).
-		AddItem(wideFlex, 0, 0, 1, 1, 0, r.theme.WideViewMinWidth, false).
-		AddItem(statusBar, 1, 0, 1, 1, 0, 0, false)
+		AddItem(wideFlex, 0, 0, 1, 1, 0, r.theme.WideViewMinWidth, false)
+
+	mainPage = r.addStatusBar(mainPage, statusBar)
 
 	r.feedsPane = feedsPane
 	r.entriesPane = entriesPane
@@ -464,15 +464,19 @@ func (r *Reader) getFocusTarget(keyr rune) tview.Primitive {
 	return target
 }
 
+func (r *Reader) addStatusBar(mainPage *tview.Grid, statusBar *tview.Flex) *tview.Grid {
+	return mainPage.SetRows(0, 1).AddItem(statusBar, 1, 0, 1, 1, 0, 0, false)
+}
+
+func (r *Reader) removeStatusBar(mainPage *tview.Grid, statusBar *tview.Flex) *tview.Grid {
+	return mainPage.RemoveItem(statusBar).SetRows(0)
+}
+
 func (r *Reader) toggleStatusBar() {
 	if r.statusBarVisible {
-		r.mainPage.
-			RemoveItem(r.statusBar).
-			SetRows(0)
+		r.removeStatusBar(r.mainPage, r.statusBar)
 	} else {
-		r.mainPage.
-			SetRows(0, 1).
-			AddItem(r.statusBar, 1, 0, 1, 1, 0, 0, false)
+		r.addStatusBar(r.mainPage, r.statusBar)
 	}
 	r.statusBarVisible = !r.statusBarVisible
 }
