@@ -196,8 +196,8 @@ func (r *Reader) setupHelpPage() {
 [yellow]X[-]       : Export feeds to OPML
 [yellow]I[-]       : Import feeds from OPML
 [yellow]Esc[-]     : Unset current focus or close open frame
-[yellow]s[-]       : Toggle stats info
-[yellow]v[-]       : Toggle version info
+[yellow]S[-]       : Toggle stats info
+[yellow]V[-]       : Toggle version info
 [yellow]h,?[-]     : Toggle this help
 [yellow]q,Ctrl-C[-]: Quit reader`)
 
@@ -326,7 +326,7 @@ func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 				}
 				return nil
 
-			case 's':
+			case 'S':
 				if front == statsPageName {
 					r.root.HidePage(front)
 				} else {
@@ -337,7 +337,7 @@ func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 				}
 				return nil
 
-			case 'v':
+			case 'V':
 				if front == versionPageName {
 					r.root.HidePage(front)
 				} else {
