@@ -4,8 +4,10 @@
 package tui
 
 import (
+	"bufio"
 	"context"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/gdamore/tcell/v2"
@@ -24,6 +26,8 @@ const (
 
 	shortDateFormat = "02/Jan/06 15:04"
 	longDateFormat  = "2 January 2006 - 15:04:05 MST"
+
+	verticalPopupPadding = 4
 )
 
 type Reader struct {
@@ -168,9 +172,7 @@ func (r *Reader) setupMainPage() {
 
 func (r *Reader) setupHelpPage() {
 
-	helpWidget := tview.NewTextView().
-		SetDynamicColors(true).
-		SetText(`[aqua]Feeds pane[-]
+	helpText := `[aqua]Feeds pane[-]
 [yellow]j/k[-]: Next / previous item
 [yellow]p[-]  : Pull current feed
 [yellow]P[-]  : Pull all feeds
@@ -204,7 +206,11 @@ func (r *Reader) setupHelpPage() {
 [yellow]S[-]       : Toggle stats info
 [yellow]V[-]       : Toggle version info
 [yellow]h,?[-]     : Toggle this help
-[yellow]q,Ctrl-C[-]: Quit reader`)
+[yellow]q,Ctrl-C[-]: Quit reader`
+
+	helpWidget := tview.NewTextView().
+		SetDynamicColors(true).
+		SetText(helpText)
 
 	helpFrame := tview.NewFrame(helpWidget).SetBorders(1, 1, 0, 0, 2, 2)
 
@@ -213,9 +219,10 @@ func (r *Reader) setupHelpPage() {
 		SetTitle(r.makeTitle(r.theme.HelpPopupTitle)).
 		SetTitleColor(r.theme.PopupTitleForeground)
 
+	nrows := calcPopupHeight(helpText)
 	helpPage := tview.NewGrid().
 		SetColumns(0, 55, 0).
-		SetRows(0, 39, 0).
+		SetRows(0, nrows, 0).
 		AddItem(helpFrame, 1, 1, 1, 1, 0, 0, true)
 
 	r.helpPage = helpPage
@@ -231,10 +238,7 @@ func (r *Reader) setupStatsPage() {
 		r.statsCache = stats
 	}
 
-	statsWidget := tview.NewTextView().
-		SetDynamicColors(true).
-		SetText(
-			fmt.Sprintf(`[aqua]Feeds[-]
+	statsText := fmt.Sprintf(`[aqua]Feeds[-]
 [yellow]Total[-]: %d
 
 [aqua]Entries[-]
@@ -243,12 +247,15 @@ func (r *Reader) setupStatsPage() {
 
 [aqua]Last pulled[-]
 %s`,
-				r.statsCache.NumFeeds,
-				r.statsCache.NumEntries,
-				r.statsCache.NumEntriesUnread,
-				r.statsCache.LastPullTime.Format(longDateFormat),
-			),
-		)
+		r.statsCache.NumFeeds,
+		r.statsCache.NumEntries,
+		r.statsCache.NumEntriesUnread,
+		r.statsCache.LastPullTime.Format(longDateFormat),
+	)
+
+	statsWidget := tview.NewTextView().
+		SetDynamicColors(true).
+		SetText(statsText)
 
 	statsFrame := tview.NewFrame(statsWidget).SetBorders(1, 1, 0, 0, 2, 2)
 
@@ -257,9 +264,10 @@ func (r *Reader) setupStatsPage() {
 		SetTitle(r.makeTitle("Stats")).
 		SetTitleColor(r.theme.PopupTitleForeground)
 
+	nrows := calcPopupHeight(statsText)
 	statsPage := tview.NewGrid().
 		SetColumns(0, 37, 0).
-		SetRows(-1, 13, -3).
+		SetRows(-1, nrows, -3).
 		AddItem(statsFrame, 1, 1, 1, 1, 0, 0, true)
 
 	r.statsPage = statsPage
@@ -275,16 +283,18 @@ func (r *Reader) setupVersionPage() {
 		buildTime = buildTimeVal.Format(longDateFormat)
 	}
 
-	versionWidget := tview.NewTextView().
-		SetDynamicColors(true).
-		SetText(fmt.Sprintf(`[yellow]Version[-]   : %s
+	versionText := fmt.Sprintf(`[yellow]Version[-]   : %s
 [yellow]Git commit[-]: %s
 [yellow]Build time[-]: %s
 `,
-			internal.Version(),
-			commit,
-			buildTime,
-		))
+		internal.Version(),
+		commit,
+		buildTime,
+	)
+
+	versionWidget := tview.NewTextView().
+		SetDynamicColors(true).
+		SetText(versionText)
 
 	versionFrame := tview.NewFrame(versionWidget).SetBorders(1, 1, 0, 0, 2, 2)
 
@@ -293,9 +303,10 @@ func (r *Reader) setupVersionPage() {
 		SetTitle(r.makeTitle("iris feed reader")).
 		SetTitleColor(r.theme.PopupTitleForeground)
 
+	nrows := calcPopupHeight(versionText)
 	versionPage := tview.NewGrid().
 		SetColumns(0, len(commit)+len("Git commit:")+7, 0).
-		SetRows(-1, 7, -3).
+		SetRows(-1, nrows, -3).
 		AddItem(versionFrame, 1, 1, 1, 1, 0, 0, true)
 
 	r.versionPage = versionPage
@@ -682,4 +693,12 @@ func init() {
 	tview.Borders.TopRightFocus = tview.Borders.TopRight
 	tview.Borders.BottomLeftFocus = tview.Borders.BottomLeft
 	tview.Borders.BottomRightFocus = tview.Borders.BottomRight
+}
+
+func calcPopupHeight(text string) (rows int) {
+	sc := bufio.NewScanner(strings.NewReader(text))
+	for sc.Scan() {
+		rows++
+	}
+	return rows + verticalPopupPadding
 }
