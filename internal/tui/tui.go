@@ -46,8 +46,8 @@ type Reader struct {
 	statusWidget       *tview.TextView
 	lastPullTextWidget *tview.TextView
 	lastPullIconWidget *tview.TextView
-	statusVisible      bool
-	footer             *tview.Flex
+	statusBarVisible   bool
+	statusBar          *tview.Flex
 
 	statsCache *internal.Stats
 }
@@ -105,7 +105,7 @@ func (r *Reader) setupMainPage() {
 		AddItem(feedsPane, 0, 3, false).
 		AddItem(entriesPane, 0, 4, false).
 		AddItem(readingPane, 0, 5, false).
-		AddItem(r.newNarrowFooterBorder(), 1, 0, false)
+		AddItem(r.newNarrowStatusBarBorder(), 1, 0, false)
 
 	wideFlex := tview.NewFlex().
 		SetDirection(tview.FlexRow).
@@ -123,7 +123,7 @@ func (r *Reader) setupMainPage() {
 				),
 			0, 1, false,
 		).
-		AddItem(r.newWideFooterBorder(45), 1, 0, false)
+		AddItem(r.newWideStatusBarBorder(45), 1, 0, false)
 
 	statusWidget := tview.NewTextView().SetTextAlign(tview.AlignLeft).
 		SetChangedFunc(func() { r.app.Draw() })
@@ -140,7 +140,7 @@ func (r *Reader) setupMainPage() {
 		AddItem(lastPullIconWidget, 1, 0, false).
 		AddItem(lastPullTextWidget, len(shortDateFormat)+1, 0, true)
 
-	footer := tview.NewFlex().
+	statusBar := tview.NewFlex().
 		SetDirection(tview.FlexColumn).
 		AddItem(statusWidget, 0, 1, false).
 		AddItem(lastPullFlex, len(shortDateFormat)+2, 1, false)
@@ -151,7 +151,7 @@ func (r *Reader) setupMainPage() {
 		SetBorders(false).
 		AddItem(narrowFlex, 0, 0, 1, 1, 0, 0, false).
 		AddItem(wideFlex, 0, 0, 1, 1, 0, r.theme.WideViewMinWidth, false).
-		AddItem(footer, 1, 0, 1, 1, 0, 0, false)
+		AddItem(statusBar, 1, 0, 1, 1, 0, 0, false)
 
 	r.feedsPane = feedsPane
 	r.entriesPane = entriesPane
@@ -160,8 +160,8 @@ func (r *Reader) setupMainPage() {
 	r.statusWidget = statusWidget
 	r.lastPullTextWidget = lastPullTextWidget
 	r.lastPullIconWidget = lastPullIconWidget
-	r.footer = footer
-	r.statusVisible = true
+	r.statusBar = statusBar
+	r.statusBarVisible = true
 
 	r.mainPage = mainPage
 }
@@ -354,7 +354,7 @@ func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 				return nil
 
 			case 's':
-				r.toggleFooter()
+				r.toggleStatusBar()
 				return nil
 
 			case 'h', '?':
@@ -411,7 +411,7 @@ func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 			switch keyr {
 			case 'P':
 
-				// TODO: Consider wrapping footer as own primitive.
+				// TODO: Consider wrapping status bar as own primitive.
 				r.setNormalStatus("Pulling feeds")
 				go func() {
 					var count int
@@ -464,17 +464,17 @@ func (r *Reader) getFocusTarget(keyr rune) tview.Primitive {
 	return target
 }
 
-func (r *Reader) toggleFooter() {
-	if r.statusVisible {
+func (r *Reader) toggleStatusBar() {
+	if r.statusBarVisible {
 		r.mainPage.
-			RemoveItem(r.footer).
+			RemoveItem(r.statusBar).
 			SetRows(0)
 	} else {
 		r.mainPage.
 			SetRows(0, 1).
-			AddItem(r.footer, 1, 0, 1, 1, 0, 0, false)
+			AddItem(r.statusBar, 1, 0, 1, 1, 0, 0, false)
 	}
-	r.statusVisible = !r.statusVisible
+	r.statusBarVisible = !r.statusBarVisible
 }
 
 func (r *Reader) setNormalStatus(text string, a ...any) {
@@ -590,7 +590,7 @@ func (r *Reader) newPaneDivider() *tview.Box {
 	return tview.NewBox().SetBorder(false).SetDrawFunc(drawf)
 }
 
-func (r *Reader) newNarrowFooterBorder() *tview.Box {
+func (r *Reader) newNarrowStatusBarBorder() *tview.Box {
 
 	style := r.theme.lineStyle()
 	drawf := func(screen tcell.Screen, x int, y int, width int, height int) (int, int, int, int) {
@@ -604,7 +604,7 @@ func (r *Reader) newNarrowFooterBorder() *tview.Box {
 	return tview.NewBox().SetBorder(false).SetDrawFunc(drawf)
 }
 
-func (r *Reader) newWideFooterBorder(branchPoint int) *tview.Box {
+func (r *Reader) newWideStatusBarBorder(branchPoint int) *tview.Box {
 
 	style := r.theme.lineStyle()
 
