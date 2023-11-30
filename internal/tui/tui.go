@@ -199,7 +199,7 @@ func (r *Reader) setupHelpPage() {
 [yellow]3,R[-]     : Toggle reading pane focus
 [yellow]Tab[-]     : Switch to next pane
 [yellow]Alt-Tab[-] : Switch to previous pane
-[yellow]s[-]       : Toggle status bar
+[yellow]b[-]       : Toggle status bar
 [yellow]X[-]       : Export feeds to OPML
 [yellow]I[-]       : Import feeds from OPML
 [yellow]Esc[-]     : Unset current focus or close open frame
@@ -364,7 +364,7 @@ func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 				}
 				return nil
 
-			case 's':
+			case 'b':
 				r.toggleStatusBar()
 				return nil
 
