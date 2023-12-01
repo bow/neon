@@ -662,7 +662,9 @@ func (r *Reader) isInitialized() bool {
 }
 
 func (r *Reader) initialize() {
-	os.Create(r.initPath) // nolint:errcheck
+	if p := r.initPath; p != "" {
+		os.Create(r.initPath) // nolint:errcheck
+	}
 }
 
 type Theme struct {
