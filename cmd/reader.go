@@ -62,6 +62,7 @@ func readerInitPath() (string, error) {
 	if err != nil {
 		return "", err
 	}
+	_, err = os.Stat(sd)
 	if err != nil {
 		if !os.IsNotExist(err) {
 			return "", err
