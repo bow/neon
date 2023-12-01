@@ -19,6 +19,7 @@ import (
 
 const dbPathKey = "db-path"
 
+// FIXME: Update value for non-linux systems.
 var defaultDBPath = "$XDG_DATA_HOME/iris/iris.db"
 
 func newViper(cmdName string) *viper.Viper {

@@ -7,10 +7,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/adrg/xdg"
 	"github.com/spf13/cobra"
 
-	"github.com/bow/iris/internal"
 	"github.com/bow/iris/internal/database"
 	"github.com/bow/iris/internal/tui"
 )
@@ -60,15 +58,17 @@ func newReaderCommand() *cobra.Command {
 }
 
 func readerInitPath() (string, error) {
-	stateDir := filepath.Join(xdg.StateHome, internal.AppName())
-	_, err := os.Stat(stateDir)
+	sd, err := stateDir()
+	if err != nil {
+		return "", err
+	}
 	if err != nil {
 		if !os.IsNotExist(err) {
 			return "", err
 		}
-		if err := os.MkdirAll(stateDir, os.ModeDir|0o700); err != nil {
+		if err := os.MkdirAll(sd, os.ModeDir|0o700); err != nil {
 			return "", err
 		}
 	}
-	return filepath.Join(stateDir, "reader.initialized"), nil
+	return filepath.Join(sd, "reader.initialized"), nil
 }
