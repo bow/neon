@@ -94,12 +94,10 @@ func (r *Reader) Show() error {
 		r.setLastPullTime(stats.LastPullTime)
 		r.setLastPullIcon()
 	}
-	if initialized := r.isInitialized(); initialized != nil {
-		if !*initialized {
-			msg := "Welcome to iris. For help, press 'h' or go to https://github.com/bow/iris."
-			r.setNormalStatus(msg)
-			defer r.initialize()
-		}
+	if !r.isInitialized() {
+		msg := "Welcome to iris. For help, press 'h' or go to https://github.com/bow/iris."
+		r.setNormalStatus(msg)
+		defer r.initialize()
 	}
 
 	return r.app.Run()
@@ -650,16 +648,17 @@ func (r *Reader) makeTitle(text string) string {
 	return fmt.Sprintf(" %s ", text)
 }
 
-func (r *Reader) isInitialized() *bool {
+func (r *Reader) isInitialized() bool {
+	// Reader default is to assume already initialized.
 	if r.initPath == "" {
-		return nil
+		return true
 	}
 	exists := true
 	_, err := os.Stat(r.initPath)
-	if err != nil {
+	if err != nil && os.IsNotExist(err) {
 		exists = false
 	}
-	return &exists
+	return exists
 }
 
 func (r *Reader) initialize() {
