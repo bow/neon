@@ -224,20 +224,12 @@ func (r *Reader) setupHelpPage() {
 		SetDynamicColors(true).
 		SetText(helpText)
 
-	helpFrame := tview.NewFrame(helpWidget).SetBorders(1, 1, 0, 0, 2, 2)
-
-	helpFrame.SetBorder(true).
-		SetBorderColor(r.theme.PopupBorderForeground).
-		SetTitle(r.makeTitle(r.theme.HelpPopupTitle)).
-		SetTitleColor(r.theme.PopupTitleForeground)
-
-	nrows := calcPopupHeight(helpText)
-	helpPage := tview.NewGrid().
-		SetColumns(0, 55, 0).
-		SetRows(0, nrows, 0).
-		AddItem(helpFrame, 1, 1, 1, 1, 0, 0, true)
-
-	r.helpPage = helpPage
+	r.helpPage = r.newPopup(
+		r.theme.HelpPopupTitle,
+		helpWidget,
+		55,
+		0, calcPopupHeight(helpText), 0,
+	)
 }
 
 func (r *Reader) setupStatsPage() {
@@ -269,20 +261,12 @@ func (r *Reader) setupStatsPage() {
 		SetDynamicColors(true).
 		SetText(statsText)
 
-	statsFrame := tview.NewFrame(statsWidget).SetBorders(1, 1, 0, 0, 2, 2)
-
-	statsFrame.SetBorder(true).
-		SetBorderColor(r.theme.PopupBorderForeground).
-		SetTitle(r.makeTitle("Stats")).
-		SetTitleColor(r.theme.PopupTitleForeground)
-
-	nrows := calcPopupHeight(statsText)
-	statsPage := tview.NewGrid().
-		SetColumns(0, 37, 0).
-		SetRows(-1, nrows, -3).
-		AddItem(statsFrame, 1, 1, 1, 1, 0, 0, true)
-
-	r.statsPage = statsPage
+	r.statsPage = r.newPopup(
+		"Stats",
+		statsWidget,
+		37,
+		-1, calcPopupHeight(statsText), -3,
+	)
 }
 
 func (r *Reader) setupVersionPage() {
@@ -308,20 +292,12 @@ func (r *Reader) setupVersionPage() {
 		SetDynamicColors(true).
 		SetText(versionText)
 
-	versionFrame := tview.NewFrame(versionWidget).SetBorders(1, 1, 0, 0, 2, 2)
-
-	versionFrame.SetBorder(true).
-		SetBorderColor(r.theme.PopupBorderForeground).
-		SetTitle(r.makeTitle("iris feed reader")).
-		SetTitleColor(r.theme.PopupTitleForeground)
-
-	nrows := calcPopupHeight(versionText)
-	versionPage := tview.NewGrid().
-		SetColumns(0, len(commit)+len("Git commit:")+7, 0).
-		SetRows(-1, nrows, -3).
-		AddItem(versionFrame, 1, 1, 1, 1, 0, 0, true)
-
-	r.versionPage = versionPage
+	r.versionPage = r.newPopup(
+		"iris feed reader",
+		versionWidget,
+		len(commit)+18,
+		-1, calcPopupHeight(versionText), -3,
+	)
 }
 
 // nolint:revive,exhaustive
@@ -600,6 +576,25 @@ func (r *Reader) newPane(title string, addTopLeftBorderTip bool) *tview.Box {
 	box.SetBlurFunc(func() { box.SetDrawFunc(makedrawf(unfocused, 3)) })
 
 	return box
+}
+
+func (r *Reader) newPopup(
+	title string,
+	contents *tview.TextView,
+	ncols int,
+	gridRows ...int,
+) *tview.Grid {
+
+	frame := tview.NewFrame(contents).SetBorders(1, 1, 0, 0, 2, 2)
+
+	frame.SetBorder(true).
+		SetTitle(r.makeTitle(title)).
+		SetTitleColor(r.theme.PopupTitleForeground)
+
+	return tview.NewGrid().
+		SetColumns(0, ncols, 0).
+		SetRows(gridRows...).
+		AddItem(frame, 1, 1, 1, 1, 0, 0, true)
 }
 
 func (r *Reader) newPaneDivider() *tview.Box {
