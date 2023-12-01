@@ -22,6 +22,7 @@ const (
 	helpPageName    = "help"
 	statsPageName   = "stats"
 	versionPageName = "version"
+	welcomePageName = "welcome"
 
 	pulledIcon = "▼"
 
@@ -95,8 +96,25 @@ func (r *Reader) Show() error {
 		r.setLastPullIcon()
 	}
 	if !r.isInitialized() {
-		msg := "Welcome to iris. For help, press 'h' or go to https://github.com/bow/iris."
-		r.setNormalStatus(msg)
+		welcomeText := `Hello and welcome the iris reader.
+
+For help, press [yellow]h[-] or go to [yellow]https://github.com/bow/iris[-].
+
+To close this message, press [yellow]<Esc>[-].
+`
+
+		r.root.AddPage(
+			welcomePageName,
+			r.newPopup(
+				"Welcome",
+				tview.NewTextView().SetDynamicColors(true).SetText(welcomeText),
+				61,
+				-1, calcPopupHeight(welcomeText), -3,
+			),
+			true,
+			false,
+		)
+		r.root.ShowPage(welcomePageName)
 		defer r.initialize()
 	}
 
@@ -331,7 +349,7 @@ func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 			case 'S':
 				if front == statsPageName {
 					r.root.HidePage(front)
-				} else {
+				} else if front != welcomePageName {
 					if front != mainPageName {
 						r.root.HidePage(front)
 					}
@@ -342,7 +360,7 @@ func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 			case 'V':
 				if front == versionPageName {
 					r.root.HidePage(front)
-				} else {
+				} else if front != welcomePageName {
 					if front != mainPageName {
 						r.root.HidePage(front)
 					}
@@ -357,7 +375,7 @@ func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 			case 'h', '?':
 				if front == helpPageName {
 					r.root.HidePage(front)
-				} else {
+				} else if front != welcomePageName {
 					if front != mainPageName {
 						r.root.HidePage(front)
 					}
@@ -384,10 +402,10 @@ func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 
 		case tcell.KeyEscape:
 			switch front {
-			case helpPageName, statsPageName, versionPageName:
-				r.root.HidePage(front)
 			case mainPageName, "":
 				r.app.SetFocus(r.root)
+			default:
+				r.root.HidePage(front)
 			}
 			return nil
 		}
