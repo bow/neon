@@ -375,7 +375,7 @@ func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 			case 'h', '?':
 				if front == helpPageName {
 					r.root.HidePage(front)
-				} else if front != welcomePageName {
+				} else {
 					if front != mainPageName {
 						r.root.HidePage(front)
 					}
