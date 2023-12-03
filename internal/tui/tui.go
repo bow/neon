@@ -106,7 +106,7 @@ To close this message, press [yellow]<Esc>[-].
 		r.root.AddPage(
 			welcomePageName,
 			r.newPopup(
-				"Welcome",
+				r.theme.WelcomePopupTitle,
 				tview.NewTextView().SetDynamicColors(true).SetText(welcomeText),
 				61,
 				-1, calcPopupHeight(welcomeText), -3,
@@ -278,7 +278,7 @@ func (r *Reader) setupStatsPage() {
 		SetText(statsText)
 
 	r.statsPage = r.newPopup(
-		"Stats",
+		r.theme.StatsPopupTitle,
 		statsWidget,
 		37,
 		-1, calcPopupHeight(statsText), -3,
@@ -309,7 +309,7 @@ func (r *Reader) setupVersionPage() {
 		SetText(versionText)
 
 	r.versionPage = r.newPopup(
-		"iris feed reader",
+		r.theme.VersionPopupTitle,
 		versionWidget,
 		len(commit)+18,
 		-1, calcPopupHeight(versionText), -3,
@@ -686,10 +686,13 @@ func (r *Reader) initialize() {
 }
 
 type Theme struct {
-	FeedsPaneTitle   string
-	EntriesPaneTitle string
-	ReadingPaneTitle string
-	HelpPopupTitle   string
+	FeedsPaneTitle    string
+	EntriesPaneTitle  string
+	ReadingPaneTitle  string
+	HelpPopupTitle    string
+	StatsPopupTitle   string
+	VersionPopupTitle string
+	WelcomePopupTitle string
 
 	Background             tcell.Color
 	BorderForeground       tcell.Color
@@ -710,10 +713,13 @@ func (theme *Theme) lineStyle() tcell.Style {
 }
 
 var DarkTheme = &Theme{
-	FeedsPaneTitle:   "Feeds",
-	EntriesPaneTitle: "Entries",
-	ReadingPaneTitle: "",
-	HelpPopupTitle:   "Keys",
+	FeedsPaneTitle:    "Feeds",
+	EntriesPaneTitle:  "Entries",
+	ReadingPaneTitle:  "",
+	HelpPopupTitle:    "Keys",
+	StatsPopupTitle:   "Stats",
+	VersionPopupTitle: "iris feed reader",
+	WelcomePopupTitle: "Welcome",
 
 	Background:             tcell.ColorBlack,
 	BorderForeground:       tcell.ColorWhite,
