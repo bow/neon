@@ -114,6 +114,7 @@ To close this message, press [yellow]<Esc>[-].
 			true,
 			false,
 		)
+		r.theme.Dim()
 		r.root.ShowPage(welcomePageName)
 		defer r.initialize()
 	}
@@ -334,6 +335,7 @@ func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 			case '1', '2', '3', 'F', 'E', 'R':
 				if front != mainPageName {
 					r.root.HidePage(front)
+					r.theme.Normalize()
 					front = mainPageName
 				}
 				if front == mainPageName {
@@ -349,10 +351,13 @@ func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 			case 'S':
 				if front == statsPageName {
 					r.root.HidePage(front)
+					r.theme.Normalize()
 				} else if front != welcomePageName {
 					if front != mainPageName {
 						r.root.HidePage(front)
+						r.theme.Normalize()
 					}
+					r.theme.Dim()
 					r.root.ShowPage(statsPageName)
 				}
 				return nil
@@ -360,10 +365,13 @@ func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 			case 'V':
 				if front == versionPageName {
 					r.root.HidePage(front)
+					r.theme.Normalize()
 				} else if front != welcomePageName {
 					if front != mainPageName {
 						r.root.HidePage(front)
+						r.theme.Normalize()
 					}
+					r.theme.Dim()
 					r.root.ShowPage(versionPageName)
 				}
 				return nil
@@ -375,10 +383,13 @@ func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 			case 'h', '?':
 				if front == helpPageName {
 					r.root.HidePage(front)
+					r.theme.Normalize()
 				} else {
 					if front != mainPageName {
 						r.root.HidePage(front)
+						r.theme.Normalize()
 					}
+					r.theme.Dim()
 					r.root.ShowPage(helpPageName)
 				}
 				return nil
@@ -406,6 +417,7 @@ func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 				r.app.SetFocus(r.root)
 			default:
 				r.root.HidePage(front)
+				r.theme.Normalize()
 			}
 			return nil
 		}
@@ -545,11 +557,7 @@ func (r *Reader) getAdjacentFocusTarget(
 
 func (r *Reader) newPane(title string, addTopLeftBorderTip bool) *tview.Box {
 
-	var (
-		unfocused, focused string
-		lineStyle          = r.theme.lineStyle()
-	)
-
+	var unfocused, focused string
 	if title != "" {
 		unfocused = r.makeTitle(title)
 		focused = r.makeTitle(fmt.Sprintf("• %s", title))
@@ -563,6 +571,7 @@ func (r *Reader) newPane(title string, addTopLeftBorderTip bool) *tview.Box {
 	) func(screen tcell.Screen, x int, y int, width int, height int) (int, int, int, int) {
 
 		return func(screen tcell.Screen, x int, y int, width int, height int) (int, int, int, int) {
+			lineStyle := r.theme.lineStyle()
 			// Draw top and optionally bottom borders.
 			for cx := x; cx < x+width; cx++ {
 				screen.SetContent(cx, y, tview.BoxDrawingsLightHorizontal, nil, lineStyle)
@@ -615,9 +624,8 @@ func (r *Reader) newPopup(
 
 func (r *Reader) newPaneDivider() *tview.Box {
 
-	style := r.theme.lineStyle()
 	drawf := func(screen tcell.Screen, x int, y int, width int, height int) (int, int, int, int) {
-
+		style := r.theme.lineStyle()
 		screen.SetContent(x, y, tview.BoxDrawingsLightDownAndHorizontal, nil, style)
 		for cy := y + 1; cy < y+height; cy++ {
 			screen.SetContent(x, cy, tview.BoxDrawingsLightVertical, nil, style)
@@ -630,9 +638,8 @@ func (r *Reader) newPaneDivider() *tview.Box {
 
 func (r *Reader) newNarrowStatusBarBorder() *tview.Box {
 
-	style := r.theme.lineStyle()
 	drawf := func(screen tcell.Screen, x int, y int, width int, height int) (int, int, int, int) {
-
+		style := r.theme.lineStyle()
 		for cx := x; cx < x+width; cx++ {
 			screen.SetContent(cx, y, tview.BoxDrawingsLightHorizontal, nil, style)
 		}
@@ -644,10 +651,8 @@ func (r *Reader) newNarrowStatusBarBorder() *tview.Box {
 
 func (r *Reader) newWideStatusBarBorder(branchPoint int) *tview.Box {
 
-	style := r.theme.lineStyle()
-
 	drawf := func(screen tcell.Screen, x int, y int, width int, height int) (int, int, int, int) {
-
+		style := r.theme.lineStyle()
 		for cx := x; cx < x+width; cx++ {
 			if cx == branchPoint {
 				screen.SetContent(cx, y, tview.BoxDrawingsLightUpAndHorizontal, nil, style)
@@ -703,7 +708,23 @@ type Theme struct {
 	PopupTitleForeground   tcell.Color
 	PopupBorderForeground  tcell.Color
 
+	NormalBorderForeground tcell.Color
+	NormalTitleForeground  tcell.Color
+
+	DimBorderForeground tcell.Color
+	DimTitleForeground  tcell.Color
+
 	WideViewMinWidth int
+}
+
+func (theme *Theme) Dim() {
+	theme.BorderForeground = theme.DimBorderForeground
+	theme.TitleForeground = theme.DimTitleForeground
+}
+
+func (theme *Theme) Normalize() {
+	theme.BorderForeground = theme.NormalBorderForeground
+	theme.TitleForeground = theme.NormalTitleForeground
 }
 
 func (theme *Theme) lineStyle() tcell.Style {
@@ -729,6 +750,13 @@ var DarkTheme = &Theme{
 	StatusNormalForeground: tcell.ColorDarkGoldenrod,
 	PopupBorderForeground:  tcell.ColorGray,
 	PopupTitleForeground:   tcell.ColorAqua,
+
+	// TODO: Add New() to ensure values are equal.
+	NormalBorderForeground: tcell.ColorWhite,
+	NormalTitleForeground:  tcell.ColorBlue,
+
+	DimBorderForeground: tcell.ColorDimGray,
+	DimTitleForeground:  tcell.ColorDimGray,
 
 	WideViewMinWidth: 150,
 }
