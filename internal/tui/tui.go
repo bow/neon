@@ -24,8 +24,6 @@ const (
 	versionPageName = "version"
 	welcomePageName = "welcome"
 
-	pulledIcon = "▼"
-
 	shortDateFormat = "02/Jan/06 15:04"
 	longDateFormat  = "2 January 2006 - 15:04:05 MST"
 
@@ -49,12 +47,7 @@ type Reader struct {
 	feedsPane   *tview.Box
 	entriesPane *tview.Box
 	readingPane *tview.Box
-
-	statusWidget       *tview.TextView
-	lastPullTextWidget *tview.TextView
-	lastPullIconWidget *tview.TextView
-	statusBarVisible   bool
-	statusBar          *tview.Flex
+	statusBar   *statusBar
 
 	statsCache *internal.Stats
 }
@@ -92,8 +85,8 @@ func (r *Reader) Show() error {
 		return err
 	}
 	if stats.NumFeeds > 0 {
-		r.setLastPullTime(stats.LastPullTime)
-		r.setLastPullIcon()
+		r.statusBar.setLastPullTime(stats.LastPullTime)
+		r.statusBar.setLastPullIcon()
 	}
 	if !r.isInitialized() {
 		welcomeText := `Hello and welcome the iris reader.
@@ -158,43 +151,18 @@ func (r *Reader) setupMainPage() {
 		).
 		AddItem(r.newWideStatusBarBorder(45), 1, 0, false)
 
-	statusWidget := tview.NewTextView().SetTextAlign(tview.AlignLeft).
-		SetChangedFunc(func() { r.app.Draw() })
-
-	lastPullIconWidget := tview.NewTextView().SetTextColor(r.theme.LastPullForeground).
-		SetTextAlign(tview.AlignCenter)
-
-	lastPullTextWidget := tview.NewTextView().SetTextColor(r.theme.LastPullForeground).
-		SetTextAlign(tview.AlignRight).
-		SetChangedFunc(func() { r.app.Draw() })
-
-	lastPullFlex := tview.NewFlex().
-		SetDirection(tview.FlexColumn).
-		AddItem(lastPullIconWidget, 1, 0, false).
-		AddItem(lastPullTextWidget, len(shortDateFormat)+1, 0, true)
-
-	statusBar := tview.NewFlex().
-		SetDirection(tview.FlexColumn).
-		AddItem(statusWidget, 0, 1, false).
-		AddItem(lastPullFlex, len(shortDateFormat)+2, 1, false)
-
 	mainPage := tview.NewGrid().
 		SetRows(0).
 		SetBorders(false).
 		AddItem(narrowFlex, 0, 0, 1, 1, 0, 0, false).
 		AddItem(wideFlex, 0, 0, 1, 1, 0, r.theme.WideViewMinWidth, false)
 
+	statusBar := newStatusBar(r)
 	mainPage = r.addStatusBar(mainPage, statusBar)
 
 	r.feedsPane = feedsPane
 	r.entriesPane = entriesPane
 	r.readingPane = readingPane
-
-	r.statusWidget = statusWidget
-	r.lastPullTextWidget = lastPullTextWidget
-	r.lastPullIconWidget = lastPullIconWidget
-	r.statusBar = statusBar
-	r.statusBarVisible = true
 
 	r.mainPage = mainPage
 }
@@ -377,7 +345,7 @@ func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 				return nil
 
 			case 'b':
-				r.toggleStatusBar()
+				r.statusBar.toggle()
 				return nil
 
 			case 'h', '?':
@@ -438,8 +406,7 @@ func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 			switch keyr {
 			case 'P':
 
-				// TODO: Consider wrapping status bar as own primitive.
-				r.setNormalStatus("Pulling feeds")
+				r.statusBar.setNormalStatus("Pulling feeds")
 				go func() {
 					var count int
 					ch := r.store.PullFeeds(r.ctx, []internal.ID{})
@@ -448,13 +415,13 @@ func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 							// TODO: Add ok / fail status in ...?
 							panic(err)
 						}
-						r.setNormalStatus("Pulling: %s done", pr.URL())
+						r.statusBar.setNormalStatus("Pulling: %s done", pr.URL())
 						count++
 					}
 					if count > 1 {
-						r.setNormalStatus("Pulled %d feeds successfully", count)
+						r.statusBar.setNormalStatus("Pulled %d feeds successfully", count)
 					} else {
-						r.setNormalStatus("Pulled %d feed successfully", count)
+						r.statusBar.setNormalStatus("Pulled %d feed successfully", count)
 					}
 
 					stats, err := r.store.GetGlobalStats(r.ctx)
@@ -462,7 +429,7 @@ func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 						panic(err)
 					}
 					r.statsCache = stats
-					r.setLastPullTime(stats.LastPullTime)
+					r.statusBar.setLastPullTime(stats.LastPullTime)
 				}()
 				return nil
 
@@ -491,40 +458,12 @@ func (r *Reader) getFocusTarget(keyr rune) tview.Primitive {
 	return target
 }
 
-func (r *Reader) addStatusBar(mainPage *tview.Grid, statusBar *tview.Flex) *tview.Grid {
-	return mainPage.SetRows(0, 1).AddItem(statusBar, 1, 0, 1, 1, 0, 0, false)
+func (r *Reader) addStatusBar(mainPage *tview.Grid, bar *statusBar) *tview.Grid {
+	return mainPage.SetRows(0, 1).AddItem(bar.container, 1, 0, 1, 1, 0, 0, false)
 }
 
-func (r *Reader) removeStatusBar(mainPage *tview.Grid, statusBar *tview.Flex) *tview.Grid {
-	return mainPage.RemoveItem(statusBar).SetRows(0)
-}
-
-func (r *Reader) toggleStatusBar() {
-	if r.statusBarVisible {
-		r.removeStatusBar(r.mainPage, r.statusBar)
-	} else {
-		r.addStatusBar(r.mainPage, r.statusBar)
-	}
-	r.statusBarVisible = !r.statusBarVisible
-}
-
-func (r *Reader) setNormalStatus(text string, a ...any) {
-	r.statusWidget.
-		SetTextColor(r.theme.StatusNormalForeground).
-		Clear()
-	if len(a) > 0 {
-		fmt.Fprintf(r.statusWidget, "%s\n", fmt.Sprintf(text, a...))
-	} else {
-		fmt.Fprintf(r.statusWidget, "%s\n", text)
-	}
-}
-
-func (r *Reader) setLastPullIcon() {
-	r.lastPullIconWidget.SetText(pulledIcon)
-}
-
-func (r *Reader) setLastPullTime(value *time.Time) {
-	r.lastPullTextWidget.SetText(value.Local().Format(shortDateFormat))
+func (r *Reader) removeStatusBar(mainPage *tview.Grid, bar *statusBar) *tview.Grid {
+	return mainPage.RemoveItem(bar.container).SetRows(0)
 }
 
 func (r *Reader) getAdjacentFocusTarget(
