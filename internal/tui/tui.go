@@ -409,8 +409,12 @@ func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 			switch keyr {
 			case 'P':
 
-				r.bar.showNormalActivity("Pulling feeds")
 				go func() {
+					r.bar.Lock()
+					defer r.bar.Unlock()
+
+					r.bar.showNormalActivity("Pulling feeds")
+
 					var count int
 					ch := r.store.PullFeeds(r.ctx, []internal.ID{})
 					for pr := range ch {

@@ -2,6 +2,7 @@ package tui
 
 import (
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/rivo/tview"
@@ -10,6 +11,8 @@ import (
 const iconAllRead = "✔"
 
 type statusBar struct {
+	sync.RWMutex
+
 	theme     *Theme
 	container *tview.Flex
 
