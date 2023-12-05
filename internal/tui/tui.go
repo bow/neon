@@ -86,7 +86,9 @@ func (r *Reader) Show() error {
 	}
 	if stats.NumFeeds > 0 {
 		r.bar.setLastPullTime(stats.LastPullTime)
-		r.bar.setLastPullIcon()
+		if stats.NumEntriesUnread == 0 {
+			r.bar.setAllRead()
+		}
 	}
 	if !r.isInitialized() {
 		welcomeText := `Hello and welcome the iris reader.
@@ -407,7 +409,7 @@ func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 			switch keyr {
 			case 'P':
 
-				r.bar.setNormalStatus("Pulling feeds")
+				r.bar.showNormalActivity("Pulling feeds")
 				go func() {
 					var count int
 					ch := r.store.PullFeeds(r.ctx, []internal.ID{})
@@ -416,13 +418,13 @@ func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 							// TODO: Add ok / fail status in ...?
 							panic(err)
 						}
-						r.bar.setNormalStatus("Pulling: %s done", pr.URL())
+						r.bar.showNormalActivity("Pulling: %s done", pr.URL())
 						count++
 					}
 					if count > 1 {
-						r.bar.setNormalStatus("Pulled %d feeds successfully", count)
+						r.bar.showNormalActivity("Pulled %d feeds successfully", count)
 					} else {
-						r.bar.setNormalStatus("Pulled %d feed successfully", count)
+						r.bar.showNormalActivity("Pulled %d feed successfully", count)
 					}
 
 					stats, err := r.store.GetGlobalStats(r.ctx)
