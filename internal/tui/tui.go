@@ -429,12 +429,13 @@ func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 						r.bar.showNormalActivity("Pulling: %s done", pr.URL())
 						count++
 					}
-					if count > 1 {
-						r.bar.showNormalActivity("Pulled %d feeds successfully", count)
-					} else if count == 1 {
-						r.bar.showNormalActivity("Pulled %d feed successfully", count)
-					} else {
+					switch count {
+					case 0:
 						r.bar.showNormalActivity("No feeds to pull")
+					case 1:
+						r.bar.showNormalActivity("Pulled %d feed successfully", count)
+					default:
+						r.bar.showNormalActivity("Pulled %d feeds successfully", count)
 					}
 
 					stats, err := r.store.GetGlobalStats(r.ctx)
