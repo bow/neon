@@ -42,7 +42,6 @@ func (db *SQLite) PullFeeds(
 			return nil
 		}
 		if len(pks) == 0 {
-			c <- internal.NewPullResultFromFeed(nil, nil)
 			return nil
 		}
 
