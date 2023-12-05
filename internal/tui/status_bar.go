@@ -10,7 +10,7 @@ import (
 const pulledIcon = "▼"
 
 type statusBar struct {
-	reader    *Reader
+	theme     *Theme
 	container *tview.Flex
 
 	statusWidget       *tview.TextView
@@ -20,17 +20,15 @@ type statusBar struct {
 	visible bool
 }
 
-func newStatusBar(r *Reader) *statusBar {
+func newStatusBar(theme *Theme) *statusBar {
 
-	statusWidget := tview.NewTextView().SetTextAlign(tview.AlignLeft).
-		SetChangedFunc(func() { r.app.Draw() })
+	statusWidget := tview.NewTextView().SetTextAlign(tview.AlignLeft)
 
-	lastPullIconWidget := tview.NewTextView().SetTextColor(r.theme.LastPullForeground).
+	lastPullIconWidget := tview.NewTextView().SetTextColor(theme.LastPullForeground).
 		SetTextAlign(tview.AlignCenter)
 
-	lastPullTextWidget := tview.NewTextView().SetTextColor(r.theme.LastPullForeground).
-		SetTextAlign(tview.AlignRight).
-		SetChangedFunc(func() { r.app.Draw() })
+	lastPullTextWidget := tview.NewTextView().SetTextColor(theme.LastPullForeground).
+		SetTextAlign(tview.AlignRight)
 
 	lastPullWidget := tview.NewFlex().
 		SetDirection(tview.FlexColumn).
@@ -43,7 +41,7 @@ func newStatusBar(r *Reader) *statusBar {
 		AddItem(lastPullWidget, len(shortDateFormat)+2, 1, false)
 
 	bar := statusBar{
-		reader:             r,
+		theme:              theme,
 		container:          container,
 		lastPullTextWidget: lastPullTextWidget,
 		lastPullIconWidget: lastPullIconWidget,
@@ -51,9 +49,14 @@ func newStatusBar(r *Reader) *statusBar {
 		visible:            true,
 	}
 
-	r.statusBar = &bar
-
 	return &bar
+}
+
+func (b *statusBar) setChangedFunc(handler func()) *statusBar {
+	b.statusWidget.SetChangedFunc(handler)
+	b.lastPullIconWidget.SetChangedFunc(handler)
+	b.lastPullTextWidget.SetChangedFunc(handler)
+	return b
 }
 
 func (b *statusBar) setLastPullIcon() {
@@ -64,18 +67,28 @@ func (b *statusBar) setLastPullTime(value *time.Time) {
 	b.lastPullTextWidget.SetText(value.Local().Format(shortDateFormat))
 }
 
-func (b *statusBar) toggle() {
+func (b *statusBar) toggleFromMainPage(page *tview.Grid) {
 	if b.visible {
-		b.reader.removeStatusBar(b.reader.mainPage, b)
+		b.removeFromMainPage(page)
 	} else {
-		b.reader.addStatusBar(b.reader.mainPage, b)
+		b.addToMainPage(page)
 	}
 	b.visible = !b.visible
 }
 
+func (b *statusBar) addToMainPage(page *tview.Grid) *statusBar {
+	page.SetRows(0, 1).AddItem(b.container, 1, 0, 1, 1, 0, 0, false)
+	return b
+}
+
+func (b *statusBar) removeFromMainPage(page *tview.Grid) *statusBar {
+	page.RemoveItem(b.container).SetRows(0)
+	return b
+}
+
 func (b *statusBar) setNormalStatus(text string, a ...any) {
 	b.statusWidget.
-		SetTextColor(b.reader.theme.StatusNormalForeground).
+		SetTextColor(b.theme.StatusNormalForeground).
 		Clear()
 	if len(a) > 0 {
 		fmt.Fprintf(b.statusWidget, "%s\n", fmt.Sprintf(text, a...))

@@ -47,7 +47,7 @@ type Reader struct {
 	feedsPane   *tview.Box
 	entriesPane *tview.Box
 	readingPane *tview.Box
-	statusBar   *statusBar
+	bar         *statusBar
 
 	statsCache *internal.Stats
 }
@@ -85,8 +85,8 @@ func (r *Reader) Show() error {
 		return err
 	}
 	if stats.NumFeeds > 0 {
-		r.statusBar.setLastPullTime(stats.LastPullTime)
-		r.statusBar.setLastPullIcon()
+		r.bar.setLastPullTime(stats.LastPullTime)
+		r.bar.setLastPullIcon()
 	}
 	if !r.isInitialized() {
 		welcomeText := `Hello and welcome the iris reader.
@@ -157,14 +157,15 @@ func (r *Reader) setupMainPage() {
 		AddItem(narrowFlex, 0, 0, 1, 1, 0, 0, false).
 		AddItem(wideFlex, 0, 0, 1, 1, 0, r.theme.WideViewMinWidth, false)
 
-	statusBar := newStatusBar(r)
-	mainPage = r.addStatusBar(mainPage, statusBar)
-
 	r.feedsPane = feedsPane
 	r.entriesPane = entriesPane
 	r.readingPane = readingPane
 
 	r.mainPage = mainPage
+
+	r.bar = newStatusBar(r.theme).
+		setChangedFunc(func() { r.app.Draw() }).
+		addToMainPage(r.mainPage)
 }
 
 func (r *Reader) setupHelpPage() {
@@ -345,7 +346,7 @@ func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 				return nil
 
 			case 'b':
-				r.statusBar.toggle()
+				r.bar.toggleFromMainPage(r.mainPage)
 				return nil
 
 			case 'h', '?':
@@ -406,7 +407,7 @@ func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 			switch keyr {
 			case 'P':
 
-				r.statusBar.setNormalStatus("Pulling feeds")
+				r.bar.setNormalStatus("Pulling feeds")
 				go func() {
 					var count int
 					ch := r.store.PullFeeds(r.ctx, []internal.ID{})
@@ -415,13 +416,13 @@ func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 							// TODO: Add ok / fail status in ...?
 							panic(err)
 						}
-						r.statusBar.setNormalStatus("Pulling: %s done", pr.URL())
+						r.bar.setNormalStatus("Pulling: %s done", pr.URL())
 						count++
 					}
 					if count > 1 {
-						r.statusBar.setNormalStatus("Pulled %d feeds successfully", count)
+						r.bar.setNormalStatus("Pulled %d feeds successfully", count)
 					} else {
-						r.statusBar.setNormalStatus("Pulled %d feed successfully", count)
+						r.bar.setNormalStatus("Pulled %d feed successfully", count)
 					}
 
 					stats, err := r.store.GetGlobalStats(r.ctx)
@@ -429,7 +430,7 @@ func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 						panic(err)
 					}
 					r.statsCache = stats
-					r.statusBar.setLastPullTime(stats.LastPullTime)
+					r.bar.setLastPullTime(stats.LastPullTime)
 				}()
 				return nil
 
@@ -456,14 +457,6 @@ func (r *Reader) getFocusTarget(keyr rune) tview.Primitive {
 		panic(fmt.Sprintf("unexpected key: %c", keyr))
 	}
 	return target
-}
-
-func (r *Reader) addStatusBar(mainPage *tview.Grid, bar *statusBar) *tview.Grid {
-	return mainPage.SetRows(0, 1).AddItem(bar.container, 1, 0, 1, 1, 0, 0, false)
-}
-
-func (r *Reader) removeStatusBar(mainPage *tview.Grid, bar *statusBar) *tview.Grid {
-	return mainPage.RemoveItem(bar.container).SetRows(0)
 }
 
 func (r *Reader) getAdjacentFocusTarget(
