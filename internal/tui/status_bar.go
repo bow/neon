@@ -111,3 +111,9 @@ func (b *statusBar) showNormalActivity(text string, a ...any) {
 		fmt.Fprintf(b.activityWidget, "%s\n", text)
 	}
 }
+
+func (b *statusBar) clear() {
+	b.activityWidget.Clear()
+	b.readWidget.Clear()
+	b.lastPullWidget.Clear()
+}
