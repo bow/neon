@@ -344,10 +344,14 @@ func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 				return nil
 
 			case 'b':
+				r.bar.Lock()
+				defer r.bar.Unlock()
 				r.bar.toggleFromMainPage(r.mainPage)
 				return nil
 
 			case 'C':
+				r.bar.Lock()
+				defer r.bar.Unlock()
 				r.bar.clear()
 				return nil
 
