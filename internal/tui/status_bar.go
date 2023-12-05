@@ -6,6 +6,8 @@ import (
 	"time"
 
 	"github.com/rivo/tview"
+
+	"github.com/bow/iris/internal"
 )
 
 const iconAllRead = "✔"
@@ -60,6 +62,16 @@ func (b *statusBar) setChangedFunc(handler func()) *statusBar {
 	b.readWidget.SetChangedFunc(handler)
 	b.lastPullWidget.SetChangedFunc(handler)
 	return b
+}
+
+func (b *statusBar) updateFromStats(stats *internal.Stats) {
+	if stats.NumFeeds < 1 {
+		return
+	}
+	b.setLastPullTime(stats.LastPullTime)
+	if stats.NumEntriesUnread == 0 {
+		b.setAllRead()
+	}
 }
 
 func (b *statusBar) setAllRead() {

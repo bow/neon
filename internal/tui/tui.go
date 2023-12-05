@@ -84,12 +84,7 @@ func (r *Reader) Show() error {
 	if err != nil {
 		return err
 	}
-	if stats.NumFeeds > 0 {
-		r.bar.setLastPullTime(stats.LastPullTime)
-		if stats.NumEntriesUnread == 0 {
-			r.bar.setAllRead()
-		}
-	}
+	r.bar.updateFromStats(stats)
 	if !r.isInitialized() {
 		welcomeText := `Hello and welcome the iris reader.
 
@@ -436,7 +431,7 @@ func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 						panic(err)
 					}
 					r.statsCache = stats
-					r.bar.setLastPullTime(stats.LastPullTime)
+					r.bar.updateFromStats(stats)
 				}()
 				return nil
 
