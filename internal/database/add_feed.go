@@ -61,8 +61,14 @@ func (db *SQLite) AddFeed(
 			return ierr
 		}
 
-		if ierr = addFeedTags(ctx, tx, feedID, tags); ierr != nil {
-			return ierr
+		if len(tags) > 0 {
+			if ierr = addFeedTags(ctx, tx, feedID, tags); ierr != nil {
+				return ierr
+			}
+		} else {
+			if ierr = removeFeedTags(ctx, tx, feedID); ierr != nil {
+				return ierr
+			}
 		}
 
 		if record, ierr = getFeed(ctx, tx, feedID); ierr != nil {
@@ -331,5 +337,24 @@ func addFeedTags(
 		}
 	}
 
+	return nil
+}
+
+func removeFeedTags(
+	ctx context.Context,
+	tx *sql.Tx,
+	feedID ID,
+) error {
+	sql1 := `DELETE FROM feeds_x_feed_tags WHERE feed_id = ?`
+	stmt1, err := tx.PrepareContext(ctx, sql1)
+	if err != nil {
+		return err
+	}
+	defer stmt1.Close()
+
+	_, err = stmt1.ExecContext(ctx, feedID)
+	if err != nil {
+		return err
+	}
 	return nil
 }
