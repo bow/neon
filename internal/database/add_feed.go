@@ -21,25 +21,28 @@ func (db *SQLite) AddFeed(
 	desc *string,
 	tags []string,
 	isStarred *bool,
-) (*internal.Feed, error) {
+) (*internal.Feed, bool, error) {
 
 	fail := failF("SQLite.AddFeed")
 
 	feed, err := db.parser.ParseURLWithContext(feedURL, ctx)
 	if err != nil {
-		return nil, fail(err)
+		return nil, false, fail(err)
 	}
 	// Handle possible specs deviations.
 	if feed.FeedLink == "" {
 		feed.FeedLink = feedURL
 	}
 
-	var created *feedRecord
+	var (
+		record *feedRecord
+		added  = pointer(false)
+	)
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
 
 		now := time.Now()
 
-		feedID, _, ierr := upsertFeed(
+		feedID, feedAdded, ierr := upsertFeed(
 			ctx,
 			tx,
 			feed.FeedLink,
@@ -62,9 +65,10 @@ func (db *SQLite) AddFeed(
 			return ierr
 		}
 
-		if created, ierr = getFeed(ctx, tx, feedID); ierr != nil {
+		if record, ierr = getFeed(ctx, tx, feedID); ierr != nil {
 			return ierr
 		}
+		added = &feedAdded
 
 		return nil
 	}
@@ -74,10 +78,10 @@ func (db *SQLite) AddFeed(
 
 	err = db.withTx(ctx, dbFunc)
 	if err != nil {
-		return nil, fail(err)
+		return nil, *added, fail(err)
 	}
 
-	return created.feed(), nil
+	return record.feed(), *added, nil
 }
 
 func upsertFeed(

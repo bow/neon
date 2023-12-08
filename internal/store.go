@@ -15,7 +15,8 @@ type FeedStore interface {
 		tags []string,
 		isStarred *bool,
 	) (
-		addedFeed *Feed,
+		feed *Feed,
+		added bool,
 		err error,
 	)
 

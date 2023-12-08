@@ -328,8 +328,6 @@ func (db *testDB) addFeedWithURL(url string) {
 	require.NoError(db.t, tx.Commit())
 }
 
-func pointer[T any](value T) *T { return &value }
-
 // toNullString wraps the given string into an sql.NullString value. An empty string input is
 // considered a database NULL value.
 func toNullString(v string) sql.NullString {

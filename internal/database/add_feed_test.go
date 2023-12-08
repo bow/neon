@@ -47,15 +47,17 @@ func TestAddFeedOkMinimal(t *testing.T) {
 	a.Equal(0, db.countFeedTags())
 	a.False(existf())
 
-	created, err := db.AddFeed(context.Background(), feed.Link, nil, nil, nil, nil)
+	record, added, err := db.AddFeed(context.Background(), feed.Link, nil, nil, nil, nil)
 	r.NoError(err)
 
-	a.Equal(feed.Title, created.Title)
-	a.Equal(pointer(feed.Description), created.Description)
-	a.Equal(pointer(feed.Link), created.SiteURL)
-	a.Equal(feed.FeedLink, created.FeedURL)
-	a.Empty(created.Tags)
-	a.False(created.IsStarred)
+	a.True(added)
+
+	a.Equal(feed.Title, record.Title)
+	a.Equal(pointer(feed.Description), record.Description)
+	a.Equal(pointer(feed.Link), record.SiteURL)
+	a.Equal(feed.FeedLink, record.FeedURL)
+	a.Empty(record.Tags)
+	a.False(record.IsStarred)
 
 	a.Equal(1, db.countFeeds())
 	a.Equal(0, db.countEntries(feed.FeedLink))
@@ -129,7 +131,7 @@ func TestAddFeedOkExtended(t *testing.T) {
 	a.False(existe(feed.Items[0]))
 	a.False(existe(feed.Items[1]))
 
-	created, err := db.AddFeed(
+	record, added, err := db.AddFeed(
 		context.Background(),
 		feed.Link,
 		&title,
@@ -139,12 +141,14 @@ func TestAddFeedOkExtended(t *testing.T) {
 	)
 	r.NoError(err)
 
-	a.Equal(title, created.Title)
-	a.Equal(description, *created.Description)
-	a.Equal(pointer(feed.Link), created.SiteURL)
-	a.Equal(feed.FeedLink, created.FeedURL)
-	a.Equal(tags, created.Tags)
-	a.True(created.IsStarred)
+	a.True(added)
+
+	a.Equal(title, record.Title)
+	a.Equal(description, *record.Description)
+	a.Equal(pointer(feed.Link), record.SiteURL)
+	a.Equal(feed.FeedLink, record.FeedURL)
+	a.Equal(tags, record.Tags)
+	a.True(record.IsStarred)
 
 	a.Equal(1, db.countFeeds())
 	a.Equal(2, db.countEntries(feed.FeedLink))
@@ -217,15 +221,17 @@ func TestAddFeedOkURLExists(t *testing.T) {
 	a.False(existe(feed.Items[0]))
 	a.False(existe(feed.Items[1]))
 
-	created, err := db.AddFeed(context.Background(), feed.Link, nil, nil, tags, pointer(true))
+	record, added, err := db.AddFeed(context.Background(), feed.Link, nil, nil, tags, pointer(true))
 	r.NoError(err)
 
-	a.Equal(feed.Title, created.Title)
-	a.Equal(pointer(feed.Description), created.Description)
-	a.Equal(pointer(feed.Link), created.SiteURL)
-	a.Equal(feed.FeedLink, created.FeedURL)
-	a.Equal(tags, created.Tags)
-	a.True(created.IsStarred)
+	a.False(added)
+
+	a.Equal(feed.Title, record.Title)
+	a.Equal(pointer(feed.Description), record.Description)
+	a.Equal(pointer(feed.Link), record.SiteURL)
+	a.Equal(feed.FeedLink, record.FeedURL)
+	a.Equal(tags, record.Tags)
+	a.True(record.IsStarred)
 
 	a.Equal(1, db.countFeeds())
 	a.Equal(2, db.countEntries(feed.FeedLink))

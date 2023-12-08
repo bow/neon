@@ -36,7 +36,7 @@ func TestAddFeedOk(t *testing.T) {
 		Tags:        []string{"tag-1", "tag-2", "tag-3"},
 		IsStarred:   pointer(true),
 	}
-	created := &internal.Feed{
+	record := &internal.Feed{
 		ID:          internal.ID(5),
 		Title:       "feed-title-original",
 		Description: pointer("feed-description-original"),
@@ -56,16 +56,16 @@ func TestAddFeedOk(t *testing.T) {
 			req.Tags,
 			req.IsStarred,
 		).
-		Return(created, nil)
+		Return(record, true, nil)
 
 	rsp, err := client.AddFeed(context.Background(), &req)
 	r.NoError(err)
 
-	a.Equal(created.Title, rsp.Feed.GetTitle())
-	a.Equal(created.Description, rsp.Feed.Description)
-	a.Equal(created.SiteURL, rsp.Feed.SiteUrl)
-	a.Equal(created.FeedURL, rsp.Feed.FeedUrl)
-	a.Equal(created.IsStarred, rsp.Feed.IsStarred)
+	a.Equal(record.Title, rsp.Feed.GetTitle())
+	a.Equal(record.Description, rsp.Feed.Description)
+	a.Equal(record.SiteURL, rsp.Feed.SiteUrl)
+	a.Equal(record.FeedURL, rsp.Feed.FeedUrl)
+	a.Equal(record.IsStarred, rsp.Feed.IsStarred)
 }
 
 func TestListFeedsOk(t *testing.T) {

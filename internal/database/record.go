@@ -224,3 +224,6 @@ func deref[T any](v *T, def T) T {
 	}
 	return def
 }
+
+// pointer returns a pointer to the value.
+func pointer[T any](value T) *T { return &value }
