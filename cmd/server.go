@@ -70,7 +70,7 @@ func newServerCommand() *cobra.Command {
 		panic(err)
 	}
 
-	command.AddCommand(newServerProtoCommand())
+	command.AddCommand(newServerShowProtoCommand())
 
 	return &command
 }

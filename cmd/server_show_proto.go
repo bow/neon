@@ -11,15 +11,16 @@ import (
 	"github.com/bow/iris/api"
 )
 
-// newServerProtoCommand creates a new 'server' subcommand along with its command-line flags.
-func newServerProtoCommand() *cobra.Command {
+// newServerShowProtoCommand creates a new subcommand for showing the server's protobuf
+// interface.
+func newServerShowProtoCommand() *cobra.Command {
 
-	var name = "proto"
+	var name = "show-proto"
 
 	command := cobra.Command{
 		Use:     name,
-		Aliases: makeAlias(name),
-		Short:   "Show the server proto file",
+		Aliases: []string{"sp"},
+		Short:   "Show the server protobuf interface",
 
 		DisableFlagsInUseLine: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
