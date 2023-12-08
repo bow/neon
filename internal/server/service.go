@@ -26,7 +26,7 @@ func (svc *service) AddFeed(
 	req *api.AddFeedRequest,
 ) (*api.AddFeedResponse, error) {
 
-	record, _, err := svc.store.AddFeed(
+	record, added, err := svc.store.AddFeed(
 		ctx,
 		req.GetUrl(),
 		req.Title,
@@ -38,7 +38,7 @@ func (svc *service) AddFeed(
 		return nil, err
 	}
 
-	rsp := api.AddFeedResponse{Feed: toFeedPb(record)}
+	rsp := api.AddFeedResponse{Feed: toFeedPb(record), IsAdded: added}
 
 	return &rsp, nil
 }

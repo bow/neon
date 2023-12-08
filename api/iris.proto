@@ -87,6 +87,7 @@ message AddFeedRequest {
 
 message AddFeedResponse {
   Feed feed = 1;
+  bool is_added = 2;
 }
 
 message EditFeedsRequest {

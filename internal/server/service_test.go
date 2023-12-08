@@ -61,6 +61,7 @@ func TestAddFeedOk(t *testing.T) {
 	rsp, err := client.AddFeed(context.Background(), &req)
 	r.NoError(err)
 
+	a.True(rsp.IsAdded)
 	a.Equal(record.Title, rsp.Feed.GetTitle())
 	a.Equal(record.Description, rsp.Feed.Description)
 	a.Equal(record.SiteURL, rsp.Feed.SiteUrl)
