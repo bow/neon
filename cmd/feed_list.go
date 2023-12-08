@@ -48,6 +48,13 @@ func fmtFeed(feed *internal.Feed) string {
 		cat = func(format string, a ...any) { fmt.Fprintf(&sb, format, a...) }
 	)
 
+	fmtTags := func(tags []string) string {
+		if len(tags) > 0 {
+			return fmt.Sprintf("#%s", strings.Join(tags, " #"))
+		}
+		return "-"
+	}
+
 	kv := []*struct {
 		k, v string
 	}{
@@ -56,7 +63,7 @@ func fmtFeed(feed *internal.Feed) string {
 		{"Updated", fmtOrEmpty(feed.Updated)},
 		{"Unread", fmt.Sprintf("%d/%d", feed.NumEntriesUnread(), feed.NumEntriesTotal())},
 		{"URL", derefOrEmpty(feed.SiteURL)},
-		{"Tags", fmt.Sprintf("#%s", strings.Join(feed.Tags, " #"))},
+		{"Tags", fmtTags(feed.Tags)},
 	}
 
 	keyMaxLen := 0
