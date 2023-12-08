@@ -6,6 +6,7 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/bow/iris/internal"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
@@ -64,17 +65,7 @@ func newFeedAddCommand() *cobra.Command {
 				return err
 			}
 
-			var msg string
-			if added {
-				msg = "added feed"
-			} else {
-				msg = "refreshed feed"
-			}
-
-			log.Info().
-				Str("feed_url", feed.FeedURL).
-				Str("title", feed.Title).
-				Msg(msg)
+			logAddResult(feed, added)
 
 			return nil
 		},
@@ -92,4 +83,33 @@ func newFeedAddCommand() *cobra.Command {
 	}
 
 	return &command
+}
+
+func logAddResult(feed *internal.Feed, added bool) {
+
+	var msg string
+	if added {
+		msg = "added feed"
+	} else {
+		msg = "refreshed feed"
+	}
+
+	l := log.Info()
+	if feed.FeedURL != "" {
+		l = l.Str("feed_url", feed.FeedURL)
+	}
+	if feed.Title != "" {
+		l = l.Str("title", feed.Title)
+	}
+	if feed.SiteURL != nil {
+		l = l.Str("site_url", *feed.SiteURL)
+	}
+	if feed.IsStarred {
+		l = l.Bool("starred", feed.IsStarred)
+	}
+	if len(feed.Tags) > 0 {
+		l = l.Strs("tags", feed.Tags)
+	}
+
+	l.Msg(msg)
 }
