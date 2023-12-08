@@ -27,7 +27,7 @@ func (db *SQLite) AddFeed(
 
 	feed, err := db.parser.ParseURLWithContext(feedURL, ctx)
 	if err != nil {
-		return nil, false, fail(err)
+		return nil, false, err
 	}
 	// Handle possible specs deviations.
 	if feed.FeedLink == "" {
