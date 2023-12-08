@@ -44,7 +44,7 @@ func newFeedCommand() *cobra.Command {
 	command.AddCommand(newFeedListCommand())
 	command.AddCommand(newFeedPullCommand())
 	command.AddCommand(newFeedListEntriesCommand())
-	command.AddCommand(newFeedViewEntryCommand())
+	command.AddCommand(newFeedShowEntryCommand())
 
 	return &command
 }

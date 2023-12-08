@@ -11,13 +11,13 @@ import (
 	"github.com/bow/iris/internal"
 )
 
-func newFeedViewEntryCommand() *cobra.Command {
-	var name = "view-entry"
+func newFeedShowEntryCommand() *cobra.Command {
+	var name = "show-entry"
 
 	command := cobra.Command{
 		Use:                   fmt.Sprintf("%s ENTRY-ID", name),
-		Aliases:               []string{"view-e", "ve"},
-		Short:                 "View a feed entry",
+		Aliases:               []string{"show-e", "se"},
+		Short:                 "Show a feed entry",
 		DisableFlagsInUseLine: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
 
