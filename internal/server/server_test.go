@@ -5,6 +5,7 @@ package server
 
 import (
 	"context"
+	"fmt"
 	"net"
 	"testing"
 	"time"
@@ -25,7 +26,7 @@ func defaultTestServerBuilder(t *testing.T) *Builder {
 	t.Helper()
 
 	return NewBuilder().
-		Address("file://" + t.TempDir() + fmt.Sprintf("/%s.socket", internal.AppName()).
+		Address("file://" + t.TempDir() + fmt.Sprintf("/%s.socket", internal.AppName())).
 		Store(internal.NewMockFeedStore(gomock.NewController(t))).
 		Logger(zerolog.Nop())
 }
