@@ -1,17 +1,17 @@
-// Protobuf interface of the iris service.
+// Protobuf interface of the lens service.
 //
 // Copyright (c) 2022 Wibowo Arindrarto <contact@arindrarto.dev>
 // SPDX-License-Identifier: BSD-3-Clause
 
 syntax = "proto3";
 
-package iris;
+package lens;
 
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/bow/iris/api";
+option go_package = "github.com/bow/lens/api";
 
-service Iris {
+service Lens {
   // AddFeeds adds a new feed source.
   rpc AddFeed (AddFeedRequest) returns (AddFeedResponse) {}
 

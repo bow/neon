@@ -22,9 +22,9 @@ import (
 	healthapi "google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/reflection"
 
-	"github.com/bow/iris/api"
-	"github.com/bow/iris/internal"
-	"github.com/bow/iris/internal/database"
+	"github.com/bow/lens/api"
+	"github.com/bow/lens/internal"
+	"github.com/bow/lens/internal/database"
 )
 
 const (
@@ -43,7 +43,7 @@ type server struct {
 func newServer(lis net.Listener, grpcServer *grpc.Server, str internal.FeedStore) *server {
 
 	svc := service{store: str}
-	api.RegisterIrisServer(grpcServer, &svc)
+	api.RegisterLensServer(grpcServer, &svc)
 
 	var (
 		funcCh = make(chan struct{}, 1)
@@ -84,7 +84,7 @@ func newServer(lis net.Listener, grpcServer *grpc.Server, str internal.FeedStore
 }
 
 func (s *server) ServiceName() string {
-	return api.Iris_ServiceDesc.ServiceName
+	return api.Lens_ServiceDesc.ServiceName
 }
 
 func (s *server) Serve(ctx context.Context) error {

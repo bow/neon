@@ -3,7 +3,7 @@
 # Copyright (c) 2022 Wibowo Arindrarto <contact@arindrarto.dev>
 # SPDX-License-Identifier: BSD-3-Clause
 #
-# This file is part of iris <https://github.com/bow/iris>.
+# This file is part of lens <https://github.com/bow/lens>.
 
 FROM golang:1.21-alpine AS builder
 
@@ -22,19 +22,19 @@ FROM golang:1.21-alpine
 ARG REVISION
 ARG BUILD_TIME
 
-LABEL org.opencontainers.image.title="iris" \
-    org.opencontainers.image.url="https://ghcr.io/bow/iris" \
-    org.opencontainers.image.source="https://github.com/bow/iris" \
+LABEL org.opencontainers.image.title="lens" \
+    org.opencontainers.image.url="https://ghcr.io/bow/lens" \
+    org.opencontainers.image.source="https://github.com/bow/lens" \
     org.opencontainers.image.authors="Wibowo Arindrarto <contact@arindrarto.dev>" \
     org.opencontainers.image.revision="${REVISION}" \
     org.opencontainers.image.created="${BUILD_TIME}" \
     org.opencontainers.image.licenses="BSD-3-Clause"
 
-COPY --from=builder /src/bin/iris /bin/iris
+COPY --from=builder /src/bin/lens /bin/lens
 
 RUN mkdir -p /var/data/
-ENV IRIS_SERVE_ADDR=tcp://0.0.0.0:7000 \
-    IRIS_SERVE_DB_PATH=/var/data/iris.db
+ENV LENS_SERVE_ADDR=tcp://0.0.0.0:7000 \
+    LENS_SERVE_DB_PATH=/var/data/lens.db
 
 WORKDIR /runtime
-ENTRYPOINT ["iris"]
+ENTRYPOINT ["lens"]

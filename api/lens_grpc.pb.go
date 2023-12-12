@@ -1,4 +1,4 @@
-// Protobuf interface of the iris service.
+// Protobuf interface of the lens service.
 //
 // Copyright (c) 2022 Wibowo Arindrarto <contact@arindrarto.dev>
 // SPDX-License-Identifier: BSD-3-Clause
@@ -7,7 +7,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.3.0
 // - protoc             v4.24.3
-// source: iris.proto
+// source: lens.proto
 
 package api
 
@@ -24,24 +24,24 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Iris_AddFeed_FullMethodName     = "/iris.Iris/AddFeed"
-	Iris_EditFeeds_FullMethodName   = "/iris.Iris/EditFeeds"
-	Iris_ListFeeds_FullMethodName   = "/iris.Iris/ListFeeds"
-	Iris_PullFeeds_FullMethodName   = "/iris.Iris/PullFeeds"
-	Iris_DeleteFeeds_FullMethodName = "/iris.Iris/DeleteFeeds"
-	Iris_ListEntries_FullMethodName = "/iris.Iris/ListEntries"
-	Iris_EditEntries_FullMethodName = "/iris.Iris/EditEntries"
-	Iris_GetEntry_FullMethodName    = "/iris.Iris/GetEntry"
-	Iris_ExportOPML_FullMethodName  = "/iris.Iris/ExportOPML"
-	Iris_ImportOPML_FullMethodName  = "/iris.Iris/ImportOPML"
-	Iris_GetStats_FullMethodName    = "/iris.Iris/GetStats"
-	Iris_GetInfo_FullMethodName     = "/iris.Iris/GetInfo"
+	Lens_AddFeed_FullMethodName     = "/lens.Lens/AddFeed"
+	Lens_EditFeeds_FullMethodName   = "/lens.Lens/EditFeeds"
+	Lens_ListFeeds_FullMethodName   = "/lens.Lens/ListFeeds"
+	Lens_PullFeeds_FullMethodName   = "/lens.Lens/PullFeeds"
+	Lens_DeleteFeeds_FullMethodName = "/lens.Lens/DeleteFeeds"
+	Lens_ListEntries_FullMethodName = "/lens.Lens/ListEntries"
+	Lens_EditEntries_FullMethodName = "/lens.Lens/EditEntries"
+	Lens_GetEntry_FullMethodName    = "/lens.Lens/GetEntry"
+	Lens_ExportOPML_FullMethodName  = "/lens.Lens/ExportOPML"
+	Lens_ImportOPML_FullMethodName  = "/lens.Lens/ImportOPML"
+	Lens_GetStats_FullMethodName    = "/lens.Lens/GetStats"
+	Lens_GetInfo_FullMethodName     = "/lens.Lens/GetInfo"
 )
 
-// IrisClient is the client API for Iris service.
+// LensClient is the client API for Lens service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type IrisClient interface {
+type LensClient interface {
 	// AddFeeds adds a new feed source.
 	AddFeed(ctx context.Context, in *AddFeedRequest, opts ...grpc.CallOption) (*AddFeedResponse, error)
 	// EditFeeds sets one or more fields of feeds.
@@ -49,7 +49,7 @@ type IrisClient interface {
 	// ListFeeds lists all added feed sources.
 	ListFeeds(ctx context.Context, in *ListFeedsRequest, opts ...grpc.CallOption) (*ListFeedsResponse, error)
 	// PullFeeds checks feeds for updates and returns all unread entries.
-	PullFeeds(ctx context.Context, in *PullFeedsRequest, opts ...grpc.CallOption) (Iris_PullFeedsClient, error)
+	PullFeeds(ctx context.Context, in *PullFeedsRequest, opts ...grpc.CallOption) (Lens_PullFeedsClient, error)
 	// DeleteFeeds removes one or more feed sources.
 	DeleteFeeds(ctx context.Context, in *DeleteFeedsRequest, opts ...grpc.CallOption) (*DeleteFeedsResponse, error)
 	// ListEntries lists entries of a specific feed.
@@ -68,47 +68,47 @@ type IrisClient interface {
 	GetInfo(ctx context.Context, in *GetInfoRequest, opts ...grpc.CallOption) (*GetInfoResponse, error)
 }
 
-type irisClient struct {
+type lensClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewIrisClient(cc grpc.ClientConnInterface) IrisClient {
-	return &irisClient{cc}
+func NewLensClient(cc grpc.ClientConnInterface) LensClient {
+	return &lensClient{cc}
 }
 
-func (c *irisClient) AddFeed(ctx context.Context, in *AddFeedRequest, opts ...grpc.CallOption) (*AddFeedResponse, error) {
+func (c *lensClient) AddFeed(ctx context.Context, in *AddFeedRequest, opts ...grpc.CallOption) (*AddFeedResponse, error) {
 	out := new(AddFeedResponse)
-	err := c.cc.Invoke(ctx, Iris_AddFeed_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, Lens_AddFeed_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *irisClient) EditFeeds(ctx context.Context, in *EditFeedsRequest, opts ...grpc.CallOption) (*EditFeedsResponse, error) {
+func (c *lensClient) EditFeeds(ctx context.Context, in *EditFeedsRequest, opts ...grpc.CallOption) (*EditFeedsResponse, error) {
 	out := new(EditFeedsResponse)
-	err := c.cc.Invoke(ctx, Iris_EditFeeds_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, Lens_EditFeeds_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *irisClient) ListFeeds(ctx context.Context, in *ListFeedsRequest, opts ...grpc.CallOption) (*ListFeedsResponse, error) {
+func (c *lensClient) ListFeeds(ctx context.Context, in *ListFeedsRequest, opts ...grpc.CallOption) (*ListFeedsResponse, error) {
 	out := new(ListFeedsResponse)
-	err := c.cc.Invoke(ctx, Iris_ListFeeds_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, Lens_ListFeeds_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *irisClient) PullFeeds(ctx context.Context, in *PullFeedsRequest, opts ...grpc.CallOption) (Iris_PullFeedsClient, error) {
-	stream, err := c.cc.NewStream(ctx, &Iris_ServiceDesc.Streams[0], Iris_PullFeeds_FullMethodName, opts...)
+func (c *lensClient) PullFeeds(ctx context.Context, in *PullFeedsRequest, opts ...grpc.CallOption) (Lens_PullFeedsClient, error) {
+	stream, err := c.cc.NewStream(ctx, &Lens_ServiceDesc.Streams[0], Lens_PullFeeds_FullMethodName, opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &irisPullFeedsClient{stream}
+	x := &lensPullFeedsClient{stream}
 	if err := x.ClientStream.SendMsg(in); err != nil {
 		return nil, err
 	}
@@ -118,16 +118,16 @@ func (c *irisClient) PullFeeds(ctx context.Context, in *PullFeedsRequest, opts .
 	return x, nil
 }
 
-type Iris_PullFeedsClient interface {
+type Lens_PullFeedsClient interface {
 	Recv() (*PullFeedsResponse, error)
 	grpc.ClientStream
 }
 
-type irisPullFeedsClient struct {
+type lensPullFeedsClient struct {
 	grpc.ClientStream
 }
 
-func (x *irisPullFeedsClient) Recv() (*PullFeedsResponse, error) {
+func (x *lensPullFeedsClient) Recv() (*PullFeedsResponse, error) {
 	m := new(PullFeedsResponse)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -135,82 +135,82 @@ func (x *irisPullFeedsClient) Recv() (*PullFeedsResponse, error) {
 	return m, nil
 }
 
-func (c *irisClient) DeleteFeeds(ctx context.Context, in *DeleteFeedsRequest, opts ...grpc.CallOption) (*DeleteFeedsResponse, error) {
+func (c *lensClient) DeleteFeeds(ctx context.Context, in *DeleteFeedsRequest, opts ...grpc.CallOption) (*DeleteFeedsResponse, error) {
 	out := new(DeleteFeedsResponse)
-	err := c.cc.Invoke(ctx, Iris_DeleteFeeds_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, Lens_DeleteFeeds_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *irisClient) ListEntries(ctx context.Context, in *ListEntriesRequest, opts ...grpc.CallOption) (*ListEntriesResponse, error) {
+func (c *lensClient) ListEntries(ctx context.Context, in *ListEntriesRequest, opts ...grpc.CallOption) (*ListEntriesResponse, error) {
 	out := new(ListEntriesResponse)
-	err := c.cc.Invoke(ctx, Iris_ListEntries_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, Lens_ListEntries_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *irisClient) EditEntries(ctx context.Context, in *EditEntriesRequest, opts ...grpc.CallOption) (*EditEntriesResponse, error) {
+func (c *lensClient) EditEntries(ctx context.Context, in *EditEntriesRequest, opts ...grpc.CallOption) (*EditEntriesResponse, error) {
 	out := new(EditEntriesResponse)
-	err := c.cc.Invoke(ctx, Iris_EditEntries_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, Lens_EditEntries_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *irisClient) GetEntry(ctx context.Context, in *GetEntryRequest, opts ...grpc.CallOption) (*GetEntryResponse, error) {
+func (c *lensClient) GetEntry(ctx context.Context, in *GetEntryRequest, opts ...grpc.CallOption) (*GetEntryResponse, error) {
 	out := new(GetEntryResponse)
-	err := c.cc.Invoke(ctx, Iris_GetEntry_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, Lens_GetEntry_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *irisClient) ExportOPML(ctx context.Context, in *ExportOPMLRequest, opts ...grpc.CallOption) (*ExportOPMLResponse, error) {
+func (c *lensClient) ExportOPML(ctx context.Context, in *ExportOPMLRequest, opts ...grpc.CallOption) (*ExportOPMLResponse, error) {
 	out := new(ExportOPMLResponse)
-	err := c.cc.Invoke(ctx, Iris_ExportOPML_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, Lens_ExportOPML_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *irisClient) ImportOPML(ctx context.Context, in *ImportOPMLRequest, opts ...grpc.CallOption) (*ImportOPMLResponse, error) {
+func (c *lensClient) ImportOPML(ctx context.Context, in *ImportOPMLRequest, opts ...grpc.CallOption) (*ImportOPMLResponse, error) {
 	out := new(ImportOPMLResponse)
-	err := c.cc.Invoke(ctx, Iris_ImportOPML_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, Lens_ImportOPML_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *irisClient) GetStats(ctx context.Context, in *GetStatsRequest, opts ...grpc.CallOption) (*GetStatsResponse, error) {
+func (c *lensClient) GetStats(ctx context.Context, in *GetStatsRequest, opts ...grpc.CallOption) (*GetStatsResponse, error) {
 	out := new(GetStatsResponse)
-	err := c.cc.Invoke(ctx, Iris_GetStats_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, Lens_GetStats_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *irisClient) GetInfo(ctx context.Context, in *GetInfoRequest, opts ...grpc.CallOption) (*GetInfoResponse, error) {
+func (c *lensClient) GetInfo(ctx context.Context, in *GetInfoRequest, opts ...grpc.CallOption) (*GetInfoResponse, error) {
 	out := new(GetInfoResponse)
-	err := c.cc.Invoke(ctx, Iris_GetInfo_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, Lens_GetInfo_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// IrisServer is the server API for Iris service.
-// All implementations must embed UnimplementedIrisServer
+// LensServer is the server API for Lens service.
+// All implementations must embed UnimplementedLensServer
 // for forward compatibility
-type IrisServer interface {
+type LensServer interface {
 	// AddFeeds adds a new feed source.
 	AddFeed(context.Context, *AddFeedRequest) (*AddFeedResponse, error)
 	// EditFeeds sets one or more fields of feeds.
@@ -218,7 +218,7 @@ type IrisServer interface {
 	// ListFeeds lists all added feed sources.
 	ListFeeds(context.Context, *ListFeedsRequest) (*ListFeedsResponse, error)
 	// PullFeeds checks feeds for updates and returns all unread entries.
-	PullFeeds(*PullFeedsRequest, Iris_PullFeedsServer) error
+	PullFeeds(*PullFeedsRequest, Lens_PullFeedsServer) error
 	// DeleteFeeds removes one or more feed sources.
 	DeleteFeeds(context.Context, *DeleteFeedsRequest) (*DeleteFeedsResponse, error)
 	// ListEntries lists entries of a specific feed.
@@ -235,339 +235,339 @@ type IrisServer interface {
 	GetStats(context.Context, *GetStatsRequest) (*GetStatsResponse, error)
 	// GetInfo returns the version info of the running server.
 	GetInfo(context.Context, *GetInfoRequest) (*GetInfoResponse, error)
-	mustEmbedUnimplementedIrisServer()
+	mustEmbedUnimplementedLensServer()
 }
 
-// UnimplementedIrisServer must be embedded to have forward compatible implementations.
-type UnimplementedIrisServer struct {
+// UnimplementedLensServer must be embedded to have forward compatible implementations.
+type UnimplementedLensServer struct {
 }
 
-func (UnimplementedIrisServer) AddFeed(context.Context, *AddFeedRequest) (*AddFeedResponse, error) {
+func (UnimplementedLensServer) AddFeed(context.Context, *AddFeedRequest) (*AddFeedResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddFeed not implemented")
 }
-func (UnimplementedIrisServer) EditFeeds(context.Context, *EditFeedsRequest) (*EditFeedsResponse, error) {
+func (UnimplementedLensServer) EditFeeds(context.Context, *EditFeedsRequest) (*EditFeedsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EditFeeds not implemented")
 }
-func (UnimplementedIrisServer) ListFeeds(context.Context, *ListFeedsRequest) (*ListFeedsResponse, error) {
+func (UnimplementedLensServer) ListFeeds(context.Context, *ListFeedsRequest) (*ListFeedsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListFeeds not implemented")
 }
-func (UnimplementedIrisServer) PullFeeds(*PullFeedsRequest, Iris_PullFeedsServer) error {
+func (UnimplementedLensServer) PullFeeds(*PullFeedsRequest, Lens_PullFeedsServer) error {
 	return status.Errorf(codes.Unimplemented, "method PullFeeds not implemented")
 }
-func (UnimplementedIrisServer) DeleteFeeds(context.Context, *DeleteFeedsRequest) (*DeleteFeedsResponse, error) {
+func (UnimplementedLensServer) DeleteFeeds(context.Context, *DeleteFeedsRequest) (*DeleteFeedsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteFeeds not implemented")
 }
-func (UnimplementedIrisServer) ListEntries(context.Context, *ListEntriesRequest) (*ListEntriesResponse, error) {
+func (UnimplementedLensServer) ListEntries(context.Context, *ListEntriesRequest) (*ListEntriesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListEntries not implemented")
 }
-func (UnimplementedIrisServer) EditEntries(context.Context, *EditEntriesRequest) (*EditEntriesResponse, error) {
+func (UnimplementedLensServer) EditEntries(context.Context, *EditEntriesRequest) (*EditEntriesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EditEntries not implemented")
 }
-func (UnimplementedIrisServer) GetEntry(context.Context, *GetEntryRequest) (*GetEntryResponse, error) {
+func (UnimplementedLensServer) GetEntry(context.Context, *GetEntryRequest) (*GetEntryResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetEntry not implemented")
 }
-func (UnimplementedIrisServer) ExportOPML(context.Context, *ExportOPMLRequest) (*ExportOPMLResponse, error) {
+func (UnimplementedLensServer) ExportOPML(context.Context, *ExportOPMLRequest) (*ExportOPMLResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ExportOPML not implemented")
 }
-func (UnimplementedIrisServer) ImportOPML(context.Context, *ImportOPMLRequest) (*ImportOPMLResponse, error) {
+func (UnimplementedLensServer) ImportOPML(context.Context, *ImportOPMLRequest) (*ImportOPMLResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ImportOPML not implemented")
 }
-func (UnimplementedIrisServer) GetStats(context.Context, *GetStatsRequest) (*GetStatsResponse, error) {
+func (UnimplementedLensServer) GetStats(context.Context, *GetStatsRequest) (*GetStatsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetStats not implemented")
 }
-func (UnimplementedIrisServer) GetInfo(context.Context, *GetInfoRequest) (*GetInfoResponse, error) {
+func (UnimplementedLensServer) GetInfo(context.Context, *GetInfoRequest) (*GetInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetInfo not implemented")
 }
-func (UnimplementedIrisServer) mustEmbedUnimplementedIrisServer() {}
+func (UnimplementedLensServer) mustEmbedUnimplementedLensServer() {}
 
-// UnsafeIrisServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to IrisServer will
+// UnsafeLensServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to LensServer will
 // result in compilation errors.
-type UnsafeIrisServer interface {
-	mustEmbedUnimplementedIrisServer()
+type UnsafeLensServer interface {
+	mustEmbedUnimplementedLensServer()
 }
 
-func RegisterIrisServer(s grpc.ServiceRegistrar, srv IrisServer) {
-	s.RegisterService(&Iris_ServiceDesc, srv)
+func RegisterLensServer(s grpc.ServiceRegistrar, srv LensServer) {
+	s.RegisterService(&Lens_ServiceDesc, srv)
 }
 
-func _Iris_AddFeed_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Lens_AddFeed_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AddFeedRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(IrisServer).AddFeed(ctx, in)
+		return srv.(LensServer).AddFeed(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Iris_AddFeed_FullMethodName,
+		FullMethod: Lens_AddFeed_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IrisServer).AddFeed(ctx, req.(*AddFeedRequest))
+		return srv.(LensServer).AddFeed(ctx, req.(*AddFeedRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Iris_EditFeeds_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Lens_EditFeeds_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(EditFeedsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(IrisServer).EditFeeds(ctx, in)
+		return srv.(LensServer).EditFeeds(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Iris_EditFeeds_FullMethodName,
+		FullMethod: Lens_EditFeeds_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IrisServer).EditFeeds(ctx, req.(*EditFeedsRequest))
+		return srv.(LensServer).EditFeeds(ctx, req.(*EditFeedsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Iris_ListFeeds_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Lens_ListFeeds_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListFeedsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(IrisServer).ListFeeds(ctx, in)
+		return srv.(LensServer).ListFeeds(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Iris_ListFeeds_FullMethodName,
+		FullMethod: Lens_ListFeeds_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IrisServer).ListFeeds(ctx, req.(*ListFeedsRequest))
+		return srv.(LensServer).ListFeeds(ctx, req.(*ListFeedsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Iris_PullFeeds_Handler(srv interface{}, stream grpc.ServerStream) error {
+func _Lens_PullFeeds_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(PullFeedsRequest)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(IrisServer).PullFeeds(m, &irisPullFeedsServer{stream})
+	return srv.(LensServer).PullFeeds(m, &lensPullFeedsServer{stream})
 }
 
-type Iris_PullFeedsServer interface {
+type Lens_PullFeedsServer interface {
 	Send(*PullFeedsResponse) error
 	grpc.ServerStream
 }
 
-type irisPullFeedsServer struct {
+type lensPullFeedsServer struct {
 	grpc.ServerStream
 }
 
-func (x *irisPullFeedsServer) Send(m *PullFeedsResponse) error {
+func (x *lensPullFeedsServer) Send(m *PullFeedsResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func _Iris_DeleteFeeds_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Lens_DeleteFeeds_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteFeedsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(IrisServer).DeleteFeeds(ctx, in)
+		return srv.(LensServer).DeleteFeeds(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Iris_DeleteFeeds_FullMethodName,
+		FullMethod: Lens_DeleteFeeds_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IrisServer).DeleteFeeds(ctx, req.(*DeleteFeedsRequest))
+		return srv.(LensServer).DeleteFeeds(ctx, req.(*DeleteFeedsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Iris_ListEntries_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Lens_ListEntries_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListEntriesRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(IrisServer).ListEntries(ctx, in)
+		return srv.(LensServer).ListEntries(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Iris_ListEntries_FullMethodName,
+		FullMethod: Lens_ListEntries_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IrisServer).ListEntries(ctx, req.(*ListEntriesRequest))
+		return srv.(LensServer).ListEntries(ctx, req.(*ListEntriesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Iris_EditEntries_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Lens_EditEntries_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(EditEntriesRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(IrisServer).EditEntries(ctx, in)
+		return srv.(LensServer).EditEntries(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Iris_EditEntries_FullMethodName,
+		FullMethod: Lens_EditEntries_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IrisServer).EditEntries(ctx, req.(*EditEntriesRequest))
+		return srv.(LensServer).EditEntries(ctx, req.(*EditEntriesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Iris_GetEntry_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Lens_GetEntry_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetEntryRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(IrisServer).GetEntry(ctx, in)
+		return srv.(LensServer).GetEntry(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Iris_GetEntry_FullMethodName,
+		FullMethod: Lens_GetEntry_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IrisServer).GetEntry(ctx, req.(*GetEntryRequest))
+		return srv.(LensServer).GetEntry(ctx, req.(*GetEntryRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Iris_ExportOPML_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Lens_ExportOPML_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ExportOPMLRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(IrisServer).ExportOPML(ctx, in)
+		return srv.(LensServer).ExportOPML(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Iris_ExportOPML_FullMethodName,
+		FullMethod: Lens_ExportOPML_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IrisServer).ExportOPML(ctx, req.(*ExportOPMLRequest))
+		return srv.(LensServer).ExportOPML(ctx, req.(*ExportOPMLRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Iris_ImportOPML_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Lens_ImportOPML_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ImportOPMLRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(IrisServer).ImportOPML(ctx, in)
+		return srv.(LensServer).ImportOPML(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Iris_ImportOPML_FullMethodName,
+		FullMethod: Lens_ImportOPML_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IrisServer).ImportOPML(ctx, req.(*ImportOPMLRequest))
+		return srv.(LensServer).ImportOPML(ctx, req.(*ImportOPMLRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Iris_GetStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Lens_GetStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetStatsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(IrisServer).GetStats(ctx, in)
+		return srv.(LensServer).GetStats(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Iris_GetStats_FullMethodName,
+		FullMethod: Lens_GetStats_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IrisServer).GetStats(ctx, req.(*GetStatsRequest))
+		return srv.(LensServer).GetStats(ctx, req.(*GetStatsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Iris_GetInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Lens_GetInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetInfoRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(IrisServer).GetInfo(ctx, in)
+		return srv.(LensServer).GetInfo(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Iris_GetInfo_FullMethodName,
+		FullMethod: Lens_GetInfo_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IrisServer).GetInfo(ctx, req.(*GetInfoRequest))
+		return srv.(LensServer).GetInfo(ctx, req.(*GetInfoRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// Iris_ServiceDesc is the grpc.ServiceDesc for Iris service.
+// Lens_ServiceDesc is the grpc.ServiceDesc for Lens service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var Iris_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "iris.Iris",
-	HandlerType: (*IrisServer)(nil),
+var Lens_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "lens.Lens",
+	HandlerType: (*LensServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "AddFeed",
-			Handler:    _Iris_AddFeed_Handler,
+			Handler:    _Lens_AddFeed_Handler,
 		},
 		{
 			MethodName: "EditFeeds",
-			Handler:    _Iris_EditFeeds_Handler,
+			Handler:    _Lens_EditFeeds_Handler,
 		},
 		{
 			MethodName: "ListFeeds",
-			Handler:    _Iris_ListFeeds_Handler,
+			Handler:    _Lens_ListFeeds_Handler,
 		},
 		{
 			MethodName: "DeleteFeeds",
-			Handler:    _Iris_DeleteFeeds_Handler,
+			Handler:    _Lens_DeleteFeeds_Handler,
 		},
 		{
 			MethodName: "ListEntries",
-			Handler:    _Iris_ListEntries_Handler,
+			Handler:    _Lens_ListEntries_Handler,
 		},
 		{
 			MethodName: "EditEntries",
-			Handler:    _Iris_EditEntries_Handler,
+			Handler:    _Lens_EditEntries_Handler,
 		},
 		{
 			MethodName: "GetEntry",
-			Handler:    _Iris_GetEntry_Handler,
+			Handler:    _Lens_GetEntry_Handler,
 		},
 		{
 			MethodName: "ExportOPML",
-			Handler:    _Iris_ExportOPML_Handler,
+			Handler:    _Lens_ExportOPML_Handler,
 		},
 		{
 			MethodName: "ImportOPML",
-			Handler:    _Iris_ImportOPML_Handler,
+			Handler:    _Lens_ImportOPML_Handler,
 		},
 		{
 			MethodName: "GetStats",
-			Handler:    _Iris_GetStats_Handler,
+			Handler:    _Lens_GetStats_Handler,
 		},
 		{
 			MethodName: "GetInfo",
-			Handler:    _Iris_GetInfo_Handler,
+			Handler:    _Lens_GetInfo_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
 		{
 			StreamName:    "PullFeeds",
-			Handler:       _Iris_PullFeeds_Handler,
+			Handler:       _Lens_PullFeeds_Handler,
 			ServerStreams: true,
 		},
 	},
-	Metadata: "iris.proto",
+	Metadata: "lens.proto",
 }

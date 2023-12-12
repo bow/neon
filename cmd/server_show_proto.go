@@ -8,7 +8,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/bow/iris/api"
+	"github.com/bow/lens/api"
 )
 
 // newServerShowProtoCommand creates a new subcommand for showing the server's protobuf

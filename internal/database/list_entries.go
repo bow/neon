@@ -8,7 +8,7 @@ import (
 	"database/sql"
 	"encoding/json"
 
-	"github.com/bow/iris/internal"
+	"github.com/bow/lens/internal"
 )
 
 func (db *SQLite) ListEntries(

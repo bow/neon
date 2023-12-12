@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 
 	"github.com/adrg/xdg"
-	"github.com/bow/iris/internal"
+	"github.com/bow/lens/internal"
 )
 
 func stateDir() (string, error) {

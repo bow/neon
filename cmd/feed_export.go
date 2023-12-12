@@ -11,7 +11,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/bow/iris/internal/opml"
+	"github.com/bow/lens/internal"
+	"github.com/bow/lens/internal/opml"
 )
 
 func newFeedExportCommand() *cobra.Command {
@@ -22,8 +23,8 @@ func newFeedExportCommand() *cobra.Command {
 		Args:    cobra.MaximumNArgs(1),
 		Aliases: makeAlias(name),
 		Short:   "Export feeds to OPML",
-		Example: `  - Export to stdout : iris feed export
-  - Export to a file : iris feed export feeds.opml`,
+		Example: fmt.Sprintf(`  - Export to stdout : %[1]s feed export
+  - Export to a file : %[1]s feed export feeds.opml`, internal.AppName()),
 
 		DisableFlagsInUseLine: true,
 		RunE: func(cmd *cobra.Command, args []string) error {

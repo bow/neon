@@ -10,7 +10,8 @@ import (
 	"github.com/adrg/xdg"
 	"github.com/spf13/cobra"
 
-	"github.com/bow/iris/internal/server"
+	"github.com/bow/lens/internal"
+	"github.com/bow/lens/internal/server"
 )
 
 // newServerCommand creates a new 'server' subcommand along with its command-line flags.
@@ -19,7 +20,7 @@ func newServerCommand() *cobra.Command {
 	var (
 		name        = "server"
 		v           = newViper(name)
-		defaultAddr = "$XDG_RUNTIME_DIR/iris/server.socket"
+		defaultAddr = fmt.Sprintf("$XDG_RUNTIME_DIR/%s/server.socket", internal.AppName())
 	)
 
 	const (

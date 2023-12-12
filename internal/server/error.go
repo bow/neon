@@ -8,10 +8,11 @@ import (
 	"encoding/xml"
 	"errors"
 
-	"github.com/bow/iris/internal"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+
+	"github.com/bow/lens/internal"
 )
 
 func storeErrorUnaryServerInterceptor(

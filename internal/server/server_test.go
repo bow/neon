@@ -17,15 +17,15 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/health/grpc_health_v1"
 
-	"github.com/bow/iris/api"
-	"github.com/bow/iris/internal"
+	"github.com/bow/lens/api"
+	"github.com/bow/lens/internal"
 )
 
 func defaultTestServerBuilder(t *testing.T) *Builder {
 	t.Helper()
 
 	return NewBuilder().
-		Address("file://" + t.TempDir() + "/iris.socket").
+		Address("file://" + t.TempDir() + fmt.Sprintf("/%s.socket", internal.AppName()).
 		Store(internal.NewMockFeedStore(gomock.NewController(t))).
 		Logger(zerolog.Nop())
 }
@@ -51,7 +51,7 @@ func (tcb *testClientBuilder) ServerStore(str internal.FeedStore) *testClientBui
 	return tcb
 }
 
-func (tcb *testClientBuilder) Build() api.IrisClient {
+func (tcb *testClientBuilder) Build() api.LensClient {
 	tcb.t.Helper()
 
 	t := tcb.t
@@ -124,7 +124,7 @@ func newTestClient(
 	t *testing.T,
 	addr net.Addr,
 	opts ...grpc.DialOption,
-) (api.IrisClient, *grpc.ClientConn) {
+) (api.LensClient, *grpc.ClientConn) {
 	t.Helper()
 
 	dialer := func(_ context.Context, rawAddr string) (net.Conn, error) {
@@ -133,13 +133,13 @@ func newTestClient(
 	opts = append(opts, grpc.WithContextDialer(dialer))
 	conn, err := grpc.Dial(addr.String(), opts...)
 	require.NoError(t, err)
-	client := api.NewIrisClient(conn)
+	client := api.NewLensClient(conn)
 
 	return client, conn
 }
 
 // setupServerTest is a shortcut method for creating server tests through a client.
-func setupServerTest(t *testing.T) (api.IrisClient, *internal.MockFeedStore) {
+func setupServerTest(t *testing.T) (api.LensClient, *internal.MockFeedStore) {
 	t.Helper()
 
 	str := internal.NewMockFeedStore(gomock.NewController(t))

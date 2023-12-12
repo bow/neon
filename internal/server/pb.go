@@ -6,9 +6,10 @@ package server
 import (
 	"time"
 
-	"github.com/bow/iris/api"
-	"github.com/bow/iris/internal"
 	"google.golang.org/protobuf/types/known/timestamppb"
+
+	"github.com/bow/lens/api"
+	"github.com/bow/lens/internal"
 )
 
 func toFeedPb(feed *internal.Feed) *api.Feed {

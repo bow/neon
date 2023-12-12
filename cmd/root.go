@@ -11,7 +11,7 @@ import (
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 
-	"github.com/bow/iris/internal"
+	"github.com/bow/lens/internal"
 )
 
 // New creates a new command along with its command-line flags.

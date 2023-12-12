@@ -15,7 +15,7 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/require"
 
-	"github.com/bow/iris/internal"
+	"github.com/bow/lens/internal"
 )
 
 // feedKey is a helper struct for testing.

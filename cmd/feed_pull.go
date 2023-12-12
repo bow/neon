@@ -9,10 +9,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/bow/iris/internal"
 	"github.com/briandowns/spinner"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
+
+	"github.com/bow/lens/internal"
 )
 
 func newFeedPullCommand() *cobra.Command {

@@ -7,9 +7,10 @@ import (
 	"context"
 	"testing"
 
-	"github.com/bow/iris/internal"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/bow/lens/internal"
 )
 
 func TestImportSubscriptionOkNoFeeds(t *testing.T) {

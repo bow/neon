@@ -17,8 +17,8 @@ import (
 	"modernc.org/sqlite"
 	sqlite3 "modernc.org/sqlite/lib"
 
-	"github.com/bow/iris/internal"
-	"github.com/bow/iris/internal/database/migration"
+	"github.com/bow/lens/internal"
+	"github.com/bow/lens/internal/database/migration"
 )
 
 type ID = uint32

@@ -1,4 +1,4 @@
-module github.com/bow/iris
+module github.com/bow/lens
 
 go 1.21
 

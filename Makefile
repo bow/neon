@@ -3,7 +3,7 @@
 # Copyright (c) 2022 Wibowo Arindrarto <contact@arindrarto.dev>
 # SPDX-License-Identifier: BSD-3-Clause
 #
-# This file is part of iris <https://github.com/bow/iris>.
+# This file is part of lens <https://github.com/bow/lens>.
 
 # Cross-platform adjustments.
 SYS := $(shell uname 2> /dev/null)
@@ -19,7 +19,7 @@ else
 $(error error: unsupported development platform)
 endif
 
-APP_NAME   := iris
+APP_NAME   := lens
 GO_VERSION := $(shell (head -n 3 go.mod | $(SED_EXE) 's/^go//g' | tail -n 1))
 REPO_NAME  := $(shell (head -n 1 go.mod | $(SED_EXE) 's/^module //g'))
 
@@ -145,15 +145,15 @@ internal/parser_mock.go: internal/parser.go
 	mockgen -source=$< -package=internal FeedParser > $@
 
 internal/store_mock.go: internal/store.go
-	mockgen -source=$< -package=internal -self_package=github.com/bow/iris/internal FeedStore > $@
+	mockgen -source=$< -package=internal -self_package=github.com/bow/lens/internal FeedStore > $@
 
 
 .PHONY: proto
 proto: $(PROTO_FILES) ## Generate code from protobuf.
 	@protoc \
 		-I=$(PROTO_DIR) \
-		--go_opt=Miris.proto="$(REPO_NAME)/api;api" \
-		--go-grpc_opt=Miris.proto="$(REPO_NAME)/api;api" \
+		--go_opt=Mlens.proto="$(REPO_NAME)/api;api" \
+		--go-grpc_opt=Mlens.proto="$(REPO_NAME)/api;api" \
 		--go_out=$(PROTO_DIR) --go_opt=paths=source_relative \
 		--go-grpc_out=$(PROTO_DIR) --go-grpc_opt=paths=source_relative \
 		$(PROTO_FILES)

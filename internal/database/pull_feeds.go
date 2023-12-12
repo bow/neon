@@ -9,7 +9,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/bow/iris/internal"
+	"github.com/bow/lens/internal"
 )
 
 func (db *SQLite) PullFeeds(

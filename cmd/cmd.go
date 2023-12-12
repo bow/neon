@@ -14,13 +14,13 @@ import (
 	"github.com/spf13/viper"
 	"golang.org/x/net/context"
 
-	"github.com/bow/iris/internal"
+	"github.com/bow/lens/internal"
 )
 
 const dbPathKey = "db-path"
 
 // FIXME: Update value for non-linux systems.
-var defaultDBPath = "$XDG_DATA_HOME/iris/iris.db"
+var defaultDBPath = "$XDG_DATA_HOME/lens/lens.db"
 
 func newViper(cmdName string) *viper.Viper {
 	v := viper.New()

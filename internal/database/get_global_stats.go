@@ -8,7 +8,7 @@ import (
 	"database/sql"
 	"errors"
 
-	"github.com/bow/iris/internal"
+	"github.com/bow/lens/internal"
 )
 
 func (db *SQLite) GetGlobalStats(ctx context.Context) (*internal.Stats, error) {

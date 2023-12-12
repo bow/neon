@@ -7,15 +7,16 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/bow/iris/api"
-	"github.com/bow/iris/internal"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+
+	"github.com/bow/lens/api"
+	"github.com/bow/lens/internal"
 )
 
-// service implements the iris service API.
+// service implements the service API.
 type service struct {
-	api.UnimplementedIrisServer
+	api.UnimplementedLensServer
 
 	store internal.FeedStore
 }
@@ -96,7 +97,7 @@ func (svc *service) DeleteFeeds(
 // PullFeeds satisfies the service API.
 func (svc *service) PullFeeds(
 	req *api.PullFeedsRequest,
-	stream api.Iris_PullFeedsServer,
+	stream api.Lens_PullFeedsServer,
 ) error {
 
 	convert := func(pr internal.PullResult) (*api.PullFeedsResponse, error) {

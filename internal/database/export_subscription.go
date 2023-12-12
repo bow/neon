@@ -7,7 +7,7 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/bow/iris/internal"
+	"github.com/bow/lens/internal"
 )
 
 func (db *SQLite) ExportSubscription(

@@ -8,9 +8,10 @@ import (
 	"io"
 	"os"
 
-	"github.com/bow/iris/internal"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
+
+	"github.com/bow/lens/internal"
 )
 
 func newFeedImportCommand() *cobra.Command {
@@ -21,8 +22,8 @@ func newFeedImportCommand() *cobra.Command {
 		Args:    cobra.MaximumNArgs(1),
 		Aliases: makeAlias(name),
 		Short:   "Import feeds from OPML",
-		Example: `  - Import from stdin  : cat feeds.opml | iris feed import
-  - Import from a file : iris feed import feeds.opml`,
+		Example: fmt.Sprintf(`  - Import from stdin  : cat feeds.opml | %[1]s feed import
+  - Import from a file : %[1]s feed import feeds.opml`, internal.AppName()),
 
 		DisableFlagsInUseLine: true,
 		RunE: func(cmd *cobra.Command, args []string) error {

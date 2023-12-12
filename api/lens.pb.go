@@ -1,4 +1,4 @@
-// Protobuf interface of the iris service.
+// Protobuf interface of the lens service.
 //
 // Copyright (c) 2022 Wibowo Arindrarto <contact@arindrarto.dev>
 // SPDX-License-Identifier: BSD-3-Clause
@@ -7,7 +7,7 @@
 // versions:
 // 	protoc-gen-go v1.31.0
 // 	protoc        v4.24.3
-// source: iris.proto
+// source: lens.proto
 
 package api
 
@@ -47,7 +47,7 @@ type Feed struct {
 func (x *Feed) Reset() {
 	*x = Feed{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_iris_proto_msgTypes[0]
+		mi := &file_lens_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -60,7 +60,7 @@ func (x *Feed) String() string {
 func (*Feed) ProtoMessage() {}
 
 func (x *Feed) ProtoReflect() protoreflect.Message {
-	mi := &file_iris_proto_msgTypes[0]
+	mi := &file_lens_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -73,7 +73,7 @@ func (x *Feed) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Feed.ProtoReflect.Descriptor instead.
 func (*Feed) Descriptor() ([]byte, []int) {
-	return file_iris_proto_rawDescGZIP(), []int{0}
+	return file_lens_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *Feed) GetId() uint32 {
@@ -174,7 +174,7 @@ type Entry struct {
 func (x *Entry) Reset() {
 	*x = Entry{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_iris_proto_msgTypes[1]
+		mi := &file_lens_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -187,7 +187,7 @@ func (x *Entry) String() string {
 func (*Entry) ProtoMessage() {}
 
 func (x *Entry) ProtoReflect() protoreflect.Message {
-	mi := &file_iris_proto_msgTypes[1]
+	mi := &file_lens_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -200,7 +200,7 @@ func (x *Entry) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Entry.ProtoReflect.Descriptor instead.
 func (*Entry) Descriptor() ([]byte, []int) {
-	return file_iris_proto_rawDescGZIP(), []int{1}
+	return file_lens_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *Entry) GetId() uint32 {
@@ -295,7 +295,7 @@ type AddFeedRequest struct {
 func (x *AddFeedRequest) Reset() {
 	*x = AddFeedRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_iris_proto_msgTypes[2]
+		mi := &file_lens_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -308,7 +308,7 @@ func (x *AddFeedRequest) String() string {
 func (*AddFeedRequest) ProtoMessage() {}
 
 func (x *AddFeedRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_iris_proto_msgTypes[2]
+	mi := &file_lens_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -321,7 +321,7 @@ func (x *AddFeedRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddFeedRequest.ProtoReflect.Descriptor instead.
 func (*AddFeedRequest) Descriptor() ([]byte, []int) {
-	return file_iris_proto_rawDescGZIP(), []int{2}
+	return file_lens_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *AddFeedRequest) GetUrl() string {
@@ -371,7 +371,7 @@ type AddFeedResponse struct {
 func (x *AddFeedResponse) Reset() {
 	*x = AddFeedResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_iris_proto_msgTypes[3]
+		mi := &file_lens_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -384,7 +384,7 @@ func (x *AddFeedResponse) String() string {
 func (*AddFeedResponse) ProtoMessage() {}
 
 func (x *AddFeedResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_iris_proto_msgTypes[3]
+	mi := &file_lens_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -397,7 +397,7 @@ func (x *AddFeedResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddFeedResponse.ProtoReflect.Descriptor instead.
 func (*AddFeedResponse) Descriptor() ([]byte, []int) {
-	return file_iris_proto_rawDescGZIP(), []int{3}
+	return file_lens_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *AddFeedResponse) GetFeed() *Feed {
@@ -425,7 +425,7 @@ type EditFeedsRequest struct {
 func (x *EditFeedsRequest) Reset() {
 	*x = EditFeedsRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_iris_proto_msgTypes[4]
+		mi := &file_lens_proto_msgTypes[4]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -438,7 +438,7 @@ func (x *EditFeedsRequest) String() string {
 func (*EditFeedsRequest) ProtoMessage() {}
 
 func (x *EditFeedsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_iris_proto_msgTypes[4]
+	mi := &file_lens_proto_msgTypes[4]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -451,7 +451,7 @@ func (x *EditFeedsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EditFeedsRequest.ProtoReflect.Descriptor instead.
 func (*EditFeedsRequest) Descriptor() ([]byte, []int) {
-	return file_iris_proto_rawDescGZIP(), []int{4}
+	return file_lens_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *EditFeedsRequest) GetOps() []*EditFeedsRequest_Op {
@@ -472,7 +472,7 @@ type EditFeedsResponse struct {
 func (x *EditFeedsResponse) Reset() {
 	*x = EditFeedsResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_iris_proto_msgTypes[5]
+		mi := &file_lens_proto_msgTypes[5]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -485,7 +485,7 @@ func (x *EditFeedsResponse) String() string {
 func (*EditFeedsResponse) ProtoMessage() {}
 
 func (x *EditFeedsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_iris_proto_msgTypes[5]
+	mi := &file_lens_proto_msgTypes[5]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -498,7 +498,7 @@ func (x *EditFeedsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EditFeedsResponse.ProtoReflect.Descriptor instead.
 func (*EditFeedsResponse) Descriptor() ([]byte, []int) {
-	return file_iris_proto_rawDescGZIP(), []int{5}
+	return file_lens_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *EditFeedsResponse) GetFeeds() []*Feed {
@@ -517,7 +517,7 @@ type ListFeedsRequest struct {
 func (x *ListFeedsRequest) Reset() {
 	*x = ListFeedsRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_iris_proto_msgTypes[6]
+		mi := &file_lens_proto_msgTypes[6]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -530,7 +530,7 @@ func (x *ListFeedsRequest) String() string {
 func (*ListFeedsRequest) ProtoMessage() {}
 
 func (x *ListFeedsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_iris_proto_msgTypes[6]
+	mi := &file_lens_proto_msgTypes[6]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -543,7 +543,7 @@ func (x *ListFeedsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListFeedsRequest.ProtoReflect.Descriptor instead.
 func (*ListFeedsRequest) Descriptor() ([]byte, []int) {
-	return file_iris_proto_rawDescGZIP(), []int{6}
+	return file_lens_proto_rawDescGZIP(), []int{6}
 }
 
 type ListFeedsResponse struct {
@@ -557,7 +557,7 @@ type ListFeedsResponse struct {
 func (x *ListFeedsResponse) Reset() {
 	*x = ListFeedsResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_iris_proto_msgTypes[7]
+		mi := &file_lens_proto_msgTypes[7]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -570,7 +570,7 @@ func (x *ListFeedsResponse) String() string {
 func (*ListFeedsResponse) ProtoMessage() {}
 
 func (x *ListFeedsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_iris_proto_msgTypes[7]
+	mi := &file_lens_proto_msgTypes[7]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -583,7 +583,7 @@ func (x *ListFeedsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListFeedsResponse.ProtoReflect.Descriptor instead.
 func (*ListFeedsResponse) Descriptor() ([]byte, []int) {
-	return file_iris_proto_rawDescGZIP(), []int{7}
+	return file_lens_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *ListFeedsResponse) GetFeeds() []*Feed {
@@ -604,7 +604,7 @@ type PullFeedsRequest struct {
 func (x *PullFeedsRequest) Reset() {
 	*x = PullFeedsRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_iris_proto_msgTypes[8]
+		mi := &file_lens_proto_msgTypes[8]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -617,7 +617,7 @@ func (x *PullFeedsRequest) String() string {
 func (*PullFeedsRequest) ProtoMessage() {}
 
 func (x *PullFeedsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_iris_proto_msgTypes[8]
+	mi := &file_lens_proto_msgTypes[8]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -630,7 +630,7 @@ func (x *PullFeedsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PullFeedsRequest.ProtoReflect.Descriptor instead.
 func (*PullFeedsRequest) Descriptor() ([]byte, []int) {
-	return file_iris_proto_rawDescGZIP(), []int{8}
+	return file_lens_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *PullFeedsRequest) GetFeedIds() []uint32 {
@@ -653,7 +653,7 @@ type PullFeedsResponse struct {
 func (x *PullFeedsResponse) Reset() {
 	*x = PullFeedsResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_iris_proto_msgTypes[9]
+		mi := &file_lens_proto_msgTypes[9]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -666,7 +666,7 @@ func (x *PullFeedsResponse) String() string {
 func (*PullFeedsResponse) ProtoMessage() {}
 
 func (x *PullFeedsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_iris_proto_msgTypes[9]
+	mi := &file_lens_proto_msgTypes[9]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -679,7 +679,7 @@ func (x *PullFeedsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PullFeedsResponse.ProtoReflect.Descriptor instead.
 func (*PullFeedsResponse) Descriptor() ([]byte, []int) {
-	return file_iris_proto_rawDescGZIP(), []int{9}
+	return file_lens_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *PullFeedsResponse) GetUrl() string {
@@ -714,7 +714,7 @@ type DeleteFeedsRequest struct {
 func (x *DeleteFeedsRequest) Reset() {
 	*x = DeleteFeedsRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_iris_proto_msgTypes[10]
+		mi := &file_lens_proto_msgTypes[10]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -727,7 +727,7 @@ func (x *DeleteFeedsRequest) String() string {
 func (*DeleteFeedsRequest) ProtoMessage() {}
 
 func (x *DeleteFeedsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_iris_proto_msgTypes[10]
+	mi := &file_lens_proto_msgTypes[10]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -740,7 +740,7 @@ func (x *DeleteFeedsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteFeedsRequest.ProtoReflect.Descriptor instead.
 func (*DeleteFeedsRequest) Descriptor() ([]byte, []int) {
-	return file_iris_proto_rawDescGZIP(), []int{10}
+	return file_lens_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *DeleteFeedsRequest) GetFeedIds() []uint32 {
@@ -759,7 +759,7 @@ type DeleteFeedsResponse struct {
 func (x *DeleteFeedsResponse) Reset() {
 	*x = DeleteFeedsResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_iris_proto_msgTypes[11]
+		mi := &file_lens_proto_msgTypes[11]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -772,7 +772,7 @@ func (x *DeleteFeedsResponse) String() string {
 func (*DeleteFeedsResponse) ProtoMessage() {}
 
 func (x *DeleteFeedsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_iris_proto_msgTypes[11]
+	mi := &file_lens_proto_msgTypes[11]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -785,7 +785,7 @@ func (x *DeleteFeedsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteFeedsResponse.ProtoReflect.Descriptor instead.
 func (*DeleteFeedsResponse) Descriptor() ([]byte, []int) {
-	return file_iris_proto_rawDescGZIP(), []int{11}
+	return file_lens_proto_rawDescGZIP(), []int{11}
 }
 
 type ListEntriesRequest struct {
@@ -800,7 +800,7 @@ type ListEntriesRequest struct {
 func (x *ListEntriesRequest) Reset() {
 	*x = ListEntriesRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_iris_proto_msgTypes[12]
+		mi := &file_lens_proto_msgTypes[12]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -813,7 +813,7 @@ func (x *ListEntriesRequest) String() string {
 func (*ListEntriesRequest) ProtoMessage() {}
 
 func (x *ListEntriesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_iris_proto_msgTypes[12]
+	mi := &file_lens_proto_msgTypes[12]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -826,7 +826,7 @@ func (x *ListEntriesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListEntriesRequest.ProtoReflect.Descriptor instead.
 func (*ListEntriesRequest) Descriptor() ([]byte, []int) {
-	return file_iris_proto_rawDescGZIP(), []int{12}
+	return file_lens_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *ListEntriesRequest) GetFeedIds() []uint32 {
@@ -854,7 +854,7 @@ type ListEntriesResponse struct {
 func (x *ListEntriesResponse) Reset() {
 	*x = ListEntriesResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_iris_proto_msgTypes[13]
+		mi := &file_lens_proto_msgTypes[13]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -867,7 +867,7 @@ func (x *ListEntriesResponse) String() string {
 func (*ListEntriesResponse) ProtoMessage() {}
 
 func (x *ListEntriesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_iris_proto_msgTypes[13]
+	mi := &file_lens_proto_msgTypes[13]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -880,7 +880,7 @@ func (x *ListEntriesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListEntriesResponse.ProtoReflect.Descriptor instead.
 func (*ListEntriesResponse) Descriptor() ([]byte, []int) {
-	return file_iris_proto_rawDescGZIP(), []int{13}
+	return file_lens_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *ListEntriesResponse) GetEntries() []*Entry {
@@ -901,7 +901,7 @@ type EditEntriesRequest struct {
 func (x *EditEntriesRequest) Reset() {
 	*x = EditEntriesRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_iris_proto_msgTypes[14]
+		mi := &file_lens_proto_msgTypes[14]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -914,7 +914,7 @@ func (x *EditEntriesRequest) String() string {
 func (*EditEntriesRequest) ProtoMessage() {}
 
 func (x *EditEntriesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_iris_proto_msgTypes[14]
+	mi := &file_lens_proto_msgTypes[14]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -927,7 +927,7 @@ func (x *EditEntriesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EditEntriesRequest.ProtoReflect.Descriptor instead.
 func (*EditEntriesRequest) Descriptor() ([]byte, []int) {
-	return file_iris_proto_rawDescGZIP(), []int{14}
+	return file_lens_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *EditEntriesRequest) GetOps() []*EditEntriesRequest_Op {
@@ -948,7 +948,7 @@ type EditEntriesResponse struct {
 func (x *EditEntriesResponse) Reset() {
 	*x = EditEntriesResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_iris_proto_msgTypes[15]
+		mi := &file_lens_proto_msgTypes[15]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -961,7 +961,7 @@ func (x *EditEntriesResponse) String() string {
 func (*EditEntriesResponse) ProtoMessage() {}
 
 func (x *EditEntriesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_iris_proto_msgTypes[15]
+	mi := &file_lens_proto_msgTypes[15]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -974,7 +974,7 @@ func (x *EditEntriesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EditEntriesResponse.ProtoReflect.Descriptor instead.
 func (*EditEntriesResponse) Descriptor() ([]byte, []int) {
-	return file_iris_proto_rawDescGZIP(), []int{15}
+	return file_lens_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *EditEntriesResponse) GetEntries() []*Entry {
@@ -995,7 +995,7 @@ type GetEntryRequest struct {
 func (x *GetEntryRequest) Reset() {
 	*x = GetEntryRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_iris_proto_msgTypes[16]
+		mi := &file_lens_proto_msgTypes[16]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1008,7 +1008,7 @@ func (x *GetEntryRequest) String() string {
 func (*GetEntryRequest) ProtoMessage() {}
 
 func (x *GetEntryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_iris_proto_msgTypes[16]
+	mi := &file_lens_proto_msgTypes[16]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1021,7 +1021,7 @@ func (x *GetEntryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetEntryRequest.ProtoReflect.Descriptor instead.
 func (*GetEntryRequest) Descriptor() ([]byte, []int) {
-	return file_iris_proto_rawDescGZIP(), []int{16}
+	return file_lens_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *GetEntryRequest) GetId() uint32 {
@@ -1042,7 +1042,7 @@ type GetEntryResponse struct {
 func (x *GetEntryResponse) Reset() {
 	*x = GetEntryResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_iris_proto_msgTypes[17]
+		mi := &file_lens_proto_msgTypes[17]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1055,7 +1055,7 @@ func (x *GetEntryResponse) String() string {
 func (*GetEntryResponse) ProtoMessage() {}
 
 func (x *GetEntryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_iris_proto_msgTypes[17]
+	mi := &file_lens_proto_msgTypes[17]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1068,7 +1068,7 @@ func (x *GetEntryResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetEntryResponse.ProtoReflect.Descriptor instead.
 func (*GetEntryResponse) Descriptor() ([]byte, []int) {
-	return file_iris_proto_rawDescGZIP(), []int{17}
+	return file_lens_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *GetEntryResponse) GetEntry() *Entry {
@@ -1089,7 +1089,7 @@ type ExportOPMLRequest struct {
 func (x *ExportOPMLRequest) Reset() {
 	*x = ExportOPMLRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_iris_proto_msgTypes[18]
+		mi := &file_lens_proto_msgTypes[18]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1102,7 +1102,7 @@ func (x *ExportOPMLRequest) String() string {
 func (*ExportOPMLRequest) ProtoMessage() {}
 
 func (x *ExportOPMLRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_iris_proto_msgTypes[18]
+	mi := &file_lens_proto_msgTypes[18]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1115,7 +1115,7 @@ func (x *ExportOPMLRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ExportOPMLRequest.ProtoReflect.Descriptor instead.
 func (*ExportOPMLRequest) Descriptor() ([]byte, []int) {
-	return file_iris_proto_rawDescGZIP(), []int{18}
+	return file_lens_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *ExportOPMLRequest) GetTitle() string {
@@ -1136,7 +1136,7 @@ type ExportOPMLResponse struct {
 func (x *ExportOPMLResponse) Reset() {
 	*x = ExportOPMLResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_iris_proto_msgTypes[19]
+		mi := &file_lens_proto_msgTypes[19]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1149,7 +1149,7 @@ func (x *ExportOPMLResponse) String() string {
 func (*ExportOPMLResponse) ProtoMessage() {}
 
 func (x *ExportOPMLResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_iris_proto_msgTypes[19]
+	mi := &file_lens_proto_msgTypes[19]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1162,7 +1162,7 @@ func (x *ExportOPMLResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ExportOPMLResponse.ProtoReflect.Descriptor instead.
 func (*ExportOPMLResponse) Descriptor() ([]byte, []int) {
-	return file_iris_proto_rawDescGZIP(), []int{19}
+	return file_lens_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *ExportOPMLResponse) GetPayload() []byte {
@@ -1183,7 +1183,7 @@ type ImportOPMLRequest struct {
 func (x *ImportOPMLRequest) Reset() {
 	*x = ImportOPMLRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_iris_proto_msgTypes[20]
+		mi := &file_lens_proto_msgTypes[20]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1196,7 +1196,7 @@ func (x *ImportOPMLRequest) String() string {
 func (*ImportOPMLRequest) ProtoMessage() {}
 
 func (x *ImportOPMLRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_iris_proto_msgTypes[20]
+	mi := &file_lens_proto_msgTypes[20]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1209,7 +1209,7 @@ func (x *ImportOPMLRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ImportOPMLRequest.ProtoReflect.Descriptor instead.
 func (*ImportOPMLRequest) Descriptor() ([]byte, []int) {
-	return file_iris_proto_rawDescGZIP(), []int{20}
+	return file_lens_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *ImportOPMLRequest) GetPayload() []byte {
@@ -1231,7 +1231,7 @@ type ImportOPMLResponse struct {
 func (x *ImportOPMLResponse) Reset() {
 	*x = ImportOPMLResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_iris_proto_msgTypes[21]
+		mi := &file_lens_proto_msgTypes[21]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1244,7 +1244,7 @@ func (x *ImportOPMLResponse) String() string {
 func (*ImportOPMLResponse) ProtoMessage() {}
 
 func (x *ImportOPMLResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_iris_proto_msgTypes[21]
+	mi := &file_lens_proto_msgTypes[21]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1257,7 +1257,7 @@ func (x *ImportOPMLResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ImportOPMLResponse.ProtoReflect.Descriptor instead.
 func (*ImportOPMLResponse) Descriptor() ([]byte, []int) {
-	return file_iris_proto_rawDescGZIP(), []int{21}
+	return file_lens_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *ImportOPMLResponse) GetNumProcessed() uint32 {
@@ -1283,7 +1283,7 @@ type GetStatsRequest struct {
 func (x *GetStatsRequest) Reset() {
 	*x = GetStatsRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_iris_proto_msgTypes[22]
+		mi := &file_lens_proto_msgTypes[22]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1296,7 +1296,7 @@ func (x *GetStatsRequest) String() string {
 func (*GetStatsRequest) ProtoMessage() {}
 
 func (x *GetStatsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_iris_proto_msgTypes[22]
+	mi := &file_lens_proto_msgTypes[22]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1309,7 +1309,7 @@ func (x *GetStatsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetStatsRequest.ProtoReflect.Descriptor instead.
 func (*GetStatsRequest) Descriptor() ([]byte, []int) {
-	return file_iris_proto_rawDescGZIP(), []int{22}
+	return file_lens_proto_rawDescGZIP(), []int{22}
 }
 
 type GetStatsResponse struct {
@@ -1323,7 +1323,7 @@ type GetStatsResponse struct {
 func (x *GetStatsResponse) Reset() {
 	*x = GetStatsResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_iris_proto_msgTypes[23]
+		mi := &file_lens_proto_msgTypes[23]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1336,7 +1336,7 @@ func (x *GetStatsResponse) String() string {
 func (*GetStatsResponse) ProtoMessage() {}
 
 func (x *GetStatsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_iris_proto_msgTypes[23]
+	mi := &file_lens_proto_msgTypes[23]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1349,7 +1349,7 @@ func (x *GetStatsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetStatsResponse.ProtoReflect.Descriptor instead.
 func (*GetStatsResponse) Descriptor() ([]byte, []int) {
-	return file_iris_proto_rawDescGZIP(), []int{23}
+	return file_lens_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *GetStatsResponse) GetGlobal() *GetStatsResponse_Stats {
@@ -1368,7 +1368,7 @@ type GetInfoRequest struct {
 func (x *GetInfoRequest) Reset() {
 	*x = GetInfoRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_iris_proto_msgTypes[24]
+		mi := &file_lens_proto_msgTypes[24]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1381,7 +1381,7 @@ func (x *GetInfoRequest) String() string {
 func (*GetInfoRequest) ProtoMessage() {}
 
 func (x *GetInfoRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_iris_proto_msgTypes[24]
+	mi := &file_lens_proto_msgTypes[24]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1394,7 +1394,7 @@ func (x *GetInfoRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetInfoRequest.ProtoReflect.Descriptor instead.
 func (*GetInfoRequest) Descriptor() ([]byte, []int) {
-	return file_iris_proto_rawDescGZIP(), []int{24}
+	return file_lens_proto_rawDescGZIP(), []int{24}
 }
 
 type GetInfoResponse struct {
@@ -1411,7 +1411,7 @@ type GetInfoResponse struct {
 func (x *GetInfoResponse) Reset() {
 	*x = GetInfoResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_iris_proto_msgTypes[25]
+		mi := &file_lens_proto_msgTypes[25]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1424,7 +1424,7 @@ func (x *GetInfoResponse) String() string {
 func (*GetInfoResponse) ProtoMessage() {}
 
 func (x *GetInfoResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_iris_proto_msgTypes[25]
+	mi := &file_lens_proto_msgTypes[25]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1437,7 +1437,7 @@ func (x *GetInfoResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetInfoResponse.ProtoReflect.Descriptor instead.
 func (*GetInfoResponse) Descriptor() ([]byte, []int) {
-	return file_iris_proto_rawDescGZIP(), []int{25}
+	return file_lens_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *GetInfoResponse) GetName() string {
@@ -1480,7 +1480,7 @@ type EditFeedsRequest_Op struct {
 func (x *EditFeedsRequest_Op) Reset() {
 	*x = EditFeedsRequest_Op{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_iris_proto_msgTypes[26]
+		mi := &file_lens_proto_msgTypes[26]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1493,7 +1493,7 @@ func (x *EditFeedsRequest_Op) String() string {
 func (*EditFeedsRequest_Op) ProtoMessage() {}
 
 func (x *EditFeedsRequest_Op) ProtoReflect() protoreflect.Message {
-	mi := &file_iris_proto_msgTypes[26]
+	mi := &file_lens_proto_msgTypes[26]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1506,7 +1506,7 @@ func (x *EditFeedsRequest_Op) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EditFeedsRequest_Op.ProtoReflect.Descriptor instead.
 func (*EditFeedsRequest_Op) Descriptor() ([]byte, []int) {
-	return file_iris_proto_rawDescGZIP(), []int{4, 0}
+	return file_lens_proto_rawDescGZIP(), []int{4, 0}
 }
 
 func (x *EditFeedsRequest_Op) GetId() uint32 {
@@ -1540,7 +1540,7 @@ type EditFeedsRequest_Op_Fields struct {
 func (x *EditFeedsRequest_Op_Fields) Reset() {
 	*x = EditFeedsRequest_Op_Fields{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_iris_proto_msgTypes[27]
+		mi := &file_lens_proto_msgTypes[27]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1553,7 +1553,7 @@ func (x *EditFeedsRequest_Op_Fields) String() string {
 func (*EditFeedsRequest_Op_Fields) ProtoMessage() {}
 
 func (x *EditFeedsRequest_Op_Fields) ProtoReflect() protoreflect.Message {
-	mi := &file_iris_proto_msgTypes[27]
+	mi := &file_lens_proto_msgTypes[27]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1566,7 +1566,7 @@ func (x *EditFeedsRequest_Op_Fields) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EditFeedsRequest_Op_Fields.ProtoReflect.Descriptor instead.
 func (*EditFeedsRequest_Op_Fields) Descriptor() ([]byte, []int) {
-	return file_iris_proto_rawDescGZIP(), []int{4, 0, 0}
+	return file_lens_proto_rawDescGZIP(), []int{4, 0, 0}
 }
 
 func (x *EditFeedsRequest_Op_Fields) GetTitle() string {
@@ -1609,7 +1609,7 @@ type EditEntriesRequest_Op struct {
 func (x *EditEntriesRequest_Op) Reset() {
 	*x = EditEntriesRequest_Op{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_iris_proto_msgTypes[28]
+		mi := &file_lens_proto_msgTypes[28]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1622,7 +1622,7 @@ func (x *EditEntriesRequest_Op) String() string {
 func (*EditEntriesRequest_Op) ProtoMessage() {}
 
 func (x *EditEntriesRequest_Op) ProtoReflect() protoreflect.Message {
-	mi := &file_iris_proto_msgTypes[28]
+	mi := &file_lens_proto_msgTypes[28]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1635,7 +1635,7 @@ func (x *EditEntriesRequest_Op) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EditEntriesRequest_Op.ProtoReflect.Descriptor instead.
 func (*EditEntriesRequest_Op) Descriptor() ([]byte, []int) {
-	return file_iris_proto_rawDescGZIP(), []int{14, 0}
+	return file_lens_proto_rawDescGZIP(), []int{14, 0}
 }
 
 func (x *EditEntriesRequest_Op) GetId() uint32 {
@@ -1664,7 +1664,7 @@ type EditEntriesRequest_Op_Fields struct {
 func (x *EditEntriesRequest_Op_Fields) Reset() {
 	*x = EditEntriesRequest_Op_Fields{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_iris_proto_msgTypes[29]
+		mi := &file_lens_proto_msgTypes[29]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1677,7 +1677,7 @@ func (x *EditEntriesRequest_Op_Fields) String() string {
 func (*EditEntriesRequest_Op_Fields) ProtoMessage() {}
 
 func (x *EditEntriesRequest_Op_Fields) ProtoReflect() protoreflect.Message {
-	mi := &file_iris_proto_msgTypes[29]
+	mi := &file_lens_proto_msgTypes[29]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1690,7 +1690,7 @@ func (x *EditEntriesRequest_Op_Fields) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EditEntriesRequest_Op_Fields.ProtoReflect.Descriptor instead.
 func (*EditEntriesRequest_Op_Fields) Descriptor() ([]byte, []int) {
-	return file_iris_proto_rawDescGZIP(), []int{14, 0, 0}
+	return file_lens_proto_rawDescGZIP(), []int{14, 0, 0}
 }
 
 func (x *EditEntriesRequest_Op_Fields) GetIsRead() bool {
@@ -1723,7 +1723,7 @@ type GetStatsResponse_Stats struct {
 func (x *GetStatsResponse_Stats) Reset() {
 	*x = GetStatsResponse_Stats{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_iris_proto_msgTypes[30]
+		mi := &file_lens_proto_msgTypes[30]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1736,7 +1736,7 @@ func (x *GetStatsResponse_Stats) String() string {
 func (*GetStatsResponse_Stats) ProtoMessage() {}
 
 func (x *GetStatsResponse_Stats) ProtoReflect() protoreflect.Message {
-	mi := &file_iris_proto_msgTypes[30]
+	mi := &file_lens_proto_msgTypes[30]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1749,7 +1749,7 @@ func (x *GetStatsResponse_Stats) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetStatsResponse_Stats.ProtoReflect.Descriptor instead.
 func (*GetStatsResponse_Stats) Descriptor() ([]byte, []int) {
-	return file_iris_proto_rawDescGZIP(), []int{23, 0}
+	return file_lens_proto_rawDescGZIP(), []int{23, 0}
 }
 
 func (x *GetStatsResponse_Stats) GetNumFeeds() uint32 {
@@ -1794,11 +1794,11 @@ func (x *GetStatsResponse_Stats) GetMostRecentUpdateTime() *timestamppb.Timestam
 	return nil
 }
 
-var File_iris_proto protoreflect.FileDescriptor
+var File_lens_proto protoreflect.FileDescriptor
 
-var file_iris_proto_rawDesc = []byte{
-	0x0a, 0x0a, 0x69, 0x72, 0x69, 0x73, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x04, 0x69, 0x72,
-	0x69, 0x73, 0x1a, 0x1f, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+var file_lens_proto_rawDesc = []byte{
+	0x0a, 0x0a, 0x6c, 0x65, 0x6e, 0x73, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x04, 0x6c, 0x65,
+	0x6e, 0x73, 0x1a, 0x1f, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f,
 	0x62, 0x75, 0x66, 0x2f, 0x74, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x2e, 0x70, 0x72,
 	0x6f, 0x74, 0x6f, 0x22, 0xd0, 0x03, 0x0a, 0x04, 0x46, 0x65, 0x65, 0x64, 0x12, 0x0e, 0x0a, 0x02,
 	0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x02, 0x69, 0x64, 0x12, 0x14, 0x0a, 0x05,
@@ -1825,7 +1825,7 @@ var file_iris_proto_rawDesc = []byte{
 	0x69, 0x6d, 0x65, 0x12, 0x1d, 0x0a, 0x0a, 0x69, 0x73, 0x5f, 0x73, 0x74, 0x61, 0x72, 0x72, 0x65,
 	0x64, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x08, 0x52, 0x09, 0x69, 0x73, 0x53, 0x74, 0x61, 0x72, 0x72,
 	0x65, 0x64, 0x12, 0x25, 0x0a, 0x07, 0x65, 0x6e, 0x74, 0x72, 0x69, 0x65, 0x73, 0x18, 0x0f, 0x20,
-	0x03, 0x28, 0x0b, 0x32, 0x0b, 0x2e, 0x69, 0x72, 0x69, 0x73, 0x2e, 0x45, 0x6e, 0x74, 0x72, 0x79,
+	0x03, 0x28, 0x0b, 0x32, 0x0b, 0x2e, 0x6c, 0x65, 0x6e, 0x73, 0x2e, 0x45, 0x6e, 0x74, 0x72, 0x79,
 	0x52, 0x07, 0x65, 0x6e, 0x74, 0x72, 0x69, 0x65, 0x73, 0x42, 0x0b, 0x0a, 0x09, 0x5f, 0x73, 0x69,
 	0x74, 0x65, 0x5f, 0x75, 0x72, 0x6c, 0x42, 0x0e, 0x0a, 0x0c, 0x5f, 0x64, 0x65, 0x73, 0x63, 0x72,
 	0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x42, 0x0e, 0x0a, 0x0c, 0x5f, 0x75, 0x70, 0x64, 0x61, 0x74,
@@ -1869,16 +1869,16 @@ var file_iris_proto_rawDesc = []byte{
 	0x6f, 0x6e, 0x42, 0x0d, 0x0a, 0x0b, 0x5f, 0x69, 0x73, 0x5f, 0x73, 0x74, 0x61, 0x72, 0x72, 0x65,
 	0x64, 0x22, 0x4c, 0x0a, 0x0f, 0x41, 0x64, 0x64, 0x46, 0x65, 0x65, 0x64, 0x52, 0x65, 0x73, 0x70,
 	0x6f, 0x6e, 0x73, 0x65, 0x12, 0x1e, 0x0a, 0x04, 0x66, 0x65, 0x65, 0x64, 0x18, 0x01, 0x20, 0x01,
-	0x28, 0x0b, 0x32, 0x0a, 0x2e, 0x69, 0x72, 0x69, 0x73, 0x2e, 0x46, 0x65, 0x65, 0x64, 0x52, 0x04,
+	0x28, 0x0b, 0x32, 0x0a, 0x2e, 0x6c, 0x65, 0x6e, 0x73, 0x2e, 0x46, 0x65, 0x65, 0x64, 0x52, 0x04,
 	0x66, 0x65, 0x65, 0x64, 0x12, 0x19, 0x0a, 0x08, 0x69, 0x73, 0x5f, 0x61, 0x64, 0x64, 0x65, 0x64,
 	0x18, 0x02, 0x20, 0x01, 0x28, 0x08, 0x52, 0x07, 0x69, 0x73, 0x41, 0x64, 0x64, 0x65, 0x64, 0x22,
 	0xbe, 0x02, 0x0a, 0x10, 0x45, 0x64, 0x69, 0x74, 0x46, 0x65, 0x65, 0x64, 0x73, 0x52, 0x65, 0x71,
 	0x75, 0x65, 0x73, 0x74, 0x12, 0x2b, 0x0a, 0x03, 0x6f, 0x70, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28,
-	0x0b, 0x32, 0x19, 0x2e, 0x69, 0x72, 0x69, 0x73, 0x2e, 0x45, 0x64, 0x69, 0x74, 0x46, 0x65, 0x65,
+	0x0b, 0x32, 0x19, 0x2e, 0x6c, 0x65, 0x6e, 0x73, 0x2e, 0x45, 0x64, 0x69, 0x74, 0x46, 0x65, 0x65,
 	0x64, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x2e, 0x4f, 0x70, 0x52, 0x03, 0x6f, 0x70,
 	0x73, 0x1a, 0xfc, 0x01, 0x0a, 0x02, 0x4f, 0x70, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01,
 	0x20, 0x01, 0x28, 0x0d, 0x52, 0x02, 0x69, 0x64, 0x12, 0x38, 0x0a, 0x06, 0x66, 0x69, 0x65, 0x6c,
-	0x64, 0x73, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x20, 0x2e, 0x69, 0x72, 0x69, 0x73, 0x2e,
+	0x64, 0x73, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x20, 0x2e, 0x6c, 0x65, 0x6e, 0x73, 0x2e,
 	0x45, 0x64, 0x69, 0x74, 0x46, 0x65, 0x65, 0x64, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
 	0x2e, 0x4f, 0x70, 0x2e, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x73, 0x52, 0x06, 0x66, 0x69, 0x65, 0x6c,
 	0x64, 0x73, 0x1a, 0xab, 0x01, 0x0a, 0x06, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x73, 0x12, 0x19, 0x0a,
@@ -1894,19 +1894,19 @@ var file_iris_proto_rawDesc = []byte{
 	0x6e, 0x42, 0x0d, 0x0a, 0x0b, 0x5f, 0x69, 0x73, 0x5f, 0x73, 0x74, 0x61, 0x72, 0x72, 0x65, 0x64,
 	0x22, 0x35, 0x0a, 0x11, 0x45, 0x64, 0x69, 0x74, 0x46, 0x65, 0x65, 0x64, 0x73, 0x52, 0x65, 0x73,
 	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x20, 0x0a, 0x05, 0x66, 0x65, 0x65, 0x64, 0x73, 0x18, 0x01,
-	0x20, 0x03, 0x28, 0x0b, 0x32, 0x0a, 0x2e, 0x69, 0x72, 0x69, 0x73, 0x2e, 0x46, 0x65, 0x65, 0x64,
+	0x20, 0x03, 0x28, 0x0b, 0x32, 0x0a, 0x2e, 0x6c, 0x65, 0x6e, 0x73, 0x2e, 0x46, 0x65, 0x65, 0x64,
 	0x52, 0x05, 0x66, 0x65, 0x65, 0x64, 0x73, 0x22, 0x12, 0x0a, 0x10, 0x4c, 0x69, 0x73, 0x74, 0x46,
 	0x65, 0x65, 0x64, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x22, 0x35, 0x0a, 0x11, 0x4c,
 	0x69, 0x73, 0x74, 0x46, 0x65, 0x65, 0x64, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
 	0x12, 0x20, 0x0a, 0x05, 0x66, 0x65, 0x65, 0x64, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32,
-	0x0a, 0x2e, 0x69, 0x72, 0x69, 0x73, 0x2e, 0x46, 0x65, 0x65, 0x64, 0x52, 0x05, 0x66, 0x65, 0x65,
+	0x0a, 0x2e, 0x6c, 0x65, 0x6e, 0x73, 0x2e, 0x46, 0x65, 0x65, 0x64, 0x52, 0x05, 0x66, 0x65, 0x65,
 	0x64, 0x73, 0x22, 0x2d, 0x0a, 0x10, 0x50, 0x75, 0x6c, 0x6c, 0x46, 0x65, 0x65, 0x64, 0x73, 0x52,
 	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x19, 0x0a, 0x08, 0x66, 0x65, 0x65, 0x64, 0x5f, 0x69,
 	0x64, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0d, 0x52, 0x07, 0x66, 0x65, 0x65, 0x64, 0x49, 0x64,
 	0x73, 0x22, 0x78, 0x0a, 0x11, 0x50, 0x75, 0x6c, 0x6c, 0x46, 0x65, 0x65, 0x64, 0x73, 0x52, 0x65,
 	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x10, 0x0a, 0x03, 0x75, 0x72, 0x6c, 0x18, 0x01, 0x20,
 	0x01, 0x28, 0x09, 0x52, 0x03, 0x75, 0x72, 0x6c, 0x12, 0x23, 0x0a, 0x04, 0x66, 0x65, 0x65, 0x64,
-	0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0a, 0x2e, 0x69, 0x72, 0x69, 0x73, 0x2e, 0x46, 0x65,
+	0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0a, 0x2e, 0x6c, 0x65, 0x6e, 0x73, 0x2e, 0x46, 0x65,
 	0x65, 0x64, 0x48, 0x00, 0x52, 0x04, 0x66, 0x65, 0x65, 0x64, 0x88, 0x01, 0x01, 0x12, 0x19, 0x0a,
 	0x05, 0x65, 0x72, 0x72, 0x6f, 0x72, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x48, 0x01, 0x52, 0x05,
 	0x65, 0x72, 0x72, 0x6f, 0x72, 0x88, 0x01, 0x01, 0x42, 0x07, 0x0a, 0x05, 0x5f, 0x66, 0x65, 0x65,
@@ -1924,16 +1924,16 @@ var file_iris_proto_rawDesc = []byte{
 	0x0a, 0x0e, 0x5f, 0x69, 0x73, 0x5f, 0x62, 0x6f, 0x6f, 0x6b, 0x6d, 0x61, 0x72, 0x6b, 0x65, 0x64,
 	0x22, 0x3c, 0x0a, 0x13, 0x4c, 0x69, 0x73, 0x74, 0x45, 0x6e, 0x74, 0x72, 0x69, 0x65, 0x73, 0x52,
 	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x25, 0x0a, 0x07, 0x65, 0x6e, 0x74, 0x72, 0x69,
-	0x65, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x0b, 0x2e, 0x69, 0x72, 0x69, 0x73, 0x2e,
+	0x65, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x0b, 0x2e, 0x6c, 0x65, 0x6e, 0x73, 0x2e,
 	0x45, 0x6e, 0x74, 0x72, 0x79, 0x52, 0x07, 0x65, 0x6e, 0x74, 0x72, 0x69, 0x65, 0x73, 0x22, 0x86,
 	0x02, 0x0a, 0x12, 0x45, 0x64, 0x69, 0x74, 0x45, 0x6e, 0x74, 0x72, 0x69, 0x65, 0x73, 0x52, 0x65,
 	0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x2d, 0x0a, 0x03, 0x6f, 0x70, 0x73, 0x18, 0x01, 0x20, 0x03,
-	0x28, 0x0b, 0x32, 0x1b, 0x2e, 0x69, 0x72, 0x69, 0x73, 0x2e, 0x45, 0x64, 0x69, 0x74, 0x45, 0x6e,
+	0x28, 0x0b, 0x32, 0x1b, 0x2e, 0x6c, 0x65, 0x6e, 0x73, 0x2e, 0x45, 0x64, 0x69, 0x74, 0x45, 0x6e,
 	0x74, 0x72, 0x69, 0x65, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x2e, 0x4f, 0x70, 0x52,
 	0x03, 0x6f, 0x70, 0x73, 0x1a, 0xc0, 0x01, 0x0a, 0x02, 0x4f, 0x70, 0x12, 0x0e, 0x0a, 0x02, 0x69,
 	0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x02, 0x69, 0x64, 0x12, 0x3a, 0x0a, 0x06, 0x66,
-	0x69, 0x65, 0x6c, 0x64, 0x73, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x22, 0x2e, 0x69, 0x72,
-	0x69, 0x73, 0x2e, 0x45, 0x64, 0x69, 0x74, 0x45, 0x6e, 0x74, 0x72, 0x69, 0x65, 0x73, 0x52, 0x65,
+	0x69, 0x65, 0x6c, 0x64, 0x73, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x22, 0x2e, 0x6c, 0x65,
+	0x6e, 0x73, 0x2e, 0x45, 0x64, 0x69, 0x74, 0x45, 0x6e, 0x74, 0x72, 0x69, 0x65, 0x73, 0x52, 0x65,
 	0x71, 0x75, 0x65, 0x73, 0x74, 0x2e, 0x4f, 0x70, 0x2e, 0x46, 0x69, 0x65, 0x6c, 0x64, 0x73, 0x52,
 	0x06, 0x66, 0x69, 0x65, 0x6c, 0x64, 0x73, 0x1a, 0x6e, 0x0a, 0x06, 0x46, 0x69, 0x65, 0x6c, 0x64,
 	0x73, 0x12, 0x1c, 0x0a, 0x07, 0x69, 0x73, 0x5f, 0x72, 0x65, 0x61, 0x64, 0x18, 0x01, 0x20, 0x01,
@@ -1945,13 +1945,13 @@ var file_iris_proto_rawDesc = []byte{
 	0x6b, 0x6d, 0x61, 0x72, 0x6b, 0x65, 0x64, 0x22, 0x3c, 0x0a, 0x13, 0x45, 0x64, 0x69, 0x74, 0x45,
 	0x6e, 0x74, 0x72, 0x69, 0x65, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x25,
 	0x0a, 0x07, 0x65, 0x6e, 0x74, 0x72, 0x69, 0x65, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32,
-	0x0b, 0x2e, 0x69, 0x72, 0x69, 0x73, 0x2e, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x52, 0x07, 0x65, 0x6e,
+	0x0b, 0x2e, 0x6c, 0x65, 0x6e, 0x73, 0x2e, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x52, 0x07, 0x65, 0x6e,
 	0x74, 0x72, 0x69, 0x65, 0x73, 0x22, 0x21, 0x0a, 0x0f, 0x47, 0x65, 0x74, 0x45, 0x6e, 0x74, 0x72,
 	0x79, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01,
 	0x20, 0x01, 0x28, 0x0d, 0x52, 0x02, 0x69, 0x64, 0x22, 0x35, 0x0a, 0x10, 0x47, 0x65, 0x74, 0x45,
 	0x6e, 0x74, 0x72, 0x79, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x21, 0x0a, 0x05,
-	0x65, 0x6e, 0x74, 0x72, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0b, 0x2e, 0x69, 0x72,
-	0x69, 0x73, 0x2e, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x52, 0x05, 0x65, 0x6e, 0x74, 0x72, 0x79, 0x22,
+	0x65, 0x6e, 0x74, 0x72, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0b, 0x2e, 0x6c, 0x65,
+	0x6e, 0x73, 0x2e, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x52, 0x05, 0x65, 0x6e, 0x74, 0x72, 0x79, 0x22,
 	0x38, 0x0a, 0x11, 0x45, 0x78, 0x70, 0x6f, 0x72, 0x74, 0x4f, 0x50, 0x4d, 0x4c, 0x52, 0x65, 0x71,
 	0x75, 0x65, 0x73, 0x74, 0x12, 0x19, 0x0a, 0x05, 0x74, 0x69, 0x74, 0x6c, 0x65, 0x18, 0x01, 0x20,
 	0x01, 0x28, 0x09, 0x48, 0x00, 0x52, 0x05, 0x74, 0x69, 0x74, 0x6c, 0x65, 0x88, 0x01, 0x01, 0x42,
@@ -1971,7 +1971,7 @@ var file_iris_proto_rawDesc = []byte{
 	0x74, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x22, 0xbb, 0x03, 0x0a, 0x10, 0x47, 0x65,
 	0x74, 0x53, 0x74, 0x61, 0x74, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x39,
 	0x0a, 0x06, 0x67, 0x6c, 0x6f, 0x62, 0x61, 0x6c, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1c,
-	0x2e, 0x69, 0x72, 0x69, 0x73, 0x2e, 0x47, 0x65, 0x74, 0x53, 0x74, 0x61, 0x74, 0x73, 0x52, 0x65,
+	0x2e, 0x6c, 0x65, 0x6e, 0x73, 0x2e, 0x47, 0x65, 0x74, 0x53, 0x74, 0x61, 0x74, 0x73, 0x52, 0x65,
 	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x2e, 0x53, 0x74, 0x61, 0x74, 0x73, 0x48, 0x00, 0x52, 0x06,
 	0x67, 0x6c, 0x6f, 0x62, 0x61, 0x6c, 0x88, 0x01, 0x01, 0x1a, 0xe0, 0x02, 0x0a, 0x05, 0x53, 0x74,
 	0x61, 0x74, 0x73, 0x12, 0x1b, 0x0a, 0x09, 0x6e, 0x75, 0x6d, 0x5f, 0x66, 0x65, 0x65, 0x64, 0x73,
@@ -2005,152 +2005,152 @@ var file_iris_proto_rawDesc = []byte{
 	0x74, 0x5f, 0x63, 0x6f, 0x6d, 0x6d, 0x69, 0x74, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09,
 	0x67, 0x69, 0x74, 0x43, 0x6f, 0x6d, 0x6d, 0x69, 0x74, 0x12, 0x1d, 0x0a, 0x0a, 0x62, 0x75, 0x69,
 	0x6c, 0x64, 0x5f, 0x74, 0x69, 0x6d, 0x65, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x62,
-	0x75, 0x69, 0x6c, 0x64, 0x54, 0x69, 0x6d, 0x65, 0x32, 0x8e, 0x06, 0x0a, 0x04, 0x49, 0x72, 0x69,
-	0x73, 0x12, 0x38, 0x0a, 0x07, 0x41, 0x64, 0x64, 0x46, 0x65, 0x65, 0x64, 0x12, 0x14, 0x2e, 0x69,
-	0x72, 0x69, 0x73, 0x2e, 0x41, 0x64, 0x64, 0x46, 0x65, 0x65, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65,
-	0x73, 0x74, 0x1a, 0x15, 0x2e, 0x69, 0x72, 0x69, 0x73, 0x2e, 0x41, 0x64, 0x64, 0x46, 0x65, 0x65,
+	0x75, 0x69, 0x6c, 0x64, 0x54, 0x69, 0x6d, 0x65, 0x32, 0x8e, 0x06, 0x0a, 0x04, 0x4c, 0x65, 0x6e,
+	0x73, 0x12, 0x38, 0x0a, 0x07, 0x41, 0x64, 0x64, 0x46, 0x65, 0x65, 0x64, 0x12, 0x14, 0x2e, 0x6c,
+	0x65, 0x6e, 0x73, 0x2e, 0x41, 0x64, 0x64, 0x46, 0x65, 0x65, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65,
+	0x73, 0x74, 0x1a, 0x15, 0x2e, 0x6c, 0x65, 0x6e, 0x73, 0x2e, 0x41, 0x64, 0x64, 0x46, 0x65, 0x65,
 	0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x3e, 0x0a, 0x09, 0x45,
-	0x64, 0x69, 0x74, 0x46, 0x65, 0x65, 0x64, 0x73, 0x12, 0x16, 0x2e, 0x69, 0x72, 0x69, 0x73, 0x2e,
+	0x64, 0x69, 0x74, 0x46, 0x65, 0x65, 0x64, 0x73, 0x12, 0x16, 0x2e, 0x6c, 0x65, 0x6e, 0x73, 0x2e,
 	0x45, 0x64, 0x69, 0x74, 0x46, 0x65, 0x65, 0x64, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
-	0x1a, 0x17, 0x2e, 0x69, 0x72, 0x69, 0x73, 0x2e, 0x45, 0x64, 0x69, 0x74, 0x46, 0x65, 0x65, 0x64,
+	0x1a, 0x17, 0x2e, 0x6c, 0x65, 0x6e, 0x73, 0x2e, 0x45, 0x64, 0x69, 0x74, 0x46, 0x65, 0x65, 0x64,
 	0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x3e, 0x0a, 0x09, 0x4c,
-	0x69, 0x73, 0x74, 0x46, 0x65, 0x65, 0x64, 0x73, 0x12, 0x16, 0x2e, 0x69, 0x72, 0x69, 0x73, 0x2e,
+	0x69, 0x73, 0x74, 0x46, 0x65, 0x65, 0x64, 0x73, 0x12, 0x16, 0x2e, 0x6c, 0x65, 0x6e, 0x73, 0x2e,
 	0x4c, 0x69, 0x73, 0x74, 0x46, 0x65, 0x65, 0x64, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
-	0x1a, 0x17, 0x2e, 0x69, 0x72, 0x69, 0x73, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x46, 0x65, 0x65, 0x64,
+	0x1a, 0x17, 0x2e, 0x6c, 0x65, 0x6e, 0x73, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x46, 0x65, 0x65, 0x64,
 	0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x40, 0x0a, 0x09, 0x50,
-	0x75, 0x6c, 0x6c, 0x46, 0x65, 0x65, 0x64, 0x73, 0x12, 0x16, 0x2e, 0x69, 0x72, 0x69, 0x73, 0x2e,
+	0x75, 0x6c, 0x6c, 0x46, 0x65, 0x65, 0x64, 0x73, 0x12, 0x16, 0x2e, 0x6c, 0x65, 0x6e, 0x73, 0x2e,
 	0x50, 0x75, 0x6c, 0x6c, 0x46, 0x65, 0x65, 0x64, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
-	0x1a, 0x17, 0x2e, 0x69, 0x72, 0x69, 0x73, 0x2e, 0x50, 0x75, 0x6c, 0x6c, 0x46, 0x65, 0x65, 0x64,
+	0x1a, 0x17, 0x2e, 0x6c, 0x65, 0x6e, 0x73, 0x2e, 0x50, 0x75, 0x6c, 0x6c, 0x46, 0x65, 0x65, 0x64,
 	0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x30, 0x01, 0x12, 0x44, 0x0a,
-	0x0b, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x46, 0x65, 0x65, 0x64, 0x73, 0x12, 0x18, 0x2e, 0x69,
-	0x72, 0x69, 0x73, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x46, 0x65, 0x65, 0x64, 0x73, 0x52,
-	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x19, 0x2e, 0x69, 0x72, 0x69, 0x73, 0x2e, 0x44, 0x65,
+	0x0b, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x46, 0x65, 0x65, 0x64, 0x73, 0x12, 0x18, 0x2e, 0x6c,
+	0x65, 0x6e, 0x73, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x46, 0x65, 0x65, 0x64, 0x73, 0x52,
+	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x19, 0x2e, 0x6c, 0x65, 0x6e, 0x73, 0x2e, 0x44, 0x65,
 	0x6c, 0x65, 0x74, 0x65, 0x46, 0x65, 0x65, 0x64, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
 	0x65, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x0b, 0x4c, 0x69, 0x73, 0x74, 0x45, 0x6e, 0x74, 0x72, 0x69,
-	0x65, 0x73, 0x12, 0x18, 0x2e, 0x69, 0x72, 0x69, 0x73, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x45, 0x6e,
-	0x74, 0x72, 0x69, 0x65, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x19, 0x2e, 0x69,
-	0x72, 0x69, 0x73, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x45, 0x6e, 0x74, 0x72, 0x69, 0x65, 0x73, 0x52,
+	0x65, 0x73, 0x12, 0x18, 0x2e, 0x6c, 0x65, 0x6e, 0x73, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x45, 0x6e,
+	0x74, 0x72, 0x69, 0x65, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x19, 0x2e, 0x6c,
+	0x65, 0x6e, 0x73, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x45, 0x6e, 0x74, 0x72, 0x69, 0x65, 0x73, 0x52,
 	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x0b, 0x45, 0x64, 0x69,
-	0x74, 0x45, 0x6e, 0x74, 0x72, 0x69, 0x65, 0x73, 0x12, 0x18, 0x2e, 0x69, 0x72, 0x69, 0x73, 0x2e,
+	0x74, 0x45, 0x6e, 0x74, 0x72, 0x69, 0x65, 0x73, 0x12, 0x18, 0x2e, 0x6c, 0x65, 0x6e, 0x73, 0x2e,
 	0x45, 0x64, 0x69, 0x74, 0x45, 0x6e, 0x74, 0x72, 0x69, 0x65, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65,
-	0x73, 0x74, 0x1a, 0x19, 0x2e, 0x69, 0x72, 0x69, 0x73, 0x2e, 0x45, 0x64, 0x69, 0x74, 0x45, 0x6e,
+	0x73, 0x74, 0x1a, 0x19, 0x2e, 0x6c, 0x65, 0x6e, 0x73, 0x2e, 0x45, 0x64, 0x69, 0x74, 0x45, 0x6e,
 	0x74, 0x72, 0x69, 0x65, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12,
-	0x3b, 0x0a, 0x08, 0x47, 0x65, 0x74, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x15, 0x2e, 0x69, 0x72,
-	0x69, 0x73, 0x2e, 0x47, 0x65, 0x74, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x52, 0x65, 0x71, 0x75, 0x65,
-	0x73, 0x74, 0x1a, 0x16, 0x2e, 0x69, 0x72, 0x69, 0x73, 0x2e, 0x47, 0x65, 0x74, 0x45, 0x6e, 0x74,
+	0x3b, 0x0a, 0x08, 0x47, 0x65, 0x74, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x15, 0x2e, 0x6c, 0x65,
+	0x6e, 0x73, 0x2e, 0x47, 0x65, 0x74, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x52, 0x65, 0x71, 0x75, 0x65,
+	0x73, 0x74, 0x1a, 0x16, 0x2e, 0x6c, 0x65, 0x6e, 0x73, 0x2e, 0x47, 0x65, 0x74, 0x45, 0x6e, 0x74,
 	0x72, 0x79, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x41, 0x0a, 0x0a,
-	0x45, 0x78, 0x70, 0x6f, 0x72, 0x74, 0x4f, 0x50, 0x4d, 0x4c, 0x12, 0x17, 0x2e, 0x69, 0x72, 0x69,
+	0x45, 0x78, 0x70, 0x6f, 0x72, 0x74, 0x4f, 0x50, 0x4d, 0x4c, 0x12, 0x17, 0x2e, 0x6c, 0x65, 0x6e,
 	0x73, 0x2e, 0x45, 0x78, 0x70, 0x6f, 0x72, 0x74, 0x4f, 0x50, 0x4d, 0x4c, 0x52, 0x65, 0x71, 0x75,
-	0x65, 0x73, 0x74, 0x1a, 0x18, 0x2e, 0x69, 0x72, 0x69, 0x73, 0x2e, 0x45, 0x78, 0x70, 0x6f, 0x72,
+	0x65, 0x73, 0x74, 0x1a, 0x18, 0x2e, 0x6c, 0x65, 0x6e, 0x73, 0x2e, 0x45, 0x78, 0x70, 0x6f, 0x72,
 	0x74, 0x4f, 0x50, 0x4d, 0x4c, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12,
 	0x41, 0x0a, 0x0a, 0x49, 0x6d, 0x70, 0x6f, 0x72, 0x74, 0x4f, 0x50, 0x4d, 0x4c, 0x12, 0x17, 0x2e,
-	0x69, 0x72, 0x69, 0x73, 0x2e, 0x49, 0x6d, 0x70, 0x6f, 0x72, 0x74, 0x4f, 0x50, 0x4d, 0x4c, 0x52,
-	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x18, 0x2e, 0x69, 0x72, 0x69, 0x73, 0x2e, 0x49, 0x6d,
+	0x6c, 0x65, 0x6e, 0x73, 0x2e, 0x49, 0x6d, 0x70, 0x6f, 0x72, 0x74, 0x4f, 0x50, 0x4d, 0x4c, 0x52,
+	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x18, 0x2e, 0x6c, 0x65, 0x6e, 0x73, 0x2e, 0x49, 0x6d,
 	0x70, 0x6f, 0x72, 0x74, 0x4f, 0x50, 0x4d, 0x4c, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
 	0x22, 0x00, 0x12, 0x3b, 0x0a, 0x08, 0x47, 0x65, 0x74, 0x53, 0x74, 0x61, 0x74, 0x73, 0x12, 0x15,
-	0x2e, 0x69, 0x72, 0x69, 0x73, 0x2e, 0x47, 0x65, 0x74, 0x53, 0x74, 0x61, 0x74, 0x73, 0x52, 0x65,
-	0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x16, 0x2e, 0x69, 0x72, 0x69, 0x73, 0x2e, 0x47, 0x65, 0x74,
+	0x2e, 0x6c, 0x65, 0x6e, 0x73, 0x2e, 0x47, 0x65, 0x74, 0x53, 0x74, 0x61, 0x74, 0x73, 0x52, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x16, 0x2e, 0x6c, 0x65, 0x6e, 0x73, 0x2e, 0x47, 0x65, 0x74,
 	0x53, 0x74, 0x61, 0x74, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12,
-	0x38, 0x0a, 0x07, 0x47, 0x65, 0x74, 0x49, 0x6e, 0x66, 0x6f, 0x12, 0x14, 0x2e, 0x69, 0x72, 0x69,
+	0x38, 0x0a, 0x07, 0x47, 0x65, 0x74, 0x49, 0x6e, 0x66, 0x6f, 0x12, 0x14, 0x2e, 0x6c, 0x65, 0x6e,
 	0x73, 0x2e, 0x47, 0x65, 0x74, 0x49, 0x6e, 0x66, 0x6f, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
-	0x1a, 0x15, 0x2e, 0x69, 0x72, 0x69, 0x73, 0x2e, 0x47, 0x65, 0x74, 0x49, 0x6e, 0x66, 0x6f, 0x52,
+	0x1a, 0x15, 0x2e, 0x6c, 0x65, 0x6e, 0x73, 0x2e, 0x47, 0x65, 0x74, 0x49, 0x6e, 0x66, 0x6f, 0x52,
 	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x42, 0x19, 0x5a, 0x17, 0x67, 0x69, 0x74,
-	0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x62, 0x6f, 0x77, 0x2f, 0x69, 0x72, 0x69, 0x73,
+	0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x62, 0x6f, 0x77, 0x2f, 0x6c, 0x65, 0x6e, 0x73,
 	0x2f, 0x61, 0x70, 0x69, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
-	file_iris_proto_rawDescOnce sync.Once
-	file_iris_proto_rawDescData = file_iris_proto_rawDesc
+	file_lens_proto_rawDescOnce sync.Once
+	file_lens_proto_rawDescData = file_lens_proto_rawDesc
 )
 
-func file_iris_proto_rawDescGZIP() []byte {
-	file_iris_proto_rawDescOnce.Do(func() {
-		file_iris_proto_rawDescData = protoimpl.X.CompressGZIP(file_iris_proto_rawDescData)
+func file_lens_proto_rawDescGZIP() []byte {
+	file_lens_proto_rawDescOnce.Do(func() {
+		file_lens_proto_rawDescData = protoimpl.X.CompressGZIP(file_lens_proto_rawDescData)
 	})
-	return file_iris_proto_rawDescData
+	return file_lens_proto_rawDescData
 }
 
-var file_iris_proto_msgTypes = make([]protoimpl.MessageInfo, 31)
-var file_iris_proto_goTypes = []interface{}{
-	(*Feed)(nil),                         // 0: iris.Feed
-	(*Entry)(nil),                        // 1: iris.Entry
-	(*AddFeedRequest)(nil),               // 2: iris.AddFeedRequest
-	(*AddFeedResponse)(nil),              // 3: iris.AddFeedResponse
-	(*EditFeedsRequest)(nil),             // 4: iris.EditFeedsRequest
-	(*EditFeedsResponse)(nil),            // 5: iris.EditFeedsResponse
-	(*ListFeedsRequest)(nil),             // 6: iris.ListFeedsRequest
-	(*ListFeedsResponse)(nil),            // 7: iris.ListFeedsResponse
-	(*PullFeedsRequest)(nil),             // 8: iris.PullFeedsRequest
-	(*PullFeedsResponse)(nil),            // 9: iris.PullFeedsResponse
-	(*DeleteFeedsRequest)(nil),           // 10: iris.DeleteFeedsRequest
-	(*DeleteFeedsResponse)(nil),          // 11: iris.DeleteFeedsResponse
-	(*ListEntriesRequest)(nil),           // 12: iris.ListEntriesRequest
-	(*ListEntriesResponse)(nil),          // 13: iris.ListEntriesResponse
-	(*EditEntriesRequest)(nil),           // 14: iris.EditEntriesRequest
-	(*EditEntriesResponse)(nil),          // 15: iris.EditEntriesResponse
-	(*GetEntryRequest)(nil),              // 16: iris.GetEntryRequest
-	(*GetEntryResponse)(nil),             // 17: iris.GetEntryResponse
-	(*ExportOPMLRequest)(nil),            // 18: iris.ExportOPMLRequest
-	(*ExportOPMLResponse)(nil),           // 19: iris.ExportOPMLResponse
-	(*ImportOPMLRequest)(nil),            // 20: iris.ImportOPMLRequest
-	(*ImportOPMLResponse)(nil),           // 21: iris.ImportOPMLResponse
-	(*GetStatsRequest)(nil),              // 22: iris.GetStatsRequest
-	(*GetStatsResponse)(nil),             // 23: iris.GetStatsResponse
-	(*GetInfoRequest)(nil),               // 24: iris.GetInfoRequest
-	(*GetInfoResponse)(nil),              // 25: iris.GetInfoResponse
-	(*EditFeedsRequest_Op)(nil),          // 26: iris.EditFeedsRequest.Op
-	(*EditFeedsRequest_Op_Fields)(nil),   // 27: iris.EditFeedsRequest.Op.Fields
-	(*EditEntriesRequest_Op)(nil),        // 28: iris.EditEntriesRequest.Op
-	(*EditEntriesRequest_Op_Fields)(nil), // 29: iris.EditEntriesRequest.Op.Fields
-	(*GetStatsResponse_Stats)(nil),       // 30: iris.GetStatsResponse.Stats
+var file_lens_proto_msgTypes = make([]protoimpl.MessageInfo, 31)
+var file_lens_proto_goTypes = []interface{}{
+	(*Feed)(nil),                         // 0: lens.Feed
+	(*Entry)(nil),                        // 1: lens.Entry
+	(*AddFeedRequest)(nil),               // 2: lens.AddFeedRequest
+	(*AddFeedResponse)(nil),              // 3: lens.AddFeedResponse
+	(*EditFeedsRequest)(nil),             // 4: lens.EditFeedsRequest
+	(*EditFeedsResponse)(nil),            // 5: lens.EditFeedsResponse
+	(*ListFeedsRequest)(nil),             // 6: lens.ListFeedsRequest
+	(*ListFeedsResponse)(nil),            // 7: lens.ListFeedsResponse
+	(*PullFeedsRequest)(nil),             // 8: lens.PullFeedsRequest
+	(*PullFeedsResponse)(nil),            // 9: lens.PullFeedsResponse
+	(*DeleteFeedsRequest)(nil),           // 10: lens.DeleteFeedsRequest
+	(*DeleteFeedsResponse)(nil),          // 11: lens.DeleteFeedsResponse
+	(*ListEntriesRequest)(nil),           // 12: lens.ListEntriesRequest
+	(*ListEntriesResponse)(nil),          // 13: lens.ListEntriesResponse
+	(*EditEntriesRequest)(nil),           // 14: lens.EditEntriesRequest
+	(*EditEntriesResponse)(nil),          // 15: lens.EditEntriesResponse
+	(*GetEntryRequest)(nil),              // 16: lens.GetEntryRequest
+	(*GetEntryResponse)(nil),             // 17: lens.GetEntryResponse
+	(*ExportOPMLRequest)(nil),            // 18: lens.ExportOPMLRequest
+	(*ExportOPMLResponse)(nil),           // 19: lens.ExportOPMLResponse
+	(*ImportOPMLRequest)(nil),            // 20: lens.ImportOPMLRequest
+	(*ImportOPMLResponse)(nil),           // 21: lens.ImportOPMLResponse
+	(*GetStatsRequest)(nil),              // 22: lens.GetStatsRequest
+	(*GetStatsResponse)(nil),             // 23: lens.GetStatsResponse
+	(*GetInfoRequest)(nil),               // 24: lens.GetInfoRequest
+	(*GetInfoResponse)(nil),              // 25: lens.GetInfoResponse
+	(*EditFeedsRequest_Op)(nil),          // 26: lens.EditFeedsRequest.Op
+	(*EditFeedsRequest_Op_Fields)(nil),   // 27: lens.EditFeedsRequest.Op.Fields
+	(*EditEntriesRequest_Op)(nil),        // 28: lens.EditEntriesRequest.Op
+	(*EditEntriesRequest_Op_Fields)(nil), // 29: lens.EditEntriesRequest.Op.Fields
+	(*GetStatsResponse_Stats)(nil),       // 30: lens.GetStatsResponse.Stats
 	(*timestamppb.Timestamp)(nil),        // 31: google.protobuf.Timestamp
 }
-var file_iris_proto_depIdxs = []int32{
-	31, // 0: iris.Feed.update_time:type_name -> google.protobuf.Timestamp
-	31, // 1: iris.Feed.sub_time:type_name -> google.protobuf.Timestamp
-	31, // 2: iris.Feed.last_pull_time:type_name -> google.protobuf.Timestamp
-	1,  // 3: iris.Feed.entries:type_name -> iris.Entry
-	31, // 4: iris.Entry.update_time:type_name -> google.protobuf.Timestamp
-	31, // 5: iris.Entry.pub_time:type_name -> google.protobuf.Timestamp
-	0,  // 6: iris.AddFeedResponse.feed:type_name -> iris.Feed
-	26, // 7: iris.EditFeedsRequest.ops:type_name -> iris.EditFeedsRequest.Op
-	0,  // 8: iris.EditFeedsResponse.feeds:type_name -> iris.Feed
-	0,  // 9: iris.ListFeedsResponse.feeds:type_name -> iris.Feed
-	0,  // 10: iris.PullFeedsResponse.feed:type_name -> iris.Feed
-	1,  // 11: iris.ListEntriesResponse.entries:type_name -> iris.Entry
-	28, // 12: iris.EditEntriesRequest.ops:type_name -> iris.EditEntriesRequest.Op
-	1,  // 13: iris.EditEntriesResponse.entries:type_name -> iris.Entry
-	1,  // 14: iris.GetEntryResponse.entry:type_name -> iris.Entry
-	30, // 15: iris.GetStatsResponse.global:type_name -> iris.GetStatsResponse.Stats
-	27, // 16: iris.EditFeedsRequest.Op.fields:type_name -> iris.EditFeedsRequest.Op.Fields
-	29, // 17: iris.EditEntriesRequest.Op.fields:type_name -> iris.EditEntriesRequest.Op.Fields
-	31, // 18: iris.GetStatsResponse.Stats.last_pull_time:type_name -> google.protobuf.Timestamp
-	31, // 19: iris.GetStatsResponse.Stats.most_recent_update_time:type_name -> google.protobuf.Timestamp
-	2,  // 20: iris.Iris.AddFeed:input_type -> iris.AddFeedRequest
-	4,  // 21: iris.Iris.EditFeeds:input_type -> iris.EditFeedsRequest
-	6,  // 22: iris.Iris.ListFeeds:input_type -> iris.ListFeedsRequest
-	8,  // 23: iris.Iris.PullFeeds:input_type -> iris.PullFeedsRequest
-	10, // 24: iris.Iris.DeleteFeeds:input_type -> iris.DeleteFeedsRequest
-	12, // 25: iris.Iris.ListEntries:input_type -> iris.ListEntriesRequest
-	14, // 26: iris.Iris.EditEntries:input_type -> iris.EditEntriesRequest
-	16, // 27: iris.Iris.GetEntry:input_type -> iris.GetEntryRequest
-	18, // 28: iris.Iris.ExportOPML:input_type -> iris.ExportOPMLRequest
-	20, // 29: iris.Iris.ImportOPML:input_type -> iris.ImportOPMLRequest
-	22, // 30: iris.Iris.GetStats:input_type -> iris.GetStatsRequest
-	24, // 31: iris.Iris.GetInfo:input_type -> iris.GetInfoRequest
-	3,  // 32: iris.Iris.AddFeed:output_type -> iris.AddFeedResponse
-	5,  // 33: iris.Iris.EditFeeds:output_type -> iris.EditFeedsResponse
-	7,  // 34: iris.Iris.ListFeeds:output_type -> iris.ListFeedsResponse
-	9,  // 35: iris.Iris.PullFeeds:output_type -> iris.PullFeedsResponse
-	11, // 36: iris.Iris.DeleteFeeds:output_type -> iris.DeleteFeedsResponse
-	13, // 37: iris.Iris.ListEntries:output_type -> iris.ListEntriesResponse
-	15, // 38: iris.Iris.EditEntries:output_type -> iris.EditEntriesResponse
-	17, // 39: iris.Iris.GetEntry:output_type -> iris.GetEntryResponse
-	19, // 40: iris.Iris.ExportOPML:output_type -> iris.ExportOPMLResponse
-	21, // 41: iris.Iris.ImportOPML:output_type -> iris.ImportOPMLResponse
-	23, // 42: iris.Iris.GetStats:output_type -> iris.GetStatsResponse
-	25, // 43: iris.Iris.GetInfo:output_type -> iris.GetInfoResponse
+var file_lens_proto_depIdxs = []int32{
+	31, // 0: lens.Feed.update_time:type_name -> google.protobuf.Timestamp
+	31, // 1: lens.Feed.sub_time:type_name -> google.protobuf.Timestamp
+	31, // 2: lens.Feed.last_pull_time:type_name -> google.protobuf.Timestamp
+	1,  // 3: lens.Feed.entries:type_name -> lens.Entry
+	31, // 4: lens.Entry.update_time:type_name -> google.protobuf.Timestamp
+	31, // 5: lens.Entry.pub_time:type_name -> google.protobuf.Timestamp
+	0,  // 6: lens.AddFeedResponse.feed:type_name -> lens.Feed
+	26, // 7: lens.EditFeedsRequest.ops:type_name -> lens.EditFeedsRequest.Op
+	0,  // 8: lens.EditFeedsResponse.feeds:type_name -> lens.Feed
+	0,  // 9: lens.ListFeedsResponse.feeds:type_name -> lens.Feed
+	0,  // 10: lens.PullFeedsResponse.feed:type_name -> lens.Feed
+	1,  // 11: lens.ListEntriesResponse.entries:type_name -> lens.Entry
+	28, // 12: lens.EditEntriesRequest.ops:type_name -> lens.EditEntriesRequest.Op
+	1,  // 13: lens.EditEntriesResponse.entries:type_name -> lens.Entry
+	1,  // 14: lens.GetEntryResponse.entry:type_name -> lens.Entry
+	30, // 15: lens.GetStatsResponse.global:type_name -> lens.GetStatsResponse.Stats
+	27, // 16: lens.EditFeedsRequest.Op.fields:type_name -> lens.EditFeedsRequest.Op.Fields
+	29, // 17: lens.EditEntriesRequest.Op.fields:type_name -> lens.EditEntriesRequest.Op.Fields
+	31, // 18: lens.GetStatsResponse.Stats.last_pull_time:type_name -> google.protobuf.Timestamp
+	31, // 19: lens.GetStatsResponse.Stats.most_recent_update_time:type_name -> google.protobuf.Timestamp
+	2,  // 20: lens.Lens.AddFeed:input_type -> lens.AddFeedRequest
+	4,  // 21: lens.Lens.EditFeeds:input_type -> lens.EditFeedsRequest
+	6,  // 22: lens.Lens.ListFeeds:input_type -> lens.ListFeedsRequest
+	8,  // 23: lens.Lens.PullFeeds:input_type -> lens.PullFeedsRequest
+	10, // 24: lens.Lens.DeleteFeeds:input_type -> lens.DeleteFeedsRequest
+	12, // 25: lens.Lens.ListEntries:input_type -> lens.ListEntriesRequest
+	14, // 26: lens.Lens.EditEntries:input_type -> lens.EditEntriesRequest
+	16, // 27: lens.Lens.GetEntry:input_type -> lens.GetEntryRequest
+	18, // 28: lens.Lens.ExportOPML:input_type -> lens.ExportOPMLRequest
+	20, // 29: lens.Lens.ImportOPML:input_type -> lens.ImportOPMLRequest
+	22, // 30: lens.Lens.GetStats:input_type -> lens.GetStatsRequest
+	24, // 31: lens.Lens.GetInfo:input_type -> lens.GetInfoRequest
+	3,  // 32: lens.Lens.AddFeed:output_type -> lens.AddFeedResponse
+	5,  // 33: lens.Lens.EditFeeds:output_type -> lens.EditFeedsResponse
+	7,  // 34: lens.Lens.ListFeeds:output_type -> lens.ListFeedsResponse
+	9,  // 35: lens.Lens.PullFeeds:output_type -> lens.PullFeedsResponse
+	11, // 36: lens.Lens.DeleteFeeds:output_type -> lens.DeleteFeedsResponse
+	13, // 37: lens.Lens.ListEntries:output_type -> lens.ListEntriesResponse
+	15, // 38: lens.Lens.EditEntries:output_type -> lens.EditEntriesResponse
+	17, // 39: lens.Lens.GetEntry:output_type -> lens.GetEntryResponse
+	19, // 40: lens.Lens.ExportOPML:output_type -> lens.ExportOPMLResponse
+	21, // 41: lens.Lens.ImportOPML:output_type -> lens.ImportOPMLResponse
+	23, // 42: lens.Lens.GetStats:output_type -> lens.GetStatsResponse
+	25, // 43: lens.Lens.GetInfo:output_type -> lens.GetInfoResponse
 	32, // [32:44] is the sub-list for method output_type
 	20, // [20:32] is the sub-list for method input_type
 	20, // [20:20] is the sub-list for extension type_name
@@ -2158,13 +2158,13 @@ var file_iris_proto_depIdxs = []int32{
 	0,  // [0:20] is the sub-list for field type_name
 }
 
-func init() { file_iris_proto_init() }
-func file_iris_proto_init() {
-	if File_iris_proto != nil {
+func init() { file_lens_proto_init() }
+func file_lens_proto_init() {
+	if File_lens_proto != nil {
 		return
 	}
 	if !protoimpl.UnsafeEnabled {
-		file_iris_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
+		file_lens_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Feed); i {
 			case 0:
 				return &v.state
@@ -2176,7 +2176,7 @@ func file_iris_proto_init() {
 				return nil
 			}
 		}
-		file_iris_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
+		file_lens_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Entry); i {
 			case 0:
 				return &v.state
@@ -2188,7 +2188,7 @@ func file_iris_proto_init() {
 				return nil
 			}
 		}
-		file_iris_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+		file_lens_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*AddFeedRequest); i {
 			case 0:
 				return &v.state
@@ -2200,7 +2200,7 @@ func file_iris_proto_init() {
 				return nil
 			}
 		}
-		file_iris_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+		file_lens_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*AddFeedResponse); i {
 			case 0:
 				return &v.state
@@ -2212,7 +2212,7 @@ func file_iris_proto_init() {
 				return nil
 			}
 		}
-		file_iris_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+		file_lens_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*EditFeedsRequest); i {
 			case 0:
 				return &v.state
@@ -2224,7 +2224,7 @@ func file_iris_proto_init() {
 				return nil
 			}
 		}
-		file_iris_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
+		file_lens_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*EditFeedsResponse); i {
 			case 0:
 				return &v.state
@@ -2236,7 +2236,7 @@ func file_iris_proto_init() {
 				return nil
 			}
 		}
-		file_iris_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
+		file_lens_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListFeedsRequest); i {
 			case 0:
 				return &v.state
@@ -2248,7 +2248,7 @@ func file_iris_proto_init() {
 				return nil
 			}
 		}
-		file_iris_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
+		file_lens_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListFeedsResponse); i {
 			case 0:
 				return &v.state
@@ -2260,7 +2260,7 @@ func file_iris_proto_init() {
 				return nil
 			}
 		}
-		file_iris_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
+		file_lens_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*PullFeedsRequest); i {
 			case 0:
 				return &v.state
@@ -2272,7 +2272,7 @@ func file_iris_proto_init() {
 				return nil
 			}
 		}
-		file_iris_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
+		file_lens_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*PullFeedsResponse); i {
 			case 0:
 				return &v.state
@@ -2284,7 +2284,7 @@ func file_iris_proto_init() {
 				return nil
 			}
 		}
-		file_iris_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
+		file_lens_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteFeedsRequest); i {
 			case 0:
 				return &v.state
@@ -2296,7 +2296,7 @@ func file_iris_proto_init() {
 				return nil
 			}
 		}
-		file_iris_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
+		file_lens_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteFeedsResponse); i {
 			case 0:
 				return &v.state
@@ -2308,7 +2308,7 @@ func file_iris_proto_init() {
 				return nil
 			}
 		}
-		file_iris_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
+		file_lens_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListEntriesRequest); i {
 			case 0:
 				return &v.state
@@ -2320,7 +2320,7 @@ func file_iris_proto_init() {
 				return nil
 			}
 		}
-		file_iris_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
+		file_lens_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListEntriesResponse); i {
 			case 0:
 				return &v.state
@@ -2332,7 +2332,7 @@ func file_iris_proto_init() {
 				return nil
 			}
 		}
-		file_iris_proto_msgTypes[14].Exporter = func(v interface{}, i int) interface{} {
+		file_lens_proto_msgTypes[14].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*EditEntriesRequest); i {
 			case 0:
 				return &v.state
@@ -2344,7 +2344,7 @@ func file_iris_proto_init() {
 				return nil
 			}
 		}
-		file_iris_proto_msgTypes[15].Exporter = func(v interface{}, i int) interface{} {
+		file_lens_proto_msgTypes[15].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*EditEntriesResponse); i {
 			case 0:
 				return &v.state
@@ -2356,7 +2356,7 @@ func file_iris_proto_init() {
 				return nil
 			}
 		}
-		file_iris_proto_msgTypes[16].Exporter = func(v interface{}, i int) interface{} {
+		file_lens_proto_msgTypes[16].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetEntryRequest); i {
 			case 0:
 				return &v.state
@@ -2368,7 +2368,7 @@ func file_iris_proto_init() {
 				return nil
 			}
 		}
-		file_iris_proto_msgTypes[17].Exporter = func(v interface{}, i int) interface{} {
+		file_lens_proto_msgTypes[17].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetEntryResponse); i {
 			case 0:
 				return &v.state
@@ -2380,7 +2380,7 @@ func file_iris_proto_init() {
 				return nil
 			}
 		}
-		file_iris_proto_msgTypes[18].Exporter = func(v interface{}, i int) interface{} {
+		file_lens_proto_msgTypes[18].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ExportOPMLRequest); i {
 			case 0:
 				return &v.state
@@ -2392,7 +2392,7 @@ func file_iris_proto_init() {
 				return nil
 			}
 		}
-		file_iris_proto_msgTypes[19].Exporter = func(v interface{}, i int) interface{} {
+		file_lens_proto_msgTypes[19].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ExportOPMLResponse); i {
 			case 0:
 				return &v.state
@@ -2404,7 +2404,7 @@ func file_iris_proto_init() {
 				return nil
 			}
 		}
-		file_iris_proto_msgTypes[20].Exporter = func(v interface{}, i int) interface{} {
+		file_lens_proto_msgTypes[20].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ImportOPMLRequest); i {
 			case 0:
 				return &v.state
@@ -2416,7 +2416,7 @@ func file_iris_proto_init() {
 				return nil
 			}
 		}
-		file_iris_proto_msgTypes[21].Exporter = func(v interface{}, i int) interface{} {
+		file_lens_proto_msgTypes[21].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ImportOPMLResponse); i {
 			case 0:
 				return &v.state
@@ -2428,7 +2428,7 @@ func file_iris_proto_init() {
 				return nil
 			}
 		}
-		file_iris_proto_msgTypes[22].Exporter = func(v interface{}, i int) interface{} {
+		file_lens_proto_msgTypes[22].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetStatsRequest); i {
 			case 0:
 				return &v.state
@@ -2440,7 +2440,7 @@ func file_iris_proto_init() {
 				return nil
 			}
 		}
-		file_iris_proto_msgTypes[23].Exporter = func(v interface{}, i int) interface{} {
+		file_lens_proto_msgTypes[23].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetStatsResponse); i {
 			case 0:
 				return &v.state
@@ -2452,7 +2452,7 @@ func file_iris_proto_init() {
 				return nil
 			}
 		}
-		file_iris_proto_msgTypes[24].Exporter = func(v interface{}, i int) interface{} {
+		file_lens_proto_msgTypes[24].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetInfoRequest); i {
 			case 0:
 				return &v.state
@@ -2464,7 +2464,7 @@ func file_iris_proto_init() {
 				return nil
 			}
 		}
-		file_iris_proto_msgTypes[25].Exporter = func(v interface{}, i int) interface{} {
+		file_lens_proto_msgTypes[25].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetInfoResponse); i {
 			case 0:
 				return &v.state
@@ -2476,7 +2476,7 @@ func file_iris_proto_init() {
 				return nil
 			}
 		}
-		file_iris_proto_msgTypes[26].Exporter = func(v interface{}, i int) interface{} {
+		file_lens_proto_msgTypes[26].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*EditFeedsRequest_Op); i {
 			case 0:
 				return &v.state
@@ -2488,7 +2488,7 @@ func file_iris_proto_init() {
 				return nil
 			}
 		}
-		file_iris_proto_msgTypes[27].Exporter = func(v interface{}, i int) interface{} {
+		file_lens_proto_msgTypes[27].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*EditFeedsRequest_Op_Fields); i {
 			case 0:
 				return &v.state
@@ -2500,7 +2500,7 @@ func file_iris_proto_init() {
 				return nil
 			}
 		}
-		file_iris_proto_msgTypes[28].Exporter = func(v interface{}, i int) interface{} {
+		file_lens_proto_msgTypes[28].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*EditEntriesRequest_Op); i {
 			case 0:
 				return &v.state
@@ -2512,7 +2512,7 @@ func file_iris_proto_init() {
 				return nil
 			}
 		}
-		file_iris_proto_msgTypes[29].Exporter = func(v interface{}, i int) interface{} {
+		file_lens_proto_msgTypes[29].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*EditEntriesRequest_Op_Fields); i {
 			case 0:
 				return &v.state
@@ -2524,7 +2524,7 @@ func file_iris_proto_init() {
 				return nil
 			}
 		}
-		file_iris_proto_msgTypes[30].Exporter = func(v interface{}, i int) interface{} {
+		file_lens_proto_msgTypes[30].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*GetStatsResponse_Stats); i {
 			case 0:
 				return &v.state
@@ -2537,32 +2537,32 @@ func file_iris_proto_init() {
 			}
 		}
 	}
-	file_iris_proto_msgTypes[0].OneofWrappers = []interface{}{}
-	file_iris_proto_msgTypes[1].OneofWrappers = []interface{}{}
-	file_iris_proto_msgTypes[2].OneofWrappers = []interface{}{}
-	file_iris_proto_msgTypes[9].OneofWrappers = []interface{}{}
-	file_iris_proto_msgTypes[12].OneofWrappers = []interface{}{}
-	file_iris_proto_msgTypes[18].OneofWrappers = []interface{}{}
-	file_iris_proto_msgTypes[23].OneofWrappers = []interface{}{}
-	file_iris_proto_msgTypes[27].OneofWrappers = []interface{}{}
-	file_iris_proto_msgTypes[29].OneofWrappers = []interface{}{}
-	file_iris_proto_msgTypes[30].OneofWrappers = []interface{}{}
+	file_lens_proto_msgTypes[0].OneofWrappers = []interface{}{}
+	file_lens_proto_msgTypes[1].OneofWrappers = []interface{}{}
+	file_lens_proto_msgTypes[2].OneofWrappers = []interface{}{}
+	file_lens_proto_msgTypes[9].OneofWrappers = []interface{}{}
+	file_lens_proto_msgTypes[12].OneofWrappers = []interface{}{}
+	file_lens_proto_msgTypes[18].OneofWrappers = []interface{}{}
+	file_lens_proto_msgTypes[23].OneofWrappers = []interface{}{}
+	file_lens_proto_msgTypes[27].OneofWrappers = []interface{}{}
+	file_lens_proto_msgTypes[29].OneofWrappers = []interface{}{}
+	file_lens_proto_msgTypes[30].OneofWrappers = []interface{}{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: file_iris_proto_rawDesc,
+			RawDescriptor: file_lens_proto_rawDesc,
 			NumEnums:      0,
 			NumMessages:   31,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_iris_proto_goTypes,
-		DependencyIndexes: file_iris_proto_depIdxs,
-		MessageInfos:      file_iris_proto_msgTypes,
+		GoTypes:           file_lens_proto_goTypes,
+		DependencyIndexes: file_lens_proto_depIdxs,
+		MessageInfos:      file_lens_proto_msgTypes,
 	}.Build()
-	File_iris_proto = out.File
-	file_iris_proto_rawDesc = nil
-	file_iris_proto_goTypes = nil
-	file_iris_proto_depIdxs = nil
+	File_lens_proto = out.File
+	file_lens_proto_rawDesc = nil
+	file_lens_proto_goTypes = nil
+	file_lens_proto_depIdxs = nil
 }

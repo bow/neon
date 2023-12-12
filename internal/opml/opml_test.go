@@ -38,8 +38,8 @@ func TestParseOkExtended(t *testing.T) {
         version="RSS2"
         xmlUrl="http://news.com.com/2547-1_3-0-5.xml"
 		category="news,tech"
-		xmlns:iris="https://github.com/bow/iris"
-		iris:isStarred="true"
+		xmlns:lens="https://github.com/bow/lens"
+		lens:isStarred="true"
     />
     <outline
         text="NYT &gt; Business"
@@ -51,8 +51,8 @@ func TestParseOkExtended(t *testing.T) {
         version="RSS2"
         xmlUrl="http://www.nytimes.com/services/xml/rss/nyt/Business.xml"
 		category="news,paper"
-		xmlns:iris="https://github.com/bow/iris"
-		iris:isStarred="true"
+		xmlns:lens="https://github.com/bow/lens"
+		lens:isStarred="true"
     />
     <outline
         text="Wired News"

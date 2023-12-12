@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/bow/iris/internal/opml"
+	"github.com/bow/lens/internal/opml"
 )
 
 type ID = uint32
@@ -232,4 +232,4 @@ const (
 	PullFail
 )
 
-const defaultExportTitle = "iris export"
+const defaultExportTitle = "lens export"

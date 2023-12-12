@@ -9,8 +9,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/bow/iris/internal/database"
-	"github.com/bow/iris/internal/tui"
+	"github.com/bow/lens/internal/database"
+	"github.com/bow/lens/internal/tui"
 )
 
 func newReaderCommand() *cobra.Command {

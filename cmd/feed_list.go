@@ -7,8 +7,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/bow/iris/internal"
 	"github.com/spf13/cobra"
+
+	"github.com/bow/lens/internal"
 )
 
 func newFeedListCommand() *cobra.Command {

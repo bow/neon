@@ -10,7 +10,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/bow/iris/internal"
+	"github.com/bow/lens/internal"
 )
 
 // newVersionCommand creates a new 'version' subcommand.

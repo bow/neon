@@ -7,7 +7,7 @@ import (
 
 	"github.com/rivo/tview"
 
-	"github.com/bow/iris/internal"
+	"github.com/bow/lens/internal"
 )
 
 const iconAllRead = "✔"

@@ -9,11 +9,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/bow/iris/internal"
 	gomock "github.com/golang/mock/gomock"
 	"github.com/mmcdole/gofeed"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/bow/lens/internal"
 )
 
 func TestPullFeedsAllOkEmptyDB(t *testing.T) {

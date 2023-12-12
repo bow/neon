@@ -14,7 +14,7 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 
-	"github.com/bow/iris/internal"
+	"github.com/bow/lens/internal"
 )
 
 const (
@@ -86,12 +86,12 @@ func (r *Reader) Show() error {
 	}
 	r.bar.updateFromStats(stats)
 	if !r.isInitialized() {
-		welcomeText := `Hello and welcome the iris reader.
+		welcomeText := fmt.Sprintf(`Hello and welcome the %s reader.
 
-For help, press [yellow]h[-] or go to [yellow]https://github.com/bow/iris[-].
+For help, press [yellow]h[-] or go to [yellow]https://github.com/bow/lens[-].
 
 To close this message, press [yellow]<Esc>[-].
-`
+`, internal.AppName())
 
 		r.root.AddPage(
 			welcomePageName,
@@ -684,7 +684,7 @@ var DarkTheme = &Theme{
 	ReadingPaneTitle:  "",
 	HelpPopupTitle:    "Keys",
 	StatsPopupTitle:   "Stats",
-	VersionPopupTitle: "iris feed reader",
+	VersionPopupTitle: fmt.Sprintf("%s feed reader", internal.AppName()),
 	WelcomePopupTitle: "Welcome",
 
 	Background:             tcell.ColorBlack,

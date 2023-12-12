@@ -11,7 +11,7 @@ import (
 
 // AppName returns the application name.
 func AppName() string {
-	return "iris"
+	return "lens"
 }
 
 // EnvKey returns the environment variable key for configuration.

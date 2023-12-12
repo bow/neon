@@ -6,9 +6,10 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/bow/iris/internal"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
+
+	"github.com/bow/lens/internal"
 )
 
 func newFeedAddCommand() *cobra.Command {

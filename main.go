@@ -9,8 +9,8 @@ import (
 
 	"github.com/rs/zerolog/log"
 
-	"github.com/bow/iris/cmd"
-	"github.com/bow/iris/internal"
+	"github.com/bow/lens/cmd"
+	"github.com/bow/lens/internal"
 )
 
 func main() {

@@ -124,7 +124,7 @@ type Outline struct {
 	Categories  Categories `xml:"category,attr"`
 	Description *string    `xml:"description,attr"`
 	HTMLURL     *string    `xml:"htmlUrl,attr"`
-	IsStarred   *bool      `xml:"https://github.com/bow/iris isStarred,attr,omitempty"`
+	IsStarred   *bool      `xml:"https://github.com/bow/lens isStarred,attr,omitempty"`
 }
 
 type Outliner interface {
