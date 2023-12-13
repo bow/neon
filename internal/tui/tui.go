@@ -73,7 +73,7 @@ func NewReader(ctx context.Context, store internal.FeedStore) *Reader {
 		AddPage(statsPageName, reader.statsPage, true, false).
 		AddPage(versionPageName, reader.versionPage, true, false)
 
-	reader.root.SetInputCapture(reader.keyHandler())
+	reader.root.SetInputCapture(reader.globalKeyHandler())
 	reader.app.SetRoot(reader.root, true).EnableMouse(true)
 
 	return &reader
@@ -119,7 +119,9 @@ func (r *Reader) WithInitPath(path string) *Reader {
 
 func (r *Reader) setupMainPage() {
 
-	feedsPane := r.newPane(r.theme.FeedsPaneTitle, false)
+	feedsPane := r.newPane(r.theme.FeedsPaneTitle, false).
+		SetInputCapture(r.feedsPaneKeyHandler())
+
 	entriesPane := r.newPane(r.theme.EntriesPaneTitle, false)
 	readingPane := r.newPane(r.theme.ReadingPaneTitle, true)
 
@@ -285,15 +287,15 @@ func (r *Reader) setupVersionPage() {
 }
 
 // nolint:revive,exhaustive
-func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
+func (r *Reader) globalKeyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 
-	defaultHandler := func(
-		event *tcell.EventKey,
-		key tcell.Key,
-		keyr rune,
-		front string,
-		focused tview.Primitive,
-	) *tcell.EventKey {
+	return func(event *tcell.EventKey) *tcell.EventKey {
+		var (
+			focused  = r.app.GetFocus()
+			front, _ = r.root.GetFrontPage()
+			key      = event.Key()
+			keyr     = event.Rune()
+		)
 
 		switch key {
 
@@ -399,61 +401,50 @@ func (r *Reader) keyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 
 		return event
 	}
+}
 
+// nolint:revive,exhaustive
+func (r *Reader) feedsPaneKeyHandler() func(event *tcell.EventKey) *tcell.EventKey {
 	return func(event *tcell.EventKey) *tcell.EventKey {
-		var (
-			focused  = r.app.GetFocus()
-			front, _ = r.root.GetFrontPage()
-			key      = event.Key()
-			keyr     = event.Rune()
-		)
-		switch focused {
+		keyr := event.Rune()
 
-		case r.feedsPane:
-			switch keyr {
-			case 'P':
+		if keyr == 'P' {
 
-				go func() {
-					r.bar.Lock()
-					defer r.bar.Unlock()
+			go func() {
+				r.bar.Lock()
+				defer r.bar.Unlock()
 
-					r.bar.showNormalActivity("Pulling feeds")
+				r.bar.showNormalActivity("Pulling feeds")
 
-					var count int
-					ch := r.store.PullFeeds(r.ctx, []internal.ID{})
-					for pr := range ch {
-						if err := pr.Error(); err != nil {
-							// TODO: Add ok / fail status in ...?
-							panic(err)
-						}
-						r.bar.showNormalActivity("Pulling: %s done", pr.URL())
-						count++
-					}
-					switch count {
-					case 0:
-						r.bar.showNormalActivity("No feeds to pull")
-					case 1:
-						r.bar.showNormalActivity("Pulled %d feed successfully", count)
-					default:
-						r.bar.showNormalActivity("Pulled %d feeds successfully", count)
-					}
-
-					stats, err := r.store.GetGlobalStats(r.ctx)
-					if err != nil {
+				var count int
+				ch := r.store.PullFeeds(r.ctx, []internal.ID{})
+				for pr := range ch {
+					if err := pr.Error(); err != nil {
+						// TODO: Add ok / fail status in ...?
 						panic(err)
 					}
-					r.statsCache = stats
-					r.bar.updateFromStats(stats)
-				}()
-				return nil
+					r.bar.showNormalActivity("Pulling: %s done", pr.URL())
+					count++
+				}
+				switch count {
+				case 0:
+					r.bar.showNormalActivity("No feeds to pull")
+				case 1:
+					r.bar.showNormalActivity("Pulled %d feed successfully", count)
+				default:
+					r.bar.showNormalActivity("Pulled %d feeds successfully", count)
+				}
 
-			default:
-				return defaultHandler(event, key, keyr, front, focused)
-			}
-
-		default:
-			return defaultHandler(event, key, keyr, front, focused)
+				stats, err := r.store.GetGlobalStats(r.ctx)
+				if err != nil {
+					panic(err)
+				}
+				r.statsCache = stats
+				r.bar.updateFromStats(stats)
+			}()
+			return nil
 		}
+		return event
 	}
 }
 
