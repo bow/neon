@@ -197,7 +197,7 @@ func (r *Reader) setupHelpPage() {
 [yellow]Tab[-]     : Switch to next pane
 [yellow]Alt-Tab[-] : Switch to previous pane
 [yellow]b[-]       : Toggle status bar
-[yellow]C[-]       : Clear status bar
+[yellow]c[-]       : Clear status bar
 [yellow]X[-]       : Export feeds to OPML
 [yellow]I[-]       : Import feeds from OPML
 [yellow]Esc[-]     : Unset current focus or close open frame
@@ -351,10 +351,10 @@ func (r *Reader) globalKeyHandler() func(event *tcell.EventKey) *tcell.EventKey 
 				r.bar.toggleFromMainPage(r.mainPage)
 				return nil
 
-			case 'C':
+			case 'c':
 				r.bar.Lock()
 				defer r.bar.Unlock()
-				r.bar.clear()
+				r.bar.clearActivity()
 				return nil
 
 			case 'h', '?':

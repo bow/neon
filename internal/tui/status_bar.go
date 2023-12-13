@@ -112,8 +112,6 @@ func (b *statusBar) showNormalActivity(text string, a ...any) {
 	}
 }
 
-func (b *statusBar) clear() {
+func (b *statusBar) clearActivity() {
 	b.activityWidget.Clear()
-	b.readWidget.Clear()
-	b.lastPullWidget.Clear()
 }
