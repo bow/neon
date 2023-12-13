@@ -35,6 +35,7 @@ type Reader struct {
 	ctx      context.Context
 	store    internal.FeedStore
 	theme    *Theme
+	dbPath   *string
 	initPath string
 
 	app *tview.Application
@@ -53,14 +54,15 @@ type Reader struct {
 	statsCache *internal.Stats
 }
 
-func NewReader(ctx context.Context, store internal.FeedStore) *Reader {
+func NewReader(ctx context.Context, store internal.FeedStore, dbPath *string) *Reader {
 
 	reader := Reader{
-		ctx:   ctx,
-		store: store,
-		theme: DarkTheme,
-		root:  tview.NewPages(),
-		app:   tview.NewApplication(),
+		ctx:    ctx,
+		store:  store,
+		theme:  DarkTheme,
+		root:   tview.NewPages(),
+		app:    tview.NewApplication(),
+		dbPath: dbPath,
 	}
 
 	reader.setupMainPage()
@@ -281,6 +283,9 @@ func (r *Reader) setupVersionPage() {
 		commit,
 		buildTime,
 	)
+	if dbPath := r.dbPath; dbPath != nil {
+		versionText += fmt.Sprintf("\n[yellow]Database[-]  : %s", *dbPath)
+	}
 
 	versionWidget := tview.NewTextView().
 		SetDynamicColors(true).

@@ -39,7 +39,7 @@ func newReaderCommand() *cobra.Command {
 				return err
 			}
 
-			app := tui.NewReader(cmd.Context(), fs).
+			app := tui.NewReader(cmd.Context(), fs, &dbPath).
 				WithInitPath(initPath)
 
 			return app.Show()
