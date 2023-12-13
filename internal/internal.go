@@ -22,6 +22,15 @@ func EnvKey(key string) string {
 	return fmt.Sprintf("%s_%s", envPrefix(), strings.ToUpper(strings.ReplaceAll(key, "-", "_")))
 }
 
+// Banner shows the application name as ASCII art.
+func Banner() string {
+	return `    __
+   / /   ___   ____   _____
+  / /   / _ \ / __ \ / ___/
+ / /___/  __// / / /(__  )
+/_____/\___//_/ /_//____/`
+}
+
 func Dedup[T comparable](values []T) []T {
 	seen := make(map[T]struct{})
 	nodup := make([]T, 0)

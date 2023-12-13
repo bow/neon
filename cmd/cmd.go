@@ -65,15 +65,7 @@ func resolveDBPath(path string) (string, error) {
 
 // showBanner prints the application banner to the given writer.
 func showBanner(w io.Writer) {
-	fmt.Fprintf(
-		w,
-		`    __
-   / /   ___   ____   _____
-  / /   / _ \ / __ \ / ___/
- / /___/  __// / / /(__  )
-/_____/\___//_/ /_//____/
-
-`)
+	fmt.Fprintf(w, "%s\n\n", internal.Banner())
 }
 
 func makeAlias(name string) []string {

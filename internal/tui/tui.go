@@ -8,6 +8,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"runtime"
 	"strings"
 	"time"
 
@@ -98,8 +99,9 @@ To close this message, press [yellow]<Esc>[-].
 			r.newPopup(
 				r.theme.WelcomePopupTitle,
 				tview.NewTextView().SetDynamicColors(true).SetText(welcomeText),
+				1, 1,
 				61,
-				-1, calcPopupHeight(welcomeText), -3,
+				[]int{-1, calcPopupHeight(welcomeText), -3},
 			),
 			true,
 			false,
@@ -213,8 +215,9 @@ func (r *Reader) setupHelpPage() {
 	r.helpPage = r.newPopup(
 		r.theme.HelpPopupTitle,
 		helpWidget,
+		1, 1,
 		55,
-		0, calcPopupHeight(helpText), 0,
+		[]int{0, calcPopupHeight(helpText), 0},
 	)
 }
 
@@ -250,8 +253,9 @@ func (r *Reader) setupStatsPage() {
 	r.statsPage = r.newPopup(
 		r.theme.StatsPopupTitle,
 		statsWidget,
+		1, 1,
 		37,
-		-1, calcPopupHeight(statsText), -3,
+		[]int{-1, calcPopupHeight(statsText), -3},
 	)
 }
 
@@ -265,10 +269,14 @@ func (r *Reader) setupVersionPage() {
 		buildTime = buildTimeVal.Format(longDateFormat)
 	}
 
-	versionText := fmt.Sprintf(`[yellow]Version[-]   : %s
+	width := len(commit) + 18
+
+	versionText := fmt.Sprintf(`%s
+
+[yellow]Version[-]   : %s
 [yellow]Git commit[-]: %s
-[yellow]Build time[-]: %s
-`,
+[yellow]Build time[-]: %s`,
+		centerBanner(internal.Banner(), width),
 		internal.Version(),
 		commit,
 		buildTime,
@@ -281,8 +289,9 @@ func (r *Reader) setupVersionPage() {
 	r.versionPage = r.newPopup(
 		r.theme.VersionPopupTitle,
 		versionWidget,
-		len(commit)+18,
-		-1, calcPopupHeight(versionText), -3,
+		0, 0,
+		width,
+		[]int{-1, calcPopupHeight(versionText) - 1, -3},
 	)
 }
 
@@ -539,14 +548,21 @@ func (r *Reader) newPane(title string, addTopLeftBorderTip bool) *tview.Box {
 	return box
 }
 
+const (
+	leftPopupMargin  = 2
+	rightPopupMargin = 2
+)
+
 func (r *Reader) newPopup(
 	title string,
 	contents *tview.TextView,
+	top, bottom int,
 	ncols int,
-	gridRows ...int,
+	gridRows []int,
 ) *tview.Grid {
 
-	frame := tview.NewFrame(contents).SetBorders(1, 1, 0, 0, 2, 2)
+	frame := tview.NewFrame(contents).
+		SetBorders(top, bottom, 0, 0, leftPopupMargin, rightPopupMargin)
 
 	frame.SetBorder(true).
 		SetTitle(r.makeTitle(title)).
@@ -675,7 +691,7 @@ var DarkTheme = &Theme{
 	ReadingPaneTitle:  "",
 	HelpPopupTitle:    "Keys",
 	StatsPopupTitle:   "Stats",
-	VersionPopupTitle: fmt.Sprintf("%s feed reader", internal.AppName()),
+	VersionPopupTitle: "About",
 	WelcomePopupTitle: "Welcome",
 
 	Background:             tcell.ColorBlack,
@@ -705,6 +721,42 @@ func init() {
 	tview.Borders.TopRightFocus = tview.Borders.TopRight
 	tview.Borders.BottomLeftFocus = tview.Borders.BottomLeft
 	tview.Borders.BottomRightFocus = tview.Borders.BottomRight
+}
+
+func centerBanner(text string, width int) string {
+	if width == 0 {
+		return text
+	}
+
+	var (
+		maxLineWidth = 0
+		lines        = make([]string, 0)
+		sc           = bufio.NewScanner(strings.NewReader(text))
+	)
+	for sc.Scan() {
+		line := sc.Text()
+		if ncols := len(line); ncols > maxLineWidth {
+			maxLineWidth = ncols
+		}
+		lines = append(lines, line)
+	}
+
+	if maxLineWidth > width {
+		return text
+	}
+
+	leftPad := strings.Repeat(" ", ((width-maxLineWidth)/2)-leftPopupMargin)
+	paddedLines := make([]string, len(lines))
+	for i, line := range lines {
+		paddedLines[i] = fmt.Sprintf("%s%s", leftPad, line)
+	}
+
+	sep := "\n"
+	if runtime.GOOS == "windows" {
+		sep = "\r\n"
+	}
+
+	return strings.Join(paddedLines, sep)
 }
 
 func calcPopupHeight(text string) (rows int) {
