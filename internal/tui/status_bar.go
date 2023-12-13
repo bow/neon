@@ -79,7 +79,9 @@ func (b *statusBar) setAllRead() {
 }
 
 func (b *statusBar) setLastPullTime(value *time.Time) {
-	b.lastPullWidget.SetText(value.Local().Format(shortDateFormat))
+	if value != nil {
+		b.lastPullWidget.SetText(value.Local().Format(shortDateFormat))
+	}
 }
 
 func (b *statusBar) toggleFromMainPage(page *tview.Grid) {
