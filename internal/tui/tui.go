@@ -40,10 +40,10 @@ type Reader struct {
 
 	app *tview.Application
 
-	root        *tview.Pages
-	mainPage    *tview.Grid
-	helpPage    *tview.Grid
-	statsPage   *tview.Grid
+	root      *tview.Pages
+	mainPage  *tview.Grid
+	helpPage  *tview.Grid
+	statsPage *tview.Grid
 	aboutPage *tview.Grid
 
 	feedsPane   *tview.Box
