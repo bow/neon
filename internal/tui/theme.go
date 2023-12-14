@@ -86,12 +86,12 @@ var DarkTheme = &Theme{
 	LastPullForegroundNormal: tcell.ColorGray,
 	LastPullForegroundDim:    darkForegroundDim,
 
-	ActivityNormalForeground: tcell.ColorDarkGoldenrod,
+	ActivityNormalForeground:       tcell.ColorDarkGoldenrod,
 	ActivityNormalForegroundNormal: tcell.ColorDarkGoldenrod,
-	ActivityNormalForegroundDim: darkForegroundDim,
+	ActivityNormalForegroundDim:    darkForegroundDim,
 
 	PopupBorderForeground: tcell.ColorGray,
-	PopupTitleForeground: tcell.ColorAqua,
+	PopupTitleForeground:  tcell.ColorAqua,
 
 	WideViewMinWidth: 150,
 }
