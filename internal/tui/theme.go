@@ -17,32 +17,42 @@ type Theme struct {
 	VersionPopupTitle string
 	WelcomePopupTitle string
 
-	Background             tcell.Color
+	Background tcell.Color
+
 	BorderForeground       tcell.Color
-	TitleForeground        tcell.Color
-	VersionForeground      tcell.Color
-	LastPullForeground     tcell.Color
-	StatusNormalForeground tcell.Color
-	PopupTitleForeground   tcell.Color
-	PopupBorderForeground  tcell.Color
+	BorderForegroundNormal tcell.Color
+	BorderForegroundDim    tcell.Color
 
-	NormalBorderForeground tcell.Color
-	NormalTitleForeground  tcell.Color
+	TitleForeground       tcell.Color
+	TitleForegroundNormal tcell.Color
+	TitleForegroundDim    tcell.Color
 
-	DimBorderForeground tcell.Color
-	DimTitleForeground  tcell.Color
+	LastPullForeground       tcell.Color
+	LastPullForegroundNormal tcell.Color
+	LastPullForegroundDim    tcell.Color
+
+	StatusNormalForeground       tcell.Color
+	StatusNormalForegroundNormal tcell.Color
+	StatusNormalForegroundDim    tcell.Color
+
+	PopupTitleForeground  tcell.Color
+	PopupBorderForeground tcell.Color
 
 	WideViewMinWidth int
 }
 
 func (theme *Theme) Dim() {
-	theme.BorderForeground = theme.DimBorderForeground
-	theme.TitleForeground = theme.DimTitleForeground
+	theme.BorderForeground = theme.BorderForegroundDim
+	theme.TitleForeground = theme.TitleForegroundDim
+	theme.LastPullForeground = theme.LastPullForegroundDim
+	theme.StatusNormalForeground = theme.StatusNormalForegroundDim
 }
 
 func (theme *Theme) Normalize() {
-	theme.BorderForeground = theme.NormalBorderForeground
-	theme.TitleForeground = theme.NormalTitleForeground
+	theme.BorderForeground = theme.BorderForegroundNormal
+	theme.TitleForeground = theme.TitleForegroundNormal
+	theme.LastPullForeground = theme.LastPullForegroundNormal
+	theme.StatusNormalForeground = theme.StatusNormalForegroundNormal
 }
 
 func (theme *Theme) lineStyle() tcell.Style {
@@ -50,6 +60,8 @@ func (theme *Theme) lineStyle() tcell.Style {
 		Background(theme.Background).
 		Foreground(theme.BorderForeground)
 }
+
+const darkForegroundDim = tcell.ColorDimGray
 
 var DarkTheme = &Theme{
 	FeedsPaneTitle:    "Feeds",
@@ -60,21 +72,26 @@ var DarkTheme = &Theme{
 	VersionPopupTitle: "About",
 	WelcomePopupTitle: "Welcome",
 
-	Background:             tcell.ColorBlack,
+	Background: tcell.ColorBlack,
+
 	BorderForeground:       tcell.ColorWhite,
-	TitleForeground:        tcell.ColorBlue,
-	VersionForeground:      tcell.ColorGray,
-	LastPullForeground:     tcell.ColorGray,
+	BorderForegroundNormal: tcell.ColorWhite,
+	BorderForegroundDim:    darkForegroundDim,
+
+	TitleForeground:       tcell.ColorBlue,
+	TitleForegroundNormal: tcell.ColorBlue,
+	TitleForegroundDim:    darkForegroundDim,
+
+	LastPullForeground:       tcell.ColorGray,
+	LastPullForegroundNormal: tcell.ColorGray,
+	LastPullForegroundDim:    darkForegroundDim,
+
 	StatusNormalForeground: tcell.ColorDarkGoldenrod,
-	PopupBorderForeground:  tcell.ColorGray,
-	PopupTitleForeground:   tcell.ColorAqua,
+	StatusNormalForegroundNormal: tcell.ColorDarkGoldenrod,
+	StatusNormalForegroundDim: darkForegroundDim,
 
-	// TODO: Add New() to ensure values are equal.
-	NormalBorderForeground: tcell.ColorWhite,
-	NormalTitleForeground:  tcell.ColorBlue,
-
-	DimBorderForeground: tcell.ColorDimGray,
-	DimTitleForeground:  tcell.ColorDimGray,
+	PopupBorderForeground: tcell.ColorGray,
+	PopupTitleForeground: tcell.ColorAqua,
 
 	WideViewMinWidth: 150,
 }
