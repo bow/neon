@@ -22,7 +22,7 @@ const (
 	mainPageName    = "main"
 	helpPageName    = "help"
 	statsPageName   = "stats"
-	versionPageName = "version"
+	aboutPageName   = "about"
 	welcomePageName = "welcome"
 
 	shortDateFormat = "02/Jan/06 15:04"
@@ -44,7 +44,7 @@ type Reader struct {
 	mainPage    *tview.Grid
 	helpPage    *tview.Grid
 	statsPage   *tview.Grid
-	versionPage *tview.Grid
+	aboutPage *tview.Grid
 
 	feedsPane   *tview.Box
 	entriesPane *tview.Box
@@ -68,13 +68,13 @@ func NewReader(ctx context.Context, store internal.FeedStore, dbPath *string) *R
 	reader.setupMainPage()
 	reader.setupHelpPage()
 	reader.setupStatsPage()
-	reader.setupVersionPage()
+	reader.setupAboutPage()
 
 	reader.root.
 		AddAndSwitchToPage(mainPageName, reader.mainPage, true).
 		AddPage(helpPageName, reader.helpPage, true, false).
 		AddPage(statsPageName, reader.statsPage, true, false).
-		AddPage(versionPageName, reader.versionPage, true, false)
+		AddPage(aboutPageName, reader.aboutPage, true, false)
 
 	reader.root.SetInputCapture(reader.globalKeyHandler())
 	reader.app.SetRoot(reader.root, true).EnableMouse(true)
@@ -205,8 +205,8 @@ func (r *Reader) setupHelpPage() {
 [yellow]X[-]       : Export feeds to OPML
 [yellow]I[-]       : Import feeds from OPML
 [yellow]Esc[-]     : Unset current focus or close open frame
-[yellow]S[-]       : Toggle stats info
-[yellow]V[-]       : Toggle version info
+[yellow]S[-]       : Toggle stats popup
+[yellow]A[-]       : Toggle 'about' popup
 [yellow]h,?[-]     : Toggle this help
 [yellow]q,Ctrl-C[-]: Quit reader`
 
@@ -261,7 +261,7 @@ func (r *Reader) setupStatsPage() {
 	)
 }
 
-func (r *Reader) setupVersionPage() {
+func (r *Reader) setupAboutPage() {
 
 	commit := internal.GitCommit()
 
@@ -273,7 +273,7 @@ func (r *Reader) setupVersionPage() {
 
 	width := len(commit) + 18
 
-	versionText := fmt.Sprintf(`%s
+	aboutText := fmt.Sprintf(`%s
 
 [yellow]Version[-]   : %s
 [yellow]Git commit[-]: %s
@@ -284,19 +284,19 @@ func (r *Reader) setupVersionPage() {
 		buildTime,
 	)
 	if dbPath := r.dbPath; dbPath != nil {
-		versionText += fmt.Sprintf("\n[yellow]Database[-]  : %s", *dbPath)
+		aboutText += fmt.Sprintf("\n[yellow]Database[-]  : %s", *dbPath)
 	}
 
-	versionWidget := tview.NewTextView().
+	aboutWidget := tview.NewTextView().
 		SetDynamicColors(true).
-		SetText(versionText)
+		SetText(aboutText)
 
-	r.versionPage = r.newPopup(
-		r.theme.VersionPopupTitle,
-		versionWidget,
+	r.aboutPage = r.newPopup(
+		r.theme.AboutPopupTitle,
+		aboutWidget,
 		0, 0,
 		width,
-		[]int{-1, calcPopupHeight(versionText) - 1, -3},
+		[]int{-1, calcPopupHeight(aboutText) - 1, -3},
 	)
 }
 
@@ -345,8 +345,8 @@ func (r *Reader) globalKeyHandler() func(event *tcell.EventKey) *tcell.EventKey 
 				}
 				return nil
 
-			case 'V':
-				if front == versionPageName {
+			case 'A':
+				if front == aboutPageName {
 					r.root.HidePage(front)
 					r.normalizeColors()
 				} else if front != welcomePageName {
@@ -356,7 +356,7 @@ func (r *Reader) globalKeyHandler() func(event *tcell.EventKey) *tcell.EventKey 
 					}
 					r.dimColors()
 					r.bar.refreshColors()
-					r.root.ShowPage(versionPageName)
+					r.root.ShowPage(aboutPageName)
 				}
 				return nil
 

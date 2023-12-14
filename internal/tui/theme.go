@@ -14,7 +14,7 @@ type Theme struct {
 	ReadingPaneTitle  string
 	HelpPopupTitle    string
 	StatsPopupTitle   string
-	VersionPopupTitle string
+	AboutPopupTitle   string
 	WelcomePopupTitle string
 
 	Background tcell.Color
@@ -69,7 +69,7 @@ var DarkTheme = &Theme{
 	ReadingPaneTitle:  "",
 	HelpPopupTitle:    "Keys",
 	StatsPopupTitle:   "Stats",
-	VersionPopupTitle: "About",
+	AboutPopupTitle:   "About",
 	WelcomePopupTitle: "Welcome",
 
 	Background: tcell.ColorBlack,
