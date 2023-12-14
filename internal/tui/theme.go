@@ -31,9 +31,9 @@ type Theme struct {
 	LastPullForegroundNormal tcell.Color
 	LastPullForegroundDim    tcell.Color
 
-	StatusNormalForeground       tcell.Color
-	StatusNormalForegroundNormal tcell.Color
-	StatusNormalForegroundDim    tcell.Color
+	ActivityNormalForeground       tcell.Color
+	ActivityNormalForegroundNormal tcell.Color
+	ActivityNormalForegroundDim    tcell.Color
 
 	PopupTitleForeground  tcell.Color
 	PopupBorderForeground tcell.Color
@@ -45,14 +45,14 @@ func (theme *Theme) Dim() {
 	theme.BorderForeground = theme.BorderForegroundDim
 	theme.TitleForeground = theme.TitleForegroundDim
 	theme.LastPullForeground = theme.LastPullForegroundDim
-	theme.StatusNormalForeground = theme.StatusNormalForegroundDim
+	theme.ActivityNormalForeground = theme.ActivityNormalForegroundDim
 }
 
 func (theme *Theme) Normalize() {
 	theme.BorderForeground = theme.BorderForegroundNormal
 	theme.TitleForeground = theme.TitleForegroundNormal
 	theme.LastPullForeground = theme.LastPullForegroundNormal
-	theme.StatusNormalForeground = theme.StatusNormalForegroundNormal
+	theme.ActivityNormalForeground = theme.ActivityNormalForegroundNormal
 }
 
 func (theme *Theme) lineStyle() tcell.Style {
@@ -86,9 +86,9 @@ var DarkTheme = &Theme{
 	LastPullForegroundNormal: tcell.ColorGray,
 	LastPullForegroundDim:    darkForegroundDim,
 
-	StatusNormalForeground: tcell.ColorDarkGoldenrod,
-	StatusNormalForegroundNormal: tcell.ColorDarkGoldenrod,
-	StatusNormalForegroundDim: darkForegroundDim,
+	ActivityNormalForeground: tcell.ColorDarkGoldenrod,
+	ActivityNormalForegroundNormal: tcell.ColorDarkGoldenrod,
+	ActivityNormalForegroundDim: darkForegroundDim,
 
 	PopupBorderForeground: tcell.ColorGray,
 	PopupTitleForeground: tcell.ColorAqua,

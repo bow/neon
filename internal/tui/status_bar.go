@@ -105,7 +105,7 @@ func (b *statusBar) removeFromMainPage(page *tview.Grid) *statusBar {
 
 func (b *statusBar) showNormalActivity(text string, a ...any) {
 	b.activityWidget.
-		SetTextColor(b.theme.StatusNormalForeground).
+		SetTextColor(b.theme.ActivityNormalForeground).
 		Clear()
 	if len(a) > 0 {
 		fmt.Fprintf(b.activityWidget, "%s\n", fmt.Sprintf(text, a...))
