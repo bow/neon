@@ -108,7 +108,7 @@ To close this message, press [yellow]<Esc>[-].
 			true,
 			false,
 		)
-		r.theme.Dim()
+		r.dimColors()
 		r.root.ShowPage(welcomePageName)
 		defer r.initialize()
 	}
@@ -318,7 +318,7 @@ func (r *Reader) globalKeyHandler() func(event *tcell.EventKey) *tcell.EventKey 
 			case '1', '2', '3', 'F', 'E', 'R':
 				if front != mainPageName {
 					r.root.HidePage(front)
-					r.theme.Normalize()
+					r.normalizeColors()
 					front = mainPageName
 				}
 				if front == mainPageName {
@@ -334,13 +334,13 @@ func (r *Reader) globalKeyHandler() func(event *tcell.EventKey) *tcell.EventKey 
 			case 'S':
 				if front == statsPageName {
 					r.root.HidePage(front)
-					r.theme.Normalize()
+					r.normalizeColors()
 				} else if front != welcomePageName {
 					if front != mainPageName {
 						r.root.HidePage(front)
-						r.theme.Normalize()
+						r.normalizeColors()
 					}
-					r.theme.Dim()
+					r.dimColors()
 					r.root.ShowPage(statsPageName)
 				}
 				return nil
@@ -348,13 +348,14 @@ func (r *Reader) globalKeyHandler() func(event *tcell.EventKey) *tcell.EventKey 
 			case 'V':
 				if front == versionPageName {
 					r.root.HidePage(front)
-					r.theme.Normalize()
+					r.normalizeColors()
 				} else if front != welcomePageName {
 					if front != mainPageName {
 						r.root.HidePage(front)
-						r.theme.Normalize()
+						r.normalizeColors()
 					}
-					r.theme.Dim()
+					r.dimColors()
+					r.bar.refreshColors()
 					r.root.ShowPage(versionPageName)
 				}
 				return nil
@@ -374,13 +375,13 @@ func (r *Reader) globalKeyHandler() func(event *tcell.EventKey) *tcell.EventKey 
 			case 'h', '?':
 				if front == helpPageName {
 					r.root.HidePage(front)
-					r.theme.Normalize()
+					r.normalizeColors()
 				} else {
 					if front != mainPageName {
 						r.root.HidePage(front)
-						r.theme.Normalize()
+						r.normalizeColors()
 					}
-					r.theme.Dim()
+					r.dimColors()
 					r.root.ShowPage(helpPageName)
 				}
 				return nil
@@ -408,7 +409,7 @@ func (r *Reader) globalKeyHandler() func(event *tcell.EventKey) *tcell.EventKey 
 				r.app.SetFocus(r.root)
 			default:
 				r.root.HidePage(front)
-				r.theme.Normalize()
+				r.normalizeColors()
 			}
 			return nil
 		}
@@ -503,6 +504,16 @@ func (r *Reader) getAdjacentFocusTarget(
 		}
 	}
 	return targets[idx]
+}
+
+func (r *Reader) dimColors() {
+	r.theme.Dim()
+	r.bar.refreshColors()
+}
+
+func (r *Reader) normalizeColors() {
+	r.theme.Normalize()
+	r.bar.refreshColors()
 }
 
 func (r *Reader) newPane(title string, addTopLeftBorderTip bool) *tview.Box {

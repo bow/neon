@@ -57,6 +57,12 @@ func newStatusBar(theme *Theme) *statusBar {
 	return &bar
 }
 
+func (b *statusBar) refreshColors() {
+	b.activityWidget.SetTextColor(b.theme.ActivityNormalForeground)
+	b.readWidget.SetTextColor(b.theme.LastPullForeground)
+	b.lastPullWidget.SetTextColor(b.theme.LastPullForeground)
+}
+
 func (b *statusBar) setChangedFunc(handler func()) *statusBar {
 	b.activityWidget.SetChangedFunc(handler)
 	b.readWidget.SetChangedFunc(handler)
