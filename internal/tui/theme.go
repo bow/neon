@@ -78,8 +78,8 @@ var DarkTheme = &Theme{
 	BorderForegroundNormal: tcell.ColorWhite,
 	BorderForegroundDim:    darkForegroundDim,
 
-	TitleForeground:       tcell.ColorBlue,
-	TitleForegroundNormal: tcell.ColorBlue,
+	TitleForeground:       tcell.ColorYellow,
+	TitleForegroundNormal: tcell.ColorYellow,
 	TitleForegroundDim:    darkForegroundDim,
 
 	LastPullForeground:       tcell.ColorGray,

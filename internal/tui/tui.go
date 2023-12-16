@@ -520,10 +520,10 @@ func (r *Reader) newPane(title string, addTopLeftBorderTip bool) *tview.Box {
 
 	var unfocused, focused string
 	if title != "" {
-		unfocused = r.makeTitle(title)
-		focused = r.makeTitle(fmt.Sprintf("• %s", title))
+		unfocused = fmt.Sprintf(" %s ", title)
+		focused = fmt.Sprintf("[::b]» %s[::-] ", title)
 	} else {
-		focused = r.makeTitle("•")
+		focused = "[::b]»[::-] "
 	}
 
 	makedrawf := func(
@@ -552,14 +552,14 @@ func (r *Reader) newPane(title string, addTopLeftBorderTip bool) *tview.Box {
 				r.theme.TitleForeground,
 			)
 
-			return x + 1, y + 1, width - 2, height - 1
+			return x + 2, y + 1, width - 2, height - 1
 		}
 	}
 
-	box := tview.NewBox().SetDrawFunc(makedrawf(unfocused, 3))
+	box := tview.NewBox().SetDrawFunc(makedrawf(unfocused, 1))
 
-	box.SetFocusFunc(func() { box.SetDrawFunc(makedrawf(focused, 1)) })
-	box.SetBlurFunc(func() { box.SetDrawFunc(makedrawf(unfocused, 3)) })
+	box.SetFocusFunc(func() { box.SetDrawFunc(makedrawf(focused, 0)) })
+	box.SetBlurFunc(func() { box.SetDrawFunc(makedrawf(unfocused, 1)) })
 
 	return box
 }
