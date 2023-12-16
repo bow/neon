@@ -195,9 +195,9 @@ func (r *Reader) setupHelpPage() {
 [yellow]G[-]  : Go to bottom
 
 [aqua]Global[-]
-[yellow]1,F[-]     : Toggle feeds pane focus
-[yellow]2,E[-]     : Toggle entries pane focus
-[yellow]3,R[-]     : Toggle reading pane focus
+[yellow]1,F[-]     : Set focus to feeds pane
+[yellow]2,E[-]     : Set focus to entries pane
+[yellow]3,R[-]     : Set focus to reading pane
 [yellow]Tab[-]     : Switch to next pane
 [yellow]Alt-Tab[-] : Switch to previous pane
 [yellow]b[-]       : Toggle status bar
@@ -323,11 +323,7 @@ func (r *Reader) globalKeyHandler() func(event *tcell.EventKey) *tcell.EventKey 
 				}
 				if front == mainPageName {
 					target := r.getFocusTarget(keyr)
-					if target != r.app.GetFocus() {
-						r.app.SetFocus(target)
-					} else {
-						r.app.SetFocus(r.root)
-					}
+					r.app.SetFocus(target)
 				}
 				return nil
 
