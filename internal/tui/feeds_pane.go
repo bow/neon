@@ -25,18 +25,29 @@ func newFeedsPane(theme *Theme) *feedsPane {
 	}
 	fp.setupNavTree()
 
-	var unfocused, focused string
+	var titleUF, titleF string
 	if theme.FeedsPaneTitle != "" {
-		unfocused = fmt.Sprintf(" %s ", theme.FeedsPaneTitle)
-		focused = fmt.Sprintf("[::b]» %s[::-] ", theme.FeedsPaneTitle)
+		titleUF = fmt.Sprintf(" %s ", theme.FeedsPaneTitle)
+		titleF = fmt.Sprintf("[::b]» %s[::-] ", theme.FeedsPaneTitle)
 	} else {
-		focused = "[::b]»[::-] "
+		titleF = "[::b]»[::-] "
 	}
 
-	makedrawf := func(
-		title string,
-		leftPad int,
+	drawf := func(
+		focused bool,
 	) func(screen tcell.Screen, x int, y int, width int, height int) (int, int, int, int) {
+
+		var (
+			title   string
+			leftPad int
+		)
+		if focused {
+			title = titleF
+			leftPad = 0
+		} else {
+			title = titleUF
+			leftPad = 1
+		}
 
 		return func(screen tcell.Screen, x int, y int, width int, height int) (int, int, int, int) {
 			lineStyle := fp.theme.lineStyle()
@@ -44,7 +55,6 @@ func newFeedsPane(theme *Theme) *feedsPane {
 			for cx := x; cx < x+width; cx++ {
 				screen.SetContent(cx, y, tview.BoxDrawingsLightHorizontal, nil, lineStyle)
 			}
-			screen.SetContent(x-1, y, tview.BoxDrawingsLightVerticalAndRight, nil, lineStyle)
 
 			// Write the title text.
 			tview.Print(
@@ -61,9 +71,12 @@ func newFeedsPane(theme *Theme) *feedsPane {
 		}
 	}
 
-	fp.SetDrawFunc(makedrawf(unfocused, 1))
-	fp.SetFocusFunc(func() { fp.SetDrawFunc(makedrawf(focused, 0)) })
-	fp.SetBlurFunc(func() { fp.SetDrawFunc(makedrawf(unfocused, 1)) })
+	focusf := drawf(true)
+	ufocusf := drawf(false)
+
+	fp.SetDrawFunc(ufocusf)
+	fp.SetFocusFunc(func() { fp.SetDrawFunc(focusf) })
+	fp.SetBlurFunc(func() { fp.SetDrawFunc(ufocusf) })
 
 	return &fp
 }
