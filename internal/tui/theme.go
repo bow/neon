@@ -27,6 +27,10 @@ type Theme struct {
 	TitleForegroundNormal tcell.Color
 	TitleForegroundDim    tcell.Color
 
+	FeedsGroup       tcell.Color
+	FeedsGroupNormal tcell.Color
+	FeedsGroupDim    tcell.Color
+
 	LastPullForeground       tcell.Color
 	LastPullForegroundNormal tcell.Color
 	LastPullForegroundDim    tcell.Color
@@ -81,6 +85,10 @@ var DarkTheme = &Theme{
 	TitleForeground:       tcell.ColorYellow,
 	TitleForegroundNormal: tcell.ColorYellow,
 	TitleForegroundDim:    darkForegroundDim,
+
+	FeedsGroup:       tcell.ColorGrey,
+	FeedsGroupNormal: tcell.ColorGrey,
+	FeedsGroupDim:    darkForegroundDim,
 
 	LastPullForeground:       tcell.ColorGray,
 	LastPullForegroundNormal: tcell.ColorGray,

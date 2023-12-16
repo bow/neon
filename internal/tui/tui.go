@@ -46,7 +46,7 @@ type Reader struct {
 	statsPage *tview.Grid
 	aboutPage *tview.Grid
 
-	feedsPane   *tview.Box
+	feedsPane   *feedsPane
 	entriesPane *tview.Box
 	readingPane *tview.Box
 	bar         *statusBar
@@ -123,8 +123,8 @@ func (r *Reader) WithInitPath(path string) *Reader {
 
 func (r *Reader) setupMainPage() {
 
-	feedsPane := r.newPane(r.theme.FeedsPaneTitle, false).
-		SetInputCapture(r.feedsPaneKeyHandler())
+	feedsPane := newFeedsPane(r.theme)
+	feedsPane.SetInputCapture(r.feedsPaneKeyHandler())
 
 	entriesPane := r.newPane(r.theme.EntriesPaneTitle, false)
 	readingPane := r.newPane(r.theme.ReadingPaneTitle, true)
@@ -482,7 +482,7 @@ func (r *Reader) getAdjacentFocusTarget(
 	current tview.Primitive,
 	reverse bool,
 ) tview.Primitive {
-	targets := []*tview.Box{r.feedsPane, r.entriesPane, r.readingPane}
+	targets := []tview.Primitive{r.feedsPane, r.entriesPane, r.readingPane}
 	idx := 0
 	if reverse {
 		switch current {
