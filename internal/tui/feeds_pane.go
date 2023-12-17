@@ -13,22 +13,24 @@ import (
 type feedsPane struct {
 	*tview.TreeView
 
-	theme   *Theme
-	navRoot *tview.TreeNode
+	theme *Theme
 }
 
 func newFeedsPane(theme *Theme) *feedsPane {
 
-	fp := feedsPane{
-		TreeView: tview.NewTreeView(),
-		theme:    theme,
-	}
+	fp := feedsPane{theme: theme}
 	fp.setupNavTree()
+	fp.setupDrawFunc()
+
+	return &fp
+}
+
+func (fp *feedsPane) setupDrawFunc() {
 
 	var titleUF, titleF string
-	if theme.FeedsPaneTitle != "" {
-		titleUF = fmt.Sprintf(" %s ", theme.FeedsPaneTitle)
-		titleF = fmt.Sprintf("[::b]» %s[::-] ", theme.FeedsPaneTitle)
+	if fp.theme.FeedsPaneTitle != "" {
+		titleUF = fmt.Sprintf(" %s ", fp.theme.FeedsPaneTitle)
+		titleF = fmt.Sprintf("[::b]» %s[::-] ", fp.theme.FeedsPaneTitle)
 	} else {
 		titleF = "[::b]»[::-] "
 	}
@@ -77,23 +79,25 @@ func newFeedsPane(theme *Theme) *feedsPane {
 	fp.SetDrawFunc(ufocusf)
 	fp.SetFocusFunc(func() { fp.SetDrawFunc(focusf) })
 	fp.SetBlurFunc(func() { fp.SetDrawFunc(ufocusf) })
-
-	return &fp
 }
 
 func (fp *feedsPane) setupNavTree() {
 
-	navRoot := tview.NewTreeNode("")
-	fp.navRoot = navRoot
+	root := tview.NewTreeNode("")
 
-	fp.SetRoot(navRoot).
-		SetCurrentNode(navRoot).
+	tree := tview.NewTreeView().
+		SetRoot(root).
+		SetCurrentNode(root).
 		SetTopLevel(1)
+
 	updateGroups := []string{"Today", "This Week", "This Month", "This Year"}
+
 	for _, ug := range updateGroups {
 		node := tview.NewTreeNode(ug).
 			SetSelectable(true).
 			SetColor(fp.theme.FeedsGroup)
-		navRoot.AddChild(node)
+		root.AddChild(node)
 	}
+
+	fp.TreeView = tree
 }
