@@ -8,7 +8,9 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/bow/lens/api"
 	"github.com/bow/lens/internal/opml"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type ID = uint32
@@ -178,6 +180,24 @@ type Stats struct {
 	NumEntriesUnread     uint32
 	LastPullTime         *time.Time
 	MostRecentUpdateTime *time.Time
+}
+
+func FromStatsPb(pb *api.GetStatsResponse_Stats) *Stats {
+	return &Stats{
+		NumFeeds:             pb.GetNumFeeds(),
+		NumEntries:           pb.GetNumEntries(),
+		NumEntriesUnread:     pb.GetNumEntriesUnread(),
+		LastPullTime:         FromTimestampPb(pb.GetLastPullTime()),
+		MostRecentUpdateTime: FromTimestampPb(pb.GetMostRecentUpdateTime()),
+	}
+}
+
+func FromTimestampPb(pb *timestamppb.Timestamp) *time.Time {
+	if pb == nil {
+		return nil
+	}
+	v := pb.AsTime()
+	return &v
 }
 
 // PullResult is a container for a pull operation.
