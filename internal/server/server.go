@@ -36,6 +36,7 @@ type server struct {
 	lis        net.Listener
 	grpcServer *grpc.Server
 	stopf      func()
+	stoppedCh  chan struct{}
 
 	healthSvc *health.Server
 }
@@ -46,14 +47,16 @@ func newServer(lis net.Listener, grpcServer *grpc.Server, str internal.FeedStore
 	api.RegisterLensServer(grpcServer, &svc)
 
 	var (
-		funcCh = make(chan struct{}, 1)
-		sigCh  = make(chan os.Signal, 1)
+		funcCh    = make(chan struct{}, 1)
+		sigCh     = make(chan os.Signal, 1)
+		stoppedCh = make(chan struct{}, 1)
 	)
 	signal.Notify(sigCh, os.Interrupt, syscall.SIGTERM)
 
 	go func() {
 		defer close(funcCh)
 		defer close(sigCh)
+		defer close(stoppedCh)
 
 		reason := "unknown"
 		select {
@@ -66,6 +69,7 @@ func newServer(lis net.Listener, grpcServer *grpc.Server, str internal.FeedStore
 		log.Debug().Msg("stopping server")
 		grpcServer.GracefulStop()
 		log.Info().Msgf("server stopped (%s)", reason)
+		stoppedCh <- struct{}{}
 	}()
 
 	healthSvc := health.NewServer()
@@ -77,6 +81,7 @@ func newServer(lis net.Listener, grpcServer *grpc.Server, str internal.FeedStore
 		lis:        lis,
 		grpcServer: grpcServer,
 		stopf:      func() { funcCh <- struct{}{} },
+		stoppedCh:  stoppedCh,
 		healthSvc:  healthSvc,
 	}
 
@@ -107,6 +112,7 @@ func (s *server) Serve(ctx context.Context) error {
 
 func (s *server) Stop() {
 	s.stopf()
+	<-s.stoppedCh
 }
 
 func (s *server) start() <-chan error {
