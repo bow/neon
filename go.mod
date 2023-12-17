@@ -5,7 +5,7 @@ go 1.21
 require (
 	github.com/adrg/xdg v0.4.0
 	github.com/briandowns/spinner v1.23.0
-	github.com/gdamore/tcell/v2 v2.6.1-0.20231203215052-2917c3801e73
+	github.com/gdamore/tcell/v2 v2.7.0
 	github.com/golang-migrate/migrate/v4 v4.16.2
 	github.com/golang/mock v1.6.0
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.0.1
