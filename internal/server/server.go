@@ -176,10 +176,10 @@ func (b *Builder) Build() (*server, error) {
 
 	var netw string
 	switch addr := b.addr; {
-	case isTCPAddr(addr):
+	case IsTCPAddr(addr):
 		netw = "tcp"
 		b.addr = addr[len(tcpPrefix):]
-	case isFileAddr(addr):
+	case IsFileAddr(addr):
 		netw = "unix"
 		b.addr = addr[len(filePrefix):]
 	default:
@@ -230,6 +230,6 @@ func isAddrF(prefix string) func(string) bool {
 }
 
 var (
-	isTCPAddr  = isAddrF(tcpPrefix)
-	isFileAddr = isAddrF(filePrefix)
+	IsTCPAddr  = isAddrF(tcpPrefix)
+	IsFileAddr = isAddrF(filePrefix)
 )

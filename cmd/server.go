@@ -7,10 +7,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/adrg/xdg"
 	"github.com/spf13/cobra"
 
-	"github.com/bow/lens/internal"
 	"github.com/bow/lens/internal/server"
 )
 
@@ -20,7 +18,7 @@ func newServerCommand() *cobra.Command {
 	var (
 		name        = "server"
 		v           = newViper(name)
-		defaultAddr = fmt.Sprintf("$XDG_RUNTIME_DIR/%s/server.socket", internal.AppName())
+		defaultAddr = "127.0.0.1:5151"
 	)
 
 	const (
@@ -43,14 +41,9 @@ func newServerCommand() *cobra.Command {
 				return err
 			}
 
-			addr, err := resolveUDSAddr(v.GetString(addrKey))
-			if err != nil {
-				return err
-			}
-
 			server, err := server.NewBuilder().
 				Context(cmd.Context()).
-				Address(addr).
+				Address(qualifyAddr(v.GetString(addrKey))).
 				StorePath(dbPath).
 				Build()
 
@@ -77,23 +70,11 @@ func newServerCommand() *cobra.Command {
 	return &command
 }
 
-// resolveUDSAddr attempts to resolve the filesystem path to a Unix domain socket exposing
-// the running application.
-func resolveUDSAddr(addr string) (string, error) {
-	var err error
-
-	// return string unchanged if tcp is requested.
-	if strings.HasPrefix(strings.ToLower(addr), "tcp") {
-		return addr, nil
+// qualifyAddr ensures the specified address has either a 'tcp' or 'file' protocol. If the
+// input has no protocol prefix, 'tcp' is assumed.
+func qualifyAddr(addr string) string {
+	if !server.IsTCPAddr(addr) && !server.IsFileAddr(addr) {
+		addr = fmt.Sprintf("tcp://%s", addr)
 	}
-
-	xdgDir := "$XDG_RUNTIME_DIR/"
-	if strings.HasPrefix(addr, xdgDir) {
-		rel := strings.TrimPrefix(addr, xdgDir)
-		addr, err = xdg.RuntimeFile(rel)
-		if err != nil {
-			return "", err
-		}
-	}
-	return fmt.Sprintf("file://%s", addr), nil
+	return strings.ToLower(addr)
 }
