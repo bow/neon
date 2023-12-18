@@ -89,6 +89,10 @@ func newServer(lis net.Listener, grpcServer *grpc.Server, str internal.FeedStore
 	return &s
 }
 
+func (s *server) Addr() net.Addr {
+	return s.lis.Addr()
+}
+
 func (s *server) ServiceName() string {
 	return api.Lens_ServiceDesc.ServiceName
 }

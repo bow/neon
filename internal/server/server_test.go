@@ -63,11 +63,11 @@ func (tcb *testClientBuilder) Build() api.LensClient {
 	if b == nil {
 		b = defaultTestServerBuilder(t)
 	}
-	srv, addr := newTestServer(t, b)
+	srv := newTestServer(t, b)
 
 	dialOpts := tcb.dialOpts
 	dialOpts = append(dialOpts, grpc.WithTransportCredentials(insecure.NewCredentials()))
-	client, conn := newTestClient(t, addr, dialOpts...)
+	client, conn := newTestClient(t, srv.Addr(), dialOpts...)
 
 	t.Cleanup(
 		func() {
@@ -79,7 +79,7 @@ func (tcb *testClientBuilder) Build() api.LensClient {
 	return client
 }
 
-func newTestServer(t *testing.T, b *Builder) (*server, net.Addr) {
+func newTestServer(t *testing.T, b *Builder) *server {
 	t.Helper()
 
 	r := require.New(t)
@@ -117,7 +117,7 @@ startwait:
 		}
 	}
 
-	return srv, srv.lis.Addr()
+	return srv
 }
 
 func newTestClient(
