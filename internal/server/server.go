@@ -29,6 +29,7 @@ import (
 
 const (
 	tcpPrefix  = "tcp://"
+	unixPrefix = "unix://"
 	filePrefix = "file://"
 )
 
@@ -182,6 +183,9 @@ func (b *Builder) Build() (*server, error) {
 	case IsFileAddr(addr):
 		netw = "unix"
 		b.addr = addr[len(filePrefix):]
+	case IsUnixAddr(addr):
+		netw = "unix"
+		b.addr = addr[len(unixPrefix):]
 	default:
 		return nil, fmt.Errorf("unexpected address type: %s", b.addr)
 	}
@@ -232,4 +236,7 @@ func isAddrF(prefix string) func(string) bool {
 var (
 	IsTCPAddr  = isAddrF(tcpPrefix)
 	IsFileAddr = isAddrF(filePrefix)
+	IsUnixAddr = isAddrF(unixPrefix)
+
+	IsFileSystemAddr = func(addr string) bool { return IsFileAddr(addr) || IsUnixAddr(addr) }
 )

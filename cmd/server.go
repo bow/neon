@@ -73,7 +73,7 @@ func newServerCommand() *cobra.Command {
 // qualifyAddr ensures the specified address has either a 'tcp' or 'file' protocol. If the
 // input has no protocol prefix, 'tcp' is assumed.
 func qualifyAddr(addr string) string {
-	if !server.IsTCPAddr(addr) && !server.IsFileAddr(addr) {
+	if !server.IsTCPAddr(addr) && !server.IsFileSystemAddr(addr) {
 		addr = fmt.Sprintf("tcp://%s", addr)
 	}
 	return strings.ToLower(addr)
