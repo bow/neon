@@ -43,7 +43,7 @@ func newServerCommand() *cobra.Command {
 
 			server, err := server.NewBuilder().
 				Context(cmd.Context()).
-				Address(qualifyAddr(v.GetString(addrKey))).
+				Address(normalizeAddr(v.GetString(addrKey))).
 				StorePath(dbPath).
 				Build()
 
@@ -70,9 +70,9 @@ func newServerCommand() *cobra.Command {
 	return &command
 }
 
-// qualifyAddr ensures the specified address has either a 'tcp' or 'file' protocol. If the
+// normalizeAddr ensures the specified address has either a 'tcp' or 'file' protocol. If the
 // input has no protocol prefix, 'tcp' is assumed.
-func qualifyAddr(addr string) string {
+func normalizeAddr(addr string) string {
 	if !server.IsTCPAddr(addr) && !server.IsFileSystemAddr(addr) {
 		addr = fmt.Sprintf("tcp://%s", addr)
 	}
