@@ -128,6 +128,7 @@ func (s *server) start() <-chan error {
 }
 
 type Builder struct {
+	ctx       context.Context
 	addr      string
 	store     internal.FeedStore
 	storePath string
@@ -136,8 +137,17 @@ type Builder struct {
 }
 
 func NewBuilder() *Builder {
-	builder := Builder{logger: log.With().Logger(), parser: gofeed.NewParser()}
+	builder := Builder{
+		ctx:    context.Background(),
+		logger: log.With().Logger(),
+		parser: gofeed.NewParser(),
+	}
 	return &builder
+}
+
+func (b *Builder) Context(ctx context.Context) *Builder {
+	b.ctx = ctx
+	return b
 }
 
 func (b *Builder) Address(addr string) *Builder {
@@ -176,7 +186,8 @@ func (b *Builder) Build() (*server, error) {
 		return nil, fmt.Errorf("unexpected address type: %s", b.addr)
 	}
 
-	lis, err := net.Listen(netw, b.addr)
+	var lc net.ListenConfig
+	lis, err := lc.Listen(b.ctx, netw, b.addr)
 	if err != nil {
 		return nil, err
 	}

@@ -49,6 +49,7 @@ func newServerCommand() *cobra.Command {
 			}
 
 			server, err := server.NewBuilder().
+				Context(cmd.Context()).
 				Address(addr).
 				StorePath(dbPath).
 				Build()
