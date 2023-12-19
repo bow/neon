@@ -13,7 +13,7 @@ import (
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/mmcdole/gofeed"
-	"github.com/rs/zerolog/log"
+	"github.com/rs/zerolog"
 	"modernc.org/sqlite"
 	sqlite3 "modernc.org/sqlite/lib"
 
@@ -37,7 +37,7 @@ func NewSQLiteWithParser(filename string, parser internal.FeedParser) (*SQLite, 
 
 	fail := failF("NewSQLiteStore")
 
-	log.Debug().Msgf("migrating data store")
+	pkgLogger.Debug().Msgf("migrating data store")
 	m, err := migration.New(filename)
 	if err != nil {
 		return nil, fail(err)
@@ -54,7 +54,7 @@ func NewSQLiteWithParser(filename string, parser internal.FeedParser) (*SQLite, 
 		dsvt = fmt.Sprintf("%s*", dsvt)
 	}
 
-	log.Debug().
+	pkgLogger.Debug().
 		Str("data_store_version", dsvt).
 		Msg("migrated data store")
 
@@ -84,7 +84,7 @@ func (db *SQLite) withTx(
 	rb := func(tx *sql.Tx) {
 		rerr := tx.Rollback()
 		if rerr != nil {
-			log.Error().Err(rerr).Msg("failed to roll back transaction")
+			pkgLogger.Error().Err(rerr).Msg("failed to roll back transaction")
 		}
 	}
 
@@ -179,3 +179,10 @@ func failF(funcName string) func(error) error {
 		return fmt.Errorf("%s: %w", funcName, err)
 	}
 }
+
+func SetLogger(logger zerolog.Logger) {
+	pkgLogger = logger
+}
+
+// pkgLogger is the server package pkgLogger.
+var pkgLogger = zerolog.Nop()

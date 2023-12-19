@@ -12,7 +12,6 @@ import (
 	"time"
 
 	gomock "github.com/golang/mock/gomock"
-	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/require"
 
 	"github.com/bow/lens/internal"
@@ -33,9 +32,6 @@ type testDB struct {
 
 func newTestDB(t *testing.T) testDB {
 	t.Helper()
-
-	// TODO: Avoid global states like this.
-	zerolog.SetGlobalLevel(zerolog.Disabled)
 
 	dbPath := filepath.Join(t.TempDir(), t.Name()+".db")
 	prs := internal.NewMockFeedParser(gomock.NewController(t))
