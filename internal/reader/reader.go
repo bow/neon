@@ -367,7 +367,7 @@ func (r *Reader) globalKeyHandler() func(event *tcell.EventKey) *tcell.EventKey 
 					front = mainPageName
 				}
 				if front == mainPageName {
-					target := r.getFocusTarget(keyr)
+					target := r.focusTarget(keyr)
 					r.app.SetFocus(target)
 				}
 				return nil
@@ -439,7 +439,7 @@ func (r *Reader) globalKeyHandler() func(event *tcell.EventKey) *tcell.EventKey 
 			}
 			if front == mainPageName {
 				reverse := event.Modifiers()&tcell.ModAlt != 0
-				target := r.getAdjacentFocusTarget(focused, reverse)
+				target := r.adjacentFocusTarget(focused, reverse)
 				r.app.SetFocus(target)
 			}
 			return nil
@@ -508,7 +508,7 @@ func (r *Reader) feedsPaneKeyHandler() func(event *tcell.EventKey) *tcell.EventK
 	}
 }
 
-func (r *Reader) getFocusTarget(keyr rune) tview.Primitive {
+func (r *Reader) focusTarget(keyr rune) tview.Primitive {
 	var target tview.Primitive
 	switch keyr { // nolint:exhaustive
 	case '1', 'F':
@@ -523,7 +523,7 @@ func (r *Reader) getFocusTarget(keyr rune) tview.Primitive {
 	return target
 }
 
-func (r *Reader) getAdjacentFocusTarget(
+func (r *Reader) adjacentFocusTarget(
 	current tview.Primitive,
 	reverse bool,
 ) tview.Primitive {
