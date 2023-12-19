@@ -16,7 +16,6 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"github.com/mmcdole/gofeed"
 	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/health"
 	healthapi "google.golang.org/grpc/health/grpc_health_v1"
@@ -67,9 +66,9 @@ func newServer(lis net.Listener, grpcServer *grpc.Server, str internal.FeedStore
 			reason = "function called"
 		}
 
-		log.Debug().Msg("stopping server")
+		pkgLogger.Debug().Msg("stopping server")
 		grpcServer.GracefulStop()
-		log.Info().Msgf("server stopped (%s)", reason)
+		pkgLogger.Info().Msgf("server stopped (%s)", reason)
 		stoppedCh <- struct{}{}
 	}()
 
@@ -98,7 +97,7 @@ func (s *Server) ServiceName() string {
 }
 
 func (s *Server) Serve(ctx context.Context) error {
-	log.Debug().
+	pkgLogger.Debug().
 		Str("addr", s.lis.Addr().String()).
 		Msg("starting server")
 
@@ -127,7 +126,7 @@ func (s *Server) start() <-chan error {
 		s.healthSvc.Resume()
 		ch <- s.grpcServer.Serve(s.lis)
 	}()
-	log.Info().Str("addr", s.lis.Addr().String()).Msgf("server listening")
+	pkgLogger.Info().Str("addr", s.lis.Addr().String()).Msgf("server listening")
 
 	return ch
 }
@@ -138,13 +137,11 @@ type Builder struct {
 	store     internal.FeedStore
 	storePath string
 	parser    internal.FeedParser
-	logger    zerolog.Logger
 }
 
 func NewBuilder() *Builder {
 	builder := Builder{
 		ctx:    context.Background(),
-		logger: log.With().Logger(),
 		parser: gofeed.NewParser(),
 	}
 	return &builder
@@ -169,11 +166,6 @@ func (b *Builder) StorePath(path string) *Builder {
 func (b *Builder) Store(str internal.FeedStore) *Builder {
 	b.store = str
 	b.storePath = ""
-	return b
-}
-
-func (b *Builder) Logger(logger zerolog.Logger) *Builder {
-	b.logger = logger
 	return b
 }
 
@@ -202,7 +194,7 @@ func (b *Builder) Build() (*Server, error) {
 
 	str := b.store
 	if sp := b.storePath; sp != "" {
-		log.Info().Str("path", sp).Msgf("initializing data store")
+		pkgLogger.Info().Str("path", sp).Msgf("initializing data store")
 		if str, err = database.NewSQLiteWithParser(sp, b.parser); err != nil {
 			return nil, fmt.Errorf("server build: %w", err)
 		}
@@ -212,18 +204,18 @@ func (b *Builder) Build() (*Server, error) {
 		b.parser = gofeed.NewParser()
 	}
 
-	logger := b.logger.With().
+	ilogger := getLogger().With().
 		Str("grpc.version", grpc.Version).
 		Logger()
 
 	grpcs := grpc.NewServer(
 		grpc.ChainUnaryInterceptor(
 			storeErrorUnaryServerInterceptor,
-			logging.UnaryServerInterceptor(internal.InterceptorLogger(logger)),
+			logging.UnaryServerInterceptor(internal.InterceptorLogger(ilogger)),
 		),
 		grpc.ChainStreamInterceptor(
 			storeErrorStreamServerInterceptor,
-			logging.StreamServerInterceptor(internal.InterceptorLogger(logger)),
+			logging.StreamServerInterceptor(internal.InterceptorLogger(ilogger)),
 		),
 	)
 	s := newServer(lis, grpcs, str)
@@ -244,3 +236,14 @@ var (
 
 	IsFileSystemAddr = func(addr string) bool { return IsFileAddr(addr) || IsUnixAddr(addr) }
 )
+
+func SetLogger(logger zerolog.Logger) {
+	pkgLogger = logger
+}
+
+func getLogger() *zerolog.Logger {
+	return &pkgLogger
+}
+
+// pkgLogger is the server package pkgLogger.
+var pkgLogger = zerolog.Nop()

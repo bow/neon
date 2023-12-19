@@ -26,8 +26,7 @@ func defaultTestServerBuilder(t *testing.T) *Builder {
 
 	return NewBuilder().
 		Address("tcp://:0").
-		Store(internal.NewMockFeedStore(gomock.NewController(t))).
-		Logger(zerolog.Nop())
+		Store(internal.NewMockFeedStore(gomock.NewController(t)))
 }
 
 type testClientBuilder struct {
