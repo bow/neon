@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 
 	"github.com/bow/lens/internal/server"
 )
@@ -36,22 +37,12 @@ func newServerCommand() *cobra.Command {
 				showBanner(cmd.OutOrStdout())
 			}
 
-			dbPath, err := resolveDBPath(v.GetString(dbPathKey))
+			srv, err := makeServer(cmd, v, normalizeAddr(v.GetString(addrKey)))
 			if err != nil {
 				return err
 			}
 
-			server, err := server.NewBuilder().
-				Context(cmd.Context()).
-				Address(normalizeAddr(v.GetString(addrKey))).
-				StorePath(dbPath).
-				Build()
-
-			if err != nil {
-				return err
-			}
-
-			return server.Serve(cmd.Context())
+			return srv.Serve(cmd.Context())
 		},
 	}
 
@@ -68,6 +59,22 @@ func newServerCommand() *cobra.Command {
 	command.AddCommand(newServerShowProtoCommand())
 
 	return &command
+}
+
+func makeServer(cmd *cobra.Command, v *viper.Viper, addr string) (*server.Server, error) {
+
+	dbPath, err := resolveDBPath(v.GetString(dbPathKey))
+	if err != nil {
+		return nil, err
+	}
+
+	srv, err := server.NewBuilder().
+		Context(cmd.Context()).
+		Address(addr).
+		StorePath(dbPath).
+		Build()
+
+	return srv, err
 }
 
 // normalizeAddr ensures the specified address has either a 'tcp' or 'file' protocol. If the
