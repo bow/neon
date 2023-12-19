@@ -11,7 +11,6 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
@@ -66,11 +65,6 @@ func newReaderCommand() *cobra.Command {
 				defer cancel()
 
 			} else {
-				// FIXME: Isolate server logging setup and change it here instead.
-				lv := zerolog.GlobalLevel()
-				defer zerolog.SetGlobalLevel(lv)
-				zerolog.SetGlobalLevel(zerolog.PanicLevel)
-
 				server, ierr := makeServer(cmd, v, addr)
 				if ierr != nil {
 					return ierr
