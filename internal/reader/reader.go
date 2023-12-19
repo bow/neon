@@ -136,11 +136,10 @@ func (r *Reader) setupLayout() {
 }
 
 func (r *Reader) Show() error {
-	stats, err := r.getGlobalStats()
-	if err != nil {
+
+	if err := r.getGlobalStats(); err != nil {
 		return err
 	}
-	r.bar.updateFromStats(stats)
 
 	if !r.isInitialized() {
 		welcomeText := fmt.Sprintf(`Hello and welcome the %s reader.
@@ -275,11 +274,9 @@ func (r *Reader) setupHelpPage() {
 func (r *Reader) setupStatsPage() {
 
 	if r.statsCache == nil {
-		stats, err := r.getGlobalStats()
-		if err != nil {
+		if err := r.getGlobalStats(); err != nil {
 			panic(err)
 		}
-		r.statsCache = stats
 	}
 
 	statsText := fmt.Sprintf(`[aqua]Feeds[-]
@@ -501,12 +498,9 @@ func (r *Reader) feedsPaneKeyHandler() func(event *tcell.EventKey) *tcell.EventK
 					r.bar.showNormalActivity("Pulled %d feeds successfully", count)
 				}
 
-				stats, err := r.getGlobalStats()
-				if err != nil {
+				if err := r.getGlobalStats(); err != nil {
 					panic(err)
 				}
-				r.statsCache = stats
-				r.bar.updateFromStats(stats)
 			}()
 			return nil
 		}
@@ -643,13 +637,17 @@ func (r *Reader) newPopup(
 		AddItem(frame, 1, 1, 1, 1, 0, 0, true)
 }
 
-func (r *Reader) getGlobalStats() (*internal.Stats, error) {
+func (r *Reader) getGlobalStats() error {
 	rsp, err := r.client.GetStats(r.ctx, &api.GetStatsRequest{})
 	if err != nil {
-		return nil, err
+		return err
 	}
+
 	stats := internal.FromStatsPb(rsp.GetGlobal())
-	return stats, nil
+	r.bar.updateFromStats(stats)
+	r.statsCache = stats
+
+	return nil
 }
 
 func (r *Reader) newPaneDivider() *tview.Box {
