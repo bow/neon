@@ -101,3 +101,9 @@ func (fp *feedsPane) setupNavTree() {
 
 	fp.TreeView = tree
 }
+
+func (fp *feedsPane) refreshColors() {
+	for _, node := range fp.TreeView.GetRoot().GetChildren() {
+		node.SetColor(fp.theme.FeedsGroup)
+	}
+}

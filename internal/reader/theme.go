@@ -50,6 +50,7 @@ func (theme *Theme) Dim() {
 	theme.TitleForeground = theme.TitleForegroundDim
 	theme.LastPullForeground = theme.LastPullForegroundDim
 	theme.ActivityNormalForeground = theme.ActivityNormalForegroundDim
+	theme.FeedsGroup = theme.FeedsGroupDim
 }
 
 func (theme *Theme) Normalize() {
@@ -57,6 +58,7 @@ func (theme *Theme) Normalize() {
 	theme.TitleForeground = theme.TitleForegroundNormal
 	theme.LastPullForeground = theme.LastPullForegroundNormal
 	theme.ActivityNormalForeground = theme.ActivityNormalForegroundNormal
+	theme.FeedsGroup = theme.FeedsGroupNormal
 }
 
 func (theme *Theme) lineStyle() tcell.Style {

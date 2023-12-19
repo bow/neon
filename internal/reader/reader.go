@@ -560,11 +560,13 @@ func (r *Reader) getAdjacentFocusTarget(
 func (r *Reader) dimColors() {
 	r.theme.Dim()
 	r.bar.refreshColors()
+	r.feedsPane.refreshColors()
 }
 
 func (r *Reader) normalizeColors() {
 	r.theme.Normalize()
 	r.bar.refreshColors()
+	r.feedsPane.refreshColors()
 }
 
 func (r *Reader) newPane(title string, addTopLeftBorderTip bool) *tview.Box {
