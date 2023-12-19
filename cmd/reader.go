@@ -41,24 +41,21 @@ func newReaderCommand() *cobra.Command {
 		Short:   "Open the feed reader",
 		RunE: func(cmd *cobra.Command, args []string) error {
 
-			initPath, err := readerInitPath()
-			if err != nil {
-				return err
-			}
-
-			connect := v.GetBool(connectKey)
-
 			var (
 				connectAddr net.Addr
 				ctx         = cmd.Context()
 				dialOpts    = []grpc.DialOption{
 					grpc.WithTransportCredentials(insecure.NewCredentials()),
 				}
+				addr = resolveAddr(v, addrKey, connectKey, defaultConnectAddr, defaultStartAddr)
 			)
 
-			addr := resolveAddr(v, addrKey, connectKey, defaultConnectAddr, defaultStartAddr)
+			initPath, err := readerInitPath()
+			if err != nil {
+				return err
+			}
 
-			if connect {
+			if v.GetBool(connectKey) {
 				connectAddr, err = makeConnectAddr(addr)
 				if err != nil {
 					return err
