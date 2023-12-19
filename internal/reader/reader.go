@@ -6,6 +6,7 @@ package reader
 import (
 	"bufio"
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -15,6 +16,7 @@ import (
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
+	"google.golang.org/grpc"
 
 	"github.com/bow/lens/api"
 	"github.com/bow/lens/internal"
@@ -34,13 +36,13 @@ const (
 )
 
 type Reader struct {
-	ctx      context.Context
+	ctx    context.Context
+	addr   string
+	conn   *grpc.ClientConn
+	client api.LensClient
+
 	theme    *Theme
 	initPath string
-
-	// TODO: Use builder to set these.
-	client api.LensClient
-	addr   string
 
 	app *tview.Application
 
@@ -58,36 +60,79 @@ type Reader struct {
 	statsCache *internal.Stats
 }
 
-func New(
-	ctx context.Context,
-	client api.LensClient,
-	addr string,
-) *Reader {
+type Builder struct {
+	ctx      context.Context
+	addr     string
+	dialOpts []grpc.DialOption
+	initPath string
+	theme    *Theme
+}
 
-	reader := Reader{
-		ctx:    ctx,
-		client: client,
-		theme:  DarkTheme,
-		root:   tview.NewPages(),
-		app:    tview.NewApplication(),
-		addr:   addr,
+func NewBuilder(addr string, dialOpts ...grpc.DialOption) *Builder {
+	b := Builder{
+		addr:     addr,
+		dialOpts: dialOpts,
+
+		ctx:   context.Background(),
+		theme: DarkTheme,
+	}
+	return &b
+}
+
+func (b *Builder) Context(ctx context.Context) *Builder {
+	b.ctx = ctx
+	return b
+}
+
+func (b *Builder) InitPath(path string) *Builder {
+	b.initPath = path
+	return b
+}
+
+func (b *Builder) Theme(theme *Theme) *Builder {
+	b.theme = theme
+	return b
+}
+
+func (b *Builder) Build() (*Reader, error) {
+
+	conn, err := grpc.DialContext(b.ctx, b.addr, b.dialOpts...)
+	if err != nil {
+		if errors.Is(err, context.DeadlineExceeded) {
+			return nil, fmt.Errorf("timeout when connecting to server %q", b.addr)
+		}
+		return nil, err
 	}
 
-	reader.setupMainPage()
-	reader.setupHelpPage()
-	reader.setupStatsPage()
-	reader.setupAboutPage()
+	rdr := Reader{
+		ctx:    b.ctx,
+		addr:   b.addr,
+		conn:   conn,
+		client: api.NewLensClient(conn),
+		theme:  b.theme,
+	}
+	rdr.setupLayout()
 
-	reader.root.
-		AddAndSwitchToPage(mainPageName, reader.mainPage, true).
-		AddPage(helpPageName, reader.helpPage, true, false).
-		AddPage(statsPageName, reader.statsPage, true, false).
-		AddPage(aboutPageName, reader.aboutPage, true, false)
+	return &rdr, nil
+}
 
-	reader.root.SetInputCapture(reader.globalKeyHandler())
-	reader.app.SetRoot(reader.root, true).EnableMouse(true)
+func (r *Reader) setupLayout() {
+	r.app = tview.NewApplication()
+	r.root = tview.NewPages()
 
-	return &reader
+	r.setupMainPage()
+	r.setupHelpPage()
+	r.setupStatsPage()
+	r.setupAboutPage()
+
+	r.root.
+		AddAndSwitchToPage(mainPageName, r.mainPage, true).
+		AddPage(helpPageName, r.helpPage, true, false).
+		AddPage(statsPageName, r.statsPage, true, false).
+		AddPage(aboutPageName, r.aboutPage, true, false)
+
+	r.root.SetInputCapture(r.globalKeyHandler())
+	r.app.SetRoot(r.root, true).EnableMouse(true)
 }
 
 func (r *Reader) Show() error {
@@ -123,11 +168,6 @@ To close this message, press [yellow]<Esc>[-].
 	}
 
 	return r.app.Run()
-}
-
-func (r *Reader) WithInitPath(path string) *Reader {
-	r.initPath = path
-	return r
 }
 
 func (r *Reader) setupMainPage() {

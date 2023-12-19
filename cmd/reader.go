@@ -5,7 +5,6 @@ package cmd
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"net"
 	"os"
@@ -18,7 +17,6 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
-	"github.com/bow/lens/api"
 	"github.com/bow/lens/internal/reader"
 	"github.com/bow/lens/internal/server"
 )
@@ -89,23 +87,14 @@ func newReaderCommand() *cobra.Command {
 				connectAddr = server.Addr()
 			}
 
-			conn, err := grpc.DialContext(ctx, connectAddr.String(), dialOpts...)
+			rdr, err := reader.NewBuilder(connectAddr.String(), dialOpts...).
+				Context(ctx).
+				InitPath(initPath).
+				Build()
+
 			if err != nil {
-				if errors.Is(err, context.DeadlineExceeded) {
-					return fmt.Errorf(
-						"timeout when connecting to server %q",
-						connectAddr.String(),
-					)
-				}
 				return err
 			}
-
-			rdr := reader.New(
-				ctx,
-				api.NewLensClient(conn),
-				connectAddr.String(),
-			).
-				WithInitPath(initPath)
 
 			return rdr.Show()
 		},
