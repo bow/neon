@@ -1,7 +1,7 @@
 // Copyright (c) 2023 Wibowo Arindrarto <contact@arindrarto.dev>
 // SPDX-License-Identifier: BSD-3-Clause
 
-package tui
+package reader
 
 import (
 	"bufio"
@@ -58,7 +58,7 @@ type Reader struct {
 	statsCache *internal.Stats
 }
 
-func NewReader(
+func New(
 	ctx context.Context,
 	client api.LensClient,
 	addr string,

@@ -19,8 +19,8 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 
 	"github.com/bow/lens/api"
+	"github.com/bow/lens/internal/reader"
 	"github.com/bow/lens/internal/server"
-	"github.com/bow/lens/internal/tui"
 )
 
 func newReaderCommand() *cobra.Command {
@@ -39,8 +39,8 @@ func newReaderCommand() *cobra.Command {
 
 	command := cobra.Command{
 		Use:     name,
-		Aliases: append(makeAlias(name), []string{"ui", "tui"}...),
-		Short:   "Open a feed reader",
+		Aliases: append(makeAlias(name), []string{"r"}...),
+		Short:   "Open the feed reader",
 		RunE: func(cmd *cobra.Command, args []string) error {
 
 			initPath, err := readerInitPath()
@@ -100,14 +100,14 @@ func newReaderCommand() *cobra.Command {
 				return err
 			}
 
-			reader := tui.NewReader(
+			rdr := reader.New(
 				ctx,
 				api.NewLensClient(conn),
 				connectAddr.String(),
 			).
 				WithInitPath(initPath)
 
-			return reader.Show()
+			return rdr.Show()
 		},
 	}
 
