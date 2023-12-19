@@ -7,9 +7,11 @@ import (
 	"fmt"
 	"strings"
 
+	zlog "github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
+	"github.com/bow/lens/internal/database"
 	"github.com/bow/lens/internal/server"
 )
 
@@ -32,6 +34,9 @@ func newServerCommand() *cobra.Command {
 		Aliases: makeAlias(name),
 		Short:   "Start a gRPC server",
 		RunE: func(cmd *cobra.Command, args []string) error {
+
+			database.SetLogger(zlog.Logger)
+			server.SetLogger(zlog.Logger)
 
 			if !v.GetBool(quietKey) {
 				showBanner(cmd.OutOrStdout())
