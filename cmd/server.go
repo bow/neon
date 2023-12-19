@@ -19,7 +19,7 @@ func newServerCommand() *cobra.Command {
 	var (
 		name        = "server"
 		v           = newViper(name)
-		defaultAddr = "127.0.0.1:5151"
+		defaultAddr = defaultServerAddr
 	)
 
 	const (

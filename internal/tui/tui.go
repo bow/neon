@@ -7,6 +7,7 @@ import (
 	"bufio"
 	"context"
 	"fmt"
+	"io"
 	"os"
 	"runtime"
 	"strings"
@@ -15,6 +16,7 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 
+	"github.com/bow/lens/api"
 	"github.com/bow/lens/internal"
 )
 
@@ -33,10 +35,12 @@ const (
 
 type Reader struct {
 	ctx      context.Context
-	store    internal.FeedStore
 	theme    *Theme
-	dbPath   *string
 	initPath string
+
+	// TODO: Use builder to set these.
+	client api.LensClient
+	addr   string
 
 	app *tview.Application
 
@@ -54,15 +58,19 @@ type Reader struct {
 	statsCache *internal.Stats
 }
 
-func NewReader(ctx context.Context, store internal.FeedStore, dbPath *string) *Reader {
+func NewReader(
+	ctx context.Context,
+	client api.LensClient,
+	addr string,
+) *Reader {
 
 	reader := Reader{
 		ctx:    ctx,
-		store:  store,
+		client: client,
 		theme:  DarkTheme,
 		root:   tview.NewPages(),
 		app:    tview.NewApplication(),
-		dbPath: dbPath,
+		addr:   addr,
 	}
 
 	reader.setupMainPage()
@@ -83,11 +91,12 @@ func NewReader(ctx context.Context, store internal.FeedStore, dbPath *string) *R
 }
 
 func (r *Reader) Show() error {
-	stats, err := r.store.GetGlobalStats(r.ctx)
+	stats, err := r.getGlobalStats()
 	if err != nil {
 		return err
 	}
 	r.bar.updateFromStats(stats)
+
 	if !r.isInitialized() {
 		welcomeText := fmt.Sprintf(`Hello and welcome the %s reader.
 
@@ -226,7 +235,7 @@ func (r *Reader) setupHelpPage() {
 func (r *Reader) setupStatsPage() {
 
 	if r.statsCache == nil {
-		stats, err := r.store.GetGlobalStats(r.ctx)
+		stats, err := r.getGlobalStats()
 		if err != nil {
 			panic(err)
 		}
@@ -277,15 +286,14 @@ func (r *Reader) setupAboutPage() {
 
 [yellow]Version[-]   : %s
 [yellow]Git commit[-]: %s
-[yellow]Build time[-]: %s`,
+[yellow]Build time[-]: %s
+[yellow]Server[-]    : %s`,
 		centerBanner(internal.Banner(), width),
 		internal.Version(),
 		commit,
 		buildTime,
+		r.addr,
 	)
-	if dbPath := r.dbPath; dbPath != nil {
-		aboutText += fmt.Sprintf("\n[yellow]Database[-]  : %s", *dbPath)
-	}
 
 	aboutWidget := tview.NewTextView().
 		SetDynamicColors(true).
@@ -428,13 +436,20 @@ func (r *Reader) feedsPaneKeyHandler() func(event *tcell.EventKey) *tcell.EventK
 				r.bar.showNormalActivity("Pulling feeds")
 
 				var count int
-				ch := r.store.PullFeeds(r.ctx, []internal.ID{})
-				for pr := range ch {
-					if err := pr.Error(); err != nil {
+				stream, err := r.client.PullFeeds(r.ctx, &api.PullFeedsRequest{})
+				if err != nil {
+					panic(err)
+				}
+				for {
+					rsp, serr := stream.Recv()
+					if serr == io.EOF {
+						break
+					}
+					if serr != nil {
 						// TODO: Add ok / fail status in ...?
 						panic(err)
 					}
-					r.bar.showNormalActivity("Pulling: %s done", pr.URL())
+					r.bar.showNormalActivity("Pulling: %s done", rsp.GetUrl())
 					count++
 				}
 				switch count {
@@ -446,7 +461,7 @@ func (r *Reader) feedsPaneKeyHandler() func(event *tcell.EventKey) *tcell.EventK
 					r.bar.showNormalActivity("Pulled %d feeds successfully", count)
 				}
 
-				stats, err := r.store.GetGlobalStats(r.ctx)
+				stats, err := r.getGlobalStats()
 				if err != nil {
 					panic(err)
 				}
@@ -584,6 +599,15 @@ func (r *Reader) newPopup(
 		SetColumns(0, ncols, 0).
 		SetRows(gridRows...).
 		AddItem(frame, 1, 1, 1, 1, 0, 0, true)
+}
+
+func (r *Reader) getGlobalStats() (*internal.Stats, error) {
+	rsp, err := r.client.GetStats(r.ctx, &api.GetStatsRequest{})
+	if err != nil {
+		return nil, err
+	}
+	stats := internal.FromStatsPb(rsp.GetGlobal())
+	return stats, nil
 }
 
 func (r *Reader) newPaneDivider() *tview.Box {

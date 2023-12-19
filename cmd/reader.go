@@ -4,19 +4,37 @@
 package cmd
 
 import (
+	"context"
+	"errors"
+	"fmt"
+	"net"
 	"os"
 	"path/filepath"
+	"time"
 
+	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 
-	"github.com/bow/lens/internal/database"
+	"github.com/bow/lens/api"
+	"github.com/bow/lens/internal/server"
 	"github.com/bow/lens/internal/tui"
 )
 
 func newReaderCommand() *cobra.Command {
 	var (
-		name = "reader"
-		v    = newViper(name)
+		name               = "reader"
+		v                  = newViper(name)
+		defaultStartAddr   = "localhost:0"
+		defaultConnectAddr = defaultServerAddr
+	)
+
+	const (
+		addrKey           = "address"
+		connectKey        = "connect"
+		connectTimeoutKey = "connect-timeout"
 	)
 
 	command := cobra.Command{
@@ -30,27 +48,90 @@ func newReaderCommand() *cobra.Command {
 				return err
 			}
 
-			dbPath, err := resolveDBPath(v.GetString(dbPathKey))
-			if err != nil {
-				return err
+			connect := v.GetBool(connectKey)
+
+			var (
+				connectAddr net.Addr
+				ctx         = cmd.Context()
+				dialOpts    = []grpc.DialOption{
+					grpc.WithTransportCredentials(insecure.NewCredentials()),
+				}
+			)
+
+			addr := resolveAddr(v, addrKey, connectKey, defaultConnectAddr, defaultStartAddr)
+
+			if connect {
+				connectAddr, err = makeConnectAddr(addr)
+				if err != nil {
+					return err
+				}
+				dialOpts = append(dialOpts, grpc.WithBlock())
+				var cancel context.CancelFunc
+				ctx, cancel = context.WithTimeout(ctx, v.GetDuration(connectTimeoutKey))
+				defer cancel()
+
+			} else {
+				// FIXME: Isolate server logging setup and change it here instead.
+				lv := zerolog.GlobalLevel()
+				defer zerolog.SetGlobalLevel(lv)
+				zerolog.SetGlobalLevel(zerolog.PanicLevel)
+
+				server, ierr := makeServer(cmd, v, addr)
+				if ierr != nil {
+					return ierr
+				}
+
+				go func() {
+					_ = server.Serve(cmd.Context())
+				}()
+				defer server.Stop()
+
+				connectAddr = server.Addr()
 			}
-			fs, err := database.NewSQLite(dbPath)
+
+			conn, err := grpc.DialContext(ctx, connectAddr.String(), dialOpts...)
 			if err != nil {
+				if errors.Is(err, context.DeadlineExceeded) {
+					return fmt.Errorf(
+						"timeout when connecting to server %q",
+						connectAddr.String(),
+					)
+				}
 				return err
 			}
 
-			app := tui.NewReader(cmd.Context(), fs, &dbPath).
+			reader := tui.NewReader(
+				ctx,
+				api.NewLensClient(conn),
+				connectAddr.String(),
+			).
 				WithInitPath(initPath)
 
-			return app.Show()
+			return reader.Show()
 		},
 	}
 
-	pflags := command.PersistentFlags()
+	flags := command.Flags()
 
-	pflags.StringP(dbPathKey, "d", defaultDBPath, "data store location")
+	flags.StringP(
+		addrKey,
+		"a",
+		"",
+		fmt.Sprintf(
+			`server address (default "%s" if "-c" is set, localhost with random port otherwise)`,
+			defaultConnectAddr,
+		),
+	)
+	flags.BoolP(connectKey, "c", false, "connect to a running server")
+	flags.DurationP(
+		connectTimeoutKey,
+		"t",
+		2*time.Second,
+		`timeout for initial server connection, ignored if "-c" is unset`,
+	)
+	flags.StringP(dbPathKey, "d", defaultDBPath, `data store location, ignored if "-c" is set`)
 
-	if err := v.BindPFlags(pflags); err != nil {
+	if err := v.BindPFlags(flags); err != nil {
 		panic(err)
 	}
 
@@ -72,4 +153,47 @@ func readerInitPath() (string, error) {
 		}
 	}
 	return filepath.Join(sd, "reader.initialized"), nil
+}
+
+func resolveAddr(
+	v *viper.Viper,
+	addrKey string,
+	connectKey string,
+	connectDefault, startDefault string,
+) string {
+	var (
+		addr    string
+		connect = v.GetBool(connectKey)
+	)
+
+	if v.IsSet(addrKey) {
+		addr = v.GetString(addrKey)
+	} else {
+		if connect {
+			addr = connectDefault
+		} else {
+			addr = startDefault
+		}
+	}
+
+	return normalizeAddr(addr)
+}
+
+func makeConnectAddr(value string) (net.Addr, error) {
+	var (
+		addr net.Addr
+		err  error
+	)
+	if server.IsTCPAddr(value) {
+		addr, err = net.ResolveTCPAddr("tcp", value[len("tcp://"):])
+		if err != nil {
+			return nil, err
+		}
+	} else if server.IsFileSystemAddr(value) {
+		addr, err = net.ResolveUnixAddr("unix", value[len("file://"):])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return addr, nil
 }

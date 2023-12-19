@@ -20,7 +20,10 @@ import (
 const dbPathKey = "db-path"
 
 // FIXME: Update value for non-linux systems.
-var defaultDBPath = "$XDG_DATA_HOME/lens/lens.db"
+var (
+	defaultDBPath     = "$XDG_DATA_HOME/lens/lens.db"
+	defaultServerAddr = "127.0.0.1:5151"
+)
 
 func newViper(cmdName string) *viper.Viper {
 	v := viper.New()
