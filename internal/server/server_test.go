@@ -79,7 +79,7 @@ func (tcb *testClientBuilder) Build() api.LensClient {
 	return client
 }
 
-func newTestServer(t *testing.T, b *Builder) *server {
+func newTestServer(t *testing.T, b *Builder) *Server {
 	t.Helper()
 
 	r := require.New(t)

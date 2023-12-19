@@ -33,7 +33,7 @@ const (
 	filePrefix = "file://"
 )
 
-type server struct {
+type Server struct {
 	lis        net.Listener
 	grpcServer *grpc.Server
 	stopf      func()
@@ -42,7 +42,7 @@ type server struct {
 	healthSvc *health.Server
 }
 
-func newServer(lis net.Listener, grpcServer *grpc.Server, str internal.FeedStore) *server {
+func newServer(lis net.Listener, grpcServer *grpc.Server, str internal.FeedStore) *Server {
 
 	svc := service{store: str}
 	api.RegisterLensServer(grpcServer, &svc)
@@ -78,7 +78,7 @@ func newServer(lis net.Listener, grpcServer *grpc.Server, str internal.FeedStore
 
 	reflection.Register(grpcServer)
 
-	s := server{
+	s := Server{
 		lis:        lis,
 		grpcServer: grpcServer,
 		stopf:      func() { funcCh <- struct{}{} },
@@ -89,15 +89,15 @@ func newServer(lis net.Listener, grpcServer *grpc.Server, str internal.FeedStore
 	return &s
 }
 
-func (s *server) Addr() net.Addr {
+func (s *Server) Addr() net.Addr {
 	return s.lis.Addr()
 }
 
-func (s *server) ServiceName() string {
+func (s *Server) ServiceName() string {
 	return api.Lens_ServiceDesc.ServiceName
 }
 
-func (s *server) Serve(ctx context.Context) error {
+func (s *Server) Serve(ctx context.Context) error {
 	log.Debug().
 		Str("addr", s.lis.Addr().String()).
 		Msg("starting server")
@@ -115,12 +115,12 @@ func (s *server) Serve(ctx context.Context) error {
 	}
 }
 
-func (s *server) Stop() {
+func (s *Server) Stop() {
 	s.stopf()
 	<-s.stoppedCh
 }
 
-func (s *server) start() <-chan error {
+func (s *Server) start() <-chan error {
 	ch := make(chan error)
 	go func() {
 		defer close(ch)
@@ -177,7 +177,7 @@ func (b *Builder) Logger(logger zerolog.Logger) *Builder {
 	return b
 }
 
-func (b *Builder) Build() (*server, error) {
+func (b *Builder) Build() (*Server, error) {
 
 	var netw string
 	switch addr := b.addr; {
