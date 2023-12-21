@@ -376,36 +376,17 @@ func (r *Reader) globalKeyHandler() func(event *tcell.EventKey) *tcell.EventKey 
 
 			case 'S':
 				if front == statsPageName {
-					r.root.HidePage(front)
-					r.normalizeColors()
-					r.popFocus()
+					r.hidePopup(front)
 				} else if front != welcomePageName {
-					if front == mainPageName {
-						r.stashFocus()
-					} else {
-						r.root.HidePage(front)
-						r.normalizeColors()
-					}
-					r.dimColors()
-					r.root.ShowPage(statsPageName)
+					r.showPopup(statsPageName, front)
 				}
 				return nil
 
 			case 'A':
 				if front == aboutPageName {
-					r.root.HidePage(front)
-					r.normalizeColors()
-					r.popFocus()
+					r.hidePopup(front)
 				} else if front != welcomePageName {
-					if front == mainPageName {
-						r.stashFocus()
-					} else {
-						r.root.HidePage(front)
-						r.normalizeColors()
-					}
-					r.dimColors()
-					r.bar.refreshColors()
-					r.root.ShowPage(aboutPageName)
+					r.showPopup(aboutPageName, front)
 				}
 				return nil
 
@@ -423,18 +404,9 @@ func (r *Reader) globalKeyHandler() func(event *tcell.EventKey) *tcell.EventKey 
 
 			case 'h', '?':
 				if front == helpPageName {
-					r.root.HidePage(front)
-					r.normalizeColors()
-					r.popFocus()
+					r.hidePopup(front)
 				} else {
-					if front == mainPageName {
-						r.stashFocus()
-					} else {
-						r.root.HidePage(front)
-						r.normalizeColors()
-					}
-					r.dimColors()
-					r.root.ShowPage(helpPageName)
+					r.showPopup(helpPageName, front)
 				}
 				return nil
 
@@ -460,11 +432,7 @@ func (r *Reader) globalKeyHandler() func(event *tcell.EventKey) *tcell.EventKey 
 			case mainPageName, "":
 				r.app.SetFocus(r.root)
 			default:
-				r.root.HidePage(front)
-				r.normalizeColors()
-				if front == helpPageName || front == statsPageName || front == aboutPageName {
-					r.popFocus()
-				}
+				r.hidePopup(front)
 			}
 			return nil
 		}
@@ -565,15 +533,28 @@ func (r *Reader) adjacentFocusTarget(
 	return targets[idx]
 }
 
-func (r *Reader) stashFocus() {
-	r.focusStack = r.app.GetFocus()
+func (r *Reader) showPopup(name string, currentFront string) {
+	if currentFront == mainPageName {
+		r.stashFocus()
+	} else {
+		r.root.HidePage(currentFront)
+	}
+	r.dimColors()
+	r.root.ShowPage(name)
 }
 
-func (r *Reader) popFocus() {
+func (r *Reader) hidePopup(name string) {
+	r.root.HidePage(name)
+	r.normalizeColors()
+
 	if r.focusStack != nil {
 		r.app.SetFocus(r.focusStack)
 	}
 	r.focusStack = nil
+}
+
+func (r *Reader) stashFocus() {
+	r.focusStack = r.app.GetFocus()
 }
 
 func (r *Reader) dimColors() {
