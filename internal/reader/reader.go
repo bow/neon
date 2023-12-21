@@ -58,6 +58,7 @@ type Reader struct {
 	bar         *statusBar
 
 	statsCache *internal.Stats
+	focusStack tview.Primitive
 }
 
 type Builder struct {
@@ -369,6 +370,7 @@ func (r *Reader) globalKeyHandler() func(event *tcell.EventKey) *tcell.EventKey 
 				if front == mainPageName {
 					target := r.focusTarget(keyr)
 					r.app.SetFocus(target)
+					r.stashFocus()
 				}
 				return nil
 
@@ -376,8 +378,11 @@ func (r *Reader) globalKeyHandler() func(event *tcell.EventKey) *tcell.EventKey 
 				if front == statsPageName {
 					r.root.HidePage(front)
 					r.normalizeColors()
+					r.popFocus()
 				} else if front != welcomePageName {
-					if front != mainPageName {
+					if front == mainPageName {
+						r.stashFocus()
+					} else {
 						r.root.HidePage(front)
 						r.normalizeColors()
 					}
@@ -390,8 +395,11 @@ func (r *Reader) globalKeyHandler() func(event *tcell.EventKey) *tcell.EventKey 
 				if front == aboutPageName {
 					r.root.HidePage(front)
 					r.normalizeColors()
+					r.popFocus()
 				} else if front != welcomePageName {
-					if front != mainPageName {
+					if front == mainPageName {
+						r.stashFocus()
+					} else {
 						r.root.HidePage(front)
 						r.normalizeColors()
 					}
@@ -417,8 +425,11 @@ func (r *Reader) globalKeyHandler() func(event *tcell.EventKey) *tcell.EventKey 
 				if front == helpPageName {
 					r.root.HidePage(front)
 					r.normalizeColors()
+					r.popFocus()
 				} else {
-					if front != mainPageName {
+					if front == mainPageName {
+						r.stashFocus()
+					} else {
 						r.root.HidePage(front)
 						r.normalizeColors()
 					}
@@ -451,6 +462,9 @@ func (r *Reader) globalKeyHandler() func(event *tcell.EventKey) *tcell.EventKey 
 			default:
 				r.root.HidePage(front)
 				r.normalizeColors()
+				if front == helpPageName || front == statsPageName || front == aboutPageName {
+					r.popFocus()
+				}
 			}
 			return nil
 		}
@@ -549,6 +563,17 @@ func (r *Reader) adjacentFocusTarget(
 		}
 	}
 	return targets[idx]
+}
+
+func (r *Reader) stashFocus() {
+	r.focusStack = r.app.GetFocus()
+}
+
+func (r *Reader) popFocus() {
+	if r.focusStack != nil {
+		r.app.SetFocus(r.focusStack)
+	}
+	r.focusStack = nil
 }
 
 func (r *Reader) dimColors() {
