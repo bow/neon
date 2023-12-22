@@ -278,6 +278,12 @@ func (r *Reader) setupStatsPage() {
 		}
 	}
 
+	sc := r.statsCache
+	var lpt string
+	if sc.LastPullTime != nil {
+		lpt = sc.LastPullTime.Format(longDateFormat)
+	}
+
 	statsText := fmt.Sprintf(`[aqua]Feeds[-]
 [yellow]Total[-]: %d
 
@@ -287,10 +293,10 @@ func (r *Reader) setupStatsPage() {
 
 [aqua]Last pulled[-]
 %s`,
-		r.statsCache.NumFeeds,
-		r.statsCache.NumEntries,
-		r.statsCache.NumEntriesUnread,
-		r.statsCache.LastPullTime.Format(longDateFormat),
+		sc.NumFeeds,
+		sc.NumEntries,
+		sc.NumEntriesUnread,
+		lpt,
 	)
 
 	statsWidget := tview.NewTextView().
