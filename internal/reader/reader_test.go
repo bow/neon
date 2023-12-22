@@ -18,54 +18,73 @@ import (
 
 func TestShowSmoke(t *testing.T) {
 
-	r := require.New(t)
-	a := assert.New(t)
+	screen, client, draw := setupReaderTest(t)
 
-	client := NewMockLensClient(gomock.NewController(t))
 	client.EXPECT().
 		GetStats(gomock.Any(), gomock.Any()).
-		Return(&api.GetStatsResponse{
-			Global: &api.GetStatsResponse_Stats{
-				NumFeeds:             2,
-				NumEntries:           5,
-				NumEntriesUnread:     5,
-				LastPullTime:         nil,
-				MostRecentUpdateTime: nil,
+		Return(
+			&api.GetStatsResponse{
+				Global: &api.GetStatsResponse_Stats{
+					NumFeeds:             2,
+					NumEntries:           5,
+					NumEntriesUnread:     5,
+					LastPullTime:         nil,
+					MostRecentUpdateTime: nil,
+				},
 			},
-		}, nil)
-
-	screen := tcell.NewSimulationScreen("UTF-8")
-	err := screen.Init()
-	r.NoError(err)
-	screen.SetSize(200, 45)
-
-	rdr, err := NewBuilder().
-		client(client).
-		screen(screen).
-		Build()
-	r.NoError(err)
-	r.NotNil(rdr)
+			nil,
+		)
 
 	drawn := func() bool {
 		return screenCellEqual(t, screen, 0, 0, tview.BoxDrawingsLightHorizontal)
 	}
 
-	a.False(drawn())
+	assert.False(t, drawn())
+	draw()
+	assert.Eventually(t, drawn, 2*time.Second, 100*time.Millisecond)
+}
+
+func setupReaderTest(
+	t *testing.T,
+) (
+	screen tcell.SimulationScreen,
+	client *MockLensClient,
+	drawf func(),
+) {
+	t.Helper()
+
+	r := require.New(t)
+
+	client = NewMockLensClient(gomock.NewController(t))
+
+	screen = tcell.NewSimulationScreen("UTF-8")
+	err := screen.Init()
+	r.NoError(err)
+	screen.SetSize(200, 45)
 
 	var wg sync.WaitGroup
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		rerr := rdr.Show()
-		r.NoError(rerr)
-	}()
+	drawf = func() {
+		rdr, err := NewBuilder().
+			client(client).
+			screen(screen).
+			Build()
+		r.NoError(err)
+		r.NotNil(rdr)
 
-	// Sanity check, just on one cell.
-	a.Eventually(drawn, 2*time.Second, 100*time.Millisecond)
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			rerr := rdr.Show()
+			r.NoError(rerr)
+		}()
+	}
 
-	// Quit reader.
-	screen.InjectKey(tcell.KeyRune, 'q', tcell.ModNone)
-	wg.Wait()
+	t.Cleanup(func() {
+		screen.InjectKey(tcell.KeyRune, 'q', tcell.ModNone)
+		wg.Wait()
+	})
+
+	return screen, client, drawf
 }
 
 func screenCell(t *testing.T, screen tcell.Screen, x, y int) rune {
