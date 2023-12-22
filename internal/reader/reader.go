@@ -136,8 +136,10 @@ func (r *Reader) setupLayout() {
 
 func (r *Reader) Show() error {
 
-	if err := r.getGlobalStats(); err != nil {
-		return err
+	if r.statsCache == nil {
+		if err := r.getGlobalStats(); err != nil {
+			return err
+		}
 	}
 
 	if !r.isInitialized() {
