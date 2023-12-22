@@ -572,9 +572,9 @@ func (r *Reader) newPane(title string, addTopLeftBorderTip bool) *tview.Box {
 	var unfocused, focused string
 	if title != "" {
 		unfocused = fmt.Sprintf(" %s ", title)
-		focused = fmt.Sprintf("[::b]» %s[::-] ", title)
+		focused = fmt.Sprintf("[::b]▶ %s[::-] ", title)
 	} else {
-		focused = "[::b]»[::-] "
+		focused = "[::b]▶[::-] "
 	}
 
 	makedrawf := func(

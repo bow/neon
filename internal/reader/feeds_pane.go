@@ -30,9 +30,9 @@ func (fp *feedsPane) setupDrawFunc() {
 	var titleUF, titleF string
 	if fp.theme.FeedsPaneTitle != "" {
 		titleUF = fmt.Sprintf(" %s ", fp.theme.FeedsPaneTitle)
-		titleF = fmt.Sprintf("[::b]» %s[::-] ", fp.theme.FeedsPaneTitle)
+		titleF = fmt.Sprintf("[::b]▶ %s[::-] ", fp.theme.FeedsPaneTitle)
 	} else {
-		titleF = "[::b]»[::-] "
+		titleF = "[::b]▶[::-] "
 	}
 
 	drawf := func(
