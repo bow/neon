@@ -37,7 +37,6 @@ const (
 
 type Reader struct {
 	ctx    context.Context
-	addr   string
 	conn   *grpc.ClientConn
 	client api.LensClient
 
@@ -107,7 +106,6 @@ func (b *Builder) Build() (*Reader, error) {
 
 	rdr := Reader{
 		ctx:    b.ctx,
-		addr:   b.addr,
 		conn:   conn,
 		client: api.NewLensClient(conn),
 		theme:  b.theme,
@@ -330,7 +328,7 @@ func (r *Reader) setupAboutPage() {
 		internal.Version(),
 		commit,
 		buildTime,
-		r.addr,
+		r.conn.Target(),
 	)
 
 	aboutWidget := tview.NewTextView().
