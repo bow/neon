@@ -78,8 +78,10 @@ func newReaderCommand() *cobra.Command {
 				connectAddr = server.Addr()
 			}
 
-			rdr, err := reader.NewBuilder(connectAddr.String(), dialOpts...).
+			rdr, err := reader.NewBuilder().
 				Context(ctx).
+				Address(connectAddr.String()).
+				DialOpts(dialOpts...).
 				InitPath(initPath).
 				Build()
 

@@ -139,13 +139,16 @@ lint:  ## Lint the code.
 
 
 .PHONY: mocks
-mocks: internal/store_mock.go internal/parser_mock.go  ## Generate mocks from interfaces.
+mocks: internal/store_mock.go internal/parser_mock.go internal/reader/client_mock.go  ## Generate mocks from interfaces.
 
 internal/parser_mock.go: internal/parser.go
 	mockgen -source=$< -package=internal FeedParser > $@
 
 internal/store_mock.go: internal/store.go
 	mockgen -source=$< -package=internal -self_package=github.com/bow/lens/internal FeedStore > $@
+
+internal/reader/client_mock.go: api/lens_grpc.pb.go
+	mockgen -source=$< -package=reader LensClient > $@
 
 
 .PHONY: protos

@@ -37,9 +37,10 @@ const (
 
 type Reader struct {
 	ctx    context.Context
-	conn   *grpc.ClientConn
+	addr   string
 	client api.LensClient
 
+	screen   tcell.Screen
 	theme    *Theme
 	initPath string
 
@@ -63,20 +64,32 @@ type Reader struct {
 type Builder struct {
 	ctx      context.Context
 	addr     string
-	dialOpts []grpc.DialOption
+	dopts    []grpc.DialOption
 	initPath string
 	theme    *Theme
+
+	// Only for testing.
+	cl  api.LensClient
+	scr tcell.Screen
 }
 
-func NewBuilder(addr string, dialOpts ...grpc.DialOption) *Builder {
+func NewBuilder() *Builder {
 	b := Builder{
-		addr:     addr,
-		dialOpts: dialOpts,
-
+		dopts: nil,
 		ctx:   context.Background(),
 		theme: DarkTheme,
 	}
 	return &b
+}
+
+func (b *Builder) Address(addr string) *Builder {
+	b.addr = addr
+	return b
+}
+
+func (b *Builder) DialOpts(dialOpts ...grpc.DialOption) *Builder {
+	b.dopts = dialOpts
+	return b
 }
 
 func (b *Builder) Context(ctx context.Context) *Builder {
@@ -94,20 +107,55 @@ func (b *Builder) Theme(theme *Theme) *Builder {
 	return b
 }
 
+func (b *Builder) client(cl api.LensClient) *Builder {
+	b.cl = cl
+	return b
+}
+
+func (b *Builder) screen(scr tcell.Screen) *Builder {
+	b.scr = scr
+	return b
+}
+
 func (b *Builder) Build() (*Reader, error) {
 
-	conn, err := grpc.DialContext(b.ctx, b.addr, b.dialOpts...)
-	if err != nil {
-		if errors.Is(err, context.DeadlineExceeded) {
-			return nil, fmt.Errorf("timeout when connecting to server %q", b.addr)
+	if b.addr == "" && b.cl == nil {
+		return nil, fmt.Errorf("reader server address must be specified")
+	}
+
+	var (
+		client api.LensClient
+		conn   *grpc.ClientConn
+		err    error
+	)
+	if b.cl != nil {
+		client = b.cl
+	} else {
+		conn, err = grpc.DialContext(b.ctx, b.addr, b.dopts...)
+		if err != nil {
+			if errors.Is(err, context.DeadlineExceeded) {
+				return nil, fmt.Errorf("timeout when connecting to server %q", b.addr)
+			}
+			return nil, err
 		}
-		return nil, err
+		client = api.NewLensClient(conn)
+	}
+
+	var screen tcell.Screen
+	if b.scr != nil {
+		screen = b.scr
+	} else {
+		screen, err = tcell.NewScreen()
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	rdr := Reader{
 		ctx:    b.ctx,
-		conn:   conn,
-		client: api.NewLensClient(conn),
+		client: client,
+		addr:   b.addr,
+		screen: screen,
 		theme:  b.theme,
 	}
 	rdr.setupLayout()
@@ -116,7 +164,7 @@ func (b *Builder) Build() (*Reader, error) {
 }
 
 func (r *Reader) setupLayout() {
-	r.app = tview.NewApplication()
+	r.app = tview.NewApplication().SetScreen(r.screen)
 	r.root = tview.NewPages()
 
 	r.setupMainPage()
@@ -336,7 +384,7 @@ func (r *Reader) setupAboutPage() {
 		internal.Version(),
 		commit,
 		buildTime,
-		r.conn.Target(),
+		r.addr,
 	)
 
 	aboutWidget := tview.NewTextView().
