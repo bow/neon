@@ -148,8 +148,8 @@ internal/store_mock.go: internal/store.go
 	mockgen -source=$< -package=internal -self_package=github.com/bow/lens/internal FeedStore > $@
 
 
-.PHONY: proto
-proto: $(PROTO_FILES) ## Generate code from protobuf.
+.PHONY: protos
+protos: $(PROTO_FILES)  ## Generate code from protobuf.
 	@protoc \
 		-I=$(PROTO_DIR) \
 		--go_opt=Mlens.proto="$(REPO_NAME)/api;api" \
