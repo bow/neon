@@ -43,9 +43,14 @@ func TestShowSmoke(t *testing.T) {
 		client(client).
 		screen(screen).
 		Build()
-
 	r.NoError(err)
 	r.NotNil(rdr)
+
+	drawn := func() bool {
+		return screenCellEqual(t, screen, 0, 0, tview.BoxDrawingsLightHorizontal)
+	}
+
+	a.False(drawn())
 
 	var wg sync.WaitGroup
 	wg.Add(1)
@@ -56,12 +61,20 @@ func TestShowSmoke(t *testing.T) {
 	}()
 
 	// Sanity check, just on one cell.
-	a.Eventually(func() bool {
-		pr, _, _, _ := screen.GetContent(0, 0)
-		return pr == tview.BoxDrawingsLightHorizontal
-	}, 2*time.Second, 100*time.Millisecond)
+	a.Eventually(drawn, 2*time.Second, 100*time.Millisecond)
 
 	// Quit reader.
 	screen.InjectKey(tcell.KeyRune, 'q', tcell.ModNone)
 	wg.Wait()
+}
+
+func screenCell(t *testing.T, screen tcell.Screen, x, y int) rune {
+	t.Helper()
+	pr, _, _, _ := screen.GetContent(x, y)
+	return pr
+}
+
+func screenCellEqual(t *testing.T, screen tcell.Screen, x, y int, expected rune) bool {
+	t.Helper()
+	return expected == screenCell(t, screen, x, y)
 }
