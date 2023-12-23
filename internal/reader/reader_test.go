@@ -44,6 +44,36 @@ func TestShowSmoke(t *testing.T) {
 	assert.Eventually(t, drawn, 2*time.Second, 100*time.Millisecond)
 }
 
+func TestHelpPopupSmoke(t *testing.T) {
+
+	screen, client, draw := setupReaderTest(t)
+
+	client.EXPECT().
+		GetStats(gomock.Any(), gomock.Any()).
+		Return(
+			&api.GetStatsResponse{
+				Global: &api.GetStatsResponse_Stats{
+					NumFeeds:             2,
+					NumEntries:           5,
+					NumEntriesUnread:     5,
+					LastPullTime:         nil,
+					MostRecentUpdateTime: nil,
+				},
+			},
+			nil,
+		)
+
+	draw()
+
+	dimmed := func() bool {
+		return screenForegroundEqual(t, screen, 0, 0, darkForegroundDim)
+	}
+
+	assert.False(t, dimmed())
+	screen.InjectKey(tcell.KeyRune, 'h', tcell.ModNone)
+	assert.Eventually(t, dimmed, 2*time.Second, 100*time.Millisecond)
+}
+
 func setupReaderTest(
 	t *testing.T,
 ) (
@@ -87,13 +117,26 @@ func setupReaderTest(
 	return screen, client, drawf
 }
 
-func screenCell(t *testing.T, screen tcell.Screen, x, y int) rune {
+func screenCell(t *testing.T, screen tcell.Screen, x, y int) (rune, tcell.Style) {
 	t.Helper()
-	pr, _, _, _ := screen.GetContent(x, y)
-	return pr
+	pr, _, st, _ := screen.GetContent(x, y)
+	return pr, st
+}
+
+func screenForegroundEqual(
+	t *testing.T,
+	screen tcell.Screen,
+	x, y int,
+	expected tcell.Color,
+) bool {
+	t.Helper()
+	_, st := screenCell(t, screen, x, y)
+	fg, _, _ := st.Decompose()
+	return expected == fg
 }
 
 func screenCellEqual(t *testing.T, screen tcell.Screen, x, y int, expected rune) bool {
 	t.Helper()
-	return expected == screenCell(t, screen, x, y)
+	pr, _ := screenCell(t, screen, x, y)
+	return expected == pr
 }
