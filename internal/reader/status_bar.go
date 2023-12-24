@@ -4,6 +4,7 @@
 package reader
 
 import (
+	context "context"
 	"fmt"
 	"sync"
 	"time"
@@ -18,19 +19,22 @@ const iconAllRead = "✔"
 type statusBar struct {
 	sync.RWMutex
 
+	ctx context.Context
+
 	theme     *Theme
 	container *tview.Flex
 
-	eventsWidget   *tview.TextView
-	readWidget     *tview.TextView
-	lastPullWidget *tview.TextView
-
-	events []*event
+	latestEventWidget *tview.TextView
+	readWidget        *tview.TextView
+	lastPullWidget    *tview.TextView
 
 	visible bool
+
+	eventsCh chan *event
+	events   []*event
 }
 
-func newStatusBar(theme *Theme) *statusBar {
+func newStatusBar(ctx context.Context, theme *Theme) *statusBar {
 
 	eventsWidget := tview.NewTextView().SetTextAlign(tview.AlignLeft)
 
@@ -51,25 +55,30 @@ func newStatusBar(theme *Theme) *statusBar {
 		AddItem(quickStatusWidget, len(shortDateFormat)+2, 1, false)
 
 	bar := statusBar{
-		theme:          theme,
-		container:      container,
-		eventsWidget:   eventsWidget,
-		readWidget:     readStatusWidget,
-		lastPullWidget: lastPullWidget,
-		visible:        true,
+		ctx:               ctx,
+		theme:             theme,
+		container:         container,
+		latestEventWidget: eventsWidget,
+		readWidget:        readStatusWidget,
+		lastPullWidget:    lastPullWidget,
+
+		visible: true,
+
+		events:   make([]*event, 0),
+		eventsCh: make(chan *event),
 	}
 
 	return &bar
 }
 
 func (b *statusBar) refreshColors() {
-	b.eventsWidget.SetTextColor(b.theme.EventNormalForeground)
+	b.latestEventWidget.SetTextColor(b.theme.EventNormalForeground)
 	b.readWidget.SetTextColor(b.theme.LastPullForeground)
 	b.lastPullWidget.SetTextColor(b.theme.LastPullForeground)
 }
 
 func (b *statusBar) setChangedFunc(handler func()) *statusBar {
-	b.eventsWidget.SetChangedFunc(handler)
+	b.latestEventWidget.SetChangedFunc(handler)
 	b.readWidget.SetChangedFunc(handler)
 	b.lastPullWidget.SetChangedFunc(handler)
 	return b
@@ -114,17 +123,50 @@ func (b *statusBar) removeFromMainPage(page *tview.Grid) *statusBar {
 	return b
 }
 
-func (b *statusBar) showNormalEvent(text string, a ...any) {
-	b.eventsWidget.
-		SetTextColor(b.theme.EventNormalForeground).
-		Clear()
-	if len(a) > 0 {
-		fmt.Fprintf(b.eventsWidget, "%s\n", fmt.Sprintf(text, a...))
-	} else {
-		fmt.Fprintf(b.eventsWidget, "%s\n", text)
+func (b *statusBar) startEventPoll() (stop func()) {
+	done := make(chan struct{})
+	stop = func() {
+		defer close(done)
+		done <- struct{}{}
 	}
+
+	go func() {
+		defer close(b.eventsCh)
+		for {
+			select {
+			case <-done:
+				return
+			case ev := <-b.eventsCh:
+				// TODO: Add support for other levels.
+				b.latestEventWidget.SetTextColor(b.theme.EventNormalForeground).Clear()
+				fmt.Fprintf(b.latestEventWidget, "%s\n", ev.text)
+				b.events = append(b.events, ev)
+			}
+		}
+	}()
+
+	return stop
 }
 
-func (b *statusBar) clearEvents() {
-	b.eventsWidget.Clear()
+func (b *statusBar) clearLatestEvent() {
+	b.latestEventWidget.Clear()
 }
+
+func (b *statusBar) infoEventf(text string, a ...any) {
+	ev := event{level: infoEvent, timestamp: time.Now(), text: fmt.Sprintf(text, a...)}
+	go func() { b.eventsCh <- &ev }()
+}
+
+type event struct {
+	level     eventLevel
+	timestamp time.Time
+	text      string
+}
+
+type eventLevel uint8
+
+const (
+	infoEvent eventLevel = iota
+	warnEvent
+	errEvent
+)
