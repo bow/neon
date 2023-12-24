@@ -16,6 +16,13 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+const (
+	// how long to wait by default for delayed test events.
+	pollTimeout = 2 * time.Second
+	// how frequent to check delayed test events by default.
+	tickFreq = 100 * time.Millisecond
+)
+
 func TestShowSmoke(t *testing.T) {
 
 	screen, draw := setupReaderTest(t)
@@ -26,7 +33,7 @@ func TestShowSmoke(t *testing.T) {
 
 	assert.False(t, drawn())
 	draw()
-	assert.Eventually(t, drawn, 2*time.Second, 100*time.Millisecond)
+	assert.Eventually(t, drawn, pollTimeout, tickFreq)
 }
 
 func TestHelpPopupSmoke(t *testing.T) {
@@ -41,7 +48,7 @@ func TestHelpPopupSmoke(t *testing.T) {
 
 	assert.False(t, dimmed())
 	screen.InjectKey(tcell.KeyRune, 'h', tcell.ModNone)
-	assert.Eventually(t, dimmed, 2*time.Second, 100*time.Millisecond)
+	assert.Eventually(t, dimmed, pollTimeout, tickFreq)
 }
 
 func TestFocusFeedsPane(t *testing.T) {
@@ -56,15 +63,15 @@ func TestFocusFeedsPane(t *testing.T) {
 	focused := func() bool { return reader.app.GetFocus() == reader.feedsPane }
 	unfocused := func() bool { return !focused() }
 
-	assert.Eventually(t, unfocused, 2*time.Second, 100*time.Millisecond)
+	assert.Eventually(t, unfocused, pollTimeout, tickFreq)
 	assert.True(t, unmarked())
 
 	screen.InjectKey(tcell.KeyRune, 'F', tcell.ModNone)
-	assert.Eventually(t, focused, 2*time.Second, 100*time.Millisecond)
+	assert.Eventually(t, focused, pollTimeout, tickFreq)
 	assert.True(t, marked())
 
 	screen.InjectKey(tcell.KeyEsc, ' ', tcell.ModNone)
-	assert.Eventually(t, unfocused, 2*time.Second, 100*time.Millisecond)
+	assert.Eventually(t, unfocused, pollTimeout, tickFreq)
 	assert.True(t, unmarked())
 }
 
