@@ -18,22 +18,7 @@ import (
 
 func TestShowSmoke(t *testing.T) {
 
-	screen, client, draw := setupReaderTest(t)
-
-	client.EXPECT().
-		GetStats(gomock.Any(), gomock.Any()).
-		Return(
-			&api.GetStatsResponse{
-				Global: &api.GetStatsResponse_Stats{
-					NumFeeds:             2,
-					NumEntries:           5,
-					NumEntriesUnread:     5,
-					LastPullTime:         nil,
-					MostRecentUpdateTime: nil,
-				},
-			},
-			nil,
-		)
+	screen, draw := setupReaderTest(t)
 
 	drawn := func() bool {
 		return screenCellEqual(t, screen, 0, 0, tview.BoxDrawingsLightHorizontal)
@@ -46,22 +31,7 @@ func TestShowSmoke(t *testing.T) {
 
 func TestHelpPopupSmoke(t *testing.T) {
 
-	screen, client, draw := setupReaderTest(t)
-
-	client.EXPECT().
-		GetStats(gomock.Any(), gomock.Any()).
-		Return(
-			&api.GetStatsResponse{
-				Global: &api.GetStatsResponse_Stats{
-					NumFeeds:             2,
-					NumEntries:           5,
-					NumEntriesUnread:     5,
-					LastPullTime:         nil,
-					MostRecentUpdateTime: nil,
-				},
-			},
-			nil,
-		)
+	screen, draw := setupReaderTest(t)
 
 	draw()
 
@@ -78,14 +48,28 @@ func setupReaderTest(
 	t *testing.T,
 ) (
 	screen tcell.SimulationScreen,
-	client *MockLensClient,
 	drawf func(),
 ) {
 	t.Helper()
 
 	r := require.New(t)
 
-	client = NewMockLensClient(gomock.NewController(t))
+	client := NewMockLensClient(gomock.NewController(t))
+	// Needed since we call the stats endpoint prior to Show.
+	client.EXPECT().
+		GetStats(gomock.Any(), gomock.Any()).
+		Return(
+			&api.GetStatsResponse{
+				Global: &api.GetStatsResponse_Stats{
+					NumFeeds:             2,
+					NumEntries:           5,
+					NumEntriesUnread:     5,
+					LastPullTime:         nil,
+					MostRecentUpdateTime: nil,
+				},
+			},
+			nil,
+		)
 
 	screen = tcell.NewSimulationScreen("UTF-8")
 	err := screen.Init()
@@ -114,7 +98,7 @@ func setupReaderTest(
 		wg.Wait()
 	})
 
-	return screen, client, drawf
+	return screen, drawf
 }
 
 func screenCell(t *testing.T, screen tcell.Screen, x, y int) (rune, tcell.Style) {
