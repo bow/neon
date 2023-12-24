@@ -453,7 +453,7 @@ func (r *Reader) globalKeyHandler() func(event *tcell.EventKey) *tcell.EventKey 
 			case 'c':
 				r.bar.Lock()
 				defer r.bar.Unlock()
-				r.bar.clearActivity()
+				r.bar.clearEvents()
 				return nil
 
 			case 'h', '?':
@@ -506,7 +506,7 @@ func (r *Reader) feedsPaneKeyHandler() func(event *tcell.EventKey) *tcell.EventK
 				r.bar.Lock()
 				defer r.bar.Unlock()
 
-				r.bar.showNormalActivity("Pulling feeds")
+				r.bar.showNormalEvent("Pulling feeds")
 
 				var count int
 				stream, err := r.client.PullFeeds(r.ctx, &api.PullFeedsRequest{})
@@ -522,16 +522,16 @@ func (r *Reader) feedsPaneKeyHandler() func(event *tcell.EventKey) *tcell.EventK
 						// TODO: Add ok / fail status in ...?
 						panic(err)
 					}
-					r.bar.showNormalActivity("Pulling: %s done", rsp.GetUrl())
+					r.bar.showNormalEvent("Pulling: %s done", rsp.GetUrl())
 					count++
 				}
 				switch count {
 				case 0:
-					r.bar.showNormalActivity("No feeds to pull")
+					r.bar.showNormalEvent("No feeds to pull")
 				case 1:
-					r.bar.showNormalActivity("Pulled %d feed successfully", count)
+					r.bar.showNormalEvent("Pulled %d feed successfully", count)
 				default:
-					r.bar.showNormalActivity("Pulled %d feeds successfully", count)
+					r.bar.showNormalEvent("Pulled %d feeds successfully", count)
 				}
 
 				if err := r.getGlobalStats(); err != nil {

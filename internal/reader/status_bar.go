@@ -21,16 +21,18 @@ type statusBar struct {
 	theme     *Theme
 	container *tview.Flex
 
-	activityWidget *tview.TextView
+	eventsWidget   *tview.TextView
 	readWidget     *tview.TextView
 	lastPullWidget *tview.TextView
+
+	events []*event
 
 	visible bool
 }
 
 func newStatusBar(theme *Theme) *statusBar {
 
-	activityWidget := tview.NewTextView().SetTextAlign(tview.AlignLeft)
+	eventsWidget := tview.NewTextView().SetTextAlign(tview.AlignLeft)
 
 	readStatusWidget := tview.NewTextView().SetTextColor(theme.LastPullForeground).
 		SetTextAlign(tview.AlignCenter)
@@ -45,13 +47,13 @@ func newStatusBar(theme *Theme) *statusBar {
 
 	container := tview.NewFlex().
 		SetDirection(tview.FlexColumn).
-		AddItem(activityWidget, 0, 1, false).
+		AddItem(eventsWidget, 0, 1, false).
 		AddItem(quickStatusWidget, len(shortDateFormat)+2, 1, false)
 
 	bar := statusBar{
 		theme:          theme,
 		container:      container,
-		activityWidget: activityWidget,
+		eventsWidget:   eventsWidget,
 		readWidget:     readStatusWidget,
 		lastPullWidget: lastPullWidget,
 		visible:        true,
@@ -61,13 +63,13 @@ func newStatusBar(theme *Theme) *statusBar {
 }
 
 func (b *statusBar) refreshColors() {
-	b.activityWidget.SetTextColor(b.theme.ActivityNormalForeground)
+	b.eventsWidget.SetTextColor(b.theme.EventNormalForeground)
 	b.readWidget.SetTextColor(b.theme.LastPullForeground)
 	b.lastPullWidget.SetTextColor(b.theme.LastPullForeground)
 }
 
 func (b *statusBar) setChangedFunc(handler func()) *statusBar {
-	b.activityWidget.SetChangedFunc(handler)
+	b.eventsWidget.SetChangedFunc(handler)
 	b.readWidget.SetChangedFunc(handler)
 	b.lastPullWidget.SetChangedFunc(handler)
 	return b
@@ -112,17 +114,17 @@ func (b *statusBar) removeFromMainPage(page *tview.Grid) *statusBar {
 	return b
 }
 
-func (b *statusBar) showNormalActivity(text string, a ...any) {
-	b.activityWidget.
-		SetTextColor(b.theme.ActivityNormalForeground).
+func (b *statusBar) showNormalEvent(text string, a ...any) {
+	b.eventsWidget.
+		SetTextColor(b.theme.EventNormalForeground).
 		Clear()
 	if len(a) > 0 {
-		fmt.Fprintf(b.activityWidget, "%s\n", fmt.Sprintf(text, a...))
+		fmt.Fprintf(b.eventsWidget, "%s\n", fmt.Sprintf(text, a...))
 	} else {
-		fmt.Fprintf(b.activityWidget, "%s\n", text)
+		fmt.Fprintf(b.eventsWidget, "%s\n", text)
 	}
 }
 
-func (b *statusBar) clearActivity() {
-	b.activityWidget.Clear()
+func (b *statusBar) clearEvents() {
+	b.eventsWidget.Clear()
 }
