@@ -48,7 +48,7 @@ func setupReaderTest(
 	t *testing.T,
 ) (
 	screen tcell.SimulationScreen,
-	drawf func(),
+	drawf func() *Reader,
 ) {
 	t.Helper()
 
@@ -77,20 +77,22 @@ func setupReaderTest(
 	screen.SetSize(200, 45)
 
 	var wg sync.WaitGroup
-	drawf = func() {
-		rdr, err := NewBuilder().
+	drawf = func() *Reader {
+		irdr, ierr := NewBuilder().
 			client(client).
 			screen(screen).
 			Build()
-		r.NoError(err)
-		r.NotNil(rdr)
+		r.NoError(ierr)
+		r.NotNil(irdr)
 
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			rerr := rdr.Show()
+			rerr := irdr.Show()
 			r.NoError(rerr)
 		}()
+
+		return irdr
 	}
 
 	t.Cleanup(func() {
