@@ -44,6 +44,30 @@ func TestHelpPopupSmoke(t *testing.T) {
 	assert.Eventually(t, dimmed, 2*time.Second, 100*time.Millisecond)
 }
 
+func TestFocusFeedsPane(t *testing.T) {
+	screen, draw := setupReaderTest(t)
+	reader := draw()
+
+	marked := func() bool { return screenCellEqual(t, screen, 0, 0, '▶') }
+	unmarked := func() bool {
+		return screenCellEqual(t, screen, 0, 0, tview.BoxDrawingsLightHorizontal)
+	}
+
+	focused := func() bool { return reader.app.GetFocus() == reader.feedsPane }
+	unfocused := func() bool { return !focused() }
+
+	assert.Eventually(t, unfocused, 2*time.Second, 100*time.Millisecond)
+	assert.True(t, unmarked())
+
+	screen.InjectKey(tcell.KeyRune, 'F', tcell.ModNone)
+	assert.Eventually(t, focused, 2*time.Second, 100*time.Millisecond)
+	assert.True(t, marked())
+
+	screen.InjectKey(tcell.KeyEsc, ' ', tcell.ModNone)
+	assert.Eventually(t, unfocused, 2*time.Second, 100*time.Millisecond)
+	assert.True(t, unmarked())
+}
+
 func setupReaderTest(
 	t *testing.T,
 ) (
