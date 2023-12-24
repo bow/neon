@@ -13,7 +13,7 @@ require (
 	github.com/rivo/tview v0.0.0-20231206124440-5f078138442e
 	github.com/rs/zerolog v1.31.0
 	github.com/spf13/cobra v1.8.0
-	github.com/spf13/viper v1.18.1
+	github.com/spf13/viper v1.18.2
 	github.com/stretchr/testify v1.8.4
 	golang.org/x/net v0.19.0
 	golang.org/x/text v0.14.0
