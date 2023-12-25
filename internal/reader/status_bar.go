@@ -153,7 +153,7 @@ func (b *statusBar) clearLatestEvent() {
 }
 
 func (b *statusBar) infoEventf(text string, a ...any) {
-	ev := event{level: infoEvent, timestamp: time.Now(), text: fmt.Sprintf(text, a...)}
+	ev := event{level: eventLevelInfo, timestamp: time.Now(), text: fmt.Sprintf(text, a...)}
 	go func() { b.eventsCh <- &ev }()
 }
 
@@ -166,7 +166,7 @@ type event struct {
 type eventLevel uint8
 
 const (
-	infoEvent eventLevel = iota
-	warnEvent
-	errEvent
+	eventLevelInfo eventLevel = iota
+	eventLevelWarn
+	eventLevelErr
 )
