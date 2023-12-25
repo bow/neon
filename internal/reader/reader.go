@@ -511,10 +511,11 @@ func (r *Reader) feedsPaneKeyHandler() func(event *tcell.EventKey) *tcell.EventK
 
 				r.bar.infoEventf("Pulling feeds")
 
-				var count int
+				var okCount, errCount, totalCount int
 				stream, err := r.client.PullFeeds(r.ctx, &api.PullFeedsRequest{})
 				if err != nil {
-					panic(err)
+					r.bar.errEvent(err)
+					return
 				}
 				for {
 					rsp, serr := stream.Recv()
@@ -522,23 +523,33 @@ func (r *Reader) feedsPaneKeyHandler() func(event *tcell.EventKey) *tcell.EventK
 						break
 					}
 					if serr != nil {
-						// TODO: Add ok / fail status in ...?
-						panic(err)
+						r.bar.errEventf("Failed to pull %s: %s", rsp.GetUrl(), serr)
+						errCount++
+					} else {
+						okCount++
 					}
-					r.bar.infoEventf("Pulling: %s done", rsp.GetUrl())
-					count++
+					totalCount++
 				}
-				switch count {
-				case 0:
-					r.bar.infoEventf("No feeds to pull")
-				case 1:
-					r.bar.infoEventf("Pulled %d feed successfully", count)
-				default:
-					r.bar.infoEventf("Pulled %d feeds successfully", count)
+				if errCount == 0 {
+					switch okCount {
+					case 0:
+						r.bar.infoEventf("No feeds to pull")
+					case 1:
+						r.bar.infoEventf("%d/%d feed pulled successfully", okCount, totalCount)
+					default:
+						r.bar.infoEventf("%d/%d feeds pulled successfully", okCount, totalCount)
+					}
+				} else {
+					switch okCount {
+					case 0:
+						r.bar.errEventf("Failed to pull any feeds")
+					default:
+						r.bar.warnEventf("Only %d/%d feeds pulled successfully", okCount, totalCount)
+					}
 				}
 
 				if err := r.getGlobalStats(); err != nil {
-					panic(err)
+					r.bar.errEventf(fmt.Sprintf("Failed to refresh stats: %s", err))
 				}
 			}()
 			return nil
