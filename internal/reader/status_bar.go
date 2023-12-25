@@ -72,7 +72,7 @@ func newStatusBar(ctx context.Context, theme *Theme) *statusBar {
 }
 
 func (b *statusBar) refreshColors() {
-	b.latestEventWidget.SetTextColor(b.theme.EventNormalForeground)
+	b.latestEventWidget.SetTextColor(b.theme.EventInfoForeground)
 	b.readWidget.SetTextColor(b.theme.LastPullForeground)
 	b.lastPullWidget.SetTextColor(b.theme.LastPullForeground)
 }
@@ -138,7 +138,7 @@ func (b *statusBar) startEventPoll() (stop func()) {
 				return
 			case ev := <-b.eventsCh:
 				// TODO: Add support for other levels.
-				b.latestEventWidget.SetTextColor(b.theme.EventNormalForeground).Clear()
+				b.latestEventWidget.SetTextColor(b.theme.EventInfoForeground).Clear()
 				fmt.Fprintf(b.latestEventWidget, "%s\n", ev.text)
 				b.events = append(b.events, ev)
 			}

@@ -35,9 +35,9 @@ type Theme struct {
 	LastPullForegroundNormal tcell.Color
 	LastPullForegroundDim    tcell.Color
 
-	EventNormalForeground       tcell.Color
-	EventNormalForegroundNormal tcell.Color
-	EventNormalForegroundDim    tcell.Color
+	EventInfoForeground       tcell.Color
+	EventInfoForegroundNormal tcell.Color
+	EventInfoForegroundDim    tcell.Color
 
 	PopupTitleForeground  tcell.Color
 	PopupBorderForeground tcell.Color
@@ -49,7 +49,7 @@ func (theme *Theme) Dim() {
 	theme.BorderForeground = theme.BorderForegroundDim
 	theme.TitleForeground = theme.TitleForegroundDim
 	theme.LastPullForeground = theme.LastPullForegroundDim
-	theme.EventNormalForeground = theme.EventNormalForegroundDim
+	theme.EventInfoForeground = theme.EventInfoForegroundDim
 	theme.FeedsGroup = theme.FeedsGroupDim
 }
 
@@ -57,7 +57,7 @@ func (theme *Theme) Normalize() {
 	theme.BorderForeground = theme.BorderForegroundNormal
 	theme.TitleForeground = theme.TitleForegroundNormal
 	theme.LastPullForeground = theme.LastPullForegroundNormal
-	theme.EventNormalForeground = theme.EventNormalForegroundNormal
+	theme.EventInfoForeground = theme.EventInfoForegroundNormal
 	theme.FeedsGroup = theme.FeedsGroupNormal
 }
 
@@ -96,9 +96,9 @@ var DarkTheme = &Theme{
 	LastPullForegroundNormal: tcell.ColorGray,
 	LastPullForegroundDim:    darkForegroundDim,
 
-	EventNormalForeground:       tcell.ColorDarkGoldenrod,
-	EventNormalForegroundNormal: tcell.ColorDarkGoldenrod,
-	EventNormalForegroundDim:    darkForegroundDim,
+	EventInfoForeground:       tcell.ColorOliveDrab,
+	EventInfoForegroundNormal: tcell.ColorOliveDrab,
+	EventInfoForegroundDim:    darkForegroundDim,
 
 	PopupBorderForeground: tcell.ColorGray,
 	PopupTitleForeground:  tcell.ColorAqua,
