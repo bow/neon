@@ -13,8 +13,6 @@ import (
 
 	gomock "github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
-
-	"github.com/bow/lens/internal"
 )
 
 // feedKey is a helper struct for testing.
@@ -27,14 +25,14 @@ type feedKey struct {
 type testDB struct {
 	*SQLite
 	t      *testing.T
-	parser *internal.MockFeedParser
+	parser *MockFeedParser
 }
 
 func newTestDB(t *testing.T) testDB {
 	t.Helper()
 
 	dbPath := filepath.Join(t.TempDir(), t.Name()+".db")
-	prs := internal.NewMockFeedParser(gomock.NewController(t))
+	prs := NewMockFeedParser(gomock.NewController(t))
 	s, err := NewSQLiteWithParser(dbPath, prs)
 	require.NoError(t, err)
 

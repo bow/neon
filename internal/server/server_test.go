@@ -26,7 +26,7 @@ func defaultTestServerBuilder(t *testing.T) *Builder {
 
 	return NewBuilder().
 		Address("tcp://:0").
-		Store(internal.NewMockFeedStore(gomock.NewController(t)))
+		Store(NewMockFeedStore(gomock.NewController(t)))
 }
 
 type testClientBuilder struct {
@@ -138,10 +138,10 @@ func newTestClient(
 }
 
 // setupServerTest is a shortcut method for creating server tests through a client.
-func setupServerTest(t *testing.T) (api.LensClient, *internal.MockFeedStore) {
+func setupServerTest(t *testing.T) (api.LensClient, *MockFeedStore) {
 	t.Helper()
 
-	str := internal.NewMockFeedStore(gomock.NewController(t))
+	str := NewMockFeedStore(gomock.NewController(t))
 	clb := newTestClientBuilder(t).ServerStore(str)
 
 	return clb.Build(), str

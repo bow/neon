@@ -139,15 +139,15 @@ lint:  ## Lint the code.
 
 
 .PHONY: mocks
-mocks: internal/store_mock.go internal/parser_mock.go internal/reader/client_mock.go  ## Generate mocks from interfaces.
+mocks: internal/server/store_mock_test.go internal/database/parser_mock_test.go internal/reader/client_mock_test.go  ## Generate mocks from interfaces.
 
-internal/parser_mock.go: internal/parser.go
-	mockgen -source=$< -package=internal FeedParser > $@
+internal/database/parser_mock_test.go: internal/parser.go
+	mockgen -source=$< -package=database FeedParser > $@
 
-internal/store_mock.go: internal/store.go
-	mockgen -source=$< -package=internal -self_package=github.com/bow/lens/internal FeedStore > $@
+internal/server/store_mock_test.go: internal/store.go
+	mockgen -source=$< -package=server FeedStore > $@
 
-internal/reader/client_mock.go: api/lens_grpc.pb.go
+internal/reader/client_mock_test.go: api/lens_grpc.pb.go
 	mockgen -source=$< -package=reader LensClient > $@
 
 
@@ -186,7 +186,7 @@ test: mocks .coverage.out  ## Run the test suite.
 
 .coverage.out:
 	gotestsum --format dots-v2 --junitfile .junit.xml -- ./... -parallel=$(shell nproc) -coverprofile=$@.all -covermode=atomic -coverpkg ./internal/...,./cmd/...,./. \
-		&& $(GREP_EXE) -v "_mock.go" $@.all > $@ \
+		&& $(GREP_EXE) -v "_mock_test.go" $@.all > $@ \
 		&& go tool cover -func=$@
 
 
