@@ -39,6 +39,14 @@ type Theme struct {
 	EventInfoForegroundNormal tcell.Color
 	EventInfoForegroundDim    tcell.Color
 
+	EventWarnForeground       tcell.Color
+	EventWarnForegroundNormal tcell.Color
+	EventWarnForegroundDim    tcell.Color
+
+	EventErrForeground       tcell.Color
+	EventErrForegroundNormal tcell.Color
+	EventErrForegroundDim    tcell.Color
+
 	PopupTitleForeground  tcell.Color
 	PopupBorderForeground tcell.Color
 
@@ -99,6 +107,14 @@ var DarkTheme = &Theme{
 	EventInfoForeground:       tcell.ColorOliveDrab,
 	EventInfoForegroundNormal: tcell.ColorOliveDrab,
 	EventInfoForegroundDim:    darkForegroundDim,
+
+	EventWarnForeground:       tcell.ColorDarkGoldenrod,
+	EventWarnForegroundNormal: tcell.ColorDarkGoldenrod,
+	EventWarnForegroundDim:    darkForegroundDim,
+
+	EventErrForeground:       tcell.ColorTomato,
+	EventErrForegroundNormal: tcell.ColorTomato,
+	EventErrForegroundDim:    darkForegroundDim,
 
 	PopupBorderForeground: tcell.ColorGray,
 	PopupTitleForeground:  tcell.ColorAqua,

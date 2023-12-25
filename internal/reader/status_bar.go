@@ -9,6 +9,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 
 	"github.com/bow/lens/internal"
@@ -137,9 +138,7 @@ func (b *statusBar) startEventPoll() (stop func()) {
 			case <-done:
 				return
 			case ev := <-b.eventsCh:
-				// TODO: Add support for other levels.
-				b.latestEventWidget.SetTextColor(b.theme.EventInfoForeground).Clear()
-				fmt.Fprintf(b.latestEventWidget, "%s\n", ev.text)
+				b.displayEvent(ev)
 				b.events = append(b.events, ev)
 			}
 		}
@@ -148,12 +147,37 @@ func (b *statusBar) startEventPoll() (stop func()) {
 	return stop
 }
 
+func (b *statusBar) displayEvent(ev *event) {
+	var color tcell.Color
+	switch ev.level {
+	case eventLevelInfo:
+		color = b.theme.EventInfoForeground
+	case eventLevelWarn:
+		color = b.theme.EventWarnForeground
+	case eventLevelErr:
+		color = b.theme.EventErrForeground
+	default:
+		panic(fmt.Sprintf("unsupported event level: %v", ev.level))
+	}
+	b.latestEventWidget.SetTextColor(color).Clear()
+	fmt.Fprintf(b.latestEventWidget, "%s\n", ev.text)
+}
+
 func (b *statusBar) clearLatestEvent() {
 	b.latestEventWidget.Clear()
 }
 
-func (b *statusBar) infoEventf(text string, a ...any) {
-	ev := event{level: eventLevelInfo, timestamp: time.Now(), text: fmt.Sprintf(text, a...)}
+func (b *statusBar) infoEventf(text string, a ...any) { b.eventf(eventLevelInfo, text, a...) }
+func (b *statusBar) warnEventf(text string, a ...any) { b.eventf(eventLevelWarn, text, a...) }
+func (b *statusBar) errEventf(text string, a ...any) {
+	b.eventf(eventLevelErr, fmt.Sprintf(text, a...))
+}
+func (b *statusBar) errEvent(err error) {
+	b.eventf(eventLevelErr, fmt.Sprintf("%s", err))
+}
+
+func (b *statusBar) eventf(level eventLevel, text string, a ...any) {
+	ev := event{level: level, timestamp: time.Now(), text: fmt.Sprintf(text, a...)}
 	go func() { b.eventsCh <- &ev }()
 }
 
