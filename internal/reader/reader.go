@@ -295,9 +295,9 @@ func (r *Reader) setupHelpPage() {
 [yellow]G[-]  : Go to bottom
 
 [aqua]Global[-]
-[yellow]1,F[-]     : Set focus to feeds pane
-[yellow]2,E[-]     : Set focus to entries pane
-[yellow]3,R[-]     : Set focus to reading pane
+[yellow]F[-]       : Set focus to feeds pane
+[yellow]E[-]       : Set focus to entries pane
+[yellow]R[-]       : Set focus to reading pane
 [yellow]Tab[-]     : Switch to next pane
 [yellow]Alt-Tab[-] : Switch to previous pane
 [yellow]b[-]       : Toggle status bar
@@ -418,7 +418,7 @@ func (r *Reader) globalKeyHandler() func(event *tcell.EventKey) *tcell.EventKey 
 
 		case tcell.KeyRune:
 			switch keyr {
-			case '1', '2', '3', 'F', 'E', 'R':
+			case 'F', 'E', 'R':
 				if front != mainPageName {
 					r.root.HidePage(front)
 					r.normalizeColors()
@@ -561,11 +561,11 @@ func (r *Reader) feedsPaneKeyHandler() func(event *tcell.EventKey) *tcell.EventK
 func (r *Reader) focusTarget(keyr rune) tview.Primitive {
 	var target tview.Primitive
 	switch keyr { // nolint:exhaustive
-	case '1', 'F':
+	case 'F':
 		target = r.feedsPane
-	case '2', 'E':
+	case 'E':
 		target = r.entriesPane
-	case '3', 'R':
+	case 'R':
 		target = r.readingPane
 	default:
 		panic(fmt.Sprintf("unexpected key: %c", keyr))
