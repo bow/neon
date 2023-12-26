@@ -79,6 +79,7 @@ func (fp *feedsPane) initTree() {
 
 	tree := tview.NewTreeView().
 		SetRoot(root).
+		SetGraphicsColor(fp.theme.FeedsGroup).
 		SetCurrentNode(root).
 		SetTopLevel(1)
 
@@ -190,7 +191,7 @@ func groupNode(ug feedUpdatedGroup, theme *Theme) *tview.TreeNode {
 	return tview.NewTreeNode(ug.Text(theme)).
 		SetReference(ug).
 		SetColor(theme.FeedsGroup).
-		SetSelectable(false)
+		SetSelectable(true)
 }
 
 func whenUpdated(feed *internal.Feed) feedUpdatedGroup {
