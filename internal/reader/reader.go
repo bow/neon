@@ -61,6 +61,8 @@ type Reader struct {
 	focusStack tview.Primitive
 }
 
+type drawFunc func(screen tcell.Screen, x int, y int, w int, h int) (ix int, iy int, iw int, ih int)
+
 type Builder struct {
 	ctx      context.Context
 	addr     string

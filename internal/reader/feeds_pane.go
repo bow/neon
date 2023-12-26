@@ -20,12 +20,16 @@ func newFeedsPane(theme *Theme) *feedsPane {
 
 	fp := feedsPane{theme: theme}
 	fp.setupNavTree()
-	fp.setupDrawFunc()
+
+	focusf, unfocusf := fp.makeDrawFuncs()
+	fp.SetDrawFunc(unfocusf)
+	fp.SetFocusFunc(func() { fp.SetDrawFunc(focusf) })
+	fp.SetBlurFunc(func() { fp.SetDrawFunc(unfocusf) })
 
 	return &fp
 }
 
-func (fp *feedsPane) setupDrawFunc() {
+func (fp *feedsPane) makeDrawFuncs() (focusf, unfocusf drawFunc) {
 
 	var titleUF, titleF string
 	if fp.theme.FeedsPaneTitle != "" {
@@ -73,12 +77,10 @@ func (fp *feedsPane) setupDrawFunc() {
 		}
 	}
 
-	focusf := drawf(true)
-	ufocusf := drawf(false)
+	focusf = drawf(true)
+	unfocusf = drawf(false)
 
-	fp.SetDrawFunc(ufocusf)
-	fp.SetFocusFunc(func() { fp.SetDrawFunc(focusf) })
-	fp.SetBlurFunc(func() { fp.SetDrawFunc(ufocusf) })
+	return focusf, unfocusf
 }
 
 func (fp *feedsPane) setupNavTree() {
