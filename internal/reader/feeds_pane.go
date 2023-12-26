@@ -5,28 +5,91 @@ package reader
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
+
+	"github.com/bow/lens/internal"
 )
 
 type feedsPane struct {
 	*tview.TreeView
 
 	theme *Theme
+
+	groupOrder []*tview.TreeNode
+	groupNodes map[feedUpdatedGroup]*tview.TreeNode
+	feedNodes  map[string]*tview.TreeNode
+
+	feeds <-chan *internal.Feed
 }
 
-func newFeedsPane(theme *Theme) *feedsPane {
+func newFeedsPane(theme *Theme, feeds <-chan *internal.Feed) *feedsPane {
 
-	fp := feedsPane{theme: theme}
-	fp.setupNavTree()
+	fp := feedsPane{
+		theme:      theme,
+		feeds:      feeds,
+		groupOrder: make([]*tview.TreeNode, 0),
+		groupNodes: make(map[feedUpdatedGroup]*tview.TreeNode),
+		feedNodes:  make(map[string]*tview.TreeNode),
+	}
+
+	fp.initTree()
 
 	focusf, unfocusf := fp.makeDrawFuncs()
 	fp.SetDrawFunc(unfocusf)
 	fp.SetFocusFunc(func() { fp.SetDrawFunc(focusf) })
 	fp.SetBlurFunc(func() { fp.SetDrawFunc(unfocusf) })
 
+	go fp.listenForUpdates()
+
 	return &fp
+}
+
+// TODO: How to handle feeds being removed altogether?
+func (fp *feedsPane) listenForUpdates() {
+	root := fp.GetRoot()
+	for feed := range fp.feeds {
+		fnode, exists := fp.feedNodes[feed.FeedURL]
+		newGroup := whenUpdated(feed)
+		if exists {
+			oldGroup := whenUpdated(fnode.GetReference().(*internal.Feed))
+			if oldGroup != newGroup {
+				fp.groupNodes[oldGroup].RemoveChild(fnode)
+			}
+		} else {
+			fnode = feedNode(feed, fp.theme)
+			fp.feedNodes[feed.FeedURL] = fnode
+		}
+		fp.groupNodes[newGroup].AddChild(fnode)
+
+		root.ClearChildren()
+		for _, gnode := range fp.groupOrder {
+			if len(gnode.GetChildren()) > 0 {
+				root.AddChild(gnode)
+			}
+		}
+	}
+}
+
+func (fp *feedsPane) initTree() {
+
+	root := tview.NewTreeNode("")
+
+	tree := tview.NewTreeView().
+		SetRoot(root).
+		SetCurrentNode(root).
+		SetTopLevel(1)
+
+	fp.TreeView = tree
+
+	for i := uint8(0); i < uint8(updatedUnknown); i++ {
+		ug := feedUpdatedGroup(i)
+		gnode := groupNode(ug, fp.theme)
+		fp.groupNodes[ug] = gnode
+		fp.groupOrder = append(fp.groupOrder, gnode)
+	}
 }
 
 func (fp *feedsPane) makeDrawFuncs() (focusf, unfocusf drawFunc) {
@@ -83,29 +146,72 @@ func (fp *feedsPane) makeDrawFuncs() (focusf, unfocusf drawFunc) {
 	return focusf, unfocusf
 }
 
-func (fp *feedsPane) setupNavTree() {
-
-	root := tview.NewTreeNode("")
-
-	tree := tview.NewTreeView().
-		SetRoot(root).
-		SetCurrentNode(root).
-		SetTopLevel(1)
-
-	updateGroups := []string{"Today", "This Week", "This Month", "This Year"}
-
-	for _, ug := range updateGroups {
-		node := tview.NewTreeNode(ug).
-			SetSelectable(true).
-			SetColor(fp.theme.FeedsGroup)
-		root.AddChild(node)
-	}
-
-	fp.TreeView = tree
-}
-
 func (fp *feedsPane) refreshColors() {
 	for _, node := range fp.TreeView.GetRoot().GetChildren() {
 		node.SetColor(fp.theme.FeedsGroup)
+	}
+}
+
+type feedUpdatedGroup uint8
+
+const (
+	updatedToday feedUpdatedGroup = iota
+	updatedThisWeek
+	updatedThisMonth
+	updatedEarlier
+	updatedUnknown
+)
+
+func (ug feedUpdatedGroup) Text(theme *Theme) string {
+	switch ug {
+	case updatedToday:
+		return theme.UpdatedTodayText
+	case updatedThisWeek:
+		return theme.UpdatedThisWeekText
+	case updatedThisMonth:
+		return theme.UpdatedThisMonthText
+	case updatedEarlier:
+		return theme.UpdatedEarlier
+	case updatedUnknown:
+		return theme.UpdatedUnknownText
+	default:
+		return theme.UpdatedUnknownText
+	}
+}
+
+func feedNode(feed *internal.Feed, _ *Theme) *tview.TreeNode {
+	return tview.NewTreeNode(feed.Title).
+		SetReference(feed.FeedURL).
+		SetColor(tcell.ColorWhite).
+		SetSelectable(true)
+}
+
+func groupNode(ug feedUpdatedGroup, theme *Theme) *tview.TreeNode {
+	return tview.NewTreeNode(ug.Text(theme)).
+		SetReference(ug).
+		SetColor(theme.FeedsGroup).
+		SetSelectable(false)
+}
+
+func whenUpdated(feed *internal.Feed) feedUpdatedGroup {
+	if feed.Updated == nil {
+		return updatedUnknown
+	}
+
+	now := time.Now()
+	yesterday := now.AddDate(0, 0, -1)
+	lastWeek := now.AddDate(0, 0, -7)
+	lastMonth := now.AddDate(0, -1, 0)
+
+	ft := *feed.Updated
+	switch {
+	case ft.Before(lastMonth):
+		return updatedEarlier
+	case ft.Before(lastWeek):
+		return updatedThisMonth
+	case ft.Before(yesterday):
+		return updatedThisWeek
+	default:
+		return updatedToday
 	}
 }

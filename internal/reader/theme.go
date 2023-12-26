@@ -17,6 +17,12 @@ type Theme struct {
 	AboutPopupTitle   string
 	WelcomePopupTitle string
 
+	UpdatedTodayText     string
+	UpdatedThisWeekText  string
+	UpdatedThisMonthText string
+	UpdatedEarlier       string
+	UpdatedUnknownText   string
+
 	Background tcell.Color
 
 	BorderForeground       tcell.Color
@@ -85,6 +91,12 @@ var DarkTheme = &Theme{
 	StatsPopupTitle:   "Stats",
 	AboutPopupTitle:   "About",
 	WelcomePopupTitle: "Welcome",
+
+	UpdatedTodayText:     "Today",
+	UpdatedThisWeekText:  "This Week",
+	UpdatedThisMonthText: "This Month",
+	UpdatedEarlier:       "Earlier",
+	UpdatedUnknownText:   "Unknown",
 
 	Background: tcell.ColorBlack,
 

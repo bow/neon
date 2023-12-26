@@ -86,6 +86,13 @@ func setupReaderTest(
 	r := require.New(t)
 
 	client := NewMockLensClient(gomock.NewController(t))
+	// Needed since we call the list feeds endpoint prior to Show.
+	client.EXPECT().
+		ListFeeds(gomock.Any(), gomock.Any()).
+		Return(
+			&api.ListFeedsResponse{Feeds: nil},
+			nil,
+		)
 	// Needed since we call the stats endpoint prior to Show.
 	client.EXPECT().
 		GetStats(gomock.Any(), gomock.Any()).

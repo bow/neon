@@ -146,6 +146,25 @@ func (f *Feed) Outline() (*opml.Outline, error) {
 	return &outl, nil
 }
 
+func FromFeedPb(pb *api.Feed) *Feed {
+	if pb == nil {
+		return nil
+	}
+	return &Feed{
+		ID:          pb.GetId(),
+		Title:       pb.GetTitle(),
+		Description: pb.Description,
+		FeedURL:     pb.GetFeedUrl(),
+		SiteURL:     pb.SiteUrl,
+		Subscribed:  *FromTimestampPb(pb.GetSubTime()),
+		LastPulled:  *FromTimestampPb(pb.GetLastPullTime()),
+		Updated:     FromTimestampPb(pb.GetUpdateTime()),
+		IsStarred:   pb.GetIsStarred(),
+		Tags:        pb.GetTags(),
+		Entries:     fromEntryPbs(pb.GetEntries()),
+	}
+}
+
 type FeedEditOp struct {
 	ID          ID
 	Title       *string
@@ -166,6 +185,36 @@ type Entry struct {
 	Description  *string
 	Content      *string
 	URL          *string
+}
+
+func FromEntryPb(pb *api.Entry) *Entry {
+	if pb == nil {
+		return nil
+	}
+	return &Entry{
+		ID:           pb.GetId(),
+		FeedID:       pb.GetFeedId(),
+		Title:        pb.GetTitle(),
+		IsRead:       pb.GetIsRead(),
+		IsBookmarked: pb.GetIsBookmarked(),
+		ExtID:        pb.GetExtId(),
+		Updated:      FromTimestampPb(pb.GetUpdateTime()),
+		Published:    FromTimestampPb(pb.GetUpdateTime()),
+		Description:  pb.Description,
+		Content:      pb.Content,
+		URL:          pb.Url,
+	}
+}
+
+func fromEntryPbs(pbs []*api.Entry) []*Entry {
+	entries := make([]*Entry, 0)
+	for _, pb := range pbs {
+		if pb == nil {
+			continue
+		}
+		entries = append(entries, FromEntryPb(pb))
+	}
+	return entries
 }
 
 type EntryEditOp struct {

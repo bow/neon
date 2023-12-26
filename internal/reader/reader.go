@@ -57,6 +57,7 @@ type Reader struct {
 	readingPane *tview.Box
 	bar         *statusBar
 
+	feedsCh    chan *internal.Feed
 	statsCache *internal.Stats
 	focusStack tview.Primitive
 }
@@ -154,11 +155,12 @@ func (b *Builder) Build() (*Reader, error) {
 	}
 
 	rdr := Reader{
-		ctx:    b.ctx,
-		client: client,
-		addr:   b.addr,
-		screen: screen,
-		theme:  b.theme,
+		ctx:     b.ctx,
+		client:  client,
+		addr:    b.addr,
+		screen:  screen,
+		theme:   b.theme,
+		feedsCh: make(chan *internal.Feed),
 	}
 	rdr.setupLayout()
 
@@ -217,6 +219,15 @@ To close this message, press [yellow]<Esc>[-].
 		defer r.initialize()
 	}
 
+	rsp, err := r.client.ListFeeds(r.ctx, &api.ListFeedsRequest{})
+	if err != nil {
+		panic(err)
+	}
+	for _, feed := range rsp.GetFeeds() {
+		feed := feed
+		go func() { r.feedsCh <- internal.FromFeedPb(feed) }()
+	}
+
 	stop := r.bar.startEventPoll()
 	defer stop()
 
@@ -225,7 +236,7 @@ To close this message, press [yellow]<Esc>[-].
 
 func (r *Reader) setupMainPage() {
 
-	feedsPane := newFeedsPane(r.theme)
+	feedsPane := newFeedsPane(r.theme, r.feedsCh)
 	feedsPane.SetInputCapture(r.feedsPaneKeyHandler())
 
 	entriesPane := r.newPane(r.theme.EntriesPaneTitle, false)
@@ -528,6 +539,7 @@ func (r *Reader) feedsPaneKeyHandler() func(event *tcell.EventKey) *tcell.EventK
 						r.bar.errEventf("Failed to pull %s: %s", rsp.GetUrl(), serr)
 						errCount++
 					} else {
+						rsp.GetFeed()
 						okCount++
 					}
 					totalCount++
