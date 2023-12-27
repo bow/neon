@@ -509,14 +509,20 @@ func (r *Reader) globalKeyHandler() func(event *tcell.EventKey) *tcell.EventKey 
 
 // nolint:revive,exhaustive
 func (r *Reader) feedsPaneKeyHandler() func(event *tcell.EventKey) *tcell.EventKey {
+	pullLock := make(chan struct{}, 1)
+
 	return func(event *tcell.EventKey) *tcell.EventKey {
 		keyr := event.Rune()
 
 		if keyr == 'P' {
 
 			go func() {
-				r.bar.Lock()
-				defer r.bar.Unlock()
+				select {
+				case pullLock <- struct{}{}:
+					defer func() { <-pullLock }()
+				default:
+					return
+				}
 
 				r.bar.infoEventf("Pulling feeds")
 

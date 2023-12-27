@@ -6,7 +6,6 @@ package reader
 import (
 	context "context"
 	"fmt"
-	"sync"
 	"time"
 
 	"github.com/gdamore/tcell/v2"
@@ -18,8 +17,6 @@ import (
 const iconAllRead = "✔"
 
 type statusBar struct {
-	sync.RWMutex
-
 	ctx context.Context
 
 	theme     *Theme
