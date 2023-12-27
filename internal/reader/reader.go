@@ -461,14 +461,10 @@ func (r *Reader) globalKeyHandler() func(event *tcell.EventKey) *tcell.EventKey 
 				return nil
 
 			case 'b':
-				r.bar.Lock()
-				defer r.bar.Unlock()
 				r.bar.toggleFromMainPage(r.mainPage)
 				return nil
 
 			case 'c':
-				r.bar.Lock()
-				defer r.bar.Unlock()
 				r.bar.clearLatestEvent()
 				return nil
 
