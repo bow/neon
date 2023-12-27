@@ -14,7 +14,7 @@ import (
 )
 
 type feedsPane struct {
-	*tview.TreeView
+	tview.TreeView
 
 	theme *Theme
 
@@ -84,7 +84,7 @@ func (fp *feedsPane) initTree() {
 		SetCurrentNode(root).
 		SetTopLevel(1)
 
-	fp.TreeView = tree
+	fp.TreeView = *tree
 
 	for i := uint8(0); i < uint8(updatedUnknown); i++ {
 		ug := feedUpdatedGroup(i)
