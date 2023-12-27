@@ -79,7 +79,8 @@ func (fp *feedsPane) initTree() {
 
 	tree := tview.NewTreeView().
 		SetRoot(root).
-		SetGraphicsColor(fp.theme.FeedsGroup).
+		SetGraphics(false).
+		SetPrefixes([]string{"", "· "}).
 		SetCurrentNode(root).
 		SetTopLevel(1)
 
@@ -148,8 +149,11 @@ func (fp *feedsPane) makeDrawFuncs() (focusf, unfocusf drawFunc) {
 }
 
 func (fp *feedsPane) refreshColors() {
-	for _, node := range fp.TreeView.GetRoot().GetChildren() {
-		node.SetColor(fp.theme.FeedsGroup)
+	for _, gnode := range fp.TreeView.GetRoot().GetChildren() {
+		gnode.SetColor(fp.theme.FeedGroupNode)
+		for _, fnode := range gnode.GetChildren() {
+			fnode.SetColor(fp.theme.FeedNode)
+		}
 	}
 }
 
@@ -180,17 +184,17 @@ func (ug feedUpdatedGroup) Text(theme *Theme) string {
 	}
 }
 
-func feedNode(feed *internal.Feed, _ *Theme) *tview.TreeNode {
+func feedNode(feed *internal.Feed, theme *Theme) *tview.TreeNode {
 	return tview.NewTreeNode(feed.Title).
 		SetReference(feed.FeedURL).
-		SetColor(tcell.ColorWhite).
+		SetColor(theme.FeedNode).
 		SetSelectable(true)
 }
 
 func groupNode(ug feedUpdatedGroup, theme *Theme) *tview.TreeNode {
 	return tview.NewTreeNode(ug.Text(theme)).
 		SetReference(ug).
-		SetColor(theme.FeedsGroup).
+		SetColor(theme.FeedGroupNode).
 		SetSelectable(true)
 }
 

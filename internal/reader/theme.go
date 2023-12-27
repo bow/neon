@@ -33,9 +33,13 @@ type Theme struct {
 	TitleForegroundNormal tcell.Color
 	TitleForegroundDim    tcell.Color
 
-	FeedsGroup       tcell.Color
-	FeedsGroupNormal tcell.Color
-	FeedsGroupDim    tcell.Color
+	FeedGroupNode       tcell.Color
+	FeedGroupNodeNormal tcell.Color
+	FeedGroupNodeDim    tcell.Color
+
+	FeedNode       tcell.Color
+	FeedNodeNormal tcell.Color
+	FeedNodeDim    tcell.Color
 
 	LastPullForeground       tcell.Color
 	LastPullForegroundNormal tcell.Color
@@ -64,7 +68,8 @@ func (theme *Theme) Dim() {
 	theme.TitleForeground = theme.TitleForegroundDim
 	theme.LastPullForeground = theme.LastPullForegroundDim
 	theme.EventInfoForeground = theme.EventInfoForegroundDim
-	theme.FeedsGroup = theme.FeedsGroupDim
+	theme.FeedGroupNode = theme.FeedGroupNodeDim
+	theme.FeedNode = theme.FeedNodeDim
 }
 
 func (theme *Theme) Normalize() {
@@ -72,7 +77,8 @@ func (theme *Theme) Normalize() {
 	theme.TitleForeground = theme.TitleForegroundNormal
 	theme.LastPullForeground = theme.LastPullForegroundNormal
 	theme.EventInfoForeground = theme.EventInfoForegroundNormal
-	theme.FeedsGroup = theme.FeedsGroupNormal
+	theme.FeedGroupNode = theme.FeedGroupNodeNormal
+	theme.FeedNode = theme.FeedNodeNormal
 }
 
 func (theme *Theme) lineStyle() tcell.Style {
@@ -104,13 +110,17 @@ var DarkTheme = &Theme{
 	BorderForegroundNormal: tcell.ColorWhite,
 	BorderForegroundDim:    darkForegroundDim,
 
-	TitleForeground:       tcell.ColorYellow,
-	TitleForegroundNormal: tcell.ColorYellow,
+	TitleForeground:       tcell.ColorAqua,
+	TitleForegroundNormal: tcell.ColorAqua,
 	TitleForegroundDim:    darkForegroundDim,
 
-	FeedsGroup:       tcell.ColorGrey,
-	FeedsGroupNormal: tcell.ColorGrey,
-	FeedsGroupDim:    darkForegroundDim,
+	FeedGroupNode:       tcell.ColorGrey,
+	FeedGroupNodeNormal: tcell.ColorGrey,
+	FeedGroupNodeDim:    darkForegroundDim,
+
+	FeedNode:       tcell.ColorWhite,
+	FeedNodeNormal: tcell.ColorWhite,
+	FeedNodeDim:    darkForegroundDim,
 
 	LastPullForeground:       tcell.ColorGray,
 	LastPullForegroundNormal: tcell.ColorGray,
