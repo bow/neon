@@ -536,9 +536,10 @@ func (r *Reader) feedsPaneKeyHandler() func(event *tcell.EventKey) *tcell.EventK
 						break
 					}
 					if serr != nil {
-						r.bar.errEventf("Failed to pull %s: %s", rsp.GetUrl(), serr)
+						r.bar.errEventf("Pull failed for %s: %s", rsp.GetUrl(), serr)
 						errCount++
 					} else {
+						r.bar.infoEventf("Pulled %s", rsp.GetUrl())
 						rsp.GetFeed()
 						okCount++
 					}
