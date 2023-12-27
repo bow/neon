@@ -748,7 +748,7 @@ func TestExportOPMLOk(t *testing.T) {
     <dateCreated>\d+ [A-Z][a-z]+ \d+ \d+:\d+ .+</dateCreated>
   </head>
   <body>
-    <outline text="Feed Q" type="rss" xmlUrl="http://q.com/feed.xml" xmlns:Neon="https://github.com/bow/neon" Neon:isStarred="true"></outline>
+    <outline text="Feed Q" type="rss" xmlUrl="http://q.com/feed.xml" xmlns:neon="https://github.com/bow/neon" neon:isStarred="true"></outline>
     <outline text="Feed X" type="rss" xmlUrl="http://x.com/feed.xml" category="foo,baz"></outline>
     <outline text="Feed A" type="rss" xmlUrl="http://a.com/feed.xml"></outline>
   </body>
@@ -771,7 +771,7 @@ func TestImportOPMLOk(t *testing.T) {
     <dateCreated>Wed, 09 Nov 2023 04:55:19 CET</dateCreated>
   </head>
   <body>
-    <outline text="Feed Q" type="rss" xmlUrl="http://q.com/feed.xml" xmlns:Neon="https://github.com/bow/neon" Neon:isStarred="true"></outline>
+    <outline text="Feed Q" type="rss" xmlUrl="http://q.com/feed.xml" xmlns:neon="https://github.com/bow/neon" neon:isStarred="true"></outline>
     <outline text="Feed X" type="rss" xmlUrl="http://x.com/feed.xml" category="foo,baz"></outline>
     <outline text="Feed A" type="rss" xmlUrl="http://a.com/feed.xml"></outline>
   </body>
