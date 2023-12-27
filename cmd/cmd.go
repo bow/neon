@@ -14,14 +14,14 @@ import (
 	"github.com/spf13/viper"
 	"golang.org/x/net/context"
 
-	"github.com/bow/lens/internal"
+	"github.com/bow/neon/internal"
 )
 
 const dbPathKey = "db-path"
 
 // FIXME: Update value for non-linux systems.
 var (
-	defaultDBPath     = "$XDG_DATA_HOME/lens/lens.db"
+	defaultDBPath     = "$XDG_DATA_HOME/neon/neon.db"
 	defaultServerAddr = "127.0.0.1:5151"
 )
 

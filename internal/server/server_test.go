@@ -17,8 +17,8 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/health/grpc_health_v1"
 
-	"github.com/bow/lens/api"
-	"github.com/bow/lens/internal"
+	"github.com/bow/neon/api"
+	"github.com/bow/neon/internal"
 )
 
 func defaultTestServerBuilder(t *testing.T) *Builder {
@@ -50,7 +50,7 @@ func (tcb *testClientBuilder) ServerStore(str internal.FeedStore) *testClientBui
 	return tcb
 }
 
-func (tcb *testClientBuilder) Build() api.LensClient {
+func (tcb *testClientBuilder) Build() api.NeonClient {
 	tcb.t.Helper()
 
 	t := tcb.t
@@ -123,7 +123,7 @@ func newTestClient(
 	t *testing.T,
 	addr net.Addr,
 	opts ...grpc.DialOption,
-) (api.LensClient, *grpc.ClientConn) {
+) (api.NeonClient, *grpc.ClientConn) {
 	t.Helper()
 
 	dialer := func(_ context.Context, rawAddr string) (net.Conn, error) {
@@ -132,13 +132,13 @@ func newTestClient(
 	opts = append(opts, grpc.WithContextDialer(dialer))
 	conn, err := grpc.Dial(addr.String(), opts...)
 	require.NoError(t, err)
-	client := api.NewLensClient(conn)
+	client := api.NewNeonClient(conn)
 
 	return client, conn
 }
 
 // setupServerTest is a shortcut method for creating server tests through a client.
-func setupServerTest(t *testing.T) (api.LensClient, *MockFeedStore) {
+func setupServerTest(t *testing.T) (api.NeonClient, *MockFeedStore) {
 	t.Helper()
 
 	str := NewMockFeedStore(gomock.NewController(t))

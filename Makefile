@@ -3,7 +3,7 @@
 # Copyright (c) 2022 Wibowo Arindrarto <contact@arindrarto.dev>
 # SPDX-License-Identifier: BSD-3-Clause
 #
-# This file is part of lens <https://github.com/bow/lens>.
+# This file is part of neon <https://github.com/bow/neon>.
 
 # Cross-platform adjustments.
 SYS := $(shell uname 2> /dev/null)
@@ -19,7 +19,7 @@ else
 $(error error: unsupported development platform)
 endif
 
-APP_NAME   := lens
+APP_NAME   := neon
 GO_VERSION := $(shell (head -n 3 go.mod | $(SED_EXE) 's/^go//g' | tail -n 1))
 REPO_NAME  := $(shell (head -n 1 go.mod | $(SED_EXE) 's/^module //g'))
 
@@ -147,16 +147,16 @@ internal/database/parser_mock_test.go: internal/parser.go
 internal/server/store_mock_test.go: internal/store.go
 	mockgen -source=$< -package=server FeedStore > $@
 
-internal/reader/client_mock_test.go: api/lens_grpc.pb.go
-	mockgen -source=$< -package=reader LensClient > $@
+internal/reader/client_mock_test.go: api/neon_grpc.pb.go
+	mockgen -source=$< -package=reader NeonClient > $@
 
 
 .PHONY: protos
 protos: $(PROTO_FILES)  ## Generate code from protobuf.
 	@protoc \
 		-I=$(PROTO_DIR) \
-		--go_opt=Mlens.proto="$(REPO_NAME)/api;api" \
-		--go-grpc_opt=Mlens.proto="$(REPO_NAME)/api;api" \
+		--go_opt=Mneon.proto="$(REPO_NAME)/api;api" \
+		--go-grpc_opt=Mneon.proto="$(REPO_NAME)/api;api" \
 		--go_out=$(PROTO_DIR) --go_opt=paths=source_relative \
 		--go-grpc_out=$(PROTO_DIR) --go-grpc_opt=paths=source_relative \
 		$(PROTO_FILES)

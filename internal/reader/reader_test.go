@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/bow/lens/api"
+	"github.com/bow/neon/api"
 	"github.com/gdamore/tcell/v2"
 	"github.com/golang/mock/gomock"
 	"github.com/rivo/tview"
@@ -85,7 +85,7 @@ func setupReaderTest(
 
 	r := require.New(t)
 
-	client := NewMockLensClient(gomock.NewController(t))
+	client := NewMockNeonClient(gomock.NewController(t))
 	// Needed since we call the list feeds endpoint prior to Show.
 	client.EXPECT().
 		ListFeeds(gomock.Any(), gomock.Any()).

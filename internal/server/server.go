@@ -21,9 +21,9 @@ import (
 	healthapi "google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/reflection"
 
-	"github.com/bow/lens/api"
-	"github.com/bow/lens/internal"
-	"github.com/bow/lens/internal/database"
+	"github.com/bow/neon/api"
+	"github.com/bow/neon/internal"
+	"github.com/bow/neon/internal/database"
 )
 
 const (
@@ -44,7 +44,7 @@ type Server struct {
 func newServer(lis net.Listener, grpcServer *grpc.Server, str internal.FeedStore) *Server {
 
 	svc := service{store: str}
-	api.RegisterLensServer(grpcServer, &svc)
+	api.RegisterNeonServer(grpcServer, &svc)
 
 	var (
 		funcCh    = make(chan struct{}, 1)
@@ -93,7 +93,7 @@ func (s *Server) Addr() net.Addr {
 }
 
 func (s *Server) ServiceName() string {
-	return api.Lens_ServiceDesc.ServiceName
+	return api.Neon_ServiceDesc.ServiceName
 }
 
 func (s *Server) Serve(ctx context.Context) error {

@@ -9,7 +9,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/bow/lens/internal"
+	"github.com/bow/neon/internal"
 )
 
 func newFeedListCommand() *cobra.Command {

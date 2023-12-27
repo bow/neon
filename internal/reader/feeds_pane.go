@@ -10,7 +10,7 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 
-	"github.com/bow/lens/internal"
+	"github.com/bow/neon/internal"
 )
 
 type feedsPane struct {

@@ -9,7 +9,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/bow/lens/internal"
+	"github.com/bow/neon/internal"
 )
 
 func stateDir() (string, error) {

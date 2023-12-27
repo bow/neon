@@ -16,8 +16,8 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
-	"github.com/bow/lens/internal/reader"
-	"github.com/bow/lens/internal/server"
+	"github.com/bow/neon/internal/reader"
+	"github.com/bow/neon/internal/server"
 )
 
 func newReaderCommand() *cobra.Command {

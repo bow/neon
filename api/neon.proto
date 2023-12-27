@@ -1,17 +1,17 @@
-// Protobuf interface of the lens service.
+// Protobuf interface of the neon service.
 //
 // Copyright (c) 2022 Wibowo Arindrarto <contact@arindrarto.dev>
 // SPDX-License-Identifier: BSD-3-Clause
 
 syntax = "proto3";
 
-package lens;
+package neon;
 
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/bow/lens/api";
+option go_package = "github.com/bow/neon/api";
 
-service Lens {
+service Neon {
   // AddFeeds adds a new feed source.
   rpc AddFeed (AddFeedRequest) returns (AddFeedResponse) {}
 

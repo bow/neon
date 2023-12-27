@@ -1,4 +1,4 @@
-module github.com/bow/lens
+module github.com/bow/neon
 
 go 1.21
 

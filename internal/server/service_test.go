@@ -18,8 +18,8 @@ import (
 	"github.com/stretchr/testify/require"
 	"google.golang.org/protobuf/proto"
 
-	"github.com/bow/lens/api"
-	"github.com/bow/lens/internal"
+	"github.com/bow/neon/api"
+	"github.com/bow/neon/internal"
 )
 
 func TestAddFeedOk(t *testing.T) {
@@ -715,7 +715,7 @@ func TestExportOPMLOk(t *testing.T) {
 		ExportSubscription(gomock.Any(), nil).
 		Return(
 			&internal.Subscription{
-				Title: pointer("lens export"),
+				Title: pointer("neon export"),
 				Feeds: []*internal.Feed{
 					{
 						Title:     "Feed Q",
@@ -744,11 +744,11 @@ func TestExportOPMLOk(t *testing.T) {
 		regexp.MustCompile(`<\?xml version="1.0" encoding="UTF-8"\?>
 <opml version="2.0">
   <head>
-    <title>lens export</title>
+    <title>neon export</title>
     <dateCreated>\d+ [A-Z][a-z]+ \d+ \d+:\d+ .+</dateCreated>
   </head>
   <body>
-    <outline text="Feed Q" type="rss" xmlUrl="http://q.com/feed.xml" xmlns:lens="https://github.com/bow/lens" lens:isStarred="true"></outline>
+    <outline text="Feed Q" type="rss" xmlUrl="http://q.com/feed.xml" xmlns:Neon="https://github.com/bow/neon" Neon:isStarred="true"></outline>
     <outline text="Feed X" type="rss" xmlUrl="http://x.com/feed.xml" category="foo,baz"></outline>
     <outline text="Feed A" type="rss" xmlUrl="http://a.com/feed.xml"></outline>
   </body>
@@ -767,11 +767,11 @@ func TestImportOPMLOk(t *testing.T) {
 	payload := []byte(`<?xml version="1.0" encoding="UTF-8"?>
 <opml version="2.0">
   <head>
-    <title>lens export</title>
+    <title>neon export</title>
     <dateCreated>Wed, 09 Nov 2023 04:55:19 CET</dateCreated>
   </head>
   <body>
-    <outline text="Feed Q" type="rss" xmlUrl="http://q.com/feed.xml" xmlns:lens="https://github.com/bow/lens" lens:isStarred="true"></outline>
+    <outline text="Feed Q" type="rss" xmlUrl="http://q.com/feed.xml" xmlns:Neon="https://github.com/bow/neon" Neon:isStarred="true"></outline>
     <outline text="Feed X" type="rss" xmlUrl="http://x.com/feed.xml" category="foo,baz"></outline>
     <outline text="Feed A" type="rss" xmlUrl="http://a.com/feed.xml"></outline>
   </body>

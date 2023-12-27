@@ -8,8 +8,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/bow/lens/api"
-	"github.com/bow/lens/internal/opml"
+	"github.com/bow/neon/api"
+	"github.com/bow/neon/internal/opml"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -301,4 +301,4 @@ const (
 	PullFail
 )
 
-const defaultExportTitle = "lens export"
+const defaultExportTitle = "neon export"

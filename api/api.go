@@ -8,7 +8,7 @@ import (
 	_ "embed"
 )
 
-//go:embed lens.proto
+//go:embed neon.proto
 var proto []byte
 
 // Proto() returns the proto file that describes the server interface.

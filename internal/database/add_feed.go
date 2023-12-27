@@ -10,7 +10,7 @@ import (
 
 	"github.com/mmcdole/gofeed"
 
-	"github.com/bow/lens/internal"
+	"github.com/bow/neon/internal"
 )
 
 // AddFeed adds the given feed into the database.

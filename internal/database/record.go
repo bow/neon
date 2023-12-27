@@ -13,7 +13,7 @@ import (
 
 	"github.com/mmcdole/gofeed"
 
-	"github.com/bow/lens/internal"
+	"github.com/bow/neon/internal"
 )
 
 type feedRecord struct {

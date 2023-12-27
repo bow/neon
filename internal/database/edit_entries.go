@@ -7,7 +7,7 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/bow/lens/internal"
+	"github.com/bow/neon/internal"
 )
 
 // EditEntries updates fields of an entry.

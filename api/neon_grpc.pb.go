@@ -1,4 +1,4 @@
-// Protobuf interface of the lens service.
+// Protobuf interface of the neon service.
 //
 // Copyright (c) 2022 Wibowo Arindrarto <contact@arindrarto.dev>
 // SPDX-License-Identifier: BSD-3-Clause
@@ -7,7 +7,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.3.0
 // - protoc             v4.24.3
-// source: lens.proto
+// source: neon.proto
 
 package api
 
@@ -24,24 +24,24 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Lens_AddFeed_FullMethodName     = "/lens.Lens/AddFeed"
-	Lens_EditFeeds_FullMethodName   = "/lens.Lens/EditFeeds"
-	Lens_ListFeeds_FullMethodName   = "/lens.Lens/ListFeeds"
-	Lens_PullFeeds_FullMethodName   = "/lens.Lens/PullFeeds"
-	Lens_DeleteFeeds_FullMethodName = "/lens.Lens/DeleteFeeds"
-	Lens_ListEntries_FullMethodName = "/lens.Lens/ListEntries"
-	Lens_EditEntries_FullMethodName = "/lens.Lens/EditEntries"
-	Lens_GetEntry_FullMethodName    = "/lens.Lens/GetEntry"
-	Lens_ExportOPML_FullMethodName  = "/lens.Lens/ExportOPML"
-	Lens_ImportOPML_FullMethodName  = "/lens.Lens/ImportOPML"
-	Lens_GetStats_FullMethodName    = "/lens.Lens/GetStats"
-	Lens_GetInfo_FullMethodName     = "/lens.Lens/GetInfo"
+	Neon_AddFeed_FullMethodName     = "/neon.Neon/AddFeed"
+	Neon_EditFeeds_FullMethodName   = "/neon.Neon/EditFeeds"
+	Neon_ListFeeds_FullMethodName   = "/neon.Neon/ListFeeds"
+	Neon_PullFeeds_FullMethodName   = "/neon.Neon/PullFeeds"
+	Neon_DeleteFeeds_FullMethodName = "/neon.Neon/DeleteFeeds"
+	Neon_ListEntries_FullMethodName = "/neon.Neon/ListEntries"
+	Neon_EditEntries_FullMethodName = "/neon.Neon/EditEntries"
+	Neon_GetEntry_FullMethodName    = "/neon.Neon/GetEntry"
+	Neon_ExportOPML_FullMethodName  = "/neon.Neon/ExportOPML"
+	Neon_ImportOPML_FullMethodName  = "/neon.Neon/ImportOPML"
+	Neon_GetStats_FullMethodName    = "/neon.Neon/GetStats"
+	Neon_GetInfo_FullMethodName     = "/neon.Neon/GetInfo"
 )
 
-// LensClient is the client API for Lens service.
+// NeonClient is the client API for Neon service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type LensClient interface {
+type NeonClient interface {
 	// AddFeeds adds a new feed source.
 	AddFeed(ctx context.Context, in *AddFeedRequest, opts ...grpc.CallOption) (*AddFeedResponse, error)
 	// EditFeeds sets one or more fields of feeds.
@@ -49,7 +49,7 @@ type LensClient interface {
 	// ListFeeds lists all added feed sources.
 	ListFeeds(ctx context.Context, in *ListFeedsRequest, opts ...grpc.CallOption) (*ListFeedsResponse, error)
 	// PullFeeds checks feeds for updates and returns all unread entries.
-	PullFeeds(ctx context.Context, in *PullFeedsRequest, opts ...grpc.CallOption) (Lens_PullFeedsClient, error)
+	PullFeeds(ctx context.Context, in *PullFeedsRequest, opts ...grpc.CallOption) (Neon_PullFeedsClient, error)
 	// DeleteFeeds removes one or more feed sources.
 	DeleteFeeds(ctx context.Context, in *DeleteFeedsRequest, opts ...grpc.CallOption) (*DeleteFeedsResponse, error)
 	// ListEntries lists entries of a specific feed.
@@ -68,47 +68,47 @@ type LensClient interface {
 	GetInfo(ctx context.Context, in *GetInfoRequest, opts ...grpc.CallOption) (*GetInfoResponse, error)
 }
 
-type lensClient struct {
+type neonClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewLensClient(cc grpc.ClientConnInterface) LensClient {
-	return &lensClient{cc}
+func NewNeonClient(cc grpc.ClientConnInterface) NeonClient {
+	return &neonClient{cc}
 }
 
-func (c *lensClient) AddFeed(ctx context.Context, in *AddFeedRequest, opts ...grpc.CallOption) (*AddFeedResponse, error) {
+func (c *neonClient) AddFeed(ctx context.Context, in *AddFeedRequest, opts ...grpc.CallOption) (*AddFeedResponse, error) {
 	out := new(AddFeedResponse)
-	err := c.cc.Invoke(ctx, Lens_AddFeed_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, Neon_AddFeed_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *lensClient) EditFeeds(ctx context.Context, in *EditFeedsRequest, opts ...grpc.CallOption) (*EditFeedsResponse, error) {
+func (c *neonClient) EditFeeds(ctx context.Context, in *EditFeedsRequest, opts ...grpc.CallOption) (*EditFeedsResponse, error) {
 	out := new(EditFeedsResponse)
-	err := c.cc.Invoke(ctx, Lens_EditFeeds_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, Neon_EditFeeds_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *lensClient) ListFeeds(ctx context.Context, in *ListFeedsRequest, opts ...grpc.CallOption) (*ListFeedsResponse, error) {
+func (c *neonClient) ListFeeds(ctx context.Context, in *ListFeedsRequest, opts ...grpc.CallOption) (*ListFeedsResponse, error) {
 	out := new(ListFeedsResponse)
-	err := c.cc.Invoke(ctx, Lens_ListFeeds_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, Neon_ListFeeds_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *lensClient) PullFeeds(ctx context.Context, in *PullFeedsRequest, opts ...grpc.CallOption) (Lens_PullFeedsClient, error) {
-	stream, err := c.cc.NewStream(ctx, &Lens_ServiceDesc.Streams[0], Lens_PullFeeds_FullMethodName, opts...)
+func (c *neonClient) PullFeeds(ctx context.Context, in *PullFeedsRequest, opts ...grpc.CallOption) (Neon_PullFeedsClient, error) {
+	stream, err := c.cc.NewStream(ctx, &Neon_ServiceDesc.Streams[0], Neon_PullFeeds_FullMethodName, opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &lensPullFeedsClient{stream}
+	x := &neonPullFeedsClient{stream}
 	if err := x.ClientStream.SendMsg(in); err != nil {
 		return nil, err
 	}
@@ -118,16 +118,16 @@ func (c *lensClient) PullFeeds(ctx context.Context, in *PullFeedsRequest, opts .
 	return x, nil
 }
 
-type Lens_PullFeedsClient interface {
+type Neon_PullFeedsClient interface {
 	Recv() (*PullFeedsResponse, error)
 	grpc.ClientStream
 }
 
-type lensPullFeedsClient struct {
+type neonPullFeedsClient struct {
 	grpc.ClientStream
 }
 
-func (x *lensPullFeedsClient) Recv() (*PullFeedsResponse, error) {
+func (x *neonPullFeedsClient) Recv() (*PullFeedsResponse, error) {
 	m := new(PullFeedsResponse)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -135,82 +135,82 @@ func (x *lensPullFeedsClient) Recv() (*PullFeedsResponse, error) {
 	return m, nil
 }
 
-func (c *lensClient) DeleteFeeds(ctx context.Context, in *DeleteFeedsRequest, opts ...grpc.CallOption) (*DeleteFeedsResponse, error) {
+func (c *neonClient) DeleteFeeds(ctx context.Context, in *DeleteFeedsRequest, opts ...grpc.CallOption) (*DeleteFeedsResponse, error) {
 	out := new(DeleteFeedsResponse)
-	err := c.cc.Invoke(ctx, Lens_DeleteFeeds_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, Neon_DeleteFeeds_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *lensClient) ListEntries(ctx context.Context, in *ListEntriesRequest, opts ...grpc.CallOption) (*ListEntriesResponse, error) {
+func (c *neonClient) ListEntries(ctx context.Context, in *ListEntriesRequest, opts ...grpc.CallOption) (*ListEntriesResponse, error) {
 	out := new(ListEntriesResponse)
-	err := c.cc.Invoke(ctx, Lens_ListEntries_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, Neon_ListEntries_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *lensClient) EditEntries(ctx context.Context, in *EditEntriesRequest, opts ...grpc.CallOption) (*EditEntriesResponse, error) {
+func (c *neonClient) EditEntries(ctx context.Context, in *EditEntriesRequest, opts ...grpc.CallOption) (*EditEntriesResponse, error) {
 	out := new(EditEntriesResponse)
-	err := c.cc.Invoke(ctx, Lens_EditEntries_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, Neon_EditEntries_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *lensClient) GetEntry(ctx context.Context, in *GetEntryRequest, opts ...grpc.CallOption) (*GetEntryResponse, error) {
+func (c *neonClient) GetEntry(ctx context.Context, in *GetEntryRequest, opts ...grpc.CallOption) (*GetEntryResponse, error) {
 	out := new(GetEntryResponse)
-	err := c.cc.Invoke(ctx, Lens_GetEntry_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, Neon_GetEntry_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *lensClient) ExportOPML(ctx context.Context, in *ExportOPMLRequest, opts ...grpc.CallOption) (*ExportOPMLResponse, error) {
+func (c *neonClient) ExportOPML(ctx context.Context, in *ExportOPMLRequest, opts ...grpc.CallOption) (*ExportOPMLResponse, error) {
 	out := new(ExportOPMLResponse)
-	err := c.cc.Invoke(ctx, Lens_ExportOPML_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, Neon_ExportOPML_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *lensClient) ImportOPML(ctx context.Context, in *ImportOPMLRequest, opts ...grpc.CallOption) (*ImportOPMLResponse, error) {
+func (c *neonClient) ImportOPML(ctx context.Context, in *ImportOPMLRequest, opts ...grpc.CallOption) (*ImportOPMLResponse, error) {
 	out := new(ImportOPMLResponse)
-	err := c.cc.Invoke(ctx, Lens_ImportOPML_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, Neon_ImportOPML_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *lensClient) GetStats(ctx context.Context, in *GetStatsRequest, opts ...grpc.CallOption) (*GetStatsResponse, error) {
+func (c *neonClient) GetStats(ctx context.Context, in *GetStatsRequest, opts ...grpc.CallOption) (*GetStatsResponse, error) {
 	out := new(GetStatsResponse)
-	err := c.cc.Invoke(ctx, Lens_GetStats_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, Neon_GetStats_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *lensClient) GetInfo(ctx context.Context, in *GetInfoRequest, opts ...grpc.CallOption) (*GetInfoResponse, error) {
+func (c *neonClient) GetInfo(ctx context.Context, in *GetInfoRequest, opts ...grpc.CallOption) (*GetInfoResponse, error) {
 	out := new(GetInfoResponse)
-	err := c.cc.Invoke(ctx, Lens_GetInfo_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, Neon_GetInfo_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// LensServer is the server API for Lens service.
-// All implementations must embed UnimplementedLensServer
+// NeonServer is the server API for Neon service.
+// All implementations must embed UnimplementedNeonServer
 // for forward compatibility
-type LensServer interface {
+type NeonServer interface {
 	// AddFeeds adds a new feed source.
 	AddFeed(context.Context, *AddFeedRequest) (*AddFeedResponse, error)
 	// EditFeeds sets one or more fields of feeds.
@@ -218,7 +218,7 @@ type LensServer interface {
 	// ListFeeds lists all added feed sources.
 	ListFeeds(context.Context, *ListFeedsRequest) (*ListFeedsResponse, error)
 	// PullFeeds checks feeds for updates and returns all unread entries.
-	PullFeeds(*PullFeedsRequest, Lens_PullFeedsServer) error
+	PullFeeds(*PullFeedsRequest, Neon_PullFeedsServer) error
 	// DeleteFeeds removes one or more feed sources.
 	DeleteFeeds(context.Context, *DeleteFeedsRequest) (*DeleteFeedsResponse, error)
 	// ListEntries lists entries of a specific feed.
@@ -235,339 +235,339 @@ type LensServer interface {
 	GetStats(context.Context, *GetStatsRequest) (*GetStatsResponse, error)
 	// GetInfo returns the version info of the running server.
 	GetInfo(context.Context, *GetInfoRequest) (*GetInfoResponse, error)
-	mustEmbedUnimplementedLensServer()
+	mustEmbedUnimplementedNeonServer()
 }
 
-// UnimplementedLensServer must be embedded to have forward compatible implementations.
-type UnimplementedLensServer struct {
+// UnimplementedNeonServer must be embedded to have forward compatible implementations.
+type UnimplementedNeonServer struct {
 }
 
-func (UnimplementedLensServer) AddFeed(context.Context, *AddFeedRequest) (*AddFeedResponse, error) {
+func (UnimplementedNeonServer) AddFeed(context.Context, *AddFeedRequest) (*AddFeedResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddFeed not implemented")
 }
-func (UnimplementedLensServer) EditFeeds(context.Context, *EditFeedsRequest) (*EditFeedsResponse, error) {
+func (UnimplementedNeonServer) EditFeeds(context.Context, *EditFeedsRequest) (*EditFeedsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EditFeeds not implemented")
 }
-func (UnimplementedLensServer) ListFeeds(context.Context, *ListFeedsRequest) (*ListFeedsResponse, error) {
+func (UnimplementedNeonServer) ListFeeds(context.Context, *ListFeedsRequest) (*ListFeedsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListFeeds not implemented")
 }
-func (UnimplementedLensServer) PullFeeds(*PullFeedsRequest, Lens_PullFeedsServer) error {
+func (UnimplementedNeonServer) PullFeeds(*PullFeedsRequest, Neon_PullFeedsServer) error {
 	return status.Errorf(codes.Unimplemented, "method PullFeeds not implemented")
 }
-func (UnimplementedLensServer) DeleteFeeds(context.Context, *DeleteFeedsRequest) (*DeleteFeedsResponse, error) {
+func (UnimplementedNeonServer) DeleteFeeds(context.Context, *DeleteFeedsRequest) (*DeleteFeedsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteFeeds not implemented")
 }
-func (UnimplementedLensServer) ListEntries(context.Context, *ListEntriesRequest) (*ListEntriesResponse, error) {
+func (UnimplementedNeonServer) ListEntries(context.Context, *ListEntriesRequest) (*ListEntriesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListEntries not implemented")
 }
-func (UnimplementedLensServer) EditEntries(context.Context, *EditEntriesRequest) (*EditEntriesResponse, error) {
+func (UnimplementedNeonServer) EditEntries(context.Context, *EditEntriesRequest) (*EditEntriesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EditEntries not implemented")
 }
-func (UnimplementedLensServer) GetEntry(context.Context, *GetEntryRequest) (*GetEntryResponse, error) {
+func (UnimplementedNeonServer) GetEntry(context.Context, *GetEntryRequest) (*GetEntryResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetEntry not implemented")
 }
-func (UnimplementedLensServer) ExportOPML(context.Context, *ExportOPMLRequest) (*ExportOPMLResponse, error) {
+func (UnimplementedNeonServer) ExportOPML(context.Context, *ExportOPMLRequest) (*ExportOPMLResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ExportOPML not implemented")
 }
-func (UnimplementedLensServer) ImportOPML(context.Context, *ImportOPMLRequest) (*ImportOPMLResponse, error) {
+func (UnimplementedNeonServer) ImportOPML(context.Context, *ImportOPMLRequest) (*ImportOPMLResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ImportOPML not implemented")
 }
-func (UnimplementedLensServer) GetStats(context.Context, *GetStatsRequest) (*GetStatsResponse, error) {
+func (UnimplementedNeonServer) GetStats(context.Context, *GetStatsRequest) (*GetStatsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetStats not implemented")
 }
-func (UnimplementedLensServer) GetInfo(context.Context, *GetInfoRequest) (*GetInfoResponse, error) {
+func (UnimplementedNeonServer) GetInfo(context.Context, *GetInfoRequest) (*GetInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetInfo not implemented")
 }
-func (UnimplementedLensServer) mustEmbedUnimplementedLensServer() {}
+func (UnimplementedNeonServer) mustEmbedUnimplementedNeonServer() {}
 
-// UnsafeLensServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to LensServer will
+// UnsafeNeonServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to NeonServer will
 // result in compilation errors.
-type UnsafeLensServer interface {
-	mustEmbedUnimplementedLensServer()
+type UnsafeNeonServer interface {
+	mustEmbedUnimplementedNeonServer()
 }
 
-func RegisterLensServer(s grpc.ServiceRegistrar, srv LensServer) {
-	s.RegisterService(&Lens_ServiceDesc, srv)
+func RegisterNeonServer(s grpc.ServiceRegistrar, srv NeonServer) {
+	s.RegisterService(&Neon_ServiceDesc, srv)
 }
 
-func _Lens_AddFeed_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Neon_AddFeed_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AddFeedRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(LensServer).AddFeed(ctx, in)
+		return srv.(NeonServer).AddFeed(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Lens_AddFeed_FullMethodName,
+		FullMethod: Neon_AddFeed_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LensServer).AddFeed(ctx, req.(*AddFeedRequest))
+		return srv.(NeonServer).AddFeed(ctx, req.(*AddFeedRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Lens_EditFeeds_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Neon_EditFeeds_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(EditFeedsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(LensServer).EditFeeds(ctx, in)
+		return srv.(NeonServer).EditFeeds(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Lens_EditFeeds_FullMethodName,
+		FullMethod: Neon_EditFeeds_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LensServer).EditFeeds(ctx, req.(*EditFeedsRequest))
+		return srv.(NeonServer).EditFeeds(ctx, req.(*EditFeedsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Lens_ListFeeds_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Neon_ListFeeds_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListFeedsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(LensServer).ListFeeds(ctx, in)
+		return srv.(NeonServer).ListFeeds(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Lens_ListFeeds_FullMethodName,
+		FullMethod: Neon_ListFeeds_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LensServer).ListFeeds(ctx, req.(*ListFeedsRequest))
+		return srv.(NeonServer).ListFeeds(ctx, req.(*ListFeedsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Lens_PullFeeds_Handler(srv interface{}, stream grpc.ServerStream) error {
+func _Neon_PullFeeds_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(PullFeedsRequest)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(LensServer).PullFeeds(m, &lensPullFeedsServer{stream})
+	return srv.(NeonServer).PullFeeds(m, &neonPullFeedsServer{stream})
 }
 
-type Lens_PullFeedsServer interface {
+type Neon_PullFeedsServer interface {
 	Send(*PullFeedsResponse) error
 	grpc.ServerStream
 }
 
-type lensPullFeedsServer struct {
+type neonPullFeedsServer struct {
 	grpc.ServerStream
 }
 
-func (x *lensPullFeedsServer) Send(m *PullFeedsResponse) error {
+func (x *neonPullFeedsServer) Send(m *PullFeedsResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func _Lens_DeleteFeeds_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Neon_DeleteFeeds_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteFeedsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(LensServer).DeleteFeeds(ctx, in)
+		return srv.(NeonServer).DeleteFeeds(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Lens_DeleteFeeds_FullMethodName,
+		FullMethod: Neon_DeleteFeeds_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LensServer).DeleteFeeds(ctx, req.(*DeleteFeedsRequest))
+		return srv.(NeonServer).DeleteFeeds(ctx, req.(*DeleteFeedsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Lens_ListEntries_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Neon_ListEntries_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListEntriesRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(LensServer).ListEntries(ctx, in)
+		return srv.(NeonServer).ListEntries(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Lens_ListEntries_FullMethodName,
+		FullMethod: Neon_ListEntries_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LensServer).ListEntries(ctx, req.(*ListEntriesRequest))
+		return srv.(NeonServer).ListEntries(ctx, req.(*ListEntriesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Lens_EditEntries_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Neon_EditEntries_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(EditEntriesRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(LensServer).EditEntries(ctx, in)
+		return srv.(NeonServer).EditEntries(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Lens_EditEntries_FullMethodName,
+		FullMethod: Neon_EditEntries_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LensServer).EditEntries(ctx, req.(*EditEntriesRequest))
+		return srv.(NeonServer).EditEntries(ctx, req.(*EditEntriesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Lens_GetEntry_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Neon_GetEntry_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetEntryRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(LensServer).GetEntry(ctx, in)
+		return srv.(NeonServer).GetEntry(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Lens_GetEntry_FullMethodName,
+		FullMethod: Neon_GetEntry_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LensServer).GetEntry(ctx, req.(*GetEntryRequest))
+		return srv.(NeonServer).GetEntry(ctx, req.(*GetEntryRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Lens_ExportOPML_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Neon_ExportOPML_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ExportOPMLRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(LensServer).ExportOPML(ctx, in)
+		return srv.(NeonServer).ExportOPML(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Lens_ExportOPML_FullMethodName,
+		FullMethod: Neon_ExportOPML_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LensServer).ExportOPML(ctx, req.(*ExportOPMLRequest))
+		return srv.(NeonServer).ExportOPML(ctx, req.(*ExportOPMLRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Lens_ImportOPML_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Neon_ImportOPML_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ImportOPMLRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(LensServer).ImportOPML(ctx, in)
+		return srv.(NeonServer).ImportOPML(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Lens_ImportOPML_FullMethodName,
+		FullMethod: Neon_ImportOPML_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LensServer).ImportOPML(ctx, req.(*ImportOPMLRequest))
+		return srv.(NeonServer).ImportOPML(ctx, req.(*ImportOPMLRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Lens_GetStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Neon_GetStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetStatsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(LensServer).GetStats(ctx, in)
+		return srv.(NeonServer).GetStats(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Lens_GetStats_FullMethodName,
+		FullMethod: Neon_GetStats_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LensServer).GetStats(ctx, req.(*GetStatsRequest))
+		return srv.(NeonServer).GetStats(ctx, req.(*GetStatsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Lens_GetInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Neon_GetInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetInfoRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(LensServer).GetInfo(ctx, in)
+		return srv.(NeonServer).GetInfo(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Lens_GetInfo_FullMethodName,
+		FullMethod: Neon_GetInfo_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LensServer).GetInfo(ctx, req.(*GetInfoRequest))
+		return srv.(NeonServer).GetInfo(ctx, req.(*GetInfoRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// Lens_ServiceDesc is the grpc.ServiceDesc for Lens service.
+// Neon_ServiceDesc is the grpc.ServiceDesc for Neon service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var Lens_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "lens.Lens",
-	HandlerType: (*LensServer)(nil),
+var Neon_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "neon.Neon",
+	HandlerType: (*NeonServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "AddFeed",
-			Handler:    _Lens_AddFeed_Handler,
+			Handler:    _Neon_AddFeed_Handler,
 		},
 		{
 			MethodName: "EditFeeds",
-			Handler:    _Lens_EditFeeds_Handler,
+			Handler:    _Neon_EditFeeds_Handler,
 		},
 		{
 			MethodName: "ListFeeds",
-			Handler:    _Lens_ListFeeds_Handler,
+			Handler:    _Neon_ListFeeds_Handler,
 		},
 		{
 			MethodName: "DeleteFeeds",
-			Handler:    _Lens_DeleteFeeds_Handler,
+			Handler:    _Neon_DeleteFeeds_Handler,
 		},
 		{
 			MethodName: "ListEntries",
-			Handler:    _Lens_ListEntries_Handler,
+			Handler:    _Neon_ListEntries_Handler,
 		},
 		{
 			MethodName: "EditEntries",
-			Handler:    _Lens_EditEntries_Handler,
+			Handler:    _Neon_EditEntries_Handler,
 		},
 		{
 			MethodName: "GetEntry",
-			Handler:    _Lens_GetEntry_Handler,
+			Handler:    _Neon_GetEntry_Handler,
 		},
 		{
 			MethodName: "ExportOPML",
-			Handler:    _Lens_ExportOPML_Handler,
+			Handler:    _Neon_ExportOPML_Handler,
 		},
 		{
 			MethodName: "ImportOPML",
-			Handler:    _Lens_ImportOPML_Handler,
+			Handler:    _Neon_ImportOPML_Handler,
 		},
 		{
 			MethodName: "GetStats",
-			Handler:    _Lens_GetStats_Handler,
+			Handler:    _Neon_GetStats_Handler,
 		},
 		{
 			MethodName: "GetInfo",
-			Handler:    _Lens_GetInfo_Handler,
+			Handler:    _Neon_GetInfo_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
 		{
 			StreamName:    "PullFeeds",
-			Handler:       _Lens_PullFeeds_Handler,
+			Handler:       _Neon_PullFeeds_Handler,
 			ServerStreams: true,
 		},
 	},
-	Metadata: "lens.proto",
+	Metadata: "neon.proto",
 }

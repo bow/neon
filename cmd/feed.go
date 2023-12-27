@@ -6,7 +6,7 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/bow/lens/internal/database"
+	"github.com/bow/neon/internal/database"
 )
 
 func newFeedCommand() *cobra.Command {

@@ -10,13 +10,13 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/bow/lens/api"
-	"github.com/bow/lens/internal"
+	"github.com/bow/neon/api"
+	"github.com/bow/neon/internal"
 )
 
 // service implements the service API.
 type service struct {
-	api.UnimplementedLensServer
+	api.UnimplementedNeonServer
 
 	store internal.FeedStore
 }
@@ -97,7 +97,7 @@ func (svc *service) DeleteFeeds(
 // PullFeeds satisfies the service API.
 func (svc *service) PullFeeds(
 	req *api.PullFeedsRequest,
-	stream api.Lens_PullFeedsServer,
+	stream api.Neon_PullFeedsServer,
 ) error {
 
 	convert := func(pr internal.PullResult) (*api.PullFeedsResponse, error) {

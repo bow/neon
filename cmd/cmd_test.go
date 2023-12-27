@@ -18,7 +18,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/bow/lens/internal"
+	"github.com/bow/neon/internal"
 )
 
 func TestNoArgs(t *testing.T) {
@@ -27,7 +27,7 @@ func TestNoArgs(t *testing.T) {
 
 	assert.Empty(t, stderr)
 	assert.Contains(t, stdout, "Feed reader suite")
-	assert.Contains(t, stdout, `Use "lens [command] --help" for more information`)
+	assert.Contains(t, stdout, `Use "neon [command] --help" for more information`)
 }
 
 func TestServer(t *testing.T) {

@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/bow/lens/internal"
+	"github.com/bow/neon/internal"
 )
 
 func TestEditFeedsOkEmpty(t *testing.T) {

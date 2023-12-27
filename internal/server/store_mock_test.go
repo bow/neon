@@ -8,7 +8,7 @@ import (
 	context "context"
 	reflect "reflect"
 
-	internal "github.com/bow/lens/internal"
+	internal "github.com/bow/neon/internal"
 	gomock "github.com/golang/mock/gomock"
 )
 

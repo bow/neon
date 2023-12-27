@@ -8,8 +8,8 @@ import (
 
 	"google.golang.org/protobuf/types/known/timestamppb"
 
-	"github.com/bow/lens/api"
-	"github.com/bow/lens/internal"
+	"github.com/bow/neon/api"
+	"github.com/bow/neon/internal"
 )
 
 func toFeedPb(feed *internal.Feed) *api.Feed {

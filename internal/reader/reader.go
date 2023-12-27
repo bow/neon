@@ -18,8 +18,8 @@ import (
 	"github.com/rivo/tview"
 	"google.golang.org/grpc"
 
-	"github.com/bow/lens/api"
-	"github.com/bow/lens/internal"
+	"github.com/bow/neon/api"
+	"github.com/bow/neon/internal"
 )
 
 const (
@@ -38,7 +38,7 @@ const (
 type Reader struct {
 	ctx    context.Context
 	addr   string
-	client api.LensClient
+	client api.NeonClient
 
 	screen   tcell.Screen
 	theme    *Theme
@@ -72,7 +72,7 @@ type Builder struct {
 	theme    *Theme
 
 	// Only for testing.
-	cl  api.LensClient
+	cl  api.NeonClient
 	scr tcell.Screen
 }
 
@@ -110,7 +110,7 @@ func (b *Builder) Theme(theme *Theme) *Builder {
 	return b
 }
 
-func (b *Builder) client(cl api.LensClient) *Builder {
+func (b *Builder) client(cl api.NeonClient) *Builder {
 	b.cl = cl
 	return b
 }
@@ -127,7 +127,7 @@ func (b *Builder) Build() (*Reader, error) {
 	}
 
 	var (
-		client api.LensClient
+		client api.NeonClient
 		conn   *grpc.ClientConn
 		err    error
 	)
@@ -141,7 +141,7 @@ func (b *Builder) Build() (*Reader, error) {
 			}
 			return nil, err
 		}
-		client = api.NewLensClient(conn)
+		client = api.NewNeonClient(conn)
 	}
 
 	var screen tcell.Screen
@@ -197,7 +197,7 @@ func (r *Reader) Show() error {
 	if !r.isInitialized() {
 		welcomeText := fmt.Sprintf(`Hello and welcome the %s reader.
 
-For help, press [yellow]h[-] or go to [yellow]https://github.com/bow/lens[-].
+For help, press [yellow]h[-] or go to [yellow]https://github.com/bow/neon[-].
 
 To close this message, press [yellow]<Esc>[-].
 `, internal.AppName())
@@ -828,7 +828,7 @@ func centerBanner(text string, width int) string {
 		return text
 	}
 
-	leftPad := strings.Repeat(" ", ((width-maxLineWidth)/2)-leftPopupMargin)
+	leftPad := strings.Repeat(" ", ((width-maxLineWidth)/2)-(leftPopupMargin*2))
 	paddedLines := make([]string, len(lines))
 	for i, line := range lines {
 		paddedLines[i] = fmt.Sprintf("%s%s", leftPad, line)

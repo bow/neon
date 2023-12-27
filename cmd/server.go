@@ -11,8 +11,8 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	"github.com/bow/lens/internal/database"
-	"github.com/bow/lens/internal/server"
+	"github.com/bow/neon/internal/database"
+	"github.com/bow/neon/internal/server"
 )
 
 // newServerCommand creates a new 'server' subcommand along with its command-line flags.

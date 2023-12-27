@@ -11,8 +11,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/bow/lens/internal"
-	"github.com/bow/lens/internal/opml"
+	"github.com/bow/neon/internal"
+	"github.com/bow/neon/internal/opml"
 )
 
 func newFeedExportCommand() *cobra.Command {

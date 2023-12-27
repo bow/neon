@@ -11,7 +11,7 @@ import (
 
 // AppName returns the application name.
 func AppName() string {
-	return "lens"
+	return "neon"
 }
 
 // EnvKey returns the environment variable key for configuration.
@@ -24,11 +24,11 @@ func EnvKey(key string) string {
 
 // Banner shows the application name as ASCII art.
 func Banner() string {
-	return `    __
-   / /   ___   ____   _____
-  / /   / _ \ / __ \ / ___/
- / /___/  __// / / /(__  )
-/_____/\___//_/ /_//____/`
+	return `    _   __
+   / | / /___   ____   ____
+  /  |/ // _ \ / __ \ / __ \
+ / /|  //  __// /_/ // / / /
+/_/ |_/ \___/ \____//_/ /_/`
 }
 
 func Dedup[T comparable](values []T) []T {
