@@ -33,7 +33,7 @@ LABEL org.opencontainers.image.title="neon" \
 COPY --from=builder /src/bin/neon /bin/neon
 
 RUN mkdir -p /var/data/
-ENV NEON_SERVE_ADDR=tcp://0.0.0.0:7000 \
+ENV NEON_SERVE_ADDR=tcp://0.0.0.0:5151 \
     NEON_SERVE_DB_PATH=/var/data/neon.db
 
 WORKDIR /runtime
