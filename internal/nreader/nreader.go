@@ -7,6 +7,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/bow/neon/internal/nreader/model"
 	"github.com/bow/neon/internal/nreader/view"
 )
 
@@ -16,7 +17,7 @@ type Reader struct {
 	initPath string
 
 	view  view.Viewer
-	model *model
+	model model.Model
 }
 
 func (r *Reader) Start() error {
