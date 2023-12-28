@@ -22,6 +22,9 @@ type SQLite struct {
 	parser Parser
 }
 
+// Ensure SQLite implements Datastore.
+var _ Datastore = new(SQLite)
+
 func NewSQLite(filename string) (*SQLite, error) {
 	return newSQLiteWithParser(filename, gofeed.NewParser())
 }
