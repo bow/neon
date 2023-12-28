@@ -7,9 +7,34 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 
-	"github.com/bow/neon/internal"
 	"github.com/bow/neon/internal/entity"
 )
+
+// Viewer describes the console reader.
+type Viewer interface {
+	ClearStatusBar()
+	FocusFeedsPane()
+	FocusEntriesPane()
+	FocusNextPane()
+	FocusPreviousPane()
+	FocusReadingPane()
+	HideIntroPopup()
+	NotifyInfof(text string, a ...any)
+	NotifyErr(err error)
+	NotifyErrf(text string, a ...any)
+	NotifyWarnf(text string, a ...any)
+	SetFeedsPaneKeyHandler(handler func(*tcell.EventKey) *tcell.EventKey)
+	SetGlobalKeyHandler(handler func(*tcell.EventKey) *tcell.EventKey)
+	ShowAboutPopup()
+	ShowFeedsInPane(<-chan *entity.Feed)
+	ShowHelpPopup()
+	ShowIntroPopup()
+	ShowStatsPopup()
+	Start() error
+	Stop()
+	ToggleStatusBar()
+	UnfocusPane()
+}
 
 //nolint:unused
 type View struct {
@@ -123,7 +148,7 @@ func (v *View) UnfocusPane() {
 }
 
 // Ensure View implements Viewer.
-var _ internal.Viewer = new(View)
+var _ Viewer = new(View)
 
 //nolint:unused
 type drawFunc func(screen tcell.Screen, x int, y int, w int, h int) (ix int, iy int, iw int, ih int)

@@ -7,7 +7,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/bow/neon/internal"
+	"github.com/bow/neon/internal/nreader/view"
 )
 
 //nolint:unused
@@ -15,7 +15,7 @@ type Reader struct {
 	ctx      context.Context
 	initPath string
 
-	view  internal.Viewer
+	view  view.Viewer
 	model *model
 }
 

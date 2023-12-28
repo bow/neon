@@ -13,21 +13,20 @@ import (
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/mmcdole/gofeed"
 
-	"github.com/bow/neon/internal"
 	"github.com/bow/neon/internal/database/migration"
 )
 
 type SQLite struct {
 	mu     sync.RWMutex
 	handle *sql.DB
-	parser internal.Parser
+	parser Parser
 }
 
 func NewSQLite(filename string) (*SQLite, error) {
-	return NewSQLiteWithParser(filename, gofeed.NewParser())
+	return newSQLiteWithParser(filename, gofeed.NewParser())
 }
 
-func NewSQLiteWithParser(filename string, parser internal.Parser) (*SQLite, error) {
+func newSQLiteWithParser(filename string, parser Parser) (*SQLite, error) {
 
 	fail := failF("NewSQLite")
 

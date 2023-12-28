@@ -14,7 +14,6 @@ import (
 	"syscall"
 
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
-	"github.com/mmcdole/gofeed"
 	"github.com/rs/zerolog"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/health"
@@ -136,14 +135,10 @@ type Builder struct {
 	addr       string
 	ds         internal.Datastore
 	sqlitePath string
-	parser     internal.Parser
 }
 
 func NewBuilder() *Builder {
-	builder := Builder{
-		ctx:    context.Background(),
-		parser: gofeed.NewParser(),
-	}
+	builder := Builder{ctx: context.Background()}
 	return &builder
 }
 
@@ -195,13 +190,9 @@ func (b *Builder) Build() (*Server, error) {
 	ds := b.ds
 	if sp := b.sqlitePath; sp != "" {
 		pkgLogger.Info().Str("path", sp).Msgf("initializing sqlite database")
-		if ds, err = database.NewSQLiteWithParser(sp, b.parser); err != nil {
+		if ds, err = database.NewSQLite(sp); err != nil {
 			return nil, fmt.Errorf("server build: %w", err)
 		}
-	}
-
-	if b.parser == nil {
-		b.parser = gofeed.NewParser()
 	}
 
 	ilogger := getLogger().With().

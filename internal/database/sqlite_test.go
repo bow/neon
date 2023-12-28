@@ -26,7 +26,7 @@ func newTestSQLiteDB(t *testing.T) testSQLiteDB {
 
 	dbPath := filepath.Join(t.TempDir(), t.Name()+".db")
 	prs := NewMockParser(gomock.NewController(t))
-	s, err := NewSQLiteWithParser(dbPath, prs)
+	s, err := newSQLiteWithParser(dbPath, prs)
 	require.NoError(t, err)
 
 	return testSQLiteDB{s, t, prs}

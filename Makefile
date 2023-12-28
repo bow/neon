@@ -141,7 +141,7 @@ lint:  ## Lint the code.
 .PHONY: mocks
 mocks: internal/server/datastore_mock_test.go internal/database/parser_mock_test.go internal/reader/client_mock_test.go  ## Generate mocks from interfaces.
 
-internal/database/parser_mock_test.go: internal/parser.go
+internal/database/parser_mock_test.go: internal/database/parser.go
 	mockgen -source=$< -package=database Parser > $@
 
 internal/server/datastore_mock_test.go: internal/datastore.go
