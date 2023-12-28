@@ -15,7 +15,7 @@ import (
 	"github.com/bow/neon/internal"
 )
 
-func storeErrorUnaryServerInterceptor(
+func errorUnaryServerInterceptor(
 	ctx context.Context,
 	req any,
 	_ *grpc.UnaryServerInfo,
@@ -25,7 +25,7 @@ func storeErrorUnaryServerInterceptor(
 	return rsp, mapError(err)
 }
 
-func storeErrorStreamServerInterceptor(
+func errorStreamServerInterceptor(
 	srv any,
 	ss grpc.ServerStream,
 	_ *grpc.StreamServerInfo,

@@ -18,7 +18,7 @@ import (
 type service struct {
 	api.UnimplementedNeonServer
 
-	store internal.FeedStore
+	ds internal.Datastore
 }
 
 // AddFeed satisfies the service API.
@@ -27,7 +27,7 @@ func (svc *service) AddFeed(
 	req *api.AddFeedRequest,
 ) (*api.AddFeedResponse, error) {
 
-	record, added, err := svc.store.AddFeed(
+	record, added, err := svc.ds.AddFeed(
 		ctx,
 		req.GetUrl(),
 		req.Title,
@@ -50,7 +50,7 @@ func (svc *service) ListFeeds(
 	_ *api.ListFeedsRequest,
 ) (*api.ListFeedsResponse, error) {
 
-	feeds, err := svc.store.ListFeeds(ctx)
+	feeds, err := svc.ds.ListFeeds(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -66,7 +66,7 @@ func (svc *service) EditFeeds(
 ) (*api.EditFeedsResponse, error) {
 
 	ops := fromFeedEditOpPbs(req.GetOps())
-	feeds, err := svc.store.EditFeeds(ctx, ops)
+	feeds, err := svc.ds.EditFeeds(ctx, ops)
 	if err != nil {
 		return nil, err
 	}
@@ -87,7 +87,7 @@ func (svc *service) DeleteFeeds(
 		ids[i] = id
 	}
 
-	err := svc.store.DeleteFeeds(ctx, ids)
+	err := svc.ds.DeleteFeeds(ctx, ids)
 
 	rsp := api.DeleteFeedsResponse{}
 
@@ -124,7 +124,7 @@ func (svc *service) PullFeeds(
 		ids[i] = id
 	}
 
-	ch := svc.store.PullFeeds(stream.Context(), ids)
+	ch := svc.ds.PullFeeds(stream.Context(), ids)
 
 	for pr := range ch {
 		payload, err := convert(pr)
@@ -148,7 +148,7 @@ func (svc *service) ListEntries(
 	req *api.ListEntriesRequest,
 ) (*api.ListEntriesResponse, error) {
 
-	entries, err := svc.store.ListEntries(ctx, req.GetFeedIds(), req.IsBookmarked)
+	entries, err := svc.ds.ListEntries(ctx, req.GetFeedIds(), req.IsBookmarked)
 	if err != nil {
 		return nil, err
 	}
@@ -165,7 +165,7 @@ func (svc *service) EditEntries(
 ) (*api.EditEntriesResponse, error) {
 
 	ops := fromEntryEditOpPbs(req.GetOps())
-	entries, err := svc.store.EditEntries(ctx, ops)
+	entries, err := svc.ds.EditEntries(ctx, ops)
 	if err != nil {
 		return nil, err
 	}
@@ -181,7 +181,7 @@ func (svc *service) GetEntry(
 	req *api.GetEntryRequest,
 ) (*api.GetEntryResponse, error) {
 
-	entry, err := svc.store.GetEntry(ctx, req.GetId())
+	entry, err := svc.ds.GetEntry(ctx, req.GetId())
 	if err != nil {
 		return nil, err
 	}
@@ -197,7 +197,7 @@ func (svc *service) ExportOPML(
 	req *api.ExportOPMLRequest,
 ) (*api.ExportOPMLResponse, error) {
 
-	sub, err := svc.store.ExportSubscription(ctx, req.Title)
+	sub, err := svc.ds.ExportSubscription(ctx, req.Title)
 	if err != nil {
 		return nil, err
 	}
@@ -227,7 +227,7 @@ func (svc *service) ImportOPML(
 		return nil, status.Errorf(codes.InvalidArgument, msg)
 	}
 
-	nproc, nimp, err := svc.store.ImportSubscription(ctx, sub)
+	nproc, nimp, err := svc.ds.ImportSubscription(ctx, sub)
 	if err != nil {
 		return nil, err
 	}
@@ -246,7 +246,7 @@ func (svc *service) GetStats(
 	_ *api.GetStatsRequest,
 ) (*api.GetStatsResponse, error) {
 
-	gstats, err := svc.store.GetGlobalStats(ctx)
+	gstats, err := svc.ds.GetGlobalStats(ctx)
 	if err != nil {
 		return nil, err
 	}

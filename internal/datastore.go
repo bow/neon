@@ -5,8 +5,8 @@ package internal
 
 import "context"
 
-// FeedStore describes the persistence layer interface.
-type FeedStore interface {
+// Datastore describes the persistence layer interface.
+type Datastore interface {
 	AddFeed(
 		ctx context.Context,
 		feedURL string,

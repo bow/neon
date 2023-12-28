@@ -26,7 +26,7 @@ func defaultTestServerBuilder(t *testing.T) *Builder {
 
 	return NewBuilder().
 		Address("tcp://:0").
-		Store(NewMockFeedStore(gomock.NewController(t)))
+		Datastore(NewMockDatastore(gomock.NewController(t)))
 }
 
 type testClientBuilder struct {
@@ -45,8 +45,8 @@ func (tcb *testClientBuilder) DialOpts(opts ...grpc.DialOption) *testClientBuild
 	return tcb
 }
 
-func (tcb *testClientBuilder) ServerStore(str internal.FeedStore) *testClientBuilder {
-	tcb.serverBuilder = tcb.serverBuilder.Store(str)
+func (tcb *testClientBuilder) ServerDatastore(ds internal.Datastore) *testClientBuilder {
+	tcb.serverBuilder = tcb.serverBuilder.Datastore(ds)
 	return tcb
 }
 
@@ -138,13 +138,13 @@ func newTestClient(
 }
 
 // setupServerTest is a shortcut method for creating server tests through a client.
-func setupServerTest(t *testing.T) (api.NeonClient, *MockFeedStore) {
+func setupServerTest(t *testing.T) (api.NeonClient, *MockDatastore) {
 	t.Helper()
 
-	str := NewMockFeedStore(gomock.NewController(t))
-	clb := newTestClientBuilder(t).ServerStore(str)
+	ds := NewMockDatastore(gomock.NewController(t))
+	clb := newTestClientBuilder(t).ServerDatastore(ds)
 
-	return clb.Build(), str
+	return clb.Build(), ds
 }
 
 func TestServerBuilderErrInvalidAddr(t *testing.T) {

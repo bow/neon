@@ -26,18 +26,18 @@ type ID = uint32
 type SQLite struct {
 	mu     sync.RWMutex
 	handle *sql.DB
-	parser internal.FeedParser
+	parser internal.Parser
 }
 
 func NewSQLite(filename string) (*SQLite, error) {
 	return NewSQLiteWithParser(filename, gofeed.NewParser())
 }
 
-func NewSQLiteWithParser(filename string, parser internal.FeedParser) (*SQLite, error) {
+func NewSQLiteWithParser(filename string, parser internal.Parser) (*SQLite, error) {
 
-	fail := failF("NewSQLiteStore")
+	fail := failF("NewSQLite")
 
-	pkgLogger.Debug().Msgf("migrating data store")
+	pkgLogger.Debug().Msgf("migrating database")
 	m, err := migration.New(filename)
 	if err != nil {
 		return nil, fail(err)
@@ -49,27 +49,27 @@ func NewSQLiteWithParser(filename string, parser internal.FeedParser) (*SQLite, 
 	if dserr != nil {
 		return nil, fail(err)
 	}
-	dsvt := fmt.Sprintf("%d", dsv)
+	sv := fmt.Sprintf("%d", dsv)
 	if dsd {
-		dsvt = fmt.Sprintf("%s*", dsvt)
+		sv = fmt.Sprintf("%s*", sv)
 	}
 
 	pkgLogger.Debug().
-		Str("data_store_version", dsvt).
-		Msg("migrated data store")
+		Str("database_schema_version", sv).
+		Msg("migrated database")
 
-	db, err := sql.Open("sqlite", filename)
+	handle, err := sql.Open("sqlite", filename)
 	if err != nil {
 		return nil, fail(err)
 	}
-	_, err = db.Exec("PRAGMA foreign_keys = ON")
+	_, err = handle.Exec("PRAGMA foreign_keys = ON")
 	if err != nil {
 		return nil, fail(err)
 	}
 
-	store := SQLite{handle: db, parser: parser}
+	db := SQLite{handle: handle, parser: parser}
 
-	return &store, nil
+	return &db, nil
 }
 
 func (db *SQLite) withTx(

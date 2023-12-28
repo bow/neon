@@ -25,7 +25,7 @@ func newFeedCommand() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			dataStorePathToCmdCtx(cmd, dbPath)
+			dbPathToCmdCtx(cmd, dbPath)
 
 			return nil
 		},
@@ -33,7 +33,7 @@ func newFeedCommand() *cobra.Command {
 
 	pflags := command.PersistentFlags()
 
-	pflags.StringP(dbPathKey, "d", defaultDBPath, "data store location")
+	pflags.StringP(dbPathKey, "d", defaultDBPath, "database location")
 
 	if err := v.BindPFlags(pflags); err != nil {
 		panic(err)
@@ -50,7 +50,7 @@ func newFeedCommand() *cobra.Command {
 	return &command
 }
 
-func dataStorePathToCmdCtx(cmd *cobra.Command, path string) {
+func dbPathToCmdCtx(cmd *cobra.Command, path string) {
 	toCmdContext(cmd, dbPathKey, path)
 }
 
@@ -59,9 +59,9 @@ func dbFromCmdCtx(cmd *cobra.Command) (*database.SQLite, error) {
 	if err != nil {
 		return nil, err
 	}
-	str, err := database.NewSQLite(dbPath)
+	db, err := database.NewSQLite(dbPath)
 	if err != nil {
 		return nil, err
 	}
-	return str, nil
+	return db, nil
 }

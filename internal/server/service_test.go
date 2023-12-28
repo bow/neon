@@ -27,7 +27,7 @@ func TestAddFeedOk(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	client, str := setupServerTest(t)
+	client, ds := setupServerTest(t)
 
 	req := api.AddFeedRequest{
 		Url:         "http://foo.com/feed.xml",
@@ -47,7 +47,7 @@ func TestAddFeedOk(t *testing.T) {
 		IsStarred:   true,
 	}
 
-	str.EXPECT().
+	ds.EXPECT().
 		AddFeed(
 			gomock.Any(),
 			req.GetUrl(),
@@ -74,7 +74,7 @@ func TestListFeedsOk(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	client, str := setupServerTest(t)
+	client, ds := setupServerTest(t)
 
 	req := api.ListFeedsRequest{}
 	feeds := []*internal.Feed{
@@ -96,7 +96,7 @@ func TestListFeedsOk(t *testing.T) {
 		},
 	}
 
-	str.EXPECT().
+	ds.EXPECT().
 		ListFeeds(gomock.Any()).
 		Return(feeds, nil)
 
@@ -112,7 +112,7 @@ func TestEditFeedsOk(t *testing.T) {
 
 	r := require.New(t)
 	a := assert.New(t)
-	client, str := setupServerTest(t)
+	client, ds := setupServerTest(t)
 
 	ops := []*internal.FeedEditOp{
 		{ID: 14, Title: pointer("newer")},
@@ -140,7 +140,7 @@ func TestEditFeedsOk(t *testing.T) {
 		},
 	}
 
-	str.EXPECT().
+	ds.EXPECT().
 		EditFeeds(gomock.Any(), gomock.AssignableToTypeOf(ops)).
 		Return(feeds, nil)
 
@@ -186,9 +186,9 @@ func TestDeleteFeedsOk(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	client, str := setupServerTest(t)
+	client, ds := setupServerTest(t)
 
-	str.EXPECT().
+	ds.EXPECT().
 		DeleteFeeds(gomock.Any(), []internal.ID{1, 9}).
 		Return(nil)
 
@@ -204,9 +204,9 @@ func TestDeleteFeedsErrNotFound(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	client, str := setupServerTest(t)
+	client, ds := setupServerTest(t)
 
-	str.EXPECT().
+	ds.EXPECT().
 		DeleteFeeds(gomock.Any(), []internal.ID{1, 9}).
 		Return(fmt.Errorf("wrapped: %w", internal.FeedNotFoundError{ID: 9}))
 
@@ -222,7 +222,7 @@ func TestPullFeedsAllOk(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	client, str := setupServerTest(t)
+	client, ds := setupServerTest(t)
 
 	prs := []internal.PullResult{
 		internal.NewPullResultFromFeed(
@@ -271,7 +271,7 @@ func TestPullFeedsAllOk(t *testing.T) {
 		}
 	}()
 
-	str.EXPECT().
+	ds.EXPECT().
 		PullFeeds(gomock.Any(), []internal.ID{}).
 		Return(ch)
 
@@ -317,7 +317,7 @@ func TestPullFeedsSelectedAllOk(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	client, str := setupServerTest(t)
+	client, ds := setupServerTest(t)
 
 	prs := []internal.PullResult{
 		internal.NewPullResultFromFeed(pointer("http://z.com/feed.xml"), nil),
@@ -352,7 +352,7 @@ func TestPullFeedsSelectedAllOk(t *testing.T) {
 		}
 	}()
 
-	str.EXPECT().
+	ds.EXPECT().
 		PullFeeds(gomock.Any(), []internal.ID{2, 3}).
 		Return(ch)
 
@@ -392,7 +392,7 @@ func TestPullFeedsErrSomeFeed(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	client, str := setupServerTest(t)
+	client, ds := setupServerTest(t)
 
 	prs := []internal.PullResult{
 		internal.NewPullResultFromFeed(
@@ -442,7 +442,7 @@ func TestPullFeedsErrSomeFeed(t *testing.T) {
 		}
 	}()
 
-	str.EXPECT().
+	ds.EXPECT().
 		PullFeeds(gomock.Any(), []internal.ID{}).
 		Return(ch)
 
@@ -490,7 +490,7 @@ func TestPullFeedsErrNonFeed(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	client, str := setupServerTest(t)
+	client, ds := setupServerTest(t)
 
 	prs := []internal.PullResult{
 		internal.NewPullResultFromFeed(
@@ -540,7 +540,7 @@ func TestPullFeedsErrNonFeed(t *testing.T) {
 		}
 	}()
 
-	str.EXPECT().
+	ds.EXPECT().
 		PullFeeds(gomock.Any(), []internal.ID{}).
 		Return(ch)
 
@@ -575,7 +575,7 @@ func TestListEntriesOk(t *testing.T) {
 
 	r := require.New(t)
 	a := assert.New(t)
-	client, str := setupServerTest(t)
+	client, ds := setupServerTest(t)
 
 	req := api.ListEntriesRequest{FeedIds: []internal.ID{2}, IsBookmarked: pointer(true)}
 	entries := []*internal.Entry{
@@ -599,7 +599,7 @@ func TestListEntriesOk(t *testing.T) {
 		},
 	}
 
-	str.EXPECT().
+	ds.EXPECT().
 		ListEntries(gomock.Any(), req.GetFeedIds(), req.IsBookmarked).
 		Return(entries, nil)
 
@@ -615,7 +615,7 @@ func TestEditEntriesOk(t *testing.T) {
 
 	r := require.New(t)
 	a := assert.New(t)
-	client, str := setupServerTest(t)
+	client, ds := setupServerTest(t)
 
 	ops := []*internal.EntryEditOp{
 		{ID: 37, IsRead: pointer(true), IsBookmarked: pointer(true)},
@@ -626,7 +626,7 @@ func TestEditEntriesOk(t *testing.T) {
 		{ID: 49, IsRead: false},
 	}
 
-	str.EXPECT().
+	ds.EXPECT().
 		EditEntries(gomock.Any(), ops).
 		Return(entries, nil)
 
@@ -667,7 +667,7 @@ func TestGetEntryOk(t *testing.T) {
 	r := require.New(t)
 	a := assert.New(t)
 
-	client, str := setupServerTest(t)
+	client, ds := setupServerTest(t)
 
 	entry := internal.Entry{
 		ID:        2,
@@ -681,7 +681,7 @@ func TestGetEntryOk(t *testing.T) {
 		URL:       pointer("http://x.com/posts/test-feed-entry.html"),
 	}
 
-	str.EXPECT().
+	ds.EXPECT().
 		GetEntry(gomock.Any(), internal.ID(2)).
 		Return(&entry, nil)
 
@@ -709,9 +709,9 @@ func TestExportOPMLOk(t *testing.T) {
 
 	r := require.New(t)
 	a := assert.New(t)
-	client, str := setupServerTest(t)
+	client, ds := setupServerTest(t)
 
-	str.EXPECT().
+	ds.EXPECT().
 		ExportSubscription(gomock.Any(), nil).
 		Return(
 			&internal.Subscription{
@@ -762,7 +762,7 @@ func TestImportOPMLOk(t *testing.T) {
 
 	r := require.New(t)
 	a := assert.New(t)
-	client, str := setupServerTest(t)
+	client, ds := setupServerTest(t)
 
 	payload := []byte(`<?xml version="1.0" encoding="UTF-8"?>
 <opml version="2.0">
@@ -796,7 +796,7 @@ func TestImportOPMLOk(t *testing.T) {
 		},
 	}
 
-	str.EXPECT().
+	ds.EXPECT().
 		ImportSubscription(gomock.Any(), &sub).
 		Return(3, 2, nil)
 
@@ -813,7 +813,7 @@ func TestGetStatsOk(t *testing.T) {
 
 	r := require.New(t)
 	a := assert.New(t)
-	client, str := setupServerTest(t)
+	client, ds := setupServerTest(t)
 
 	stats := internal.Stats{
 		NumFeeds:             45,
@@ -823,7 +823,7 @@ func TestGetStatsOk(t *testing.T) {
 		MostRecentUpdateTime: pointer(mustTimeVV(t, "2023-11-04T05:13:12.805Z")),
 	}
 
-	str.EXPECT().
+	ds.EXPECT().
 		GetGlobalStats(gomock.Any()).
 		Return(&stats, nil)
 

@@ -9,7 +9,7 @@ import (
 	"github.com/mmcdole/gofeed"
 )
 
-// FeedParser captures the gofeed parser as a pluggable interface.
-type FeedParser interface {
+// Parser captures the gofeed parser as a pluggable interface.
+type Parser interface {
 	ParseURLWithContext(feedURL string, ctx context.Context) (feed *gofeed.Feed, err error)
 }

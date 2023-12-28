@@ -41,9 +41,9 @@ type Server struct {
 	healthSvc *health.Server
 }
 
-func newServer(lis net.Listener, grpcServer *grpc.Server, str internal.FeedStore) *Server {
+func newServer(lis net.Listener, grpcServer *grpc.Server, ds internal.Datastore) *Server {
 
-	svc := service{store: str}
+	svc := service{ds: ds}
 	api.RegisterNeonServer(grpcServer, &svc)
 
 	var (
@@ -132,11 +132,11 @@ func (s *Server) start() <-chan error {
 }
 
 type Builder struct {
-	ctx       context.Context
-	addr      string
-	store     internal.FeedStore
-	storePath string
-	parser    internal.FeedParser
+	ctx        context.Context
+	addr       string
+	ds         internal.Datastore
+	sqlitePath string
+	parser     internal.Parser
 }
 
 func NewBuilder() *Builder {
@@ -157,15 +157,15 @@ func (b *Builder) Address(addr string) *Builder {
 	return b
 }
 
-func (b *Builder) StorePath(path string) *Builder {
-	b.storePath = path
-	b.store = nil
+func (b *Builder) SQLite(path string) *Builder {
+	b.sqlitePath = path
+	b.ds = nil
 	return b
 }
 
-func (b *Builder) Store(str internal.FeedStore) *Builder {
-	b.store = str
-	b.storePath = ""
+func (b *Builder) Datastore(ds internal.Datastore) *Builder {
+	b.ds = ds
+	b.sqlitePath = ""
 	return b
 }
 
@@ -192,10 +192,10 @@ func (b *Builder) Build() (*Server, error) {
 		return nil, err
 	}
 
-	str := b.store
-	if sp := b.storePath; sp != "" {
-		pkgLogger.Info().Str("path", sp).Msgf("initializing data store")
-		if str, err = database.NewSQLiteWithParser(sp, b.parser); err != nil {
+	ds := b.ds
+	if sp := b.sqlitePath; sp != "" {
+		pkgLogger.Info().Str("path", sp).Msgf("initializing sqlite database")
+		if ds, err = database.NewSQLiteWithParser(sp, b.parser); err != nil {
 			return nil, fmt.Errorf("server build: %w", err)
 		}
 	}
@@ -210,15 +210,15 @@ func (b *Builder) Build() (*Server, error) {
 
 	grpcs := grpc.NewServer(
 		grpc.ChainUnaryInterceptor(
-			storeErrorUnaryServerInterceptor,
+			errorUnaryServerInterceptor,
 			logging.UnaryServerInterceptor(internal.InterceptorLogger(ilogger)),
 		),
 		grpc.ChainStreamInterceptor(
-			storeErrorStreamServerInterceptor,
+			errorStreamServerInterceptor,
 			logging.StreamServerInterceptor(internal.InterceptorLogger(ilogger)),
 		),
 	)
-	s := newServer(lis, grpcs, str)
+	s := newServer(lis, grpcs, ds)
 
 	return s, nil
 }

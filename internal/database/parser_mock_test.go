@@ -12,31 +12,31 @@ import (
 	gofeed "github.com/mmcdole/gofeed"
 )
 
-// MockFeedParser is a mock of FeedParser interface.
-type MockFeedParser struct {
+// MockParser is a mock of Parser interface.
+type MockParser struct {
 	ctrl     *gomock.Controller
-	recorder *MockFeedParserMockRecorder
+	recorder *MockParserMockRecorder
 }
 
-// MockFeedParserMockRecorder is the mock recorder for MockFeedParser.
-type MockFeedParserMockRecorder struct {
-	mock *MockFeedParser
+// MockParserMockRecorder is the mock recorder for MockParser.
+type MockParserMockRecorder struct {
+	mock *MockParser
 }
 
-// NewMockFeedParser creates a new mock instance.
-func NewMockFeedParser(ctrl *gomock.Controller) *MockFeedParser {
-	mock := &MockFeedParser{ctrl: ctrl}
-	mock.recorder = &MockFeedParserMockRecorder{mock}
+// NewMockParser creates a new mock instance.
+func NewMockParser(ctrl *gomock.Controller) *MockParser {
+	mock := &MockParser{ctrl: ctrl}
+	mock.recorder = &MockParserMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockFeedParser) EXPECT() *MockFeedParserMockRecorder {
+func (m *MockParser) EXPECT() *MockParserMockRecorder {
 	return m.recorder
 }
 
 // ParseURLWithContext mocks base method.
-func (m *MockFeedParser) ParseURLWithContext(feedURL string, ctx context.Context) (*gofeed.Feed, error) {
+func (m *MockParser) ParseURLWithContext(feedURL string, ctx context.Context) (*gofeed.Feed, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseURLWithContext", feedURL, ctx)
 	ret0, _ := ret[0].(*gofeed.Feed)
@@ -45,7 +45,7 @@ func (m *MockFeedParser) ParseURLWithContext(feedURL string, ctx context.Context
 }
 
 // ParseURLWithContext indicates an expected call of ParseURLWithContext.
-func (mr *MockFeedParserMockRecorder) ParseURLWithContext(feedURL, ctx interface{}) *gomock.Call {
+func (mr *MockParserMockRecorder) ParseURLWithContext(feedURL, ctx interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseURLWithContext", reflect.TypeOf((*MockFeedParser)(nil).ParseURLWithContext), feedURL, ctx)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseURLWithContext", reflect.TypeOf((*MockParser)(nil).ParseURLWithContext), feedURL, ctx)
 }

@@ -25,14 +25,14 @@ type feedKey struct {
 type testDB struct {
 	*SQLite
 	t      *testing.T
-	parser *MockFeedParser
+	parser *MockParser
 }
 
 func newTestDB(t *testing.T) testDB {
 	t.Helper()
 
 	dbPath := filepath.Join(t.TempDir(), t.Name()+".db")
-	prs := NewMockFeedParser(gomock.NewController(t))
+	prs := NewMockParser(gomock.NewController(t))
 	s, err := NewSQLiteWithParser(dbPath, prs)
 	require.NoError(t, err)
 

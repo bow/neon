@@ -55,7 +55,7 @@ func newServerCommand() *cobra.Command {
 
 	flags.BoolP(quietKey, "q", false, "hide startup banner")
 	flags.StringP(addrKey, "a", defaultAddr, "listening address")
-	flags.StringP(dbPathKey, "d", defaultDBPath, "data store location")
+	flags.StringP(dbPathKey, "d", defaultDBPath, "database location")
 
 	if err := v.BindPFlags(flags); err != nil {
 		panic(err)
@@ -76,7 +76,7 @@ func makeServer(cmd *cobra.Command, v *viper.Viper, addr string) (*server.Server
 	srv, err := server.NewBuilder().
 		Context(cmd.Context()).
 		Address(addr).
-		StorePath(dbPath).
+		SQLite(dbPath).
 		Build()
 
 	return srv, err

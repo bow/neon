@@ -139,13 +139,13 @@ lint:  ## Lint the code.
 
 
 .PHONY: mocks
-mocks: internal/server/store_mock_test.go internal/database/parser_mock_test.go internal/reader/client_mock_test.go  ## Generate mocks from interfaces.
+mocks: internal/server/datastore_mock_test.go internal/database/parser_mock_test.go internal/reader/client_mock_test.go  ## Generate mocks from interfaces.
 
 internal/database/parser_mock_test.go: internal/parser.go
-	mockgen -source=$< -package=database FeedParser > $@
+	mockgen -source=$< -package=database Parser > $@
 
-internal/server/store_mock_test.go: internal/store.go
-	mockgen -source=$< -package=server FeedStore > $@
+internal/server/datastore_mock_test.go: internal/datastore.go
+	mockgen -source=$< -package=server Datastore > $@
 
 internal/reader/client_mock_test.go: api/neon_grpc.pb.go
 	mockgen -source=$< -package=reader NeonClient > $@
