@@ -111,7 +111,7 @@ func newReaderCommand() *cobra.Command {
 		2*time.Second,
 		`timeout for initial server connection, ignored if "-c" is unset`,
 	)
-	flags.StringP(dbPathKey, "d", defaultDBPath, `database location, ignored if "-c" is set`)
+	flags.StringP(dbPathKey, "d", defaultDBPath, `datastore location, ignored if "-c" is set`)
 
 	if err := v.BindPFlags(flags); err != nil {
 		panic(err)

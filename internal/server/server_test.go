@@ -18,7 +18,7 @@ import (
 	"google.golang.org/grpc/health/grpc_health_v1"
 
 	"github.com/bow/neon/api"
-	"github.com/bow/neon/internal"
+	"github.com/bow/neon/internal/datastore"
 )
 
 func defaultTestServerBuilder(t *testing.T) *Builder {
@@ -45,7 +45,7 @@ func (tcb *testClientBuilder) DialOpts(opts ...grpc.DialOption) *testClientBuild
 	return tcb
 }
 
-func (tcb *testClientBuilder) ServerDatastore(ds internal.Datastore) *testClientBuilder {
+func (tcb *testClientBuilder) ServerDatastore(ds datastore.Datastore) *testClientBuilder {
 	tcb.serverBuilder = tcb.serverBuilder.Datastore(ds)
 	return tcb
 }

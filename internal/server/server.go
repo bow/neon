@@ -22,7 +22,7 @@ import (
 
 	"github.com/bow/neon/api"
 	"github.com/bow/neon/internal"
-	"github.com/bow/neon/internal/database"
+	"github.com/bow/neon/internal/datastore"
 )
 
 const (
@@ -40,7 +40,7 @@ type Server struct {
 	healthSvc *health.Server
 }
 
-func newServer(lis net.Listener, grpcServer *grpc.Server, ds internal.Datastore) *Server {
+func newServer(lis net.Listener, grpcServer *grpc.Server, ds datastore.Datastore) *Server {
 
 	svc := service{ds: ds}
 	api.RegisterNeonServer(grpcServer, &svc)
@@ -133,7 +133,7 @@ func (s *Server) start() <-chan error {
 type Builder struct {
 	ctx        context.Context
 	addr       string
-	ds         internal.Datastore
+	ds         datastore.Datastore
 	sqlitePath string
 }
 
@@ -158,7 +158,7 @@ func (b *Builder) SQLite(path string) *Builder {
 	return b
 }
 
-func (b *Builder) Datastore(ds internal.Datastore) *Builder {
+func (b *Builder) Datastore(ds datastore.Datastore) *Builder {
 	b.ds = ds
 	b.sqlitePath = ""
 	return b
@@ -189,8 +189,8 @@ func (b *Builder) Build() (*Server, error) {
 
 	ds := b.ds
 	if sp := b.sqlitePath; sp != "" {
-		pkgLogger.Info().Str("path", sp).Msgf("initializing sqlite database")
-		if ds, err = database.NewSQLite(sp); err != nil {
+		pkgLogger.Info().Str("path", sp).Msgf("initializing sqlite datastore")
+		if ds, err = datastore.NewSQLite(sp); err != nil {
 			return nil, fmt.Errorf("server build: %w", err)
 		}
 	}

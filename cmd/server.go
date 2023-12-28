@@ -11,7 +11,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	"github.com/bow/neon/internal/database"
+	"github.com/bow/neon/internal/datastore"
 	"github.com/bow/neon/internal/server"
 )
 
@@ -35,7 +35,7 @@ func newServerCommand() *cobra.Command {
 		Short:   "Start a gRPC server",
 		RunE: func(cmd *cobra.Command, args []string) error {
 
-			database.SetLogger(zlog.Logger)
+			datastore.SetLogger(zlog.Logger)
 			server.SetLogger(zlog.Logger)
 
 			if !v.GetBool(quietKey) {
@@ -55,7 +55,7 @@ func newServerCommand() *cobra.Command {
 
 	flags.BoolP(quietKey, "q", false, "hide startup banner")
 	flags.StringP(addrKey, "a", defaultAddr, "listening address")
-	flags.StringP(dbPathKey, "d", defaultDBPath, "database location")
+	flags.StringP(dbPathKey, "d", defaultDBPath, "datastore location")
 
 	if err := v.BindPFlags(flags); err != nil {
 		panic(err)

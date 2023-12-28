@@ -6,7 +6,7 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/bow/neon/internal/database"
+	"github.com/bow/neon/internal/datastore"
 )
 
 func newFeedCommand() *cobra.Command {
@@ -33,7 +33,7 @@ func newFeedCommand() *cobra.Command {
 
 	pflags := command.PersistentFlags()
 
-	pflags.StringP(dbPathKey, "d", defaultDBPath, "database location")
+	pflags.StringP(dbPathKey, "d", defaultDBPath, "datastore location")
 
 	if err := v.BindPFlags(pflags); err != nil {
 		panic(err)
@@ -54,12 +54,12 @@ func dbPathToCmdCtx(cmd *cobra.Command, path string) {
 	toCmdContext(cmd, dbPathKey, path)
 }
 
-func dbFromCmdCtx(cmd *cobra.Command) (*database.SQLite, error) {
+func dbFromCmdCtx(cmd *cobra.Command) (*datastore.SQLite, error) {
 	dbPath, err := fromCmdContext[string](cmd, dbPathKey)
 	if err != nil {
 		return nil, err
 	}
-	db, err := database.NewSQLite(dbPath)
+	db, err := datastore.NewSQLite(dbPath)
 	if err != nil {
 		return nil, err
 	}

@@ -1,7 +1,7 @@
 // Copyright (c) 2023 Wibowo Arindrarto <contact@arindrarto.dev>
 // SPDX-License-Identifier: BSD-3-Clause
 
-package database
+package datastore
 
 import (
 	"context"
@@ -13,7 +13,7 @@ import (
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/mmcdole/gofeed"
 
-	"github.com/bow/neon/internal/database/migration"
+	"github.com/bow/neon/internal/datastore/migration"
 )
 
 type SQLite struct {

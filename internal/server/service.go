@@ -12,6 +12,7 @@ import (
 
 	"github.com/bow/neon/api"
 	"github.com/bow/neon/internal"
+	"github.com/bow/neon/internal/datastore"
 	"github.com/bow/neon/internal/entity"
 )
 
@@ -19,7 +20,7 @@ import (
 type service struct {
 	api.UnimplementedNeonServer
 
-	ds internal.Datastore
+	ds datastore.Datastore
 }
 
 // AddFeed satisfies the service API.

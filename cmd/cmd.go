@@ -49,7 +49,7 @@ func fromCmdContext[T any](cmd *cobra.Command, key string) (T, error) {
 	return val, nil
 }
 
-// resolveDBPath attempts to resolve the filesystem path to the database.
+// resolveDBPath attempts to resolve the filesystem path to the datastore.
 func resolveDBPath(path string) (string, error) {
 	var (
 		err    error
