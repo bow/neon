@@ -12,6 +12,7 @@ import (
 
 	"github.com/bow/neon/api"
 	"github.com/bow/neon/internal"
+	"github.com/bow/neon/internal/entity"
 )
 
 // service implements the service API.
@@ -82,7 +83,7 @@ func (svc *service) DeleteFeeds(
 	req *api.DeleteFeedsRequest,
 ) (*api.DeleteFeedsResponse, error) {
 
-	ids := make([]internal.ID, len(req.GetFeedIds()))
+	ids := make([]entity.ID, len(req.GetFeedIds()))
 	for i, id := range req.GetFeedIds() {
 		ids[i] = id
 	}
@@ -100,7 +101,7 @@ func (svc *service) PullFeeds(
 	stream api.Neon_PullFeedsServer,
 ) error {
 
-	convert := func(pr internal.PullResult) (*api.PullFeedsResponse, error) {
+	convert := func(pr entity.PullResult) (*api.PullFeedsResponse, error) {
 		if err := pr.Error(); err != nil {
 			url := pr.URL()
 			if url == "" {
@@ -119,7 +120,7 @@ func (svc *service) PullFeeds(
 		return &rsp, nil
 	}
 
-	ids := make([]internal.ID, len(req.GetFeedIds()))
+	ids := make([]entity.ID, len(req.GetFeedIds()))
 	for i, id := range req.GetFeedIds() {
 		ids[i] = id
 	}
@@ -221,7 +222,7 @@ func (svc *service) ImportOPML(
 
 	payload := req.GetPayload()
 
-	sub, err := internal.NewSubscriptionFromRawOPML(payload)
+	sub, err := entity.NewSubscriptionFromRawOPML(payload)
 	if err != nil {
 		msg := fmt.Errorf("failed to parse OPML: %w", err).Error()
 		return nil, status.Errorf(codes.InvalidArgument, msg)

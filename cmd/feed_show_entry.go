@@ -8,7 +8,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/bow/neon/internal"
+	"github.com/bow/neon/internal/entity"
 )
 
 func newFeedShowEntryCommand() *cobra.Command {
@@ -27,7 +27,7 @@ func newFeedShowEntryCommand() *cobra.Command {
 				return fmt.Errorf("too many arguments")
 			}
 
-			entryID, err := internal.ToFeedID(args[0])
+			entryID, err := entity.ToFeedID(args[0])
 			if err != nil {
 				return err
 			}

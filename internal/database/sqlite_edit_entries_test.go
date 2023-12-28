@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/bow/neon/internal"
+	"github.com/bow/neon/internal/entity"
 )
 
 func TestEditEntriesOkEmpty(t *testing.T) {
@@ -18,7 +18,7 @@ func TestEditEntriesOkEmpty(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	db := newTestDB(t)
+	db := newTestSQLiteDB(t)
 
 	entries, err := db.EditEntries(context.Background(), nil)
 	r.NoError(err)
@@ -31,7 +31,7 @@ func TestEditEntriesOkMinimal(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	db := newTestDB(t)
+	db := newTestSQLiteDB(t)
 
 	dbFeeds := []*feedRecord{
 		{
@@ -58,7 +58,7 @@ func TestEditEntriesOkMinimal(t *testing.T) {
 	a.True(existe("Entry A1", true))
 	a.False(existe("Entry A1", false))
 
-	ops := []*internal.EntryEditOp{
+	ops := []*entity.EntryEditOp{
 		{ID: keys["Feed A"].Entries["Entry A1"], IsRead: pointer(false)},
 	}
 	entries, err := db.EditEntries(context.Background(), ops)
@@ -75,7 +75,7 @@ func TestEditEntriesOkExtended(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	db := newTestDB(t)
+	db := newTestSQLiteDB(t)
 
 	dbFeeds := []*feedRecord{
 		{
@@ -118,7 +118,7 @@ func TestEditEntriesOkExtended(t *testing.T) {
 	a.True(existe("Entry X1", false, false))
 	a.False(existe("Entry X1", true, true))
 
-	setOps := []*internal.EntryEditOp{
+	setOps := []*entity.EntryEditOp{
 		{ID: keys["Feed X"].Entries["Entry X1"], IsRead: pointer(true), IsBookmarked: pointer(true)},
 		{ID: keys["Feed A"].Entries["Entry A2"], IsRead: pointer(true)},
 	}

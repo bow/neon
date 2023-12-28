@@ -12,6 +12,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/bow/neon/internal"
+	"github.com/bow/neon/internal/entity"
 )
 
 func newFeedImportCommand() *cobra.Command {
@@ -51,7 +52,7 @@ func newFeedImportCommand() *cobra.Command {
 				return err
 			}
 
-			sub, err := internal.NewSubscriptionFromRawOPML(contents)
+			sub, err := entity.NewSubscriptionFromRawOPML(contents)
 			if err != nil {
 				return fmt.Errorf("failed to parse OPML document: %w", err)
 			}

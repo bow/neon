@@ -9,7 +9,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 
-	"github.com/bow/neon/internal"
+	"github.com/bow/neon/internal/entity"
 )
 
 func newFeedAddCommand() *cobra.Command {
@@ -86,7 +86,7 @@ func newFeedAddCommand() *cobra.Command {
 	return &command
 }
 
-func logAddResult(feed *internal.Feed, added bool) {
+func logAddResult(feed *entity.Feed, added bool) {
 
 	var msg string
 	if added {

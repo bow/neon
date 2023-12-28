@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/bow/neon/internal"
+	"github.com/bow/neon/internal/entity"
 )
 
 func TestEditFeedsOkEmpty(t *testing.T) {
@@ -18,7 +18,7 @@ func TestEditFeedsOkEmpty(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	db := newTestDB(t)
+	db := newTestSQLiteDB(t)
 
 	feeds, err := db.EditFeeds(context.Background(), nil)
 	r.NoError(err)
@@ -31,7 +31,7 @@ func TestEditFeedsOkExtended(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	db := newTestDB(t)
+	db := newTestSQLiteDB(t)
 
 	dbFeeds := []*feedRecord{
 		{
@@ -56,7 +56,7 @@ func TestEditFeedsOkExtended(t *testing.T) {
 	a.True(existf("Feed A", false))
 	a.False(existf("Feed X", true))
 
-	ops := []*internal.FeedEditOp{
+	ops := []*entity.FeedEditOp{
 		{ID: keys["Feed A"].ID, Title: pointer("Feed X"), IsStarred: pointer(true)},
 	}
 	feeds, err := db.EditFeeds(context.Background(), ops)

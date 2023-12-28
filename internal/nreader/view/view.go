@@ -8,6 +8,7 @@ import (
 	"github.com/rivo/tview"
 
 	"github.com/bow/neon/internal"
+	"github.com/bow/neon/internal/entity"
 )
 
 //nolint:unused
@@ -21,6 +22,7 @@ type View struct {
 	focusStack tview.Primitive
 }
 
+//nolint:revive
 func New(scr tcell.Screen, theme string) (*View, error) {
 	panic("New is unimplemented")
 }
@@ -88,7 +90,7 @@ func (v *View) ShowAboutPopup() {
 }
 
 //nolint:revive
-func (v *View) ShowFeedsInPane(<-chan *internal.Feed) {
+func (v *View) ShowFeedsInPane(<-chan *entity.Feed) {
 	panic("ShowFeedsInPane is unimplemented")
 }
 

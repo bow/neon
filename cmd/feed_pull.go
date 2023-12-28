@@ -14,6 +14,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/bow/neon/internal"
+	"github.com/bow/neon/internal/entity"
 )
 
 func newFeedPullCommand() *cobra.Command {
@@ -39,7 +40,7 @@ func newFeedPullCommand() *cobra.Command {
 			}
 
 			rawIDs := internal.Dedup(args)
-			ids, err := internal.ToFeedIDs(rawIDs)
+			ids, err := entity.ToFeedIDs(rawIDs)
 			if err != nil {
 				return err
 			}

@@ -8,9 +8,10 @@ import (
 	"database/sql"
 
 	"github.com/bow/neon/internal"
+	"github.com/bow/neon/internal/entity"
 )
 
-func (db *SQLite) DeleteFeeds(ctx context.Context, ids []internal.ID) error {
+func (db *SQLite) DeleteFeeds(ctx context.Context, ids []entity.ID) error {
 
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
 
@@ -30,7 +31,7 @@ func (db *SQLite) DeleteFeeds(ctx context.Context, ids []internal.ID) error {
 				return err
 			}
 			if n != int64(1) {
-				return internal.FeedNotFoundError{ID: id}
+				return entity.FeedNotFoundError{ID: id}
 			}
 			return nil
 		}

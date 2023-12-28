@@ -16,7 +16,7 @@ func TestListFeedsOkMinimal(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	db := newTestDB(t)
+	db := newTestSQLiteDB(t)
 
 	feeds, err := db.ListFeeds(context.Background())
 	r.NoError(err)
@@ -29,7 +29,7 @@ func TestListFeedsOkExtended(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	db := newTestDB(t)
+	db := newTestSQLiteDB(t)
 
 	dbFeeds := []*feedRecord{
 		{

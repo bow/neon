@@ -9,7 +9,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/bow/neon/internal"
+	"github.com/bow/neon/internal/entity"
 )
 
 func newFeedListEntriesCommand() *cobra.Command {
@@ -40,7 +40,7 @@ func newFeedListEntriesCommand() *cobra.Command {
 				isBookmarked = &value
 			}
 
-			feedID, err := internal.ToFeedID(args[0])
+			feedID, err := entity.ToFeedID(args[0])
 			if err != nil {
 				return err
 			}
@@ -50,7 +50,7 @@ func newFeedListEntriesCommand() *cobra.Command {
 				return err
 			}
 
-			entries, err := db.ListEntries(cmd.Context(), []internal.ID{feedID}, isBookmarked)
+			entries, err := db.ListEntries(cmd.Context(), []entity.ID{feedID}, isBookmarked)
 			if err != nil {
 				return err
 			}
@@ -73,7 +73,7 @@ func newFeedListEntriesCommand() *cobra.Command {
 	return &command
 }
 
-func fmtListEntry(entry *internal.Entry) string {
+func fmtListEntry(entry *entity.Entry) string {
 	var (
 		sb  strings.Builder
 		cat = func(format string, a ...any) { fmt.Fprintf(&sb, format, a...) }

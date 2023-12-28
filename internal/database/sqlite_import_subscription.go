@@ -8,12 +8,12 @@ import (
 	"database/sql"
 	"time"
 
-	"github.com/bow/neon/internal"
+	"github.com/bow/neon/internal/entity"
 )
 
 func (db *SQLite) ImportSubscription(
 	ctx context.Context,
-	sub *internal.Subscription,
+	sub *entity.Subscription,
 ) (processed int, imported int, err error) {
 
 	if len(sub.Feeds) == 0 {

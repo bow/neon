@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/bow/neon/internal"
+	"github.com/bow/neon/internal/entity"
 )
 
 func TestImportSubscriptionOkNoFeeds(t *testing.T) {
@@ -18,11 +18,11 @@ func TestImportSubscriptionOkNoFeeds(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	db := newTestDB(t)
+	db := newTestSQLiteDB(t)
 
 	r.Equal(0, db.countFeeds())
 
-	sub := internal.Subscription{}
+	sub := entity.Subscription{}
 
 	nproc, nimp, err := db.ImportSubscription(context.Background(), &sub)
 	r.NoError(err)
@@ -37,7 +37,7 @@ func TestImportSubscriptionOkMinimal(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	db := newTestDB(t)
+	db := newTestSQLiteDB(t)
 
 	existf := func() bool {
 		return db.rowExists(
@@ -53,8 +53,8 @@ func TestImportSubscriptionOkMinimal(t *testing.T) {
 	r.Equal(0, db.countFeeds())
 	a.False(existf())
 
-	sub := internal.Subscription{
-		Feeds: []*internal.Feed{
+	sub := entity.Subscription{
+		Feeds: []*entity.Feed{
 			{Title: "Feed A", FeedURL: "http://a.com/feed.xml"},
 		},
 	}
@@ -73,7 +73,7 @@ func TestImportSubscriptionOkExtended(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	db := newTestDB(t)
+	db := newTestSQLiteDB(t)
 
 	dbFeeds := []*feedRecord{
 		{
@@ -120,8 +120,8 @@ func TestImportSubscriptionOkExtended(t *testing.T) {
 		)
 	}
 
-	sub := internal.Subscription{
-		Feeds: []*internal.Feed{
+	sub := entity.Subscription{
+		Feeds: []*entity.Feed{
 			{
 				Title:       "Feed A",
 				FeedURL:     "http://a.com/feed.xml",

@@ -7,21 +7,21 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/bow/neon/internal"
+	"github.com/bow/neon/internal/entity"
 )
 
 func (db *SQLite) ExportSubscription(
 	ctx context.Context,
 	title *string,
-) (*internal.Subscription, error) {
+) (*entity.Subscription, error) {
 
-	var sub internal.Subscription
+	var sub entity.Subscription
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
 		recs, err := getAllFeeds(ctx, tx)
 		if err != nil {
 			return err
 		}
-		isub := internal.Subscription{
+		isub := entity.Subscription{
 			Title: title,
 			Feeds: feedRecords(recs).feeds(),
 		}

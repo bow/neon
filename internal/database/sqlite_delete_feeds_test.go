@@ -16,7 +16,7 @@ func TestDeleteFeedsOkEmpty(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	db := newTestDB(t)
+	db := newTestSQLiteDB(t)
 
 	dbFeeds := []*feedRecord{
 		{
@@ -44,7 +44,7 @@ func TestDeleteFeedsOkSingle(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	db := newTestDB(t)
+	db := newTestSQLiteDB(t)
 
 	dbFeeds := []*feedRecord{
 		{
@@ -92,7 +92,7 @@ func TestDeleteFeedsOkMultiple(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	db := newTestDB(t)
+	db := newTestSQLiteDB(t)
 
 	dbFeeds := []*feedRecord{
 		{
@@ -154,7 +154,7 @@ func TestDeleteFeedsErrHasMissing(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	db := newTestDB(t)
+	db := newTestSQLiteDB(t)
 
 	dbFeeds := []*feedRecord{
 		{

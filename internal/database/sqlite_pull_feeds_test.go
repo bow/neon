@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/bow/neon/internal"
+	"github.com/bow/neon/internal/entity"
 )
 
 func TestPullFeedsAllOkEmptyDB(t *testing.T) {
@@ -22,7 +22,7 @@ func TestPullFeedsAllOkEmptyDB(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	db := newTestDB(t)
+	db := newTestSQLiteDB(t)
 
 	r.Equal(0, db.countFeeds())
 
@@ -39,7 +39,7 @@ func TestPullFeedsAllOkEmptyEntries(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	db := newTestDB(t)
+	db := newTestSQLiteDB(t)
 
 	dbFeeds := []*feedRecord{
 		{
@@ -71,17 +71,17 @@ func TestPullFeedsAllOkEmptyEntries(t *testing.T) {
 
 	c := db.PullFeeds(context.Background(), nil)
 
-	got := make([]internal.PullResult, 0)
+	got := make([]entity.PullResult, 0)
 	for res := range c {
 		got = append(got, res)
 	}
 
-	want := []internal.PullResult{
-		internal.NewPullResultFromFeed(
+	want := []entity.PullResult{
+		entity.NewPullResultFromFeed(
 			&dbFeeds[0].feedURL,
 			nil,
 		),
-		internal.NewPullResultFromFeed(
+		entity.NewPullResultFromFeed(
 			&dbFeeds[1].feedURL,
 			nil,
 		),
@@ -95,7 +95,7 @@ func TestPullFeedsAllOkNoNewEntries(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	db := newTestDB(t)
+	db := newTestSQLiteDB(t)
 
 	dbFeeds := []*feedRecord{
 		{
@@ -185,17 +185,17 @@ func TestPullFeedsAllOkNoNewEntries(t *testing.T) {
 
 	c := db.PullFeeds(context.Background(), nil)
 
-	got := make([]internal.PullResult, 0)
+	got := make([]entity.PullResult, 0)
 	for res := range c {
 		got = append(got, res)
 	}
 
-	want := []internal.PullResult{
-		internal.NewPullResultFromFeed(
+	want := []entity.PullResult{
+		entity.NewPullResultFromFeed(
 			&pulledFeeds[0].feedURL,
 			nil,
 		),
-		internal.NewPullResultFromFeed(
+		entity.NewPullResultFromFeed(
 			&pulledFeeds[1].feedURL,
 			nil,
 		),
@@ -209,7 +209,7 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	db := newTestDB(t)
+	db := newTestSQLiteDB(t)
 
 	dbFeeds := []*feedRecord{ // nolint:dupl
 		{
@@ -326,7 +326,7 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 
 	c := db.PullFeeds(context.Background(), nil)
 
-	got := make([]internal.PullResult, 0)
+	got := make([]entity.PullResult, 0)
 	for res := range c {
 		got = append(got, res)
 	}
@@ -334,17 +334,17 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 	feedURL0 := pulledFeeds[0].feedURL
 	feedURL1 := pulledFeeds[1].feedURL
 
-	want := []internal.PullResult{
-		internal.NewPullResultFromFeed(
+	want := []entity.PullResult{
+		entity.NewPullResultFromFeed(
 			&dbFeeds[0].feedURL,
-			&internal.Feed{
+			&entity.Feed{
 				ID:         keys[pulledFeeds[0].title].ID,
 				Title:      pulledFeeds[0].title,
 				FeedURL:    pulledFeeds[0].feedURL,
 				Updated:    db.getFeedUpdateTime(feedURL0),
 				Subscribed: db.getFeedSubTime(feedURL0),
 				LastPulled: time.Time{},
-				Entries: []*internal.Entry{
+				Entries: []*entity.Entry{
 					{
 						ID:        db.getEntryID(feedURL0, pulledFeeds[0].entries[1].extID),
 						FeedID:    keys[pulledFeeds[0].title].ID,
@@ -368,16 +368,16 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 				},
 			},
 		),
-		internal.NewPullResultFromFeed(
+		entity.NewPullResultFromFeed(
 			&dbFeeds[1].feedURL,
-			&internal.Feed{
+			&entity.Feed{
 				ID:         keys[pulledFeeds[1].title].ID,
 				Title:      pulledFeeds[1].title,
 				FeedURL:    pulledFeeds[1].feedURL,
 				Updated:    db.getFeedUpdateTime(feedURL1),
 				Subscribed: db.getFeedSubTime(feedURL1),
 				LastPulled: time.Time{},
-				Entries: []*internal.Entry{
+				Entries: []*entity.Entry{
 					{
 						ID:        db.getEntryID(feedURL1, pulledFeeds[1].entries[1].extID),
 						FeedID:    keys[pulledFeeds[1].title].ID,
@@ -410,7 +410,7 @@ func TestPullFeedsSelectedOkSomeNewEntries(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	db := newTestDB(t)
+	db := newTestSQLiteDB(t)
 
 	dbFeeds := []*feedRecord{ // nolint:dupl
 		// This feed should not be returned later, it is not selected.
@@ -494,22 +494,22 @@ func TestPullFeedsSelectedOkSomeNewEntries(t *testing.T) {
 
 	c := db.PullFeeds(context.Background(), []ID{keys[pulledFeed.title].ID})
 
-	got := make([]internal.PullResult, 0)
+	got := make([]entity.PullResult, 0)
 	for res := range c {
 		got = append(got, res)
 	}
 
-	want := []internal.PullResult{
-		internal.NewPullResultFromFeed(
+	want := []entity.PullResult{
+		entity.NewPullResultFromFeed(
 			&dbFeeds[1].feedURL,
-			&internal.Feed{
+			&entity.Feed{
 				ID:         keys[pulledFeed.title].ID,
 				Title:      pulledFeed.title,
 				FeedURL:    pulledFeed.feedURL,
 				Updated:    db.getFeedUpdateTime(pulledFeed.feedURL),
 				Subscribed: db.getFeedSubTime(pulledFeed.feedURL),
 				LastPulled: time.Time{},
-				Entries: []*internal.Entry{
+				Entries: []*entity.Entry{
 					{
 						ID:        db.getEntryID(pulledFeed.feedURL, pulledFeed.entries[1].extID),
 						FeedID:    keys[pulledFeed.title].ID,
@@ -537,7 +537,7 @@ func TestPullFeedsSelectedOkSomeNewEntries(t *testing.T) {
 	a.ElementsMatch(want, got)
 }
 
-func sortPullResultEntries(arr []internal.PullResult) {
+func sortPullResultEntries(arr []entity.PullResult) {
 	for _, item := range arr {
 		sort.SliceStable(
 			item.Feed().Entries,

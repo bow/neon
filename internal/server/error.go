@@ -12,7 +12,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/bow/neon/internal"
+	"github.com/bow/neon/internal/entity"
 )
 
 func errorUnaryServerInterceptor(
@@ -39,7 +39,7 @@ func unwrapError(err error) (codes.Code, error) {
 		return codes.Unknown, nil
 	}
 	switch cerr := err.(type) {
-	case internal.FeedNotFoundError, internal.EntryNotFoundError:
+	case entity.FeedNotFoundError, entity.EntryNotFoundError:
 		return codes.NotFound, cerr
 	case xml.UnmarshalError, *xml.SyntaxError:
 		return codes.InvalidArgument, cerr

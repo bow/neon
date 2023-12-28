@@ -8,14 +8,14 @@ import (
 	"database/sql"
 	"encoding/json"
 
-	"github.com/bow/neon/internal"
+	"github.com/bow/neon/internal/entity"
 )
 
 func (db *SQLite) ListEntries(
 	ctx context.Context,
-	feedIDs []internal.ID,
+	feedIDs []entity.ID,
 	isBookmarked *bool,
-) ([]*internal.Entry, error) {
+) ([]*entity.Entry, error) {
 
 	recs := make([]*entryRecord, 0)
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {

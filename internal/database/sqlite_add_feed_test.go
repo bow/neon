@@ -18,7 +18,7 @@ func TestAddFeedOkMinimal(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	db := newTestDB(t)
+	db := newTestSQLiteDB(t)
 
 	feed := gofeed.Feed{
 		Title:       "feed-title",
@@ -70,7 +70,7 @@ func TestAddFeedOkExtended(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	db := newTestDB(t)
+	db := newTestSQLiteDB(t)
 
 	feed := gofeed.Feed{
 		Title:       "feed-title-original",
@@ -164,7 +164,7 @@ func TestAddFeedOkURLExists(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	db := newTestDB(t)
+	db := newTestSQLiteDB(t)
 
 	feed := gofeed.Feed{
 		Title:       "feed-title",

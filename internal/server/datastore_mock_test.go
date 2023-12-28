@@ -8,7 +8,7 @@ import (
 	context "context"
 	reflect "reflect"
 
-	internal "github.com/bow/neon/internal"
+	entity "github.com/bow/neon/internal/entity"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -36,10 +36,10 @@ func (m *MockDatastore) EXPECT() *MockDatastoreMockRecorder {
 }
 
 // AddFeed mocks base method.
-func (m *MockDatastore) AddFeed(ctx context.Context, feedURL string, title, desc *string, tags []string, isStarred *bool) (*internal.Feed, bool, error) {
+func (m *MockDatastore) AddFeed(ctx context.Context, feedURL string, title, desc *string, tags []string, isStarred *bool) (*entity.Feed, bool, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AddFeed", ctx, feedURL, title, desc, tags, isStarred)
-	ret0, _ := ret[0].(*internal.Feed)
+	ret0, _ := ret[0].(*entity.Feed)
 	ret1, _ := ret[1].(bool)
 	ret2, _ := ret[2].(error)
 	return ret0, ret1, ret2
@@ -52,7 +52,7 @@ func (mr *MockDatastoreMockRecorder) AddFeed(ctx, feedURL, title, desc, tags, is
 }
 
 // DeleteFeeds mocks base method.
-func (m *MockDatastore) DeleteFeeds(ctx context.Context, ids []internal.ID) error {
+func (m *MockDatastore) DeleteFeeds(ctx context.Context, ids []entity.ID) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DeleteFeeds", ctx, ids)
 	ret0, _ := ret[0].(error)
@@ -66,10 +66,10 @@ func (mr *MockDatastoreMockRecorder) DeleteFeeds(ctx, ids interface{}) *gomock.C
 }
 
 // EditEntries mocks base method.
-func (m *MockDatastore) EditEntries(ctx context.Context, ops []*internal.EntryEditOp) ([]*internal.Entry, error) {
+func (m *MockDatastore) EditEntries(ctx context.Context, ops []*entity.EntryEditOp) ([]*entity.Entry, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "EditEntries", ctx, ops)
-	ret0, _ := ret[0].([]*internal.Entry)
+	ret0, _ := ret[0].([]*entity.Entry)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -81,10 +81,10 @@ func (mr *MockDatastoreMockRecorder) EditEntries(ctx, ops interface{}) *gomock.C
 }
 
 // EditFeeds mocks base method.
-func (m *MockDatastore) EditFeeds(ctx context.Context, ops []*internal.FeedEditOp) ([]*internal.Feed, error) {
+func (m *MockDatastore) EditFeeds(ctx context.Context, ops []*entity.FeedEditOp) ([]*entity.Feed, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "EditFeeds", ctx, ops)
-	ret0, _ := ret[0].([]*internal.Feed)
+	ret0, _ := ret[0].([]*entity.Feed)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -96,10 +96,10 @@ func (mr *MockDatastoreMockRecorder) EditFeeds(ctx, ops interface{}) *gomock.Cal
 }
 
 // ExportSubscription mocks base method.
-func (m *MockDatastore) ExportSubscription(ctx context.Context, title *string) (*internal.Subscription, error) {
+func (m *MockDatastore) ExportSubscription(ctx context.Context, title *string) (*entity.Subscription, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ExportSubscription", ctx, title)
-	ret0, _ := ret[0].(*internal.Subscription)
+	ret0, _ := ret[0].(*entity.Subscription)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -111,10 +111,10 @@ func (mr *MockDatastoreMockRecorder) ExportSubscription(ctx, title interface{}) 
 }
 
 // GetEntry mocks base method.
-func (m *MockDatastore) GetEntry(ctx context.Context, id internal.ID) (*internal.Entry, error) {
+func (m *MockDatastore) GetEntry(ctx context.Context, id entity.ID) (*entity.Entry, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetEntry", ctx, id)
-	ret0, _ := ret[0].(*internal.Entry)
+	ret0, _ := ret[0].(*entity.Entry)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -126,10 +126,10 @@ func (mr *MockDatastoreMockRecorder) GetEntry(ctx, id interface{}) *gomock.Call 
 }
 
 // GetGlobalStats mocks base method.
-func (m *MockDatastore) GetGlobalStats(ctx context.Context) (*internal.Stats, error) {
+func (m *MockDatastore) GetGlobalStats(ctx context.Context) (*entity.Stats, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetGlobalStats", ctx)
-	ret0, _ := ret[0].(*internal.Stats)
+	ret0, _ := ret[0].(*entity.Stats)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -141,7 +141,7 @@ func (mr *MockDatastoreMockRecorder) GetGlobalStats(ctx interface{}) *gomock.Cal
 }
 
 // ImportSubscription mocks base method.
-func (m *MockDatastore) ImportSubscription(ctx context.Context, sub *internal.Subscription) (int, int, error) {
+func (m *MockDatastore) ImportSubscription(ctx context.Context, sub *entity.Subscription) (int, int, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ImportSubscription", ctx, sub)
 	ret0, _ := ret[0].(int)
@@ -157,10 +157,10 @@ func (mr *MockDatastoreMockRecorder) ImportSubscription(ctx, sub interface{}) *g
 }
 
 // ListEntries mocks base method.
-func (m *MockDatastore) ListEntries(ctx context.Context, feedIDs []internal.ID, isBookmarked *bool) ([]*internal.Entry, error) {
+func (m *MockDatastore) ListEntries(ctx context.Context, feedIDs []entity.ID, isBookmarked *bool) ([]*entity.Entry, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ListEntries", ctx, feedIDs, isBookmarked)
-	ret0, _ := ret[0].([]*internal.Entry)
+	ret0, _ := ret[0].([]*entity.Entry)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -172,10 +172,10 @@ func (mr *MockDatastoreMockRecorder) ListEntries(ctx, feedIDs, isBookmarked inte
 }
 
 // ListFeeds mocks base method.
-func (m *MockDatastore) ListFeeds(ctx context.Context) ([]*internal.Feed, error) {
+func (m *MockDatastore) ListFeeds(ctx context.Context) ([]*entity.Feed, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ListFeeds", ctx)
-	ret0, _ := ret[0].([]*internal.Feed)
+	ret0, _ := ret[0].([]*entity.Feed)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -187,10 +187,10 @@ func (mr *MockDatastoreMockRecorder) ListFeeds(ctx interface{}) *gomock.Call {
 }
 
 // PullFeeds mocks base method.
-func (m *MockDatastore) PullFeeds(ctx context.Context, ids []internal.ID) <-chan internal.PullResult {
+func (m *MockDatastore) PullFeeds(ctx context.Context, ids []entity.ID) <-chan entity.PullResult {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "PullFeeds", ctx, ids)
-	ret0, _ := ret[0].(<-chan internal.PullResult)
+	ret0, _ := ret[0].(<-chan entity.PullResult)
 	return ret0
 }
 

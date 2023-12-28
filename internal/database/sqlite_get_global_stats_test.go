@@ -17,7 +17,7 @@ func TestGetGlobalStatsEmptyOk(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	db := newTestDB(t)
+	db := newTestSQLiteDB(t)
 
 	stats, err := db.GetGlobalStats(context.Background())
 	r.NoError(err)
@@ -35,7 +35,7 @@ func TestGetGlobalStatsExtendedOk(t *testing.T) {
 
 	r := require.New(t)
 	a := assert.New(t)
-	db := newTestDB(t)
+	db := newTestSQLiteDB(t)
 
 	dbFeeds := []*feedRecord{ // nolint:dupl
 		{

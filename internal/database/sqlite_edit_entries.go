@@ -7,18 +7,18 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/bow/neon/internal"
+	"github.com/bow/neon/internal/entity"
 )
 
 // EditEntries updates fields of an entry.
 func (db *SQLite) EditEntries(
 	ctx context.Context,
-	ops []*internal.EntryEditOp,
-) ([]*internal.Entry, error) {
+	ops []*entity.EntryEditOp,
+) ([]*entity.Entry, error) {
 
 	updateFunc := func(
 		ctx context.Context,
-		tx *sql.Tx, op *internal.EntryEditOp,
+		tx *sql.Tx, op *entity.EntryEditOp,
 	) (*entryRecord, error) {
 		if err := setEntryIsRead(ctx, tx, op.ID, op.IsRead); err != nil {
 			return nil, err

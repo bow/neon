@@ -7,7 +7,7 @@ import (
 	"context"
 
 	"github.com/bow/neon/api"
-	"github.com/bow/neon/internal"
+	"github.com/bow/neon/internal/entity"
 )
 
 //nolint:unused
@@ -15,20 +15,20 @@ type model struct {
 	addr   string
 	client api.NeonClient
 
-	statsCache *internal.Stats
+	statsCache *entity.Stats
 }
 
 //nolint:unused
-func (m *model) ListFeeds(ctx context.Context) (<-chan *internal.Feed, error) {
+func (m *model) ListFeeds(ctx context.Context) (<-chan *entity.Feed, error) {
 	panic("ListFeeds is unimplemented")
 }
 
 //nolint:unused
-func (m *model) PullFeeds(ctx context.Context) (<-chan *internal.Feed, error) {
+func (m *model) PullFeeds(ctx context.Context) (<-chan *entity.Feed, error) {
 	panic("PullFeeds is unimplemented")
 }
 
 //nolint:unused
-func (m *model) GetStats(ctx context.Context) (<-chan *internal.Stats, error) {
+func (m *model) GetStats(ctx context.Context) (<-chan *entity.Stats, error) {
 	panic("GetStats is unimplemented")
 }

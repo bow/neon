@@ -1,7 +1,7 @@
-// Copyright (c) 2022 Wibowo Arindrarto <contact@arindrarto.dev>
+// Copyright (c) 2022-2023 Wibowo Arindrarto <contact@arindrarto.dev>
 // SPDX-License-Identifier: BSD-3-Clause
 
-package internal
+package entity
 
 import "fmt"
 

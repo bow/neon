@@ -11,7 +11,7 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 
-	"github.com/bow/neon/internal"
+	"github.com/bow/neon/internal/entity"
 )
 
 const iconAllRead = "✔"
@@ -82,7 +82,7 @@ func (b *statusBar) setChangedFunc(handler func()) *statusBar {
 	return b
 }
 
-func (b *statusBar) updateFromStats(stats *internal.Stats) {
+func (b *statusBar) updateFromStats(stats *entity.Stats) {
 	if stats.NumFeeds < 1 {
 		return
 	}

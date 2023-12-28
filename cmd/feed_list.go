@@ -9,7 +9,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/bow/neon/internal"
+	"github.com/bow/neon/internal/entity"
 )
 
 func newFeedListCommand() *cobra.Command {
@@ -43,7 +43,7 @@ func newFeedListCommand() *cobra.Command {
 	return &command
 }
 
-func fmtFeed(feed *internal.Feed) string {
+func fmtFeed(feed *entity.Feed) string {
 	var (
 		sb  strings.Builder
 		cat = func(format string, a ...any) { fmt.Fprintf(&sb, format, a...) }

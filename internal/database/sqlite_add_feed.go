@@ -10,7 +10,7 @@ import (
 
 	"github.com/mmcdole/gofeed"
 
-	"github.com/bow/neon/internal"
+	"github.com/bow/neon/internal/entity"
 )
 
 // AddFeed adds the given feed into the database.
@@ -21,7 +21,7 @@ func (db *SQLite) AddFeed(
 	desc *string,
 	tags []string,
 	isStarred *bool,
-) (*internal.Feed, bool, error) {
+) (*entity.Feed, bool, error) {
 
 	fail := failF("SQLite.AddFeed")
 

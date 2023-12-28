@@ -3,7 +3,11 @@
 
 package internal
 
-import "context"
+import (
+	"context"
+
+	"github.com/bow/neon/internal/entity"
+)
 
 // Datastore describes the persistence layer interface.
 type Datastore interface {
@@ -15,62 +19,62 @@ type Datastore interface {
 		tags []string,
 		isStarred *bool,
 	) (
-		feed *Feed,
+		feed *entity.Feed,
 		added bool,
 		err error,
 	)
 
 	EditFeeds(
 		ctx context.Context,
-		ops []*FeedEditOp,
+		ops []*entity.FeedEditOp,
 	) (
-		feeds []*Feed,
+		feeds []*entity.Feed,
 		err error,
 	)
 
 	ListFeeds(
 		ctx context.Context,
 	) (
-		feeds []*Feed,
+		feeds []*entity.Feed,
 		err error,
 	)
 
 	PullFeeds(
 		ctx context.Context,
-		ids []ID,
+		ids []entity.ID,
 	) (
-		results <-chan PullResult,
+		results <-chan entity.PullResult,
 	)
 
 	DeleteFeeds(
 		ctx context.Context,
-		ids []ID,
+		ids []entity.ID,
 	) (
 		err error,
 	)
 
 	ListEntries(
 		ctx context.Context,
-		feedIDs []ID,
+		feedIDs []entity.ID,
 		isBookmarked *bool,
 	) (
-		entries []*Entry,
+		entries []*entity.Entry,
 		err error,
 	)
 
 	EditEntries(
 		ctx context.Context,
-		ops []*EntryEditOp,
+		ops []*entity.EntryEditOp,
 	) (
-		entries []*Entry,
+		entries []*entity.Entry,
 		err error,
 	)
 
 	GetEntry(
 		ctx context.Context,
-		id ID,
+		id entity.ID,
 	) (
-		entry *Entry,
+		entry *entity.Entry,
 		err error,
 	)
 
@@ -78,13 +82,13 @@ type Datastore interface {
 		ctx context.Context,
 		title *string,
 	) (
-		subscription *Subscription,
+		subscription *entity.Subscription,
 		err error,
 	)
 
 	ImportSubscription(
 		ctx context.Context,
-		sub *Subscription,
+		sub *entity.Subscription,
 	) (
 		processed int,
 		imported int,
@@ -94,7 +98,7 @@ type Datastore interface {
 	GetGlobalStats(
 		ctx context.Context,
 	) (
-		stats *Stats,
+		stats *entity.Stats,
 		err error,
 	)
 }

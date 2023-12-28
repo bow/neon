@@ -20,6 +20,7 @@ import (
 
 	"github.com/bow/neon/api"
 	"github.com/bow/neon/internal"
+	"github.com/bow/neon/internal/entity"
 )
 
 const (
@@ -57,8 +58,8 @@ type Reader struct {
 	readingPane *tview.Box
 	bar         *statusBar
 
-	feedsCh    chan *internal.Feed
-	statsCache *internal.Stats
+	feedsCh    chan *entity.Feed
+	statsCache *entity.Stats
 	focusStack tview.Primitive
 }
 
@@ -160,7 +161,7 @@ func (b *Builder) Build() (*Reader, error) {
 		addr:    b.addr,
 		screen:  screen,
 		theme:   b.theme,
-		feedsCh: make(chan *internal.Feed),
+		feedsCh: make(chan *entity.Feed),
 	}
 	rdr.setupLayout()
 
@@ -225,7 +226,7 @@ To close this message, press [yellow]<Esc>[-].
 	}
 	for _, feed := range rsp.GetFeeds() {
 		feed := feed
-		go func() { r.feedsCh <- internal.FromFeedPb(feed) }()
+		go func() { r.feedsCh <- entity.FromFeedPb(feed) }()
 	}
 
 	stop := r.bar.startEventPoll()
@@ -734,7 +735,7 @@ func (r *Reader) getGlobalStats() error {
 		return err
 	}
 
-	stats := internal.FromStatsPb(rsp.GetGlobal())
+	stats := entity.FromStatsPb(rsp.GetGlobal())
 	r.bar.updateFromStats(stats)
 	r.statsCache = stats
 

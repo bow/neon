@@ -10,16 +10,17 @@ import (
 	"time"
 
 	"github.com/bow/neon/internal"
+	"github.com/bow/neon/internal/entity"
 )
 
 func (db *SQLite) PullFeeds(
 	ctx context.Context,
-	ids []internal.ID,
-) <-chan internal.PullResult {
+	ids []entity.ID,
+) <-chan entity.PullResult {
 
 	var (
 		fail = failF("SQLite.PullFeeds")
-		c    = make(chan internal.PullResult)
+		c    = make(chan entity.PullResult)
 		wg   sync.WaitGroup
 	)
 
@@ -38,14 +39,14 @@ func (db *SQLite) PullFeeds(
 			pks, err = getPullKeys(ctx, tx, dedups)
 		}
 		if err != nil {
-			c <- internal.NewPullResultFromError(nil, fail(err))
+			c <- entity.NewPullResultFromError(nil, fail(err))
 			return nil
 		}
 		if len(pks) == 0 {
 			return nil
 		}
 
-		chs := make([]<-chan internal.PullResult, len(pks))
+		chs := make([]<-chan entity.PullResult, len(pks))
 		for i, pk := range pks {
 			chs[i] = pullNewFeedEntries(ctx, tx, pk, db.parser)
 		}
@@ -72,7 +73,7 @@ func (db *SQLite) PullFeeds(
 		wg.Add(1)
 		err := db.withTx(ctx, dbFunc)
 		if err != nil {
-			c <- internal.NewPullResultFromError(nil, fail(err))
+			c <- entity.NewPullResultFromError(nil, fail(err))
 		}
 	}()
 
@@ -84,15 +85,15 @@ type pullKey struct {
 	feedURL string
 }
 
-func (pk pullKey) ok(feed *internal.Feed) internal.PullResult {
-	pr := internal.NewPullResultFromFeed(&pk.feedURL, feed)
-	pr.SetStatus(internal.PullSuccess)
+func (pk pullKey) ok(feed *entity.Feed) entity.PullResult {
+	pr := entity.NewPullResultFromFeed(&pk.feedURL, feed)
+	pr.SetStatus(entity.PullSuccess)
 	return pr
 }
 
-func (pk pullKey) err(e error) internal.PullResult {
-	pr := internal.NewPullResultFromError(&pk.feedURL, e)
-	pr.SetStatus(internal.PullFail)
+func (pk pullKey) err(e error) entity.PullResult {
+	pr := entity.NewPullResultFromError(&pk.feedURL, e)
+	pr.SetStatus(entity.PullFail)
 	return pr
 }
 
@@ -158,10 +159,10 @@ func pullNewFeedEntries(
 	tx *sql.Tx,
 	pk pullKey,
 	parser internal.Parser,
-) chan internal.PullResult {
+) chan entity.PullResult {
 
 	pullTime := time.Now().UTC()
-	pullf := func() internal.PullResult {
+	pullf := func() entity.PullResult {
 
 		gfeed, err := parser.ParseURLWithContext(pk.feedURL, ctx)
 		if err != nil {
@@ -203,13 +204,13 @@ func pullNewFeedEntries(
 		return pk.ok(rec.feed())
 	}
 
-	ic := make(chan internal.PullResult)
+	ic := make(chan entity.PullResult)
 	go func() {
 		defer close(ic)
 		ic <- pullf()
 	}()
 
-	oc := make(chan internal.PullResult)
+	oc := make(chan entity.PullResult)
 	go func() {
 		defer close(oc)
 		select {

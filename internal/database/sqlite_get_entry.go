@@ -8,20 +8,20 @@ import (
 	"database/sql"
 	"errors"
 
-	"github.com/bow/neon/internal"
+	"github.com/bow/neon/internal/entity"
 )
 
 func (db *SQLite) GetEntry(
 	ctx context.Context,
-	id internal.ID,
-) (*internal.Entry, error) {
+	id entity.ID,
+) (*entity.Entry, error) {
 
 	var rec *entryRecord
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
 		irec, err := getEntry(ctx, tx, id)
 		if err != nil {
 			if errors.Is(err, sql.ErrNoRows) {
-				return internal.EntryNotFoundError{ID: id}
+				return entity.EntryNotFoundError{ID: id}
 			}
 			return err
 		}

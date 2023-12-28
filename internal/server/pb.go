@@ -9,10 +9,10 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 
 	"github.com/bow/neon/api"
-	"github.com/bow/neon/internal"
+	"github.com/bow/neon/internal/entity"
 )
 
-func toFeedPb(feed *internal.Feed) *api.Feed {
+func toFeedPb(feed *entity.Feed) *api.Feed {
 	return &api.Feed{
 		Id:           feed.ID,
 		Title:        feed.Title,
@@ -28,7 +28,7 @@ func toFeedPb(feed *internal.Feed) *api.Feed {
 	}
 }
 
-func toFeedPbs(feeds []*internal.Feed) []*api.Feed {
+func toFeedPbs(feeds []*entity.Feed) []*api.Feed {
 	pbs := make([]*api.Feed, len(feeds))
 	for i, feed := range feeds {
 		pbs[i] = toFeedPb(feed)
@@ -36,8 +36,8 @@ func toFeedPbs(feeds []*internal.Feed) []*api.Feed {
 	return pbs
 }
 
-func fromFeedEditOpPb(pb *api.EditFeedsRequest_Op) *internal.FeedEditOp {
-	return &internal.FeedEditOp{
+func fromFeedEditOpPb(pb *api.EditFeedsRequest_Op) *entity.FeedEditOp {
+	return &entity.FeedEditOp{
 		ID:          pb.Id,
 		Title:       pb.Fields.Title,
 		Description: pb.Fields.Description,
@@ -46,15 +46,15 @@ func fromFeedEditOpPb(pb *api.EditFeedsRequest_Op) *internal.FeedEditOp {
 	}
 }
 
-func fromFeedEditOpPbs(pbs []*api.EditFeedsRequest_Op) []*internal.FeedEditOp {
-	ops := make([]*internal.FeedEditOp, len(pbs))
+func fromFeedEditOpPbs(pbs []*api.EditFeedsRequest_Op) []*entity.FeedEditOp {
+	ops := make([]*entity.FeedEditOp, len(pbs))
 	for i, pb := range pbs {
 		ops[i] = fromFeedEditOpPb(pb)
 	}
 	return ops
 }
 
-func toEntryPb(entry *internal.Entry) *api.Entry {
+func toEntryPb(entry *entity.Entry) *api.Entry {
 	return &api.Entry{
 		Id:           entry.ID,
 		FeedId:       entry.FeedID,
@@ -70,7 +70,7 @@ func toEntryPb(entry *internal.Entry) *api.Entry {
 	}
 }
 
-func toEntryPbs(entries []*internal.Entry) []*api.Entry {
+func toEntryPbs(entries []*entity.Entry) []*api.Entry {
 	pbs := make([]*api.Entry, len(entries))
 	for i, entry := range entries {
 		pbs[i] = toEntryPb(entry)
@@ -78,23 +78,23 @@ func toEntryPbs(entries []*internal.Entry) []*api.Entry {
 	return pbs
 }
 
-func fromEntryEditOpPb(pb *api.EditEntriesRequest_Op) *internal.EntryEditOp {
-	return &internal.EntryEditOp{
+func fromEntryEditOpPb(pb *api.EditEntriesRequest_Op) *entity.EntryEditOp {
+	return &entity.EntryEditOp{
 		ID:           pb.Id,
 		IsRead:       pb.Fields.IsRead,
 		IsBookmarked: pb.Fields.IsBookmarked,
 	}
 }
 
-func fromEntryEditOpPbs(pbs []*api.EditEntriesRequest_Op) []*internal.EntryEditOp {
-	ops := make([]*internal.EntryEditOp, len(pbs))
+func fromEntryEditOpPbs(pbs []*api.EditEntriesRequest_Op) []*entity.EntryEditOp {
+	ops := make([]*entity.EntryEditOp, len(pbs))
 	for i, pb := range pbs {
 		ops[i] = fromEntryEditOpPb(pb)
 	}
 	return ops
 }
 
-func toStatsPb(stats *internal.Stats) *api.GetStatsResponse_Stats {
+func toStatsPb(stats *entity.Stats) *api.GetStatsResponse_Stats {
 	return &api.GetStatsResponse_Stats{
 		NumFeeds:             stats.NumFeeds,
 		NumEntries:           stats.NumEntries,

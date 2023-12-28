@@ -20,6 +20,7 @@ import (
 
 	"github.com/bow/neon/api"
 	"github.com/bow/neon/internal"
+	"github.com/bow/neon/internal/entity"
 )
 
 func TestAddFeedOk(t *testing.T) {
@@ -36,8 +37,8 @@ func TestAddFeedOk(t *testing.T) {
 		Tags:        []string{"tag-1", "tag-2", "tag-3"},
 		IsStarred:   pointer(true),
 	}
-	record := &internal.Feed{
-		ID:          internal.ID(5),
+	record := &entity.Feed{
+		ID:          entity.ID(5),
 		Title:       "feed-title-original",
 		Description: pointer("feed-description-original"),
 		FeedURL:     "https://foo.com/feed.xml",
@@ -77,9 +78,9 @@ func TestListFeedsOk(t *testing.T) {
 	client, ds := setupServerTest(t)
 
 	req := api.ListFeedsRequest{}
-	feeds := []*internal.Feed{
+	feeds := []*entity.Feed{
 		{
-			ID:         internal.ID(2),
+			ID:         entity.ID(2),
 			Title:      "Feed A",
 			FeedURL:    "http://a.com/feed.xml",
 			Subscribed: mustTimeVV(t, "2022-06-22T19:39:38.964+02:00"),
@@ -87,7 +88,7 @@ func TestListFeedsOk(t *testing.T) {
 			Updated:    pointer(mustTimeVV(t, "2022-03-19T16:23:18.600+02:00")),
 		},
 		{
-			ID:         internal.ID(3),
+			ID:         entity.ID(3),
 			Title:      "Feed X",
 			FeedURL:    "http://x.com/feed.xml",
 			Subscribed: mustTimeVV(t, "2022-06-22T19:39:44.037+02:00"),
@@ -114,12 +115,12 @@ func TestEditFeedsOk(t *testing.T) {
 	a := assert.New(t)
 	client, ds := setupServerTest(t)
 
-	ops := []*internal.FeedEditOp{
+	ops := []*entity.FeedEditOp{
 		{ID: 14, Title: pointer("newer")},
 		{ID: 58, Tags: pointer([]string{"x", "y"})},
 		{ID: 77, IsStarred: pointer(true)},
 	}
-	feeds := []*internal.Feed{
+	feeds := []*entity.Feed{
 		{
 			ID:         14,
 			Title:      "newer",
@@ -189,7 +190,7 @@ func TestDeleteFeedsOk(t *testing.T) {
 	client, ds := setupServerTest(t)
 
 	ds.EXPECT().
-		DeleteFeeds(gomock.Any(), []internal.ID{1, 9}).
+		DeleteFeeds(gomock.Any(), []entity.ID{1, 9}).
 		Return(nil)
 
 	req := api.DeleteFeedsRequest{FeedIds: []uint32{1, 9}}
@@ -207,8 +208,8 @@ func TestDeleteFeedsErrNotFound(t *testing.T) {
 	client, ds := setupServerTest(t)
 
 	ds.EXPECT().
-		DeleteFeeds(gomock.Any(), []internal.ID{1, 9}).
-		Return(fmt.Errorf("wrapped: %w", internal.FeedNotFoundError{ID: 9}))
+		DeleteFeeds(gomock.Any(), []entity.ID{1, 9}).
+		Return(fmt.Errorf("wrapped: %w", entity.FeedNotFoundError{ID: 9}))
 
 	req := api.DeleteFeedsRequest{FeedIds: []uint32{1, 9}}
 	rsp, err := client.DeleteFeeds(context.Background(), &req)
@@ -224,43 +225,43 @@ func TestPullFeedsAllOk(t *testing.T) {
 	r := require.New(t)
 	client, ds := setupServerTest(t)
 
-	prs := []internal.PullResult{
-		internal.NewPullResultFromFeed(
+	prs := []entity.PullResult{
+		entity.NewPullResultFromFeed(
 			pointer("http://a.com/feed.xml"),
-			&internal.Feed{
+			&entity.Feed{
 				Title:      "feed-A",
 				FeedURL:    "https://a.com/feed.xml",
 				Subscribed: mustTimeVV(t, "2021-07-23T17:20:29.499+02:00"),
 				LastPulled: mustTimeVV(t, "2021-07-23T17:20:29.499+02:00"),
 				IsStarred:  true,
-				Entries: []*internal.Entry{
+				Entries: []*entity.Entry{
 					{Title: "Entry A1", IsRead: false},
 					{Title: "Entry A2", IsRead: false},
 				},
 			},
 		),
-		internal.NewPullResultFromFeed(pointer("http://z.com/feed.xml"), nil),
-		internal.NewPullResultFromFeed(
+		entity.NewPullResultFromFeed(pointer("http://z.com/feed.xml"), nil),
+		entity.NewPullResultFromFeed(
 			pointer("http://c.com/feed.xml"),
-			&internal.Feed{
+			&entity.Feed{
 				Title:      "feed-C",
 				FeedURL:    "https://c.com/feed.xml",
 				Subscribed: mustTimeVV(t, "2021-07-23T17:21:11.489+02:00"),
 				LastPulled: mustTimeVV(t, "2021-07-23T17:21:11.489+02:00"),
 				IsStarred:  false,
-				Entries: []*internal.Entry{
+				Entries: []*entity.Entry{
 					{Title: "Entry C3", IsRead: false},
 				},
 			},
 		),
 	}
 
-	ch := make(chan internal.PullResult)
+	ch := make(chan entity.PullResult)
 	go func() {
 		defer close(ch)
 
 		// Randomize ordering, to simulate actual URL pulls.
-		shufres := make([]internal.PullResult, len(prs))
+		shufres := make([]entity.PullResult, len(prs))
 		copy(shufres, prs)
 		r := rand.New(rand.NewSource(time.Now().UnixNano())) // #nosec: G404
 		shf := func(i, j int) { shufres[i], shufres[j] = shufres[j], shufres[i] }
@@ -272,7 +273,7 @@ func TestPullFeedsAllOk(t *testing.T) {
 	}()
 
 	ds.EXPECT().
-		PullFeeds(gomock.Any(), []internal.ID{}).
+		PullFeeds(gomock.Any(), []entity.ID{}).
 		Return(ch)
 
 	req := api.PullFeedsRequest{}
@@ -319,29 +320,29 @@ func TestPullFeedsSelectedAllOk(t *testing.T) {
 	r := require.New(t)
 	client, ds := setupServerTest(t)
 
-	prs := []internal.PullResult{
-		internal.NewPullResultFromFeed(pointer("http://z.com/feed.xml"), nil),
-		internal.NewPullResultFromFeed(
+	prs := []entity.PullResult{
+		entity.NewPullResultFromFeed(pointer("http://z.com/feed.xml"), nil),
+		entity.NewPullResultFromFeed(
 			pointer("http://c.com/feed.xml"),
-			&internal.Feed{
+			&entity.Feed{
 				Title:      "feed-C",
 				FeedURL:    "https://c.com/feed.xml",
 				Subscribed: mustTimeVV(t, "2021-07-23T17:21:11.489+02:00"),
 				LastPulled: mustTimeVV(t, "2021-07-23T17:21:11.489+02:00"),
 				IsStarred:  false,
-				Entries: []*internal.Entry{
+				Entries: []*entity.Entry{
 					{Title: "Entry C3", IsRead: false},
 				},
 			},
 		),
 	}
 
-	ch := make(chan internal.PullResult)
+	ch := make(chan entity.PullResult)
 	go func() {
 		defer close(ch)
 
 		// Randomize ordering, to simulate actual URL pulls.
-		shufres := make([]internal.PullResult, len(prs))
+		shufres := make([]entity.PullResult, len(prs))
 		copy(shufres, prs)
 		r := rand.New(rand.NewSource(time.Now().UnixNano())) // #nosec: G404
 		shf := func(i, j int) { shufres[i], shufres[j] = shufres[j], shufres[i] }
@@ -353,7 +354,7 @@ func TestPullFeedsSelectedAllOk(t *testing.T) {
 	}()
 
 	ds.EXPECT().
-		PullFeeds(gomock.Any(), []internal.ID{2, 3}).
+		PullFeeds(gomock.Any(), []entity.ID{2, 3}).
 		Return(ch)
 
 	req := api.PullFeedsRequest{FeedIds: []uint32{2, 3}}
@@ -394,44 +395,44 @@ func TestPullFeedsErrSomeFeed(t *testing.T) {
 	r := require.New(t)
 	client, ds := setupServerTest(t)
 
-	prs := []internal.PullResult{
-		internal.NewPullResultFromFeed(
+	prs := []entity.PullResult{
+		entity.NewPullResultFromFeed(
 			pointer("https://a.com/feed.xml"),
-			&internal.Feed{
+			&entity.Feed{
 				Title:      "feed-A",
 				FeedURL:    "https://a.com/feed.xml",
 				Subscribed: mustTimeVV(t, "2021-07-23T17:20:29.499+02:00"),
 				LastPulled: mustTimeVV(t, "2021-07-23T17:20:29.499+02:00"),
 				IsStarred:  true,
-				Entries: []*internal.Entry{
+				Entries: []*entity.Entry{
 					{Title: "Entry A1", IsRead: false},
 					{Title: "Entry A2", IsRead: false},
 				},
 			},
 		),
-		internal.NewPullResultFromError(pointer("https://x.com/feed.xml"), fmt.Errorf("timed out")),
-		internal.NewPullResultFromFeed(pointer("https://z.com/feed.xml"), nil),
-		internal.NewPullResultFromFeed(
+		entity.NewPullResultFromError(pointer("https://x.com/feed.xml"), fmt.Errorf("timed out")),
+		entity.NewPullResultFromFeed(pointer("https://z.com/feed.xml"), nil),
+		entity.NewPullResultFromFeed(
 			pointer("https://c.com/feed.xml"),
-			&internal.Feed{
+			&entity.Feed{
 				Title:      "feed-C",
 				FeedURL:    "https://c.com/feed.xml",
 				Subscribed: mustTimeVV(t, "2021-07-23T17:21:11.489+02:00"),
 				LastPulled: mustTimeVV(t, "2021-07-23T17:21:11.489+02:00"),
 				IsStarred:  false,
-				Entries: []*internal.Entry{
+				Entries: []*entity.Entry{
 					{Title: "Entry C3", IsRead: false},
 				},
 			},
 		),
 	}
 
-	ch := make(chan internal.PullResult)
+	ch := make(chan entity.PullResult)
 	go func() {
 		defer close(ch)
 
 		// Randomize ordering, to simulate actual URL pulls.
-		shufres := make([]internal.PullResult, len(prs))
+		shufres := make([]entity.PullResult, len(prs))
 		copy(shufres, prs)
 		r := rand.New(rand.NewSource(time.Now().UnixNano())) // #nosec: G404
 		shf := func(i, j int) { shufres[i], shufres[j] = shufres[j], shufres[i] }
@@ -443,7 +444,7 @@ func TestPullFeedsErrSomeFeed(t *testing.T) {
 	}()
 
 	ds.EXPECT().
-		PullFeeds(gomock.Any(), []internal.ID{}).
+		PullFeeds(gomock.Any(), []entity.ID{}).
 		Return(ch)
 
 	req := api.PullFeedsRequest{}
@@ -492,44 +493,44 @@ func TestPullFeedsErrNonFeed(t *testing.T) {
 	r := require.New(t)
 	client, ds := setupServerTest(t)
 
-	prs := []internal.PullResult{
-		internal.NewPullResultFromFeed(
+	prs := []entity.PullResult{
+		entity.NewPullResultFromFeed(
 			pointer("https://a.com/feed.xml"),
-			&internal.Feed{
+			&entity.Feed{
 				Title:      "feed-A",
 				FeedURL:    "https://a.com/feed.xml",
 				Subscribed: mustTimeVV(t, "2021-07-23T17:20:29.499+02:00"),
 				LastPulled: mustTimeVV(t, "2021-07-23T17:20:29.499+02:00"),
 				IsStarred:  true,
-				Entries: []*internal.Entry{
+				Entries: []*entity.Entry{
 					{Title: "Entry A1", IsRead: false},
 					{Title: "Entry A2", IsRead: false},
 				},
 			},
 		),
-		internal.NewPullResultFromFeed(pointer("https://z.com/feed.xml"), nil),
-		internal.NewPullResultFromFeed(
+		entity.NewPullResultFromFeed(pointer("https://z.com/feed.xml"), nil),
+		entity.NewPullResultFromFeed(
 			pointer("https://c.com/feed.xml"),
-			&internal.Feed{
+			&entity.Feed{
 				Title:      "feed-C",
 				FeedURL:    "https://c.com/feed.xml",
 				Subscribed: mustTimeVV(t, "2021-07-23T17:21:11.489+02:00"),
 				LastPulled: mustTimeVV(t, "2021-07-23T17:21:11.489+02:00"),
 				IsStarred:  false,
-				Entries: []*internal.Entry{
+				Entries: []*entity.Entry{
 					{Title: "Entry C3", IsRead: false},
 				},
 			},
 		),
-		internal.NewPullResultFromError(nil, fmt.Errorf("tx error")),
+		entity.NewPullResultFromError(nil, fmt.Errorf("tx error")),
 	}
 
-	ch := make(chan internal.PullResult)
+	ch := make(chan entity.PullResult)
 	go func() {
 		defer close(ch)
 
 		// Randomize ordering, to simulate actual URL pulls.
-		shufres := make([]internal.PullResult, len(prs))
+		shufres := make([]entity.PullResult, len(prs))
 		copy(shufres, prs)
 		r := rand.New(rand.NewSource(time.Now().UnixNano())) // #nosec: G404
 		shf := func(i, j int) { shufres[i], shufres[j] = shufres[j], shufres[i] }
@@ -541,7 +542,7 @@ func TestPullFeedsErrNonFeed(t *testing.T) {
 	}()
 
 	ds.EXPECT().
-		PullFeeds(gomock.Any(), []internal.ID{}).
+		PullFeeds(gomock.Any(), []entity.ID{}).
 		Return(ch)
 
 	req := api.PullFeedsRequest{}
@@ -577,8 +578,8 @@ func TestListEntriesOk(t *testing.T) {
 	a := assert.New(t)
 	client, ds := setupServerTest(t)
 
-	req := api.ListEntriesRequest{FeedIds: []internal.ID{2}, IsBookmarked: pointer(true)}
-	entries := []*internal.Entry{
+	req := api.ListEntriesRequest{FeedIds: []entity.ID{2}, IsBookmarked: pointer(true)}
+	entries := []*entity.Entry{
 		{
 			Title:        "Entry 1",
 			IsRead:       false,
@@ -617,11 +618,11 @@ func TestEditEntriesOk(t *testing.T) {
 	a := assert.New(t)
 	client, ds := setupServerTest(t)
 
-	ops := []*internal.EntryEditOp{
+	ops := []*entity.EntryEditOp{
 		{ID: 37, IsRead: pointer(true), IsBookmarked: pointer(true)},
 		{ID: 49, IsRead: pointer(false)},
 	}
-	entries := []*internal.Entry{
+	entries := []*entity.Entry{
 		{ID: 37, IsRead: true, IsBookmarked: true},
 		{ID: 49, IsRead: false},
 	}
@@ -669,7 +670,7 @@ func TestGetEntryOk(t *testing.T) {
 
 	client, ds := setupServerTest(t)
 
-	entry := internal.Entry{
+	entry := entity.Entry{
 		ID:        2,
 		FeedID:    3,
 		Title:     "Test Feed Entry",
@@ -682,7 +683,7 @@ func TestGetEntryOk(t *testing.T) {
 	}
 
 	ds.EXPECT().
-		GetEntry(gomock.Any(), internal.ID(2)).
+		GetEntry(gomock.Any(), entity.ID(2)).
 		Return(&entry, nil)
 
 	req := api.GetEntryRequest{Id: 2}
@@ -714,9 +715,9 @@ func TestExportOPMLOk(t *testing.T) {
 	ds.EXPECT().
 		ExportSubscription(gomock.Any(), nil).
 		Return(
-			&internal.Subscription{
+			&entity.Subscription{
 				Title: pointer("neon export"),
-				Feeds: []*internal.Feed{
+				Feeds: []*entity.Feed{
 					{
 						Title:     "Feed Q",
 						FeedURL:   "http://q.com/feed.xml",
@@ -777,8 +778,8 @@ func TestImportOPMLOk(t *testing.T) {
   </body>
 </opml>`)
 
-	sub := internal.Subscription{
-		Feeds: []*internal.Feed{
+	sub := entity.Subscription{
+		Feeds: []*entity.Feed{
 			{
 				Title:     "Feed Q",
 				FeedURL:   "http://q.com/feed.xml",
@@ -815,7 +816,7 @@ func TestGetStatsOk(t *testing.T) {
 	a := assert.New(t)
 	client, ds := setupServerTest(t)
 
-	stats := internal.Stats{
+	stats := entity.Stats{
 		NumFeeds:             45,
 		NumEntries:           5311,
 		NumEntriesUnread:     8,

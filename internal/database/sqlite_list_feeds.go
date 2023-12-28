@@ -7,10 +7,10 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/bow/neon/internal"
+	"github.com/bow/neon/internal/entity"
 )
 
-func (db *SQLite) ListFeeds(ctx context.Context) ([]*internal.Feed, error) {
+func (db *SQLite) ListFeeds(ctx context.Context) ([]*entity.Feed, error) {
 
 	recs := make([]*feedRecord, 0)
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {

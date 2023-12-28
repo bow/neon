@@ -8,10 +8,10 @@ import (
 	"database/sql"
 	"errors"
 
-	"github.com/bow/neon/internal"
+	"github.com/bow/neon/internal/entity"
 )
 
-func (db *SQLite) GetGlobalStats(ctx context.Context) (*internal.Stats, error) {
+func (db *SQLite) GetGlobalStats(ctx context.Context) (*entity.Stats, error) {
 
 	aggr := &statsAggregateRecord{}
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {

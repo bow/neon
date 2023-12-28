@@ -1,16 +1,17 @@
 // Copyright (c) 2023 Wibowo Arindrarto <contact@arindrarto.dev>
 // SPDX-License-Identifier: BSD-3-Clause
 
-package internal
+package entity
 
 import (
 	"fmt"
 	"strconv"
 	"time"
 
+	"google.golang.org/protobuf/types/known/timestamppb"
+
 	"github.com/bow/neon/api"
 	"github.com/bow/neon/internal/opml"
-	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type ID = uint32

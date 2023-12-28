@@ -13,7 +13,7 @@ import (
 
 	"github.com/mmcdole/gofeed"
 
-	"github.com/bow/neon/internal"
+	"github.com/bow/neon/internal/entity"
 )
 
 type feedRecord struct {
@@ -30,8 +30,8 @@ type feedRecord struct {
 	entries     []*entryRecord
 }
 
-func (rec *feedRecord) feed() *internal.Feed {
-	return &internal.Feed{
+func (rec *feedRecord) feed() *entity.Feed {
+	return &entity.Feed{
 		ID:          rec.id,
 		Title:       rec.title,
 		Description: fromNullString(rec.description),
@@ -48,9 +48,9 @@ func (rec *feedRecord) feed() *internal.Feed {
 
 type feedRecords []*feedRecord
 
-func (recs feedRecords) feeds() []*internal.Feed {
+func (recs feedRecords) feeds() []*entity.Feed {
 
-	feeds := make([]*internal.Feed, len(recs))
+	feeds := make([]*entity.Feed, len(recs))
 	for i, rec := range recs {
 		feeds[i] = rec.feed()
 	}
@@ -72,8 +72,8 @@ type entryRecord struct {
 	url          sql.NullString
 }
 
-func (rec *entryRecord) entry() *internal.Entry {
-	return &internal.Entry{
+func (rec *entryRecord) entry() *entity.Entry {
+	return &entity.Entry{
 		ID:           rec.id,
 		FeedID:       rec.feedID,
 		Title:        rec.title,
@@ -90,9 +90,9 @@ func (rec *entryRecord) entry() *internal.Entry {
 
 type entryRecords []*entryRecord
 
-func (recs entryRecords) entries() []*internal.Entry {
+func (recs entryRecords) entries() []*entity.Entry {
 
-	entries := make([]*internal.Entry, len(recs))
+	entries := make([]*entity.Entry, len(recs))
 	for i, rec := range recs {
 		entries[i] = rec.entry()
 	}
@@ -108,14 +108,14 @@ type statsAggregateRecord struct {
 	mostRecentUpdateTime sql.NullTime
 }
 
-func (aggr *statsAggregateRecord) stats() *internal.Stats {
+func (aggr *statsAggregateRecord) stats() *entity.Stats {
 
 	var mrut *time.Time
 	if aggr.mostRecentUpdateTime.Valid {
 		mrut = &aggr.mostRecentUpdateTime.Time
 	}
 
-	stats := internal.Stats{
+	stats := entity.Stats{
 		NumFeeds:             aggr.numFeeds,
 		NumEntries:           aggr.numEntries,
 		NumEntriesUnread:     aggr.numEntriesUnread,

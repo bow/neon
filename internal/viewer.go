@@ -5,6 +5,8 @@ package internal
 
 import (
 	"github.com/gdamore/tcell/v2"
+
+	"github.com/bow/neon/internal/entity"
 )
 
 // Viewer describes the console reader.
@@ -23,7 +25,7 @@ type Viewer interface {
 	SetFeedsPaneKeyHandler(handler func(*tcell.EventKey) *tcell.EventKey)
 	SetGlobalKeyHandler(handler func(*tcell.EventKey) *tcell.EventKey)
 	ShowAboutPopup()
-	ShowFeedsInPane(<-chan *Feed)
+	ShowFeedsInPane(<-chan *entity.Feed)
 	ShowHelpPopup()
 	ShowIntroPopup()
 	ShowStatsPopup()

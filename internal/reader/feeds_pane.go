@@ -10,7 +10,7 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 
-	"github.com/bow/neon/internal"
+	"github.com/bow/neon/internal/entity"
 )
 
 type feedsPane struct {
@@ -22,10 +22,10 @@ type feedsPane struct {
 	groupNodes map[feedUpdatedGroup]*tview.TreeNode
 	feedNodes  map[string]*tview.TreeNode
 
-	feeds <-chan *internal.Feed
+	feeds <-chan *entity.Feed
 }
 
-func newFeedsPane(theme *Theme, feeds <-chan *internal.Feed) *feedsPane {
+func newFeedsPane(theme *Theme, feeds <-chan *entity.Feed) *feedsPane {
 
 	fp := feedsPane{
 		theme:      theme,
@@ -54,7 +54,7 @@ func (fp *feedsPane) listenForUpdates() {
 		fnode, exists := fp.feedNodes[feed.FeedURL]
 		newGroup := whenUpdated(feed)
 		if exists {
-			oldGroup := whenUpdated(fnode.GetReference().(*internal.Feed))
+			oldGroup := whenUpdated(fnode.GetReference().(*entity.Feed))
 			if oldGroup != newGroup {
 				fp.groupNodes[oldGroup].RemoveChild(fnode)
 			}
@@ -184,7 +184,7 @@ func (ug feedUpdatedGroup) Text(theme *Theme) string {
 	}
 }
 
-func feedNode(feed *internal.Feed, theme *Theme) *tview.TreeNode {
+func feedNode(feed *entity.Feed, theme *Theme) *tview.TreeNode {
 	return tview.NewTreeNode(feed.Title).
 		SetReference(feed.FeedURL).
 		SetColor(theme.FeedNode).
@@ -198,7 +198,7 @@ func groupNode(ug feedUpdatedGroup, theme *Theme) *tview.TreeNode {
 		SetSelectable(true)
 }
 
-func whenUpdated(feed *internal.Feed) feedUpdatedGroup {
+func whenUpdated(feed *entity.Feed) feedUpdatedGroup {
 	if feed.Updated == nil {
 		return updatedUnknown
 	}

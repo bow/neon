@@ -7,18 +7,18 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/bow/neon/internal"
+	"github.com/bow/neon/internal/entity"
 )
 
 // EditFeed updates fields of an feed.
 func (db *SQLite) EditFeeds(
 	ctx context.Context,
-	ops []*internal.FeedEditOp,
-) ([]*internal.Feed, error) {
+	ops []*entity.FeedEditOp,
+) ([]*entity.Feed, error) {
 
 	updateFunc := func(
 		ctx context.Context,
-		tx *sql.Tx, op *internal.FeedEditOp,
+		tx *sql.Tx, op *entity.FeedEditOp,
 	) (*feedRecord, error) {
 		if err := setFeedTitle(ctx, tx, op.ID, op.Title); err != nil {
 			return nil, err

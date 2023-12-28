@@ -16,7 +16,7 @@ func TestExportSubscriptionOkEmpty(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	db := newTestDB(t)
+	db := newTestSQLiteDB(t)
 
 	r.Equal(0, db.countFeeds())
 
@@ -33,7 +33,7 @@ func TestExportSubscriptionOkExtended(t *testing.T) {
 
 	a := assert.New(t)
 	r := require.New(t)
-	db := newTestDB(t)
+	db := newTestSQLiteDB(t)
 
 	dbFeeds := []*feedRecord{
 		{
