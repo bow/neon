@@ -148,7 +148,7 @@ internal/datastore/parser_mock_test.go: internal/datastore/parser.go
 internal/server/datastore_mock_test.go: internal/datastore/datastore.go
 	mockgen -source=$< -package=server Datastore > $@
 
-internal/reader/viewer_mock_test.go: internal/reader/view/view.go
+internal/reader/viewer_mock_test.go: internal/reader/ui/view.go
 	mockgen -source=$< -package=reader Viewer > $@
 
 internal/reader/model_mock_test.go: internal/reader/model/model.go

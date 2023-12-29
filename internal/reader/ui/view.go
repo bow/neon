@@ -1,7 +1,7 @@
 // Copyright (c) 2022 Wibowo Arindrarto <contact@arindrarto.dev>
 // SPDX-License-Identifier: BSD-3-Clause
 
-package view
+package ui
 
 import (
 	"github.com/gdamore/tcell/v2"
@@ -50,7 +50,7 @@ type View struct {
 }
 
 //nolint:revive
-func New(theme string) (*View, error) {
+func NewView(theme string) (*View, error) {
 	th, err := LoadTheme(theme)
 	if err != nil {
 		return nil, err

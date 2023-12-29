@@ -10,7 +10,7 @@ import (
 	"google.golang.org/grpc"
 
 	m "github.com/bow/neon/internal/reader/model"
-	v "github.com/bow/neon/internal/reader/view"
+	"github.com/bow/neon/internal/reader/ui"
 )
 
 //nolint:unused
@@ -18,7 +18,7 @@ type Reader struct {
 	ctx      context.Context
 	initPath string
 
-	view  v.Viewer
+	view  ui.Viewer
 	model m.Model
 }
 
@@ -37,7 +37,7 @@ type Builder struct {
 
 	// For testing.
 	mod m.Model
-	vwr v.Viewer
+	vwr ui.Viewer
 }
 
 func NewBuilder() *Builder {
@@ -79,8 +79,8 @@ func (b *Builder) model(mod m.Model) *Builder {
 	return b
 }
 
-func (b *Builder) viewer(vwr v.Viewer) *Builder {
-	b.vwr = vwr
+func (b *Builder) viewer(v ui.Viewer) *Builder {
+	b.vwr = v
 	return b
 }
 
@@ -103,11 +103,11 @@ func (b *Builder) Build() (*Reader, error) {
 		}
 	}
 
-	var viewer v.Viewer
+	var viewer ui.Viewer
 	if b.vwr != nil {
 		viewer = b.vwr
 	} else {
-		viewer, err = v.New(b.themeName)
+		viewer, err = ui.NewView(b.themeName)
 		if err != nil {
 			return nil, err
 		}
