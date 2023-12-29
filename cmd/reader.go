@@ -16,7 +16,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
-	"github.com/bow/neon/internal/reader"
+	"github.com/bow/neon/internal/oreader"
 	"github.com/bow/neon/internal/server"
 )
 
@@ -78,7 +78,7 @@ func newReaderCommand() *cobra.Command {
 				connectAddr = server.Addr()
 			}
 
-			rdr, err := reader.NewBuilder().
+			rdr, err := oreader.NewBuilder().
 				Context(ctx).
 				Address(connectAddr.String()).
 				DialOpts(dialOpts...).
