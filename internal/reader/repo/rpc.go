@@ -1,7 +1,7 @@
 // Copyright (c) 2023 Wibowo Arindrarto <contact@arindrarto.dev>
 // SPDX-License-Identifier: BSD-3-Clause
 
-package model
+package repo
 
 import (
 	"context"
@@ -14,17 +14,17 @@ import (
 )
 
 //nolint:unused
-type rpcModel struct {
+type rpcRepo struct {
 	addr   string
 	client api.NeonClient
 
 	statsCache *entity.Stats
 }
 
-// Ensure rpcModel implements Model.
-var _ Model = new(rpcModel)
+// Ensure rpcRepo implements Repo.
+var _ Repo = new(rpcRepo)
 
-func NewRPCModel(ctx context.Context, addr string, dialOpts ...grpc.DialOption) (*rpcModel, error) {
+func NewRPCRepo(ctx context.Context, addr string, dialOpts ...grpc.DialOption) (*rpcRepo, error) {
 	conn, err := grpc.DialContext(ctx, addr, dialOpts...)
 	if err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {
@@ -32,24 +32,24 @@ func NewRPCModel(ctx context.Context, addr string, dialOpts ...grpc.DialOption) 
 		}
 		return nil, err
 	}
-	return newRPCModelWithClient(addr, api.NewNeonClient(conn)), nil
+	return newRPCRepoWithClient(addr, api.NewNeonClient(conn)), nil
 }
 
-func newRPCModelWithClient(addr string, client api.NeonClient) *rpcModel {
-	return &rpcModel{addr: addr, client: client}
+func newRPCRepoWithClient(addr string, client api.NeonClient) *rpcRepo {
+	return &rpcRepo{addr: addr, client: client}
 }
 
 //nolint:unused
-func (m *rpcModel) GetStats(ctx context.Context) (<-chan *entity.Stats, error) {
+func (m *rpcRepo) GetStats(ctx context.Context) (<-chan *entity.Stats, error) {
 	panic("GetStats is unimplemented")
 }
 
 //nolint:unused
-func (m *rpcModel) ListFeeds(ctx context.Context) (<-chan *entity.Feed, error) {
+func (m *rpcRepo) ListFeeds(ctx context.Context) (<-chan *entity.Feed, error) {
 	panic("ListFeeds is unimplemented")
 }
 
 //nolint:unused
-func (m *rpcModel) PullFeeds(ctx context.Context) (<-chan *entity.Feed, error) {
+func (m *rpcRepo) PullFeeds(ctx context.Context) (<-chan *entity.Feed, error) {
 	panic("PullFeeds is unimplemented")
 }

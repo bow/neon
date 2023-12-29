@@ -9,7 +9,7 @@ import (
 
 	"google.golang.org/grpc"
 
-	m "github.com/bow/neon/internal/reader/model"
+	rp "github.com/bow/neon/internal/reader/repo"
 	"github.com/bow/neon/internal/reader/ui"
 )
 
@@ -18,8 +18,8 @@ type Reader struct {
 	ctx      context.Context
 	initPath string
 
-	view  ui.Viewer
-	model m.Model
+	view ui.Viewer
+	repo rp.Repo
 }
 
 func (r *Reader) Show() error {
@@ -31,12 +31,12 @@ type Builder struct {
 	initPath  string
 	themeName string
 
-	// rpcModel args.
+	// rpcRepo args.
 	addr  string
 	dopts []grpc.DialOption
 
 	// For testing.
-	mod m.Model
+	rpo rp.Repo
 	vwr ui.Viewer
 }
 
@@ -74,8 +74,8 @@ func (b *Builder) Theme(name string) *Builder {
 	return b
 }
 
-func (b *Builder) model(mod m.Model) *Builder {
-	b.mod = mod
+func (b *Builder) repo(rpo rp.Repo) *Builder {
+	b.rpo = rpo
 	return b
 }
 
@@ -86,18 +86,18 @@ func (b *Builder) viewer(v ui.Viewer) *Builder {
 
 func (b *Builder) Build() (*Reader, error) {
 
-	if b.addr == "" && b.mod == nil {
+	if b.addr == "" && b.rpo == nil {
 		return nil, fmt.Errorf("reader server address must be specified")
 	}
 
 	var (
-		mod m.Model
+		rpo rp.Repo
 		err error
 	)
-	if b.mod != nil {
-		mod = b.mod
+	if b.rpo != nil {
+		rpo = b.rpo
 	} else {
-		mod, err = m.NewRPCModel(b.ctx, b.addr, b.dopts...)
+		rpo, err = rp.NewRPCRepo(b.ctx, b.addr, b.dopts...)
 		if err != nil {
 			return nil, err
 		}
@@ -114,9 +114,9 @@ func (b *Builder) Build() (*Reader, error) {
 	}
 
 	rdr := Reader{
-		ctx:   b.ctx,
-		view:  viewer,
-		model: mod,
+		ctx:  b.ctx,
+		view: viewer,
+		repo: rpo,
 	}
 	rdr.setKeyHandlers()
 

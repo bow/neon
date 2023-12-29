@@ -39,7 +39,7 @@ func setupReaderTest(
 
 	r := require.New(t)
 
-	model := NewMockModel(gomock.NewController(t))
+	repo := NewMockRepo(gomock.NewController(t))
 
 	screen = tcell.NewSimulationScreen("UTF-8")
 	r.NoError(screen.Init())
@@ -58,7 +58,7 @@ func setupReaderTest(
 	var wg sync.WaitGroup
 	drawf = func() *Reader {
 		rdr, err := NewBuilder().
-			model(model).
+			repo(repo).
 			viewer(viewer).
 			Build()
 		r.NoError(err)
