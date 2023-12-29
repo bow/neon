@@ -7,7 +7,6 @@ require (
 	github.com/briandowns/spinner v1.23.0
 	github.com/gdamore/tcell/v2 v2.7.0
 	github.com/golang-migrate/migrate/v4 v4.17.0
-	github.com/golang/mock v1.6.0
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.0.1
 	github.com/mmcdole/gofeed v1.2.1
 	github.com/rivo/tview v0.0.0-20231206124440-5f078138442e
@@ -15,6 +14,7 @@ require (
 	github.com/spf13/cobra v1.8.0
 	github.com/spf13/viper v1.18.2
 	github.com/stretchr/testify v1.8.4
+	go.uber.org/mock v0.4.0
 	golang.org/x/net v0.19.0
 	golang.org/x/text v0.14.0
 	google.golang.org/grpc v1.60.1

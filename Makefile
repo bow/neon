@@ -99,7 +99,7 @@ dev:  ## Install dependencies for local development.
 		&& go install golang.org/x/tools/cmd/goimports@latest \
 		&& go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@$(PROTOC_GEN_GO_GRPC_VERSION) \
 		&& go install google.golang.org/protobuf/cmd/protoc-gen-go@$(GO_PROTOBUF_VERSION) \
-		&& go install github.com/golang/mock/mockgen@v1.6.0 \
+		&& go install go.uber.org/mock/mockgen@v0.4.0 \
 		&& go install github.com/securego/gosec/v2/cmd/gosec@latest \
 		&& go install github.com/sonatype-nexus-community/nancy@latest \
 		&& go install github.com/boumenot/gocover-cobertura@latest \

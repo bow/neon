@@ -9,7 +9,7 @@ import (
 	reflect "reflect"
 
 	api "github.com/bow/neon/api"
-	gomock "github.com/golang/mock/gomock"
+	gomock "go.uber.org/mock/gomock"
 	grpc "google.golang.org/grpc"
 	metadata "google.golang.org/grpc/metadata"
 )

@@ -13,9 +13,9 @@ import (
 	"testing"
 	"time"
 
-	gomock "github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	gomock "go.uber.org/mock/gomock"
 	"google.golang.org/protobuf/proto"
 
 	"github.com/bow/neon/api"
