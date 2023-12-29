@@ -4,9 +4,18 @@
 package view
 
 import (
+	"fmt"
+
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
+
+func LoadTheme(name string) (*Theme, error) {
+	if name == "dark" {
+		return DarkTheme, nil
+	}
+	return nil, fmt.Errorf("theme %q does not exist", name)
+}
 
 type Theme struct {
 	FeedsPaneTitle    string
