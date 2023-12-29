@@ -1,14 +1,14 @@
 // Copyright (c) 2023 Wibowo Arindrarto <contact@arindrarto.dev>
 // SPDX-License-Identifier: BSD-3-Clause
 
-package nreader
+package reader
 
 import (
 	"context"
 	"fmt"
 
-	"github.com/bow/neon/internal/nreader/model"
-	"github.com/bow/neon/internal/nreader/view"
+	"github.com/bow/neon/internal/reader/model"
+	"github.com/bow/neon/internal/reader/view"
 )
 
 //nolint:unused
