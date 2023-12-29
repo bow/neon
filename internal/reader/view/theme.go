@@ -18,14 +18,6 @@ func LoadTheme(name string) (*Theme, error) {
 }
 
 type Theme struct {
-	FeedsPaneTitle    string
-	EntriesPaneTitle  string
-	ReadingPaneTitle  string
-	HelpPopupTitle    string
-	StatsPopupTitle   string
-	AboutPopupTitle   string
-	WelcomePopupTitle string
-
 	Background tcell.Color
 
 	BorderForeground       tcell.Color
@@ -88,14 +80,6 @@ func (theme *Theme) lineStyle() tcell.Style {
 const darkForegroundDim = tcell.ColorDimGray
 
 var DarkTheme = &Theme{
-	FeedsPaneTitle:    "Feeds",
-	EntriesPaneTitle:  "Entries",
-	ReadingPaneTitle:  "",
-	HelpPopupTitle:    "Keys",
-	StatsPopupTitle:   "Stats",
-	AboutPopupTitle:   "About",
-	WelcomePopupTitle: "Welcome",
-
 	Background: tcell.ColorBlack,
 
 	BorderForeground:       tcell.ColorWhite,

@@ -40,6 +40,7 @@ type Viewer interface {
 type View struct {
 	screen tcell.Screen
 	theme  *Theme
+	lang   *Lang
 
 	app  *tview.Application
 	root *tview.Pages
