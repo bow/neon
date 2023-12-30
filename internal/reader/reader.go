@@ -138,10 +138,34 @@ func (b *Builder) Build() (*Reader, error) {
 		view:    viewer,
 		repo:    rpo,
 	}
-	rdr.setKeyHandlers()
+	rdr.display.Init(rdr.globalKeyHandler())
 
 	return &rdr, nil
 }
 
-func (r *Reader) setKeyHandlers() {
+func (r *Reader) globalKeyHandler() ui.KeyHandler {
+
+	return func(event *tcell.EventKey) *tcell.EventKey {
+		var (
+			key  = event.Key()
+			keyr = event.Rune()
+		)
+
+		// nolint:gocritic,revive,exhaustive
+		switch key {
+
+		case tcell.KeyRune:
+			switch keyr {
+			case 'h', '?':
+				r.view.ToggleHelpPopup(r.display)
+				return nil
+
+			case 'q':
+				r.display.Stop()
+				return nil
+			}
+		}
+
+		return event
+	}
 }

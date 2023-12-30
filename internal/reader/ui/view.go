@@ -32,15 +32,16 @@ type Viewer interface {
 	UnfocusPane(*Display)
 }
 
+type KeyHandler = func(*tcell.EventKey) *tcell.EventKey
+
 //nolint:unused
 type View struct {
-	lang       *Lang
 	focusStack tview.Primitive
 }
 
 //nolint:revive
 func NewView() *View {
-	view := View{lang: langEN}
+	view := View{}
 	return &view
 }
 
@@ -109,9 +110,12 @@ func (v *View) ToggleFeedsInPane(dsp *Display, ch <-chan *entity.Feed) {
 	panic("ToggleFeedsInPane is unimplemented")
 }
 
-//nolint:revive
 func (v *View) ToggleHelpPopup(dsp *Display) {
-	panic("ToggleHelpPopup is unimplemented")
+	if name := v.frontPageName(dsp); name == helpPageName {
+		v.hidePopup(dsp, name)
+	} else {
+		v.showPopup(dsp, helpPageName, name)
+	}
 }
 
 //nolint:revive
@@ -133,6 +137,32 @@ func (v *View) ToggleStatusBar(dsp *Display) {
 func (v *View) UnfocusPane(dsp *Display) {
 	panic("UnfocusPane is unimplemented")
 }
+
+func (v *View) frontPageName(dsp *Display) string {
+	name, _ := dsp.root.GetFrontPage()
+	return name
+}
+
+func (v *View) showPopup(dsp *Display, name string, currentFront string) {
+	if currentFront == mainPageName {
+		v.stashFocus(dsp)
+	} else {
+		dsp.root.HidePage(currentFront)
+	}
+	dsp.dimMainPage()
+	dsp.root.ShowPage(name)
+}
+
+func (v *View) hidePopup(dsp *Display, name string) {
+	dsp.root.HidePage(name)
+	dsp.normalizeMainPage()
+	if top := v.focusStack; top != nil {
+		dsp.inner.SetFocus(top)
+	}
+	v.focusStack = nil
+}
+
+func (v *View) stashFocus(dsp *Display) { v.focusStack = dsp.inner.GetFocus() }
 
 // Ensure View implements Viewer.
 var _ Viewer = new(View)
