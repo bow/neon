@@ -12,107 +12,95 @@ import (
 
 // Viewer describes the console reader.
 type Viewer interface {
-	ClearStatusBar()
-	CurrentFocus() tview.Primitive
-	EntriesPane() tview.Primitive
-	FeedsPane() tview.Primitive
-	FocusFeedsPane()
-	FocusEntriesPane()
-	FocusNextPane()
-	FocusPreviousPane()
-	FocusReadingPane()
-	HideIntroPopup()
-	MainPage() tview.Primitive
+	ClearStatusBar(*Display)
+	CurrentFocus(*Display) tview.Primitive
+	EntriesPane(*Display) tview.Primitive
+	FeedsPane(*Display) tview.Primitive
+	FocusFeedsPane(*Display)
+	FocusEntriesPane(*Display)
+	FocusNextPane(*Display)
+	FocusPreviousPane(*Display)
+	FocusReadingPane(*Display)
+	HideIntroPopup(*Display)
+	MainPage(*Display) tview.Primitive
 	NotifyInfof(text string, a ...any)
 	NotifyErr(err error)
 	NotifyErrf(text string, a ...any)
 	NotifyWarnf(text string, a ...any)
-	ReadingPane() tview.Primitive
-	Show() error
-	ShowAboutPopup()
-	ShowFeedsInPane(<-chan *entity.Feed)
-	ShowHelpPopup()
-	ShowIntroPopup()
-	ShowStatsPopup(<-chan *entity.Stats)
-	ToggleStatusBar()
-	UnfocusPane()
+	ReadingPane(*Display) tview.Primitive
+	ShowAboutPopup(*Display)
+	ShowFeedsInPane(*Display, <-chan *entity.Feed)
+	ShowHelpPopup(*Display)
+	ShowIntroPopup(*Display)
+	ShowStatsPopup(*Display, <-chan *entity.Stats)
+	ToggleStatusBar(*Display)
+	UnfocusPane(*Display)
 }
 
 //nolint:unused
 type View struct {
-	theme *Theme
-	lang  *Lang
-	app   *tview.Application
-
-	root *tview.Pages
-
+	lang       *Lang
 	focusStack tview.Primitive
 }
 
 //nolint:revive
-func NewView(theme string) (*View, error) {
-	th, err := LoadTheme(theme)
-	if err != nil {
-		return nil, err
-	}
-
-	root := tview.NewPages()
-	app := tview.NewApplication().
-		EnableMouse(true).
-		SetRoot(root, true)
-
-	view := View{
-		app:   app,
-		theme: th,
-		lang:  langEN,
-
-		root: root,
-	}
-
-	return &view, nil
+func NewView() *View {
+	view := View{lang: langEN}
+	return &view
 }
 
-func (v *View) ClearStatusBar() {
+//nolint:revive
+func (v *View) ClearStatusBar(dsp *Display) {
 	panic("ClearStatusBar is unimplemented")
 }
 
-func (v *View) CurrentFocus() tview.Primitive {
-	return v.app.GetFocus()
+//nolint:revive
+func (v *View) CurrentFocus(dsp *Display) tview.Primitive {
+	return dsp.inner.GetFocus()
 }
 
-func (v *View) EntriesPane() tview.Primitive {
+//nolint:revive
+func (v *View) EntriesPane(dsp *Display) tview.Primitive {
 	panic("EntriesPane is unimplemented")
 }
 
-func (v *View) FeedsPane() tview.Primitive {
+//nolint:revive
+func (v *View) FeedsPane(dsp *Display) tview.Primitive {
 	panic("FeedsPane is unimplemented")
 }
 
-func (v *View) FocusFeedsPane() {
+//nolint:revive
+func (v *View) FocusFeedsPane(dsp *Display) {
 	panic("FocusFeedsPane is unimplemented")
 }
 
-func (v *View) FocusEntriesPane() {
+//nolint:revive
+func (v *View) FocusEntriesPane(dsp *Display) {
 	panic("FocusEntriesPane is unimplemented")
 }
 
-func (v *View) FocusNextPane() {
+//nolint:revive
+func (v *View) FocusNextPane(dsp *Display) {
 	panic("FocusNextPane is unimplemented")
 }
 
-func (v *View) FocusPreviousPane() {
+//nolint:revive
+func (v *View) FocusPreviousPane(dsp *Display) {
 	panic("FocusPreviousPane is unimplemented")
 }
 
-func (v *View) FocusReadingPane() {
+//nolint:revive
+func (v *View) FocusReadingPane(dsp *Display) {
 	panic("FocusReadingPane is unimplemented")
 }
 
-func (v *View) HideIntroPopup() {
+//nolint:revive
+func (v *View) HideIntroPopup(dsp *Display) {
 	panic("HideIntroPopup is unimplemented")
 }
 
-func (v *View) MainPage() tview.Primitive {
+//nolint:revive
+func (v *View) MainPage(dsp *Display) tview.Primitive {
 	panic("MainPage is unimplemented")
 }
 
@@ -136,41 +124,43 @@ func (v *View) NotifyWarnf(text string, a ...any) {
 	panic("NotifyWarnf is unimplemented")
 }
 
-func (v *View) ReadingPane() tview.Primitive {
+//nolint:revive
+func (v *View) ReadingPane(dsp *Display) tview.Primitive {
 	panic("FeedsPane is unimplemented")
 }
 
-func (v *View) Show() error {
-	return v.app.Run()
-}
-
-func (v *View) ShowAboutPopup() {
+//nolint:revive
+func (v *View) ShowAboutPopup(dsp *Display) {
 	panic("ShowAboutPopup is unimplemented")
 }
 
 //nolint:revive
-func (v *View) ShowFeedsInPane(ch <-chan *entity.Feed) {
+func (v *View) ShowFeedsInPane(dsp *Display, ch <-chan *entity.Feed) {
 	panic("ShowFeedsInPane is unimplemented")
 }
 
-func (v *View) ShowHelpPopup() {
+//nolint:revive
+func (v *View) ShowHelpPopup(dsp *Display) {
 	panic("ShowHelpPopup is unimplemented")
 }
 
-func (v *View) ShowIntroPopup() {
+//nolint:revive
+func (v *View) ShowIntroPopup(dsp *Display) {
 	panic("ShowIntroPopup is unimplemented")
 }
 
 //nolint:revive
-func (v *View) ShowStatsPopup(ch <-chan *entity.Stats) {
+func (v *View) ShowStatsPopup(dsp *Display, ch <-chan *entity.Stats) {
 	panic("ShowStatsPopup is unimplemented")
 }
 
-func (v *View) ToggleStatusBar() {
+//nolint:revive
+func (v *View) ToggleStatusBar(dsp *Display) {
 	panic("ToggleStatusBar is unimplemented")
 }
 
-func (v *View) UnfocusPane() {
+//nolint:revive
+func (v *View) UnfocusPane(dsp *Display) {
 	panic("UnfocusPane is unimplemented")
 }
 

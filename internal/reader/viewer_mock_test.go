@@ -13,6 +13,7 @@ import (
 	reflect "reflect"
 
 	entity "github.com/bow/neon/internal/entity"
+	ui "github.com/bow/neon/internal/reader/ui"
 	tview "github.com/rivo/tview"
 	gomock "go.uber.org/mock/gomock"
 )
@@ -41,143 +42,143 @@ func (m *MockViewer) EXPECT() *MockViewerMockRecorder {
 }
 
 // ClearStatusBar mocks base method.
-func (m *MockViewer) ClearStatusBar() {
+func (m *MockViewer) ClearStatusBar(arg0 *ui.Display) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "ClearStatusBar")
+	m.ctrl.Call(m, "ClearStatusBar", arg0)
 }
 
 // ClearStatusBar indicates an expected call of ClearStatusBar.
-func (mr *MockViewerMockRecorder) ClearStatusBar() *gomock.Call {
+func (mr *MockViewerMockRecorder) ClearStatusBar(arg0 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ClearStatusBar", reflect.TypeOf((*MockViewer)(nil).ClearStatusBar))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ClearStatusBar", reflect.TypeOf((*MockViewer)(nil).ClearStatusBar), arg0)
 }
 
 // CurrentFocus mocks base method.
-func (m *MockViewer) CurrentFocus() tview.Primitive {
+func (m *MockViewer) CurrentFocus(arg0 *ui.Display) tview.Primitive {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CurrentFocus")
+	ret := m.ctrl.Call(m, "CurrentFocus", arg0)
 	ret0, _ := ret[0].(tview.Primitive)
 	return ret0
 }
 
 // CurrentFocus indicates an expected call of CurrentFocus.
-func (mr *MockViewerMockRecorder) CurrentFocus() *gomock.Call {
+func (mr *MockViewerMockRecorder) CurrentFocus(arg0 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CurrentFocus", reflect.TypeOf((*MockViewer)(nil).CurrentFocus))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CurrentFocus", reflect.TypeOf((*MockViewer)(nil).CurrentFocus), arg0)
 }
 
 // EntriesPane mocks base method.
-func (m *MockViewer) EntriesPane() tview.Primitive {
+func (m *MockViewer) EntriesPane(arg0 *ui.Display) tview.Primitive {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "EntriesPane")
+	ret := m.ctrl.Call(m, "EntriesPane", arg0)
 	ret0, _ := ret[0].(tview.Primitive)
 	return ret0
 }
 
 // EntriesPane indicates an expected call of EntriesPane.
-func (mr *MockViewerMockRecorder) EntriesPane() *gomock.Call {
+func (mr *MockViewerMockRecorder) EntriesPane(arg0 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "EntriesPane", reflect.TypeOf((*MockViewer)(nil).EntriesPane))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "EntriesPane", reflect.TypeOf((*MockViewer)(nil).EntriesPane), arg0)
 }
 
 // FeedsPane mocks base method.
-func (m *MockViewer) FeedsPane() tview.Primitive {
+func (m *MockViewer) FeedsPane(arg0 *ui.Display) tview.Primitive {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FeedsPane")
+	ret := m.ctrl.Call(m, "FeedsPane", arg0)
 	ret0, _ := ret[0].(tview.Primitive)
 	return ret0
 }
 
 // FeedsPane indicates an expected call of FeedsPane.
-func (mr *MockViewerMockRecorder) FeedsPane() *gomock.Call {
+func (mr *MockViewerMockRecorder) FeedsPane(arg0 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FeedsPane", reflect.TypeOf((*MockViewer)(nil).FeedsPane))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FeedsPane", reflect.TypeOf((*MockViewer)(nil).FeedsPane), arg0)
 }
 
 // FocusEntriesPane mocks base method.
-func (m *MockViewer) FocusEntriesPane() {
+func (m *MockViewer) FocusEntriesPane(arg0 *ui.Display) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "FocusEntriesPane")
+	m.ctrl.Call(m, "FocusEntriesPane", arg0)
 }
 
 // FocusEntriesPane indicates an expected call of FocusEntriesPane.
-func (mr *MockViewerMockRecorder) FocusEntriesPane() *gomock.Call {
+func (mr *MockViewerMockRecorder) FocusEntriesPane(arg0 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FocusEntriesPane", reflect.TypeOf((*MockViewer)(nil).FocusEntriesPane))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FocusEntriesPane", reflect.TypeOf((*MockViewer)(nil).FocusEntriesPane), arg0)
 }
 
 // FocusFeedsPane mocks base method.
-func (m *MockViewer) FocusFeedsPane() {
+func (m *MockViewer) FocusFeedsPane(arg0 *ui.Display) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "FocusFeedsPane")
+	m.ctrl.Call(m, "FocusFeedsPane", arg0)
 }
 
 // FocusFeedsPane indicates an expected call of FocusFeedsPane.
-func (mr *MockViewerMockRecorder) FocusFeedsPane() *gomock.Call {
+func (mr *MockViewerMockRecorder) FocusFeedsPane(arg0 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FocusFeedsPane", reflect.TypeOf((*MockViewer)(nil).FocusFeedsPane))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FocusFeedsPane", reflect.TypeOf((*MockViewer)(nil).FocusFeedsPane), arg0)
 }
 
 // FocusNextPane mocks base method.
-func (m *MockViewer) FocusNextPane() {
+func (m *MockViewer) FocusNextPane(arg0 *ui.Display) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "FocusNextPane")
+	m.ctrl.Call(m, "FocusNextPane", arg0)
 }
 
 // FocusNextPane indicates an expected call of FocusNextPane.
-func (mr *MockViewerMockRecorder) FocusNextPane() *gomock.Call {
+func (mr *MockViewerMockRecorder) FocusNextPane(arg0 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FocusNextPane", reflect.TypeOf((*MockViewer)(nil).FocusNextPane))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FocusNextPane", reflect.TypeOf((*MockViewer)(nil).FocusNextPane), arg0)
 }
 
 // FocusPreviousPane mocks base method.
-func (m *MockViewer) FocusPreviousPane() {
+func (m *MockViewer) FocusPreviousPane(arg0 *ui.Display) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "FocusPreviousPane")
+	m.ctrl.Call(m, "FocusPreviousPane", arg0)
 }
 
 // FocusPreviousPane indicates an expected call of FocusPreviousPane.
-func (mr *MockViewerMockRecorder) FocusPreviousPane() *gomock.Call {
+func (mr *MockViewerMockRecorder) FocusPreviousPane(arg0 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FocusPreviousPane", reflect.TypeOf((*MockViewer)(nil).FocusPreviousPane))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FocusPreviousPane", reflect.TypeOf((*MockViewer)(nil).FocusPreviousPane), arg0)
 }
 
 // FocusReadingPane mocks base method.
-func (m *MockViewer) FocusReadingPane() {
+func (m *MockViewer) FocusReadingPane(arg0 *ui.Display) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "FocusReadingPane")
+	m.ctrl.Call(m, "FocusReadingPane", arg0)
 }
 
 // FocusReadingPane indicates an expected call of FocusReadingPane.
-func (mr *MockViewerMockRecorder) FocusReadingPane() *gomock.Call {
+func (mr *MockViewerMockRecorder) FocusReadingPane(arg0 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FocusReadingPane", reflect.TypeOf((*MockViewer)(nil).FocusReadingPane))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FocusReadingPane", reflect.TypeOf((*MockViewer)(nil).FocusReadingPane), arg0)
 }
 
 // HideIntroPopup mocks base method.
-func (m *MockViewer) HideIntroPopup() {
+func (m *MockViewer) HideIntroPopup(arg0 *ui.Display) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "HideIntroPopup")
+	m.ctrl.Call(m, "HideIntroPopup", arg0)
 }
 
 // HideIntroPopup indicates an expected call of HideIntroPopup.
-func (mr *MockViewerMockRecorder) HideIntroPopup() *gomock.Call {
+func (mr *MockViewerMockRecorder) HideIntroPopup(arg0 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HideIntroPopup", reflect.TypeOf((*MockViewer)(nil).HideIntroPopup))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HideIntroPopup", reflect.TypeOf((*MockViewer)(nil).HideIntroPopup), arg0)
 }
 
 // MainPage mocks base method.
-func (m *MockViewer) MainPage() tview.Primitive {
+func (m *MockViewer) MainPage(arg0 *ui.Display) tview.Primitive {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "MainPage")
+	ret := m.ctrl.Call(m, "MainPage", arg0)
 	ret0, _ := ret[0].(tview.Primitive)
 	return ret0
 }
 
 // MainPage indicates an expected call of MainPage.
-func (mr *MockViewerMockRecorder) MainPage() *gomock.Call {
+func (mr *MockViewerMockRecorder) MainPage(arg0 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MainPage", reflect.TypeOf((*MockViewer)(nil).MainPage))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MainPage", reflect.TypeOf((*MockViewer)(nil).MainPage), arg0)
 }
 
 // NotifyErr mocks base method.
@@ -244,113 +245,99 @@ func (mr *MockViewerMockRecorder) NotifyWarnf(text any, a ...any) *gomock.Call {
 }
 
 // ReadingPane mocks base method.
-func (m *MockViewer) ReadingPane() tview.Primitive {
+func (m *MockViewer) ReadingPane(arg0 *ui.Display) tview.Primitive {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ReadingPane")
+	ret := m.ctrl.Call(m, "ReadingPane", arg0)
 	ret0, _ := ret[0].(tview.Primitive)
 	return ret0
 }
 
 // ReadingPane indicates an expected call of ReadingPane.
-func (mr *MockViewerMockRecorder) ReadingPane() *gomock.Call {
+func (mr *MockViewerMockRecorder) ReadingPane(arg0 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReadingPane", reflect.TypeOf((*MockViewer)(nil).ReadingPane))
-}
-
-// Show mocks base method.
-func (m *MockViewer) Show() error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Show")
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// Show indicates an expected call of Show.
-func (mr *MockViewerMockRecorder) Show() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Show", reflect.TypeOf((*MockViewer)(nil).Show))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReadingPane", reflect.TypeOf((*MockViewer)(nil).ReadingPane), arg0)
 }
 
 // ShowAboutPopup mocks base method.
-func (m *MockViewer) ShowAboutPopup() {
+func (m *MockViewer) ShowAboutPopup(arg0 *ui.Display) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "ShowAboutPopup")
+	m.ctrl.Call(m, "ShowAboutPopup", arg0)
 }
 
 // ShowAboutPopup indicates an expected call of ShowAboutPopup.
-func (mr *MockViewerMockRecorder) ShowAboutPopup() *gomock.Call {
+func (mr *MockViewerMockRecorder) ShowAboutPopup(arg0 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ShowAboutPopup", reflect.TypeOf((*MockViewer)(nil).ShowAboutPopup))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ShowAboutPopup", reflect.TypeOf((*MockViewer)(nil).ShowAboutPopup), arg0)
 }
 
 // ShowFeedsInPane mocks base method.
-func (m *MockViewer) ShowFeedsInPane(arg0 <-chan *entity.Feed) {
+func (m *MockViewer) ShowFeedsInPane(arg0 *ui.Display, arg1 <-chan *entity.Feed) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "ShowFeedsInPane", arg0)
+	m.ctrl.Call(m, "ShowFeedsInPane", arg0, arg1)
 }
 
 // ShowFeedsInPane indicates an expected call of ShowFeedsInPane.
-func (mr *MockViewerMockRecorder) ShowFeedsInPane(arg0 any) *gomock.Call {
+func (mr *MockViewerMockRecorder) ShowFeedsInPane(arg0, arg1 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ShowFeedsInPane", reflect.TypeOf((*MockViewer)(nil).ShowFeedsInPane), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ShowFeedsInPane", reflect.TypeOf((*MockViewer)(nil).ShowFeedsInPane), arg0, arg1)
 }
 
 // ShowHelpPopup mocks base method.
-func (m *MockViewer) ShowHelpPopup() {
+func (m *MockViewer) ShowHelpPopup(arg0 *ui.Display) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "ShowHelpPopup")
+	m.ctrl.Call(m, "ShowHelpPopup", arg0)
 }
 
 // ShowHelpPopup indicates an expected call of ShowHelpPopup.
-func (mr *MockViewerMockRecorder) ShowHelpPopup() *gomock.Call {
+func (mr *MockViewerMockRecorder) ShowHelpPopup(arg0 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ShowHelpPopup", reflect.TypeOf((*MockViewer)(nil).ShowHelpPopup))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ShowHelpPopup", reflect.TypeOf((*MockViewer)(nil).ShowHelpPopup), arg0)
 }
 
 // ShowIntroPopup mocks base method.
-func (m *MockViewer) ShowIntroPopup() {
+func (m *MockViewer) ShowIntroPopup(arg0 *ui.Display) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "ShowIntroPopup")
+	m.ctrl.Call(m, "ShowIntroPopup", arg0)
 }
 
 // ShowIntroPopup indicates an expected call of ShowIntroPopup.
-func (mr *MockViewerMockRecorder) ShowIntroPopup() *gomock.Call {
+func (mr *MockViewerMockRecorder) ShowIntroPopup(arg0 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ShowIntroPopup", reflect.TypeOf((*MockViewer)(nil).ShowIntroPopup))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ShowIntroPopup", reflect.TypeOf((*MockViewer)(nil).ShowIntroPopup), arg0)
 }
 
 // ShowStatsPopup mocks base method.
-func (m *MockViewer) ShowStatsPopup(arg0 <-chan *entity.Stats) {
+func (m *MockViewer) ShowStatsPopup(arg0 *ui.Display, arg1 <-chan *entity.Stats) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "ShowStatsPopup", arg0)
+	m.ctrl.Call(m, "ShowStatsPopup", arg0, arg1)
 }
 
 // ShowStatsPopup indicates an expected call of ShowStatsPopup.
-func (mr *MockViewerMockRecorder) ShowStatsPopup(arg0 any) *gomock.Call {
+func (mr *MockViewerMockRecorder) ShowStatsPopup(arg0, arg1 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ShowStatsPopup", reflect.TypeOf((*MockViewer)(nil).ShowStatsPopup), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ShowStatsPopup", reflect.TypeOf((*MockViewer)(nil).ShowStatsPopup), arg0, arg1)
 }
 
 // ToggleStatusBar mocks base method.
-func (m *MockViewer) ToggleStatusBar() {
+func (m *MockViewer) ToggleStatusBar(arg0 *ui.Display) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "ToggleStatusBar")
+	m.ctrl.Call(m, "ToggleStatusBar", arg0)
 }
 
 // ToggleStatusBar indicates an expected call of ToggleStatusBar.
-func (mr *MockViewerMockRecorder) ToggleStatusBar() *gomock.Call {
+func (mr *MockViewerMockRecorder) ToggleStatusBar(arg0 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ToggleStatusBar", reflect.TypeOf((*MockViewer)(nil).ToggleStatusBar))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ToggleStatusBar", reflect.TypeOf((*MockViewer)(nil).ToggleStatusBar), arg0)
 }
 
 // UnfocusPane mocks base method.
-func (m *MockViewer) UnfocusPane() {
+func (m *MockViewer) UnfocusPane(arg0 *ui.Display) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "UnfocusPane")
+	m.ctrl.Call(m, "UnfocusPane", arg0)
 }
 
 // UnfocusPane indicates an expected call of UnfocusPane.
-func (mr *MockViewerMockRecorder) UnfocusPane() *gomock.Call {
+func (mr *MockViewerMockRecorder) UnfocusPane(arg0 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UnfocusPane", reflect.TypeOf((*MockViewer)(nil).UnfocusPane))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UnfocusPane", reflect.TypeOf((*MockViewer)(nil).UnfocusPane), arg0)
 }

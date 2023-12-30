@@ -7,6 +7,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/gdamore/tcell/v2"
 	"google.golang.org/grpc"
 
 	rp "github.com/bow/neon/internal/reader/repo"
@@ -18,18 +19,20 @@ type Reader struct {
 	ctx      context.Context
 	initPath string
 
-	view ui.Viewer
-	repo rp.Repo
+	display *ui.Display
+	view    ui.Viewer
+	repo    rp.Repo
 }
 
-func (r *Reader) Show() error {
-	return r.view.Show()
+func (r *Reader) Start() error {
+	return r.display.Start()
 }
 
 type Builder struct {
 	ctx       context.Context
-	initPath  string
 	themeName string
+	initPath  string
+	scr       tcell.Screen
 
 	// rpcRepo args.
 	addr  string
@@ -43,8 +46,8 @@ type Builder struct {
 func NewBuilder() *Builder {
 	b := Builder{
 		ctx:       context.Background(),
-		dopts:     nil,
 		themeName: "dark",
+		dopts:     nil,
 	}
 	return &b
 }
@@ -79,6 +82,11 @@ func (b *Builder) repo(rpo rp.Repo) *Builder {
 	return b
 }
 
+func (b *Builder) screen(scr tcell.Screen) *Builder {
+	b.scr = scr
+	return b
+}
+
 func (b *Builder) viewer(v ui.Viewer) *Builder {
 	b.vwr = v
 	return b
@@ -103,20 +111,32 @@ func (b *Builder) Build() (*Reader, error) {
 		}
 	}
 
-	var viewer ui.Viewer
-	if b.vwr != nil {
-		viewer = b.vwr
+	var scr tcell.Screen
+	if b.scr != nil {
+		scr = b.scr
 	} else {
-		viewer, err = ui.NewView(b.themeName)
+		scr, err = tcell.NewScreen()
 		if err != nil {
 			return nil, err
 		}
 	}
+	display, err := ui.NewDisplay(scr, b.themeName)
+	if err != nil {
+		return nil, err
+	}
+
+	var viewer ui.Viewer
+	if b.vwr != nil {
+		viewer = b.vwr
+	} else {
+		viewer = ui.NewView()
+	}
 
 	rdr := Reader{
-		ctx:  b.ctx,
-		view: viewer,
-		repo: rpo,
+		ctx:     b.ctx,
+		display: display,
+		view:    viewer,
+		repo:    rpo,
 	}
 	rdr.setKeyHandlers()
 
