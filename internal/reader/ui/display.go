@@ -17,10 +17,10 @@ type Display struct {
 	lang   *Lang
 	screen tcell.Screen
 
-	inner    *tview.Application
-	root     *tview.Pages
-	mainPage *tview.Grid
-	helpPage *tview.Grid
+	inner     *tview.Application
+	root      *tview.Pages
+	mainPage  *tview.Grid
+	helpPopup *tview.Grid
 
 	initialized bool
 }
@@ -84,7 +84,7 @@ func (d *Display) setRoot() {
 
 	pages.
 		AddAndSwitchToPage(mainPageName, d.mainPage, true).
-		AddPage(helpPageName, d.helpPage, true, false)
+		AddPage(helpPageName, d.helpPopup, true, false)
 
 	d.root = pages
 	d.inner = d.inner.SetRoot(pages, true)
@@ -142,7 +142,7 @@ func (d *Display) setHelpPopup() {
 		SetDynamicColors(true).
 		SetText(helpText)
 
-	d.helpPage = newPopup(
+	d.helpPopup = newPopup(
 		d.lang.helpPopupTitle,
 		helpWidget,
 		d.theme.popupTitleFG,
