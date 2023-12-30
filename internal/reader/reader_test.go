@@ -68,14 +68,14 @@ func setupReaderTest(
 	r.NoError(screen.Init())
 	screen.SetSize(screenW, screenH)
 
-	viewer := NewMockViewer(gomock.NewController(t))
+	opr := NewMockOperator(gomock.NewController(t))
 
 	var wg sync.WaitGroup
 	drawf = func() *Reader {
 		rdr, err := NewBuilder().
 			repo(repo).
 			screen(screen).
-			viewer(viewer).
+			operator(opr).
 			Build()
 		r.NoError(err)
 		r.NotNil(rdr)

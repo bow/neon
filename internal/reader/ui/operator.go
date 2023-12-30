@@ -1,17 +1,16 @@
-// Copyright (c) 2022 Wibowo Arindrarto <contact@arindrarto.dev>
+// Copyright (c) 2023 Wibowo Arindrarto <contact@arindrarto.dev>
 // SPDX-License-Identifier: BSD-3-Clause
 
 package ui
 
 import (
-	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 
 	"github.com/bow/neon/internal/entity"
 )
 
-// Viewer describes the console reader.
-type Viewer interface {
+// Operator describes high-level UI operations.
+type Operator interface {
 	ClearStatusBar(*Display)
 	FocusFeedsPane(*Display)
 	FocusEntriesPane(*Display)
@@ -32,120 +31,117 @@ type Viewer interface {
 	UnfocusPane(*Display)
 }
 
-type KeyHandler = func(*tcell.EventKey) *tcell.EventKey
-
-//nolint:unused
-type View struct {
+type DisplayOperator struct {
 	focusStack tview.Primitive
 }
 
 //nolint:revive
-func NewView() *View {
-	view := View{}
-	return &view
+func NewDisplayOperator() *DisplayOperator {
+	do := DisplayOperator{}
+	return &do
 }
 
 //nolint:revive
-func (v *View) ClearStatusBar(d *Display) {
+func (do *DisplayOperator) ClearStatusBar(d *Display) {
 	panic("ClearStatusBar is unimplemented")
 }
 
 //nolint:revive
-func (v *View) FocusFeedsPane(d *Display) {
+func (do *DisplayOperator) FocusFeedsPane(d *Display) {
 	panic("FocusFeedsPane is unimplemented")
 }
 
 //nolint:revive
-func (v *View) FocusEntriesPane(d *Display) {
+func (do *DisplayOperator) FocusEntriesPane(d *Display) {
 	panic("FocusEntriesPane is unimplemented")
 }
 
 //nolint:revive
-func (v *View) FocusNextPane(d *Display) {
+func (do *DisplayOperator) FocusNextPane(d *Display) {
 	panic("FocusNextPane is unimplemented")
 }
 
 //nolint:revive
-func (v *View) FocusPreviousPane(d *Display) {
+func (do *DisplayOperator) FocusPreviousPane(d *Display) {
 	panic("FocusPreviousPane is unimplemented")
 }
 
 //nolint:revive
-func (v *View) FocusReadingPane(d *Display) {
+func (do *DisplayOperator) FocusReadingPane(d *Display) {
 	panic("FocusReadingPane is unimplemented")
 }
 
 //nolint:revive
-func (v *View) HideIntroPopup(d *Display) {
+func (do *DisplayOperator) HideIntroPopup(d *Display) {
 	panic("HideIntroPopup is unimplemented")
 }
 
 //nolint:revive
-func (v *View) NotifyInfof(text string, a ...any) {
+func (do *DisplayOperator) NotifyInfof(text string, a ...any) {
 	panic("NotifyInfof is unimplemented")
 }
 
 //nolint:revive
-func (v *View) NotifyErr(err error) {
+func (do *DisplayOperator) NotifyErr(err error) {
 	panic("NotifyErr is unimplemented")
 }
 
 //nolint:revive
-func (v *View) NotifyErrf(text string, a ...any) {
+func (do *DisplayOperator) NotifyErrf(text string, a ...any) {
 	panic("NotifyErrf is unimplemented")
 }
 
 //nolint:revive
-func (v *View) NotifyWarnf(text string, a ...any) {
+func (do *DisplayOperator) NotifyWarnf(text string, a ...any) {
 	panic("NotifyWarnf is unimplemented")
 }
 
 //nolint:revive
-func (v *View) ToggleAboutPopup(d *Display) {
+func (do *DisplayOperator) ToggleAboutPopup(d *Display) {
 	panic("ToggleAboutPopup is unimplemented")
 }
 
 //nolint:revive
-func (v *View) ToggleFeedsInPane(d *Display, ch <-chan *entity.Feed) {
+func (do *DisplayOperator) ToggleFeedsInPane(d *Display, ch <-chan *entity.Feed) {
 	panic("ToggleFeedsInPane is unimplemented")
 }
 
-func (v *View) ToggleHelpPopup(d *Display) {
-	if name := v.frontPageName(d); name == helpPageName {
-		v.hidePopup(d, name)
+func (do *DisplayOperator) ToggleHelpPopup(d *Display) {
+	if name := do.frontPageName(d); name == helpPageName {
+		do.hidePopup(d, name)
 	} else {
-		v.showPopup(d, helpPageName, name)
+		do.showPopup(d, helpPageName, name)
 	}
 }
 
 //nolint:revive
-func (v *View) ToggleIntroPopup(d *Display) {
+func (do *DisplayOperator) ToggleIntroPopup(d *Display) {
 	panic("ToggleIntroPopup is unimplemented")
 }
 
 //nolint:revive
-func (v *View) ToggleStatsPopup(d *Display, ch <-chan *entity.Stats) {
+func (do *DisplayOperator) ToggleStatsPopup(d *Display, ch <-chan *entity.Stats) {
 	panic("ToggleStatsPopup is unimplemented")
 }
 
 //nolint:revive
-func (v *View) ToggleStatusBar(d *Display) {
+func (do *DisplayOperator) ToggleStatusBar(d *Display) {
 	panic("ToggleStatusBar is unimplemented")
 }
 
 //nolint:revive
-func (v *View) UnfocusPane(d *Display) {
+func (do *DisplayOperator) UnfocusPane(d *Display) {
 	panic("UnfocusPane is unimplemented")
 }
 
-func (v *View) frontPageName(d *Display) string {
+func (do *DisplayOperator) frontPageName(d *Display) string {
 	name, _ := d.root.GetFrontPage()
 	return name
 }
 
-func (v *View) showPopup(d *Display, name string, currentFront string) {
+func (do *DisplayOperator) showPopup(d *Display, name string, currentFront string) {
 	if currentFront == mainPageName {
-		v.stashFocus(d)
+		do.stashFocus(d)
 	} else {
 		d.root.HidePage(currentFront)
 	}
@@ -153,19 +149,16 @@ func (v *View) showPopup(d *Display, name string, currentFront string) {
 	d.root.ShowPage(name)
 }
 
-func (v *View) hidePopup(d *Display, name string) {
+func (do *DisplayOperator) hidePopup(d *Display, name string) {
 	d.root.HidePage(name)
 	d.normalizeMainPage()
-	if top := v.focusStack; top != nil {
+	if top := do.focusStack; top != nil {
 		d.inner.SetFocus(top)
 	}
-	v.focusStack = nil
+	do.focusStack = nil
 }
 
-func (v *View) stashFocus(d *Display) { v.focusStack = d.inner.GetFocus() }
+func (do *DisplayOperator) stashFocus(d *Display) { do.focusStack = d.inner.GetFocus() }
 
-// Ensure View implements Viewer.
-var _ Viewer = new(View)
-
-//nolint:unused
-type drawFunc func(screen tcell.Screen, x int, y int, w int, h int) (ix int, iy int, iw int, ih int)
+// Ensure DisplayOperator implements Operator.
+var _ Operator = new(DisplayOperator)

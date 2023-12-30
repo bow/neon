@@ -19,9 +19,9 @@ type Reader struct {
 	ctx      context.Context
 	initPath string
 
-	display *ui.Display
-	view    ui.Viewer
-	repo    rp.Repo
+	display  *ui.Display
+	operator ui.Operator
+	repo     rp.Repo
 }
 
 func (r *Reader) Start() error {
@@ -40,7 +40,7 @@ type Builder struct {
 
 	// For testing.
 	rpo rp.Repo
-	vwr ui.Viewer
+	opr ui.Operator
 }
 
 func NewBuilder() *Builder {
@@ -87,8 +87,8 @@ func (b *Builder) screen(scr tcell.Screen) *Builder {
 	return b
 }
 
-func (b *Builder) viewer(v ui.Viewer) *Builder {
-	b.vwr = v
+func (b *Builder) operator(op ui.Operator) *Builder {
+	b.opr = op
 	return b
 }
 
@@ -125,18 +125,18 @@ func (b *Builder) Build() (*Reader, error) {
 		return nil, err
 	}
 
-	var viewer ui.Viewer
-	if b.vwr != nil {
-		viewer = b.vwr
+	var opr ui.Operator
+	if b.opr != nil {
+		opr = b.opr
 	} else {
-		viewer = ui.NewView()
+		opr = ui.NewDisplayOperator()
 	}
 
 	rdr := Reader{
-		ctx:     b.ctx,
-		display: display,
-		view:    viewer,
-		repo:    rpo,
+		ctx:      b.ctx,
+		display:  display,
+		operator: opr,
+		repo:     rpo,
 	}
 	rdr.display.Init(rdr.globalKeyHandler())
 
@@ -157,7 +157,7 @@ func (r *Reader) globalKeyHandler() ui.KeyHandler {
 		case tcell.KeyRune:
 			switch keyr {
 			case 'h', '?':
-				r.view.ToggleHelpPopup(r.display)
+				r.operator.ToggleHelpPopup(r.display)
 				return nil
 
 			case 'q':
