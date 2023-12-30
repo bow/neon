@@ -22,7 +22,7 @@ func TestToggleHelpPopupCalled(t *testing.T) {
 	rdr := draw()
 
 	opr.EXPECT().
-		ToggleHelpPopup(rdr.display).
+		ToggleHelpPopup(rdr.dsp).
 		Times(2)
 
 	screen.InjectKey(tcell.KeyRune, '?', tcell.ModNone)
