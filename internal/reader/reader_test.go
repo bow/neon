@@ -16,9 +16,22 @@ import (
 
 const screenW, screenH = 210, 60
 
-func TestStartOkSmoke(t *testing.T) {
+func TestToggleHelpPopupCalled(t *testing.T) {
+	screen, opr, draw := setupReaderTest(t)
 
-	screen, draw := setupReaderTest(t)
+	rdr := draw()
+
+	opr.EXPECT().
+		ToggleHelpPopup(rdr.display).
+		Times(2)
+
+	screen.InjectKey(tcell.KeyRune, '?', tcell.ModNone)
+	screen.InjectKey(tcell.KeyRune, 'h', tcell.ModNone)
+}
+
+func TestStartSmoke(t *testing.T) {
+
+	screen, _, draw := setupReaderTest(t)
 
 	// Since draw states are hidden at this level, the test just checks that
 	// precondition == all cells empty, postcondition == at least one cell non-empty
@@ -56,6 +69,7 @@ func setupReaderTest(
 	t *testing.T,
 ) (
 	screen tcell.SimulationScreen,
+	opr *MockOperator,
 	drawf func() *Reader,
 ) {
 	t.Helper()
@@ -68,7 +82,7 @@ func setupReaderTest(
 	r.NoError(screen.Init())
 	screen.SetSize(screenW, screenH)
 
-	opr := NewMockOperator(gomock.NewController(t))
+	opr = NewMockOperator(gomock.NewController(t))
 
 	var wg sync.WaitGroup
 	drawf = func() *Reader {
@@ -95,5 +109,5 @@ func setupReaderTest(
 		wg.Wait()
 	})
 
-	return screen, drawf
+	return screen, opr, drawf
 }
