@@ -29,6 +29,16 @@ func TestToggleHelpPopupCalled(t *testing.T) {
 	screen.InjectKey(tcell.KeyRune, 'h', tcell.ModNone)
 }
 
+func TestStopCalled(t *testing.T) {
+	r := require.New(t)
+	screen, _, draw := setupReaderTest(t)
+	rdr := draw()
+
+	r.False(rdr.stopped)
+	screen.InjectKey(tcell.KeyRune, 'q', tcell.ModNone)
+	r.Eventually(func() bool { return rdr.stopped }, 2*time.Second, 100*time.Millisecond)
+}
+
 func TestStartSmoke(t *testing.T) {
 
 	screen, _, draw := setupReaderTest(t)
