@@ -46,37 +46,37 @@ func NewView() *View {
 }
 
 //nolint:revive
-func (v *View) ClearStatusBar(dsp *Display) {
+func (v *View) ClearStatusBar(d *Display) {
 	panic("ClearStatusBar is unimplemented")
 }
 
 //nolint:revive
-func (v *View) FocusFeedsPane(dsp *Display) {
+func (v *View) FocusFeedsPane(d *Display) {
 	panic("FocusFeedsPane is unimplemented")
 }
 
 //nolint:revive
-func (v *View) FocusEntriesPane(dsp *Display) {
+func (v *View) FocusEntriesPane(d *Display) {
 	panic("FocusEntriesPane is unimplemented")
 }
 
 //nolint:revive
-func (v *View) FocusNextPane(dsp *Display) {
+func (v *View) FocusNextPane(d *Display) {
 	panic("FocusNextPane is unimplemented")
 }
 
 //nolint:revive
-func (v *View) FocusPreviousPane(dsp *Display) {
+func (v *View) FocusPreviousPane(d *Display) {
 	panic("FocusPreviousPane is unimplemented")
 }
 
 //nolint:revive
-func (v *View) FocusReadingPane(dsp *Display) {
+func (v *View) FocusReadingPane(d *Display) {
 	panic("FocusReadingPane is unimplemented")
 }
 
 //nolint:revive
-func (v *View) HideIntroPopup(dsp *Display) {
+func (v *View) HideIntroPopup(d *Display) {
 	panic("HideIntroPopup is unimplemented")
 }
 
@@ -101,68 +101,68 @@ func (v *View) NotifyWarnf(text string, a ...any) {
 }
 
 //nolint:revive
-func (v *View) ToggleAboutPopup(dsp *Display) {
+func (v *View) ToggleAboutPopup(d *Display) {
 	panic("ToggleAboutPopup is unimplemented")
 }
 
 //nolint:revive
-func (v *View) ToggleFeedsInPane(dsp *Display, ch <-chan *entity.Feed) {
+func (v *View) ToggleFeedsInPane(d *Display, ch <-chan *entity.Feed) {
 	panic("ToggleFeedsInPane is unimplemented")
 }
 
-func (v *View) ToggleHelpPopup(dsp *Display) {
-	if name := v.frontPageName(dsp); name == helpPageName {
-		v.hidePopup(dsp, name)
+func (v *View) ToggleHelpPopup(d *Display) {
+	if name := v.frontPageName(d); name == helpPageName {
+		v.hidePopup(d, name)
 	} else {
-		v.showPopup(dsp, helpPageName, name)
+		v.showPopup(d, helpPageName, name)
 	}
 }
 
 //nolint:revive
-func (v *View) ToggleIntroPopup(dsp *Display) {
+func (v *View) ToggleIntroPopup(d *Display) {
 	panic("ToggleIntroPopup is unimplemented")
 }
 
 //nolint:revive
-func (v *View) ToggleStatsPopup(dsp *Display, ch <-chan *entity.Stats) {
+func (v *View) ToggleStatsPopup(d *Display, ch <-chan *entity.Stats) {
 	panic("ToggleStatsPopup is unimplemented")
 }
 
 //nolint:revive
-func (v *View) ToggleStatusBar(dsp *Display) {
+func (v *View) ToggleStatusBar(d *Display) {
 	panic("ToggleStatusBar is unimplemented")
 }
 
 //nolint:revive
-func (v *View) UnfocusPane(dsp *Display) {
+func (v *View) UnfocusPane(d *Display) {
 	panic("UnfocusPane is unimplemented")
 }
 
-func (v *View) frontPageName(dsp *Display) string {
-	name, _ := dsp.root.GetFrontPage()
+func (v *View) frontPageName(d *Display) string {
+	name, _ := d.root.GetFrontPage()
 	return name
 }
 
-func (v *View) showPopup(dsp *Display, name string, currentFront string) {
+func (v *View) showPopup(d *Display, name string, currentFront string) {
 	if currentFront == mainPageName {
-		v.stashFocus(dsp)
+		v.stashFocus(d)
 	} else {
-		dsp.root.HidePage(currentFront)
+		d.root.HidePage(currentFront)
 	}
-	dsp.dimMainPage()
-	dsp.root.ShowPage(name)
+	d.dimMainPage()
+	d.root.ShowPage(name)
 }
 
-func (v *View) hidePopup(dsp *Display, name string) {
-	dsp.root.HidePage(name)
-	dsp.normalizeMainPage()
+func (v *View) hidePopup(d *Display, name string) {
+	d.root.HidePage(name)
+	d.normalizeMainPage()
 	if top := v.focusStack; top != nil {
-		dsp.inner.SetFocus(top)
+		d.inner.SetFocus(top)
 	}
 	v.focusStack = nil
 }
 
-func (v *View) stashFocus(dsp *Display) { v.focusStack = dsp.inner.GetFocus() }
+func (v *View) stashFocus(d *Display) { v.focusStack = d.inner.GetFocus() }
 
 // Ensure View implements Viewer.
 var _ Viewer = new(View)

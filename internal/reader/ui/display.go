@@ -31,7 +31,7 @@ func NewDisplay(screen tcell.Screen, theme string) (*Display, error) {
 		return nil, err
 	}
 
-	dsp := Display{
+	d := Display{
 		theme:  th,
 		lang:   langEN,
 		screen: screen,
@@ -39,33 +39,33 @@ func NewDisplay(screen tcell.Screen, theme string) (*Display, error) {
 			EnableMouse(true).
 			SetScreen(screen),
 	}
-	dsp.setRoot()
+	d.setRoot()
 
-	return &dsp, nil
+	return &d, nil
 }
 
-func (dsp *Display) Init(globalKeyHandler KeyHandler) {
-	dsp.inner = dsp.inner.SetInputCapture(globalKeyHandler)
-	dsp.initialized = true
+func (d *Display) Init(globalKeyHandler KeyHandler) {
+	d.inner = d.inner.SetInputCapture(globalKeyHandler)
+	d.initialized = true
 }
 
-func (dsp *Display) Start() error {
-	if !dsp.initialized {
+func (d *Display) Start() error {
+	if !d.initialized {
 		return fmt.Errorf("display must be initialized before starting")
 	}
-	return dsp.inner.Run()
+	return d.inner.Run()
 }
 
-func (dsp *Display) Stop() {
-	dsp.inner.Stop()
+func (d *Display) Stop() {
+	d.inner.Stop()
 }
 
-func (dsp *Display) dimMainPage() {
-	dsp.theme.dim()
+func (d *Display) dimMainPage() {
+	d.theme.dim()
 }
 
-func (dsp *Display) normalizeMainPage() {
-	dsp.theme.normalize()
+func (d *Display) normalizeMainPage() {
+	d.theme.normalize()
 }
 
 const (
@@ -77,29 +77,29 @@ const (
 	verticalPopupPadding = 4
 )
 
-func (dsp *Display) setRoot() {
+func (d *Display) setRoot() {
 	pages := tview.NewPages()
-	dsp.setMainPage()
-	dsp.setHelpPopup()
+	d.setMainPage()
+	d.setHelpPopup()
 
 	pages.
-		AddAndSwitchToPage(mainPageName, dsp.mainPage, true).
-		AddPage(helpPageName, dsp.helpPage, true, false)
+		AddAndSwitchToPage(mainPageName, d.mainPage, true).
+		AddPage(helpPageName, d.helpPage, true, false)
 
-	dsp.root = pages
-	dsp.inner = dsp.inner.SetRoot(pages, true)
+	d.root = pages
+	d.inner = d.inner.SetRoot(pages, true)
 }
 
-func (dsp *Display) setMainPage() {
+func (d *Display) setMainPage() {
 	// TODO: Add inner flexes.
 	grid := tview.NewGrid().
 		SetRows(0).
 		SetBorders(false)
 
-	dsp.mainPage = grid
+	d.mainPage = grid
 }
 
-func (dsp *Display) setHelpPopup() {
+func (d *Display) setHelpPopup() {
 	// TODO: Consider moving the content out into where handlers are defined.
 	helpText := `[aqua]Feeds pane[-]
 [yellow]j/k[-]: Next / previous item
@@ -142,10 +142,10 @@ func (dsp *Display) setHelpPopup() {
 		SetDynamicColors(true).
 		SetText(helpText)
 
-	dsp.helpPage = newPopup(
-		dsp.lang.helpPopupTitle,
+	d.helpPage = newPopup(
+		d.lang.helpPopupTitle,
 		helpWidget,
-		dsp.theme.popupTitleFG,
+		d.theme.popupTitleFG,
 		1, 1,
 		55,
 		[]int{0, popupHeight(helpText), 0},
