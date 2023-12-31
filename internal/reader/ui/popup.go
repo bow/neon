@@ -8,12 +8,9 @@ import (
 	"fmt"
 	"runtime"
 	"strings"
-	"time"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
-
-	"github.com/bow/neon/internal"
 )
 
 const (
@@ -88,43 +85,6 @@ func newFilledPopup(
 	p := popup{Grid: *grid, frame: frame, content: content}
 
 	return &p
-}
-
-func setAboutPopupText(p *popup, backend string) {
-	commit := internal.GitCommit()
-
-	var buildTime = internal.BuildTime()
-	buildTimeVal, err := time.Parse(time.RFC3339, buildTime)
-	if err == nil {
-		buildTime = buildTimeVal.Format(longDateFormat)
-	}
-
-	infoText := fmt.Sprintf(`[yellow]Version[-]   : %s
-[yellow]Git commit[-]: %s
-[yellow]Build time[-]: %s
-[yellow]Backend[-]   : %s`,
-		internal.Version(),
-		commit,
-		buildTime,
-		backend,
-	)
-
-	aboutWidget := tview.NewTextView().
-		SetDynamicColors(true).
-		SetText(infoText)
-
-	// NOTE: We assume the banner's width is less than the one computed here.
-	width := popupWidth(aboutWidget.GetText(true))
-	banner := centerBanner(internal.Banner(), width)
-	aboutText := fmt.Sprintf("%s\n\n%s", banner, infoText)
-
-	aboutWidget.SetText(aboutText)
-
-	height := popupHeight(aboutText) - 1
-
-	p.setWidth(width)
-	p.setGridRows([]int{-1, height, -3})
-	p.setContent(aboutWidget)
 }
 
 func centerBanner(text string, width int) string {
