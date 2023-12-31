@@ -19,9 +19,9 @@ type Reader struct {
 	ctx      context.Context
 	initPath string
 
-	dsp  *ui.Display
-	opr  ui.Operator
-	repo rp.Repo
+	dsp *ui.Display
+	opr ui.Operator
+	rpo rp.Repo
 }
 
 func (r *Reader) Start() error {
@@ -65,7 +65,7 @@ func (r *Reader) mustDefinedFields() {
 		panic("can not set handler with nil operator")
 	}
 
-	if r.repo == nil {
+	if r.rpo == nil {
 		panic("can not set handler with nil repo")
 	}
 }
@@ -147,7 +147,7 @@ func (b *Builder) Build() (*Reader, error) {
 	if b.rpo != nil {
 		rpo = b.rpo
 	} else {
-		rpo, err = rp.NewRPCRepo(b.ctx, b.addr, b.dopts...)
+		rpo, err = rp.NewRPC(b.ctx, b.addr, b.dopts...)
 		if err != nil {
 			return nil, err
 		}
@@ -175,10 +175,10 @@ func (b *Builder) Build() (*Reader, error) {
 	}
 
 	rdr := Reader{
-		ctx:  b.ctx,
-		dsp:  dsp,
-		opr:  opr,
-		repo: rpo,
+		ctx: b.ctx,
+		dsp: dsp,
+		opr: opr,
+		rpo: rpo,
 	}
 	rdr.dsp.Init(rdr.globalKeyHandler())
 

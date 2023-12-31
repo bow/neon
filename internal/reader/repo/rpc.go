@@ -14,7 +14,7 @@ import (
 )
 
 //nolint:unused
-type rpcRepo struct {
+type RPC struct {
 	addr   string
 	client api.NeonClient
 
@@ -22,9 +22,9 @@ type rpcRepo struct {
 }
 
 // Ensure rpcRepo implements Repo.
-var _ Repo = new(rpcRepo)
+var _ Repo = new(RPC)
 
-func NewRPCRepo(ctx context.Context, addr string, dialOpts ...grpc.DialOption) (*rpcRepo, error) {
+func NewRPC(ctx context.Context, addr string, dialOpts ...grpc.DialOption) (*RPC, error) {
 	conn, err := grpc.DialContext(ctx, addr, dialOpts...)
 	if err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {
@@ -32,24 +32,24 @@ func NewRPCRepo(ctx context.Context, addr string, dialOpts ...grpc.DialOption) (
 		}
 		return nil, err
 	}
-	return newRPCRepoWithClient(addr, api.NewNeonClient(conn)), nil
+	return newRPCWithClient(addr, api.NewNeonClient(conn)), nil
 }
 
-func newRPCRepoWithClient(addr string, client api.NeonClient) *rpcRepo {
-	return &rpcRepo{addr: addr, client: client}
+func newRPCWithClient(addr string, client api.NeonClient) *RPC {
+	return &RPC{addr: addr, client: client}
 }
 
 //nolint:unused
-func (m *rpcRepo) GetStats(ctx context.Context) (<-chan *entity.Stats, error) {
+func (r *RPC) GetStats(ctx context.Context) (<-chan *entity.Stats, error) {
 	panic("GetStats is unimplemented")
 }
 
 //nolint:unused
-func (m *rpcRepo) ListFeeds(ctx context.Context) (<-chan *entity.Feed, error) {
+func (r *RPC) ListFeeds(ctx context.Context) (<-chan *entity.Feed, error) {
 	panic("ListFeeds is unimplemented")
 }
 
 //nolint:unused
-func (m *rpcRepo) PullFeeds(ctx context.Context) (<-chan *entity.Feed, error) {
+func (r *RPC) PullFeeds(ctx context.Context) (<-chan *entity.Feed, error) {
 	panic("PullFeeds is unimplemented")
 }
