@@ -11,26 +11,26 @@ import (
 
 // Operator describes high-level UI operations.
 type Operator interface {
-	ClearStatusBar(*Display)
-	FocusFeedsPane(*Display)
-	FocusEntriesPane(*Display)
-	FocusNextPane(*Display)
-	FocusPreviousPane(*Display)
-	FocusReadingPane(*Display)
-	HideIntroPopup(*Display)
+	ClearStatusBar(d *Display)
+	FocusFeedsPane(d *Display)
+	FocusEntriesPane(d *Display)
+	FocusNextPane(d *Display)
+	FocusPreviousPane(d *Display)
+	FocusReadingPane(d *Display)
+	HideIntroPopup(d *Display)
 	NotifyInfof(text string, a ...any)
 	NotifyErr(err error)
 	NotifyErrf(text string, a ...any)
 	NotifyWarnf(text string, a ...any)
-	Start(*Display) error
-	Stop(*Display)
-	ToggleAboutPopup(*Display)
-	ToggleFeedsInPane(*Display, <-chan *entity.Feed)
-	ToggleHelpPopup(*Display)
-	ToggleIntroPopup(*Display)
-	ToggleStatsPopup(*Display, <-chan *entity.Stats)
-	ToggleStatusBar(*Display)
-	UnfocusPane(*Display)
+	Start(d *Display) error
+	Stop(d *Display)
+	ToggleAboutPopup(d *Display)
+	ToggleFeedsInPane(d *Display, feeds <-chan *entity.Feed)
+	ToggleHelpPopup(d *Display)
+	ToggleIntroPopup(d *Display)
+	ToggleStatsPopup(d *Display, stats <-chan *entity.Stats)
+	ToggleStatusBar(d *Display)
+	UnfocusPane(d *Display)
 }
 
 type DisplayOperator struct {
