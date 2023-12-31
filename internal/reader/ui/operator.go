@@ -18,10 +18,10 @@ type Operator interface {
 	FocusPreviousPane(d *Display)
 	FocusReadingPane(d *Display)
 	HideIntroPopup(d *Display)
-	NotifyInfof(text string, a ...any)
-	NotifyErr(err error)
-	NotifyErrf(text string, a ...any)
-	NotifyWarnf(text string, a ...any)
+	NotifyInfof(d *Display, text string, a ...any)
+	NotifyErr(d *Display, err error)
+	NotifyErrf(d *Display, text string, a ...any)
+	NotifyWarnf(d *Display, text string, a ...any)
 	Start(d *Display) error
 	Stop(d *Display)
 	ToggleAboutPopup(d *Display)
@@ -79,22 +79,22 @@ func (do *DisplayOperator) HideIntroPopup(d *Display) {
 }
 
 //nolint:revive
-func (do *DisplayOperator) NotifyInfof(text string, a ...any) {
+func (do *DisplayOperator) NotifyInfof(d *Display, text string, a ...any) {
 	panic("NotifyInfof is unimplemented")
 }
 
 //nolint:revive
-func (do *DisplayOperator) NotifyErr(err error) {
+func (do *DisplayOperator) NotifyErr(d *Display, err error) {
 	panic("NotifyErr is unimplemented")
 }
 
 //nolint:revive
-func (do *DisplayOperator) NotifyErrf(text string, a ...any) {
+func (do *DisplayOperator) NotifyErrf(d *Display, text string, a ...any) {
 	panic("NotifyErrf is unimplemented")
 }
 
 //nolint:revive
-func (do *DisplayOperator) NotifyWarnf(text string, a ...any) {
+func (do *DisplayOperator) NotifyWarnf(d *Display, text string, a ...any) {
 	panic("NotifyWarnf is unimplemented")
 }
 
