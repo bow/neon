@@ -28,6 +28,33 @@ func (r *Reader) Start() error {
 	return r.opr.Start(r.dsp)
 }
 
+func (r *Reader) globalKeyHandler() ui.KeyHandler {
+
+	return func(event *tcell.EventKey) *tcell.EventKey {
+		var (
+			key  = event.Key()
+			keyr = event.Rune()
+		)
+
+		// nolint:gocritic,revive,exhaustive
+		switch key {
+
+		case tcell.KeyRune:
+			switch keyr {
+			case 'h', '?':
+				r.opr.ToggleHelpPopup(r.dsp)
+				return nil
+
+			case 'q':
+				r.opr.Stop(r.dsp)
+				return nil
+			}
+		}
+
+		return event
+	}
+}
+
 type Builder struct {
 	ctx       context.Context
 	themeName string
@@ -141,31 +168,4 @@ func (b *Builder) Build() (*Reader, error) {
 	rdr.dsp.Init(rdr.globalKeyHandler())
 
 	return &rdr, nil
-}
-
-func (r *Reader) globalKeyHandler() ui.KeyHandler {
-
-	return func(event *tcell.EventKey) *tcell.EventKey {
-		var (
-			key  = event.Key()
-			keyr = event.Rune()
-		)
-
-		// nolint:gocritic,revive,exhaustive
-		switch key {
-
-		case tcell.KeyRune:
-			switch keyr {
-			case 'h', '?':
-				r.opr.ToggleHelpPopup(r.dsp)
-				return nil
-
-			case 'q':
-				r.opr.Stop(r.dsp)
-				return nil
-			}
-		}
-
-		return event
-	}
 }
