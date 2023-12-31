@@ -101,7 +101,7 @@ func (d *Display) setMainPage() {
 }
 
 func (d *Display) setAboutPopup() {
-	d.aboutPopup = newEmptyPopup(d.lang.aboutPopupTitle, d.theme.popupTitleFG, 0, 0)
+	d.aboutPopup = newPopup(d.lang.aboutPopupTitle, d.theme.popupTitleFG, 0, 0)
 }
 
 func (d *Display) setHelpPopup() {
@@ -147,7 +147,7 @@ func (d *Display) setHelpPopup() {
 		SetDynamicColors(true).
 		SetText(helpText)
 
-	d.helpPopup = newPopup(
+	d.helpPopup = newFilledPopup(
 		d.lang.helpPopupTitle,
 		helpWidget,
 		d.theme.popupTitleFG,

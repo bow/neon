@@ -41,7 +41,7 @@ func (p *popup) setGridRows(rows []int) {
 	p.Grid.SetRows(rows...)
 }
 
-func newEmptyPopup(
+func newPopup(
 	title string,
 	titleColorFG tcell.Color,
 	top, bottom int,
@@ -63,7 +63,7 @@ func newEmptyPopup(
 	return &p
 }
 
-func newPopup(
+func newFilledPopup(
 	title string,
 	content tview.Primitive,
 	titleColorFG tcell.Color,
