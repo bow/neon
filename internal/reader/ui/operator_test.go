@@ -9,11 +9,52 @@ import (
 	"time"
 
 	"github.com/gdamore/tcell/v2"
+	"github.com/google/uuid"
+	"github.com/rivo/tview"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 const screenW, screenH = 210, 60
+
+func TestToggleAboutPopup(t *testing.T) {
+	a := assert.New(t)
+	r := require.New(t)
+	draw := setupDisplayOperatorTest(t)
+
+	opr, dsp := draw()
+
+	name, item := dsp.root.GetFrontPage()
+	a.Equal(mainPageName, name)
+	r.Equal(dsp.mainPage, item)
+	a.Nil(dsp.aboutPopup.content)
+
+	backend1 := uuid.NewString()
+	opr.ToggleAboutPopup(dsp, backend1)
+	name, item = dsp.root.GetFrontPage()
+	a.Equal(aboutPageName, name)
+	r.Equal(dsp.aboutPopup.grid, item)
+	r.NotNil(dsp.aboutPopup.content)
+	c1, typeok1 := dsp.aboutPopup.content.(*tview.TextView)
+	r.True(typeok1)
+	a.Contains(c1.GetText(true), backend1)
+
+	opr.ToggleAboutPopup(dsp, "")
+	name, item = dsp.root.GetFrontPage()
+	a.Equal(mainPageName, name)
+	r.Equal(dsp.mainPage, item)
+	a.NotNil(dsp.aboutPopup.content)
+
+	backend2 := uuid.NewString()
+	opr.ToggleAboutPopup(dsp, backend2)
+	name, item = dsp.root.GetFrontPage()
+	a.Equal(aboutPageName, name)
+	r.Equal(dsp.aboutPopup.grid, item)
+	r.NotNil(dsp.aboutPopup.content)
+	c2, typeok2 := dsp.aboutPopup.content.(*tview.TextView)
+	r.True(typeok2)
+	a.Contains(c2.GetText(true), backend2)
+}
 
 func TestToggleHelpPopup(t *testing.T) {
 	a := assert.New(t)

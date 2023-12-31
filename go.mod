@@ -7,6 +7,7 @@ require (
 	github.com/briandowns/spinner v1.23.0
 	github.com/gdamore/tcell/v2 v2.7.0
 	github.com/golang-migrate/migrate/v4 v4.17.0
+	github.com/google/uuid v1.5.0
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.0.1
 	github.com/mmcdole/gofeed v1.2.1
 	github.com/rivo/tview v0.0.0-20231206124440-5f078138442e
@@ -31,7 +32,6 @@ require (
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/gdamore/encoding v1.0.0 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
-	github.com/google/uuid v1.5.0 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
