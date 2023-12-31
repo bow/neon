@@ -5,9 +5,7 @@ package ui
 
 import (
 	"fmt"
-	"time"
 
-	"github.com/bow/neon/internal"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
@@ -20,8 +18,8 @@ type Display struct {
 	inner      *tview.Application
 	root       *tview.Pages
 	mainPage   *tview.Grid
-	aboutPopup *tview.Grid
-	helpPopup  *tview.Grid
+	aboutPopup *popup
+	helpPopup  *popup
 
 	initialized bool
 }
@@ -86,8 +84,8 @@ func (d *Display) setRoot() {
 
 	pages.
 		AddAndSwitchToPage(mainPageName, d.mainPage, true).
-		AddPage(helpPageName, d.helpPopup, true, false).
-		AddPage(aboutPageName, d.aboutPopup, true, false)
+		AddPage(helpPageName, d.helpPopup.grid, true, false).
+		AddPage(aboutPageName, d.aboutPopup.grid, true, false)
 
 	d.root = pages
 	d.inner = d.inner.SetRoot(pages, true)
@@ -103,42 +101,7 @@ func (d *Display) setMainPage() {
 }
 
 func (d *Display) setAboutPopup() {
-	commit := internal.GitCommit()
-
-	var buildTime = internal.BuildTime()
-	buildTimeVal, err := time.Parse(time.RFC3339, buildTime)
-	if err == nil {
-		buildTime = buildTimeVal.Format(longDateFormat)
-	}
-
-	width := len(commit) + 18
-
-	aboutText := fmt.Sprintf(`%s
-
-[yellow]Version[-]   : %s
-[yellow]Git commit[-]: %s
-[yellow]Build time[-]: %s
-[yellow]Source[-]    : %s`, // FIXME: Use Repo.Source() for this.
-		centerBanner(internal.Banner(), width),
-		internal.Version(),
-		commit,
-		buildTime,
-		"",
-	)
-
-	aboutWidget := tview.NewTextView().
-		SetDynamicColors(true).
-		SetText(aboutText)
-
-	d.aboutPopup = newPopup(
-		d.lang.aboutPopupTitle,
-		aboutWidget,
-		d.theme.popupTitleFG,
-		0, 0,
-		width,
-		[]int{-1, popupHeight(aboutText) - 1, -3},
-	)
-
+	d.aboutPopup = newEmptyPopup(d.lang.aboutPopupTitle, d.theme.popupTitleFG, 0, 0)
 }
 
 func (d *Display) setHelpPopup() {

@@ -29,7 +29,7 @@ func TestToggleHelpPopup(t *testing.T) {
 	opr.ToggleHelpPopup(dsp)
 	name, item = dsp.root.GetFrontPage()
 	a.Equal(helpPageName, name)
-	r.Equal(dsp.helpPopup, item)
+	r.Equal(dsp.helpPopup.grid, item)
 
 	opr.ToggleHelpPopup(dsp)
 	name, item = dsp.root.GetFrontPage()

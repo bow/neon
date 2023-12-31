@@ -108,10 +108,11 @@ func (do *DisplayOperator) Stop(d *Display) {
 	d.inner.Stop()
 }
 
-func (do *DisplayOperator) ToggleAboutPopup(d *Display, _ string) {
+func (do *DisplayOperator) ToggleAboutPopup(d *Display, source string) {
 	if name := do.frontPageName(d); name == aboutPageName {
 		do.hidePopup(d, name)
 	} else if name != introPageName {
+		setAboutPopupText(d.aboutPopup, source)
 		do.showPopup(d, aboutPageName, name)
 	}
 }
