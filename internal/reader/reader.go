@@ -43,7 +43,7 @@ func (r *Reader) globalKeyHandler() ui.KeyHandler {
 		case tcell.KeyRune:
 			switch keyr {
 			case 'A':
-				r.opr.ToggleAboutPopup(r.dsp, r.rpo.Source())
+				r.opr.ToggleAboutPopup(r.dsp, r.rpo.Backend())
 				return nil
 
 			case 'h', '?':

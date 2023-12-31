@@ -82,7 +82,7 @@ func newPopup(
 	return &p
 }
 
-func setAboutPopupText(p *popup, source string) {
+func setAboutPopupText(p *popup, backend string) {
 	commit := internal.GitCommit()
 
 	var buildTime = internal.BuildTime()
@@ -98,12 +98,12 @@ func setAboutPopupText(p *popup, source string) {
 [yellow]Version[-]   : %s
 [yellow]Git commit[-]: %s
 [yellow]Build time[-]: %s
-[yellow]Source[-]    : %s`, // FIXME: Use Repo.Source() for this.
+[yellow]Backend[-]   : %s`, // FIXME: Use Repo.Source() for this.
 		centerBanner(internal.Banner(), width),
 		internal.Version(),
 		commit,
 		buildTime,
-		source,
+		backend,
 	)
 
 	aboutWidget := tview.NewTextView().

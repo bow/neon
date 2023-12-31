@@ -24,7 +24,7 @@ type Operator interface {
 	NotifyWarnf(d *Display, text string, a ...any)
 	Start(d *Display) error
 	Stop(d *Display)
-	ToggleAboutPopup(d *Display, source string)
+	ToggleAboutPopup(d *Display, backend string)
 	ToggleFeedsInPane(d *Display, feeds <-chan *entity.Feed)
 	ToggleHelpPopup(d *Display)
 	ToggleIntroPopup(d *Display)
@@ -108,11 +108,11 @@ func (do *DisplayOperator) Stop(d *Display) {
 	d.inner.Stop()
 }
 
-func (do *DisplayOperator) ToggleAboutPopup(d *Display, source string) {
+func (do *DisplayOperator) ToggleAboutPopup(d *Display, backend string) {
 	if name := do.frontPageName(d); name == aboutPageName {
 		do.hidePopup(d, name)
 	} else if name != introPageName {
-		setAboutPopupText(d.aboutPopup, source)
+		setAboutPopupText(d.aboutPopup, backend)
 		do.showPopup(d, aboutPageName, name)
 	}
 }

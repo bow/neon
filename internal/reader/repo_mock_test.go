@@ -40,6 +40,20 @@ func (m *MockRepo) EXPECT() *MockRepoMockRecorder {
 	return m.recorder
 }
 
+// Backend mocks base method.
+func (m *MockRepo) Backend() string {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Backend")
+	ret0, _ := ret[0].(string)
+	return ret0
+}
+
+// Backend indicates an expected call of Backend.
+func (mr *MockRepoMockRecorder) Backend() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Backend", reflect.TypeOf((*MockRepo)(nil).Backend))
+}
+
 // GetStats mocks base method.
 func (m *MockRepo) GetStats(arg0 context.Context) (<-chan *entity.Stats, error) {
 	m.ctrl.T.Helper()
@@ -83,18 +97,4 @@ func (m *MockRepo) PullFeeds(arg0 context.Context) (<-chan *entity.Feed, error) 
 func (mr *MockRepoMockRecorder) PullFeeds(arg0 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PullFeeds", reflect.TypeOf((*MockRepo)(nil).PullFeeds), arg0)
-}
-
-// Source mocks base method.
-func (m *MockRepo) Source() string {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Source")
-	ret0, _ := ret[0].(string)
-	return ret0
-}
-
-// Source indicates an expected call of Source.
-func (mr *MockRepoMockRecorder) Source() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Source", reflect.TypeOf((*MockRepo)(nil).Source))
 }
