@@ -23,9 +23,9 @@ const (
 )
 
 type popup struct {
+	tview.Grid
 	content tview.Primitive
 	frame   *tview.Frame
-	grid    *tview.Grid
 }
 
 func (p *popup) setContent(prim tview.Primitive) {
@@ -34,11 +34,11 @@ func (p *popup) setContent(prim tview.Primitive) {
 }
 
 func (p *popup) setWidth(w int) {
-	p.grid.SetColumns(0, w, 0)
+	p.Grid.SetColumns(0, w, 0)
 }
 
 func (p *popup) setGridRows(rows []int) {
-	p.grid.SetRows(rows...)
+	p.Grid.SetRows(rows...)
 }
 
 func newEmptyPopup(
@@ -58,7 +58,7 @@ func newEmptyPopup(
 	grid := tview.NewGrid().
 		AddItem(frame, 1, 1, 1, 1, 0, 0, true)
 
-	p := popup{grid: grid, frame: frame, content: content}
+	p := popup{Grid: *grid, frame: frame, content: content}
 
 	return &p
 }
@@ -84,7 +84,7 @@ func newPopup(
 		SetRows(gridRows...).
 		AddItem(frame, 1, 1, 1, 1, 0, 0, true)
 
-	p := popup{grid: grid, frame: frame, content: content}
+	p := popup{Grid: *grid, frame: frame, content: content}
 
 	return &p
 }

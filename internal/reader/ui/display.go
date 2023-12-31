@@ -84,8 +84,8 @@ func (d *Display) setRoot() {
 
 	pages.
 		AddAndSwitchToPage(mainPageName, d.mainPage, true).
-		AddPage(helpPageName, d.helpPopup.grid, true, false).
-		AddPage(aboutPageName, d.aboutPopup.grid, true, false)
+		AddPage(helpPageName, d.helpPopup, true, false).
+		AddPage(aboutPageName, d.aboutPopup, true, false)
 
 	d.root = pages
 	d.inner = d.inner.SetRoot(pages, true)
