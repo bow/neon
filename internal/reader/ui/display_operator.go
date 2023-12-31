@@ -6,7 +6,7 @@ package ui
 import (
 	"github.com/rivo/tview"
 
-	"github.com/bow/neon/internal/entity"
+	"github.com/bow/neon/internal/reader/repo"
 )
 
 type DisplayOperator struct {
@@ -84,17 +84,17 @@ func (do *DisplayOperator) Stop(d *Display) {
 	d.inner.Stop()
 }
 
-func (do *DisplayOperator) ToggleAboutPopup(d *Display, backend string) {
+func (do *DisplayOperator) ToggleAboutPopup(d *Display, rpo repo.Repo) {
 	if name := do.frontPageName(d); name == aboutPageName {
 		do.hidePopup(d, name)
 	} else if name != introPageName {
-		d.setAboutPopupText(backend)
+		d.setAboutPopupText(rpo.Backend())
 		do.showPopup(d, aboutPageName, name)
 	}
 }
 
 //nolint:revive
-func (do *DisplayOperator) ToggleFeedsInPane(d *Display, ch <-chan *entity.Feed) {
+func (do *DisplayOperator) ToggleFeedsInPane(d *Display, rpo repo.Repo) {
 	panic("ToggleFeedsInPane is unimplemented")
 }
 
@@ -112,7 +112,7 @@ func (do *DisplayOperator) ToggleIntroPopup(d *Display) {
 }
 
 //nolint:revive
-func (do *DisplayOperator) ToggleStatsPopup(d *Display, ch <-chan *entity.Stats) {
+func (do *DisplayOperator) ToggleStatsPopup(d *Display, rpo repo.Repo) {
 	panic("ToggleStatsPopup is unimplemented")
 }
 

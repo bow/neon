@@ -13,6 +13,7 @@ import (
 	"github.com/rivo/tview"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"go.uber.org/mock/gomock"
 )
 
 const screenW, screenH = 210, 60
@@ -21,6 +22,7 @@ func TestToggleAboutPopup(t *testing.T) {
 	a := assert.New(t)
 	r := require.New(t)
 	draw := setupDisplayOperatorTest(t)
+	rpo := NewMockRepo(gomock.NewController(t))
 
 	opr, dsp := draw()
 
@@ -30,7 +32,9 @@ func TestToggleAboutPopup(t *testing.T) {
 	a.Nil(dsp.aboutPopup.content)
 
 	backend1 := uuid.NewString()
-	opr.ToggleAboutPopup(dsp, backend1)
+	rpo.EXPECT().Backend().Return(backend1)
+
+	opr.ToggleAboutPopup(dsp, rpo)
 	name, item = dsp.root.GetFrontPage()
 	a.Equal(aboutPageName, name)
 	r.Equal(dsp.aboutPopup, item)
@@ -39,14 +43,18 @@ func TestToggleAboutPopup(t *testing.T) {
 	r.True(typeok1)
 	a.Contains(c1.GetText(true), backend1)
 
-	opr.ToggleAboutPopup(dsp, "")
+	rpo.EXPECT().Backend().Times(0)
+
+	opr.ToggleAboutPopup(dsp, rpo)
 	name, item = dsp.root.GetFrontPage()
 	a.Equal(mainPageName, name)
 	r.Equal(dsp.mainPage, item)
 	a.NotNil(dsp.aboutPopup.content)
 
 	backend2 := uuid.NewString()
-	opr.ToggleAboutPopup(dsp, backend2)
+	rpo.EXPECT().Backend().Return(backend2)
+
+	opr.ToggleAboutPopup(dsp, rpo)
 	name, item = dsp.root.GetFrontPage()
 	a.Equal(aboutPageName, name)
 	r.Equal(dsp.aboutPopup, item)

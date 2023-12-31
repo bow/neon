@@ -22,9 +22,7 @@ func TestToggleAboutPopupCalled(t *testing.T) {
 
 	rdr := draw()
 
-	rpo.EXPECT().Backend().Return("mocked")
-	opr.EXPECT().ToggleAboutPopup(rdr.dsp, "mocked")
-
+	opr.EXPECT().ToggleAboutPopup(rdr.dsp, rpo)
 	screen.InjectKey(tcell.KeyRune, 'A', tcell.ModNone)
 }
 
