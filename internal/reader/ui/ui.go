@@ -9,9 +9,3 @@ type KeyHandler = func(*tcell.EventKey) *tcell.EventKey
 
 //nolint:unused
 type drawFunc func(screen tcell.Screen, x int, y int, w int, h int) (ix int, iy int, iw int, ih int)
-
-const (
-	leftPopupMargin      = 2
-	rightPopupMargin     = 2
-	verticalPopupPadding = 4
-)

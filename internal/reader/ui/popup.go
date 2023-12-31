@@ -10,9 +10,16 @@ import (
 	"strings"
 	"time"
 
-	"github.com/bow/neon/internal"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
+
+	"github.com/bow/neon/internal"
+)
+
+const (
+	leftPopupMargin      = 2
+	rightPopupMargin     = 2
+	verticalPopupPadding = 4
 )
 
 type popup struct {
@@ -91,15 +98,10 @@ func setAboutPopupText(p *popup, backend string) {
 		buildTime = buildTimeVal.Format(longDateFormat)
 	}
 
-	width := len(commit) + 18
-
-	aboutText := fmt.Sprintf(`%s
-
-[yellow]Version[-]   : %s
+	infoText := fmt.Sprintf(`[yellow]Version[-]   : %s
 [yellow]Git commit[-]: %s
 [yellow]Build time[-]: %s
-[yellow]Backend[-]   : %s`, // FIXME: Use Repo.Source() for this.
-		centerBanner(internal.Banner(), width),
+[yellow]Backend[-]   : %s`,
 		internal.Version(),
 		commit,
 		buildTime,
@@ -108,7 +110,14 @@ func setAboutPopupText(p *popup, backend string) {
 
 	aboutWidget := tview.NewTextView().
 		SetDynamicColors(true).
-		SetText(aboutText)
+		SetText(infoText)
+
+	// NOTE: We assume the banner's width is less than the one computed here.
+	width := popupWidth(aboutWidget.GetText(true))
+	banner := centerBanner(internal.Banner(), width)
+	aboutText := fmt.Sprintf("%s\n\n%s", banner, infoText)
+
+	aboutWidget.SetText(aboutText)
 
 	height := popupHeight(aboutText) - 1
 
@@ -155,6 +164,12 @@ func textWidth(text string) (int, []string) {
 	}
 
 	return maxLineWidth, lines
+}
+
+func popupWidth(text string) (cols int) {
+	tw, _ := textWidth(text)
+	// +2 to returned value, to account for left + right borders
+	return tw + leftPopupMargin + rightPopupMargin + 2
 }
 
 func popupHeight(text string) (rows int) {

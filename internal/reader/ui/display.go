@@ -152,7 +152,7 @@ func (d *Display) setHelpPopup() {
 		helpWidget,
 		d.theme.popupTitleFG,
 		1, 1,
-		55,
+		popupWidth(helpWidget.GetText(true)),
 		[]int{0, popupHeight(helpText), 0},
 	)
 }
