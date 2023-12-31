@@ -24,7 +24,7 @@ type Operator interface {
 	NotifyWarnf(d *Display, text string, a ...any)
 	Start(d *Display) error
 	Stop(d *Display)
-	ToggleAboutPopup(d *Display)
+	ToggleAboutPopup(d *Display, source string)
 	ToggleFeedsInPane(d *Display, feeds <-chan *entity.Feed)
 	ToggleHelpPopup(d *Display)
 	ToggleIntroPopup(d *Display)
@@ -109,7 +109,7 @@ func (do *DisplayOperator) Stop(d *Display) {
 }
 
 //nolint:revive
-func (do *DisplayOperator) ToggleAboutPopup(d *Display) {
+func (do *DisplayOperator) ToggleAboutPopup(d *Display, source string) {
 	panic("ToggleAboutPopup is unimplemented")
 }
 

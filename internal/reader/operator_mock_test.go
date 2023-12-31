@@ -214,15 +214,15 @@ func (mr *MockOperatorMockRecorder) Stop(d any) *gomock.Call {
 }
 
 // ToggleAboutPopup mocks base method.
-func (m *MockOperator) ToggleAboutPopup(d *ui.Display) {
+func (m *MockOperator) ToggleAboutPopup(d *ui.Display, source string) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "ToggleAboutPopup", d)
+	m.ctrl.Call(m, "ToggleAboutPopup", d, source)
 }
 
 // ToggleAboutPopup indicates an expected call of ToggleAboutPopup.
-func (mr *MockOperatorMockRecorder) ToggleAboutPopup(d any) *gomock.Call {
+func (mr *MockOperatorMockRecorder) ToggleAboutPopup(d, source any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ToggleAboutPopup", reflect.TypeOf((*MockOperator)(nil).ToggleAboutPopup), d)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ToggleAboutPopup", reflect.TypeOf((*MockOperator)(nil).ToggleAboutPopup), d, source)
 }
 
 // ToggleFeedsInPane mocks base method.
