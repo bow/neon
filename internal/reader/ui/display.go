@@ -6,8 +6,11 @@ package ui
 import (
 	"bufio"
 	"fmt"
+	"runtime"
 	"strings"
+	"time"
 
+	"github.com/bow/neon/internal"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
@@ -17,10 +20,11 @@ type Display struct {
 	lang   *Lang
 	screen tcell.Screen
 
-	inner     *tview.Application
-	root      *tview.Pages
-	mainPage  *tview.Grid
-	helpPopup *tview.Grid
+	inner      *tview.Application
+	root       *tview.Pages
+	mainPage   *tview.Grid
+	aboutPopup *tview.Grid
+	helpPopup  *tview.Grid
 
 	initialized bool
 }
@@ -69,8 +73,12 @@ func (d *Display) normalizeMainPage() {
 }
 
 const (
-	mainPageName = "main"
-	helpPageName = "help"
+	mainPageName  = "main"
+	aboutPageName = "about"
+	helpPageName  = "help"
+	introPageName = "intro"
+
+	longDateFormat = "2 January 2006 - 15:04:05 MST"
 
 	leftPopupMargin      = 2
 	rightPopupMargin     = 2
@@ -81,10 +89,12 @@ func (d *Display) setRoot() {
 	pages := tview.NewPages()
 	d.setMainPage()
 	d.setHelpPopup()
+	d.setAboutPopup()
 
 	pages.
 		AddAndSwitchToPage(mainPageName, d.mainPage, true).
-		AddPage(helpPageName, d.helpPopup, true, false)
+		AddPage(helpPageName, d.helpPopup, true, false).
+		AddPage(aboutPageName, d.aboutPopup, true, false)
 
 	d.root = pages
 	d.inner = d.inner.SetRoot(pages, true)
@@ -97,6 +107,45 @@ func (d *Display) setMainPage() {
 		SetBorders(false)
 
 	d.mainPage = grid
+}
+
+func (d *Display) setAboutPopup() {
+	commit := internal.GitCommit()
+
+	var buildTime = internal.BuildTime()
+	buildTimeVal, err := time.Parse(time.RFC3339, buildTime)
+	if err == nil {
+		buildTime = buildTimeVal.Format(longDateFormat)
+	}
+
+	width := len(commit) + 18
+
+	aboutText := fmt.Sprintf(`%s
+
+[yellow]Version[-]   : %s
+[yellow]Git commit[-]: %s
+[yellow]Build time[-]: %s
+[yellow]Source[-]    : %s`, // FIXME: Use Repo.Source() for this.
+		centerBanner(internal.Banner(), width),
+		internal.Version(),
+		commit,
+		buildTime,
+		"",
+	)
+
+	aboutWidget := tview.NewTextView().
+		SetDynamicColors(true).
+		SetText(aboutText)
+
+	d.aboutPopup = newPopup(
+		d.lang.aboutPopupTitle,
+		aboutWidget,
+		d.theme.popupTitleFG,
+		0, 0,
+		width,
+		[]int{-1, popupHeight(aboutText) - 1, -3},
+	)
+
 }
 
 func (d *Display) setHelpPopup() {
@@ -172,6 +221,42 @@ func newPopup(
 		SetColumns(0, ncols, 0).
 		SetRows(gridRows...).
 		AddItem(frame, 1, 1, 1, 1, 0, 0, true)
+}
+
+func centerBanner(text string, width int) string {
+	if width == 0 {
+		return text
+	}
+
+	var (
+		maxLineWidth = 0
+		lines        = make([]string, 0)
+		sc           = bufio.NewScanner(strings.NewReader(text))
+	)
+	for sc.Scan() {
+		line := sc.Text()
+		if ncols := len(line); ncols > maxLineWidth {
+			maxLineWidth = ncols
+		}
+		lines = append(lines, line)
+	}
+
+	if maxLineWidth > width {
+		return text
+	}
+
+	leftPad := strings.Repeat(" ", ((width-maxLineWidth)/2)-(leftPopupMargin*2))
+	paddedLines := make([]string, len(lines))
+	for i, line := range lines {
+		paddedLines[i] = fmt.Sprintf("%s%s", leftPad, line)
+	}
+
+	sep := "\n"
+	if runtime.GOOS == "windows" {
+		sep = "\r\n"
+	}
+
+	return strings.Join(paddedLines, sep)
 }
 
 func popupHeight(text string) (rows int) {

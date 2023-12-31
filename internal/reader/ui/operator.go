@@ -108,9 +108,12 @@ func (do *DisplayOperator) Stop(d *Display) {
 	d.inner.Stop()
 }
 
-//nolint:revive
-func (do *DisplayOperator) ToggleAboutPopup(d *Display, source string) {
-	panic("ToggleAboutPopup is unimplemented")
+func (do *DisplayOperator) ToggleAboutPopup(d *Display, _ string) {
+	if name := do.frontPageName(d); name == aboutPageName {
+		do.hidePopup(d, name)
+	} else if name != introPageName {
+		do.showPopup(d, aboutPageName, name)
+	}
 }
 
 //nolint:revive
