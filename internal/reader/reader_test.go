@@ -8,6 +8,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/bow/neon/internal/reader/ui"
 	"github.com/gdamore/tcell/v2"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -30,13 +31,10 @@ func TestToggleHelpPopupCalled(t *testing.T) {
 }
 
 func TestStopCalled(t *testing.T) {
-	r := require.New(t)
-	screen, _, draw := setupReaderTest(t)
+	screen, opr, draw := setupReaderTest(t)
 	rdr := draw()
-
-	r.False(rdr.stopped)
+	opr.EXPECT().Stop(rdr.dsp).Times(1)
 	screen.InjectKey(tcell.KeyRune, 'q', tcell.ModNone)
-	r.Eventually(func() bool { return rdr.stopped }, 2*time.Second, 100*time.Millisecond)
 }
 
 func TestStartSmoke(t *testing.T) {
@@ -103,6 +101,10 @@ func setupReaderTest(
 			Build()
 		r.NoError(err)
 		r.NotNil(rdr)
+
+		opr.EXPECT().
+			Start(rdr.dsp).
+			DoAndReturn(func(dsp *ui.Display) error { return dsp.Start() })
 
 		wg.Add(1)
 		go func() {

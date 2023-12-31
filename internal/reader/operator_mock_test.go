@@ -187,6 +187,32 @@ func (mr *MockOperatorMockRecorder) NotifyWarnf(text any, a ...any) *gomock.Call
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "NotifyWarnf", reflect.TypeOf((*MockOperator)(nil).NotifyWarnf), varargs...)
 }
 
+// Start mocks base method.
+func (m *MockOperator) Start(arg0 *ui.Display) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Start", arg0)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Start indicates an expected call of Start.
+func (mr *MockOperatorMockRecorder) Start(arg0 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Start", reflect.TypeOf((*MockOperator)(nil).Start), arg0)
+}
+
+// Stop mocks base method.
+func (m *MockOperator) Stop(arg0 *ui.Display) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "Stop", arg0)
+}
+
+// Stop indicates an expected call of Stop.
+func (mr *MockOperatorMockRecorder) Stop(arg0 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Stop", reflect.TypeOf((*MockOperator)(nil).Stop), arg0)
+}
+
 // ToggleAboutPopup mocks base method.
 func (m *MockOperator) ToggleAboutPopup(arg0 *ui.Display) {
 	m.ctrl.T.Helper()

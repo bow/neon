@@ -22,12 +22,10 @@ type Reader struct {
 	dsp  *ui.Display
 	opr  ui.Operator
 	repo rp.Repo
-
-	stopped bool
 }
 
 func (r *Reader) Start() error {
-	return r.dsp.Start()
+	return r.opr.Start(r.dsp)
 }
 
 type Builder struct {
@@ -139,8 +137,6 @@ func (b *Builder) Build() (*Reader, error) {
 		dsp:  dsp,
 		opr:  opr,
 		repo: rpo,
-
-		stopped: false,
 	}
 	rdr.dsp.Init(rdr.globalKeyHandler())
 
@@ -165,8 +161,7 @@ func (r *Reader) globalKeyHandler() ui.KeyHandler {
 				return nil
 
 			case 'q':
-				r.dsp.Stop()
-				r.stopped = true
+				r.opr.Stop(r.dsp)
 				return nil
 			}
 		}
