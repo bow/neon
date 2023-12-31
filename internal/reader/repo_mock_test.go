@@ -84,3 +84,17 @@ func (mr *MockRepoMockRecorder) PullFeeds(arg0 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PullFeeds", reflect.TypeOf((*MockRepo)(nil).PullFeeds), arg0)
 }
+
+// Source mocks base method.
+func (m *MockRepo) Source() string {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Source")
+	ret0, _ := ret[0].(string)
+	return ret0
+}
+
+// Source indicates an expected call of Source.
+func (mr *MockRepoMockRecorder) Source() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Source", reflect.TypeOf((*MockRepo)(nil).Source))
+}
