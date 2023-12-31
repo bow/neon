@@ -29,6 +29,7 @@ func (r *Reader) Start() error {
 }
 
 func (r *Reader) globalKeyHandler() ui.KeyHandler {
+	r.mustDefinedFields()
 
 	return func(event *tcell.EventKey) *tcell.EventKey {
 		var (
@@ -52,6 +53,20 @@ func (r *Reader) globalKeyHandler() ui.KeyHandler {
 		}
 
 		return event
+	}
+}
+
+func (r *Reader) mustDefinedFields() {
+	if r.dsp == nil {
+		panic("can not set handler with nil display")
+	}
+
+	if r.opr == nil {
+		panic("can not set handler with nil operator")
+	}
+
+	if r.repo == nil {
+		panic("can not set handler with nil repo")
 	}
 }
 
