@@ -76,12 +76,12 @@ func (do *DisplayOperator) NotifyWarnf(d *Display, text string, a ...any) {
 
 //nolint:revive
 func (do *DisplayOperator) Start(d *Display) error {
-	return d.inner.Run()
+	return d.Start()
 }
 
 //nolint:revive
 func (do *DisplayOperator) Stop(d *Display) {
-	d.inner.Stop()
+	d.stop()
 }
 
 func (do *DisplayOperator) ToggleAboutPopup(d *Display, rpo repo.Repo) {

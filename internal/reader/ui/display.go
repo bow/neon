@@ -58,7 +58,7 @@ func (d *Display) Start() error {
 	return d.inner.Run()
 }
 
-func (d *Display) Stop() {
+func (d *Display) stop() {
 	d.inner.Stop()
 }
 
