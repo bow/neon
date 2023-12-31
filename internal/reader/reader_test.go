@@ -17,8 +17,19 @@ import (
 
 const screenW, screenH = 210, 60
 
+func TestToggleAboutPopupCalled(t *testing.T) {
+	screen, opr, rpo, draw := setupReaderTest(t)
+
+	rdr := draw()
+
+	rpo.EXPECT().Source().Return("mocked")
+	opr.EXPECT().ToggleAboutPopup(rdr.dsp, "mocked")
+
+	screen.InjectKey(tcell.KeyRune, 'A', tcell.ModNone)
+}
+
 func TestToggleHelpPopupCalled(t *testing.T) {
-	screen, opr, draw := setupReaderTest(t)
+	screen, opr, _, draw := setupReaderTest(t)
 
 	rdr := draw()
 
@@ -31,7 +42,7 @@ func TestToggleHelpPopupCalled(t *testing.T) {
 }
 
 func TestStopCalled(t *testing.T) {
-	screen, opr, draw := setupReaderTest(t)
+	screen, opr, _, draw := setupReaderTest(t)
 	rdr := draw()
 	opr.EXPECT().Stop(rdr.dsp).Times(1)
 	screen.InjectKey(tcell.KeyRune, 'q', tcell.ModNone)
@@ -39,7 +50,7 @@ func TestStopCalled(t *testing.T) {
 
 func TestStartSmoke(t *testing.T) {
 
-	screen, _, draw := setupReaderTest(t)
+	screen, _, _, draw := setupReaderTest(t)
 
 	// Since draw states are hidden at this level, the test just checks that
 	// precondition == all cells empty, postcondition == at least one cell non-empty
@@ -78,13 +89,14 @@ func setupReaderTest(
 ) (
 	screen tcell.SimulationScreen,
 	opr *MockOperator,
+	rpo *MockRepo,
 	drawf func() *Reader,
 ) {
 	t.Helper()
 
 	r := require.New(t)
 
-	repo := NewMockRepo(gomock.NewController(t))
+	rpo = NewMockRepo(gomock.NewController(t))
 
 	screen = tcell.NewSimulationScreen("UTF-8")
 	r.NoError(screen.Init())
@@ -95,7 +107,7 @@ func setupReaderTest(
 	var wg sync.WaitGroup
 	drawf = func() *Reader {
 		rdr, err := NewBuilder().
-			repo(repo).
+			repo(rpo).
 			screen(screen).
 			operator(opr).
 			Build()
@@ -121,5 +133,5 @@ func setupReaderTest(
 		wg.Wait()
 	})
 
-	return screen, opr, drawf
+	return screen, opr, rpo, drawf
 }
