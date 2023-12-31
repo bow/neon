@@ -126,7 +126,7 @@ func centerBanner(text string, width int) string {
 		return text
 	}
 
-	leftPad := strings.Repeat(" ", ((width-maxLineWidth)/2)-(leftPopupMargin*2))
+	leftPad := strings.Repeat(" ", ((width-maxLineWidth)/2)-leftPopupMargin-1)
 	paddedLines := make([]string, len(lines))
 	for i, line := range lines {
 		paddedLines[i] = fmt.Sprintf("%s%s", leftPad, line)
