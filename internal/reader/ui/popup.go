@@ -24,6 +24,7 @@ const (
 
 type popup struct {
 	tview.Grid
+
 	content tview.Primitive
 	frame   *tview.Frame
 }
