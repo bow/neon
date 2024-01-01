@@ -8,7 +8,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/bow/neon/internal/reader/ui"
 	"github.com/gdamore/tcell/v2"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -37,13 +36,6 @@ func TestToggleHelpPopupCalled(t *testing.T) {
 
 	screen.InjectKey(tcell.KeyRune, '?', tcell.ModNone)
 	screen.InjectKey(tcell.KeyRune, 'h', tcell.ModNone)
-}
-
-func TestStopCalled(t *testing.T) {
-	screen, opr, _, draw := setupReaderTest(t)
-	rdr := draw()
-	opr.EXPECT().Stop(rdr.dsp).Times(1)
-	screen.InjectKey(tcell.KeyRune, 'q', tcell.ModNone)
 }
 
 func TestStartSmoke(t *testing.T) {
@@ -80,6 +72,9 @@ func TestStartSmoke(t *testing.T) {
 	assert.True(t, empty())
 	draw()
 	assert.Eventually(t, drawn, 2*time.Second, 100*time.Millisecond)
+
+	// screen.InjectKey(tcell.KeyRune, 'q', tcell.ModNone)
+	// assert.Eventually(t, empty, 2*time.Second, 100*time.Millisecond)
 }
 
 func setupReaderTest(
@@ -112,10 +107,6 @@ func setupReaderTest(
 		r.NoError(err)
 		r.NotNil(rdr)
 
-		opr.EXPECT().
-			Start(rdr.dsp).
-			DoAndReturn(func(dsp *ui.Display) error { return dsp.Start() })
-
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
@@ -123,13 +114,13 @@ func setupReaderTest(
 			r.NoError(rerr)
 		}()
 
+		t.Cleanup(func() {
+			screen.InjectKey(tcell.KeyRune, 'q', tcell.ModNone)
+			wg.Wait()
+		})
+
 		return rdr
 	}
-
-	t.Cleanup(func() {
-		screen.InjectKey(tcell.KeyCtrlC, ' ', tcell.ModNone)
-		wg.Wait()
-	})
 
 	return screen, opr, rpo, drawf
 }

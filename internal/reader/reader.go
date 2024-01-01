@@ -25,7 +25,7 @@ type Reader struct {
 }
 
 func (r *Reader) Start() error {
-	return r.opr.Start(r.dsp)
+	return r.dsp.Start()
 }
 
 func (r *Reader) globalKeyHandler() ui.KeyHandler {
@@ -51,7 +51,7 @@ func (r *Reader) globalKeyHandler() ui.KeyHandler {
 				return nil
 
 			case 'q':
-				r.opr.Stop(r.dsp)
+				r.dsp.Stop()
 				return nil
 			}
 		}

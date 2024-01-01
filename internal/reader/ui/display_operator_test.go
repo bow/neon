@@ -125,7 +125,7 @@ func setupDisplayOperatorTest(t *testing.T) func() (*DisplayOperator, *Display) 
 
 	t.Cleanup(func() {
 		if dsp != nil && dsp.inner != nil {
-			dsp.stop()
+			dsp.inner.Stop()
 			stopWaiter.Wait()
 		}
 	})

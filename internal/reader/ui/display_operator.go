@@ -74,16 +74,6 @@ func (do *DisplayOperator) NotifyWarnf(d *Display, text string, a ...any) {
 	panic("NotifyWarnf is unimplemented")
 }
 
-//nolint:revive
-func (do *DisplayOperator) Start(d *Display) error {
-	return d.Start()
-}
-
-//nolint:revive
-func (do *DisplayOperator) Stop(d *Display) {
-	d.stop()
-}
-
 func (do *DisplayOperator) ToggleAboutPopup(d *Display, rpo repo.Repo) {
 	if name := do.frontPageName(d); name == aboutPageName {
 		do.hidePopup(d, name)

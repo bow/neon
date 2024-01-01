@@ -18,8 +18,6 @@ type Operator interface {
 	NotifyErr(d *Display, err error)
 	NotifyErrf(d *Display, text string, a ...any)
 	NotifyWarnf(d *Display, text string, a ...any)
-	Start(d *Display) error
-	Stop(d *Display)
 	ToggleAboutPopup(d *Display, r repo.Repo)
 	ToggleFeedsInPane(d *Display, r repo.Repo)
 	ToggleHelpPopup(d *Display)
