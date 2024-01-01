@@ -151,7 +151,8 @@ func screenDrawn(t *testing.T, screen tcell.Screen) bool {
 	for y := 0; y < screenH; y++ {
 		for x := 0; x < screenW; x++ {
 			pr, _, _, _ := screen.GetContent(y, x)
-			if pr != ' ' && pr != '\x00' {
+			// \x00 is when cell is invalid, ' ' is when cell is drawn as empty
+			if pr != '\x00' && pr != ' ' {
 				return true
 			}
 		}

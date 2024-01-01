@@ -55,14 +55,11 @@ func TestStartSmoke(t *testing.T) {
 
 	// Since draw states are hidden at this level, the test just checks that
 	// precondition == all cells empty, postcondition == at least one cell non-empty
-	cellEmpty := func(x, y int) bool {
-		pr, _, _, _ := screen.GetContent(x, y)
-		return pr == ' ' || pr == '\x00'
-	}
 	empty := func() bool {
 		for y := 0; y < screenH; y++ {
 			for x := 0; x < screenW; x++ {
-				if !cellEmpty(x, y) {
+				pr, _, _, _ := screen.GetContent(x, y)
+				if pr != '\x00' {
 					return false
 				}
 			}
@@ -72,21 +69,23 @@ func TestStartSmoke(t *testing.T) {
 	drawn := func() bool {
 		for y := 0; y < screenH; y++ {
 			for x := 0; x < screenW; x++ {
-				if !cellEmpty(x, y) {
+				pr, _, _, _ := screen.GetContent(x, y)
+				if pr != '\x00' && pr != ' ' {
 					return true
 				}
 			}
 		}
 		return false
 	}
+	pollTimeout, tickFreq := 2*time.Second, 100*time.Millisecond
 
-	assert.True(t, empty())
+	assert.Eventually(t, empty, pollTimeout, tickFreq)
 
 	draw()
-	assert.Eventually(t, drawn, 2*time.Second, 100*time.Millisecond)
+	assert.Eventually(t, drawn, pollTimeout, tickFreq)
 
 	screen.InjectKey(tcell.KeyRune, 'q', tcell.ModNone)
-	assert.Eventually(t, empty, 2*time.Second, 100*time.Millisecond)
+	assert.Eventually(t, empty, pollTimeout, tickFreq)
 }
 
 func setupReaderTest(
