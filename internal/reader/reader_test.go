@@ -85,8 +85,8 @@ func TestStartSmoke(t *testing.T) {
 	draw()
 	assert.Eventually(t, drawn, 2*time.Second, 100*time.Millisecond)
 
-	// screen.InjectKey(tcell.KeyRune, 'q', tcell.ModNone)
-	// assert.Eventually(t, empty, 2*time.Second, 100*time.Millisecond)
+	screen.InjectKey(tcell.KeyRune, 'q', tcell.ModNone)
+	assert.Eventually(t, empty, 2*time.Second, 100*time.Millisecond)
 }
 
 func setupReaderTest(
