@@ -14,9 +14,8 @@ import (
 )
 
 type Display struct {
-	theme  *Theme
-	lang   *Lang
-	screen tcell.Screen
+	theme *Theme
+	lang  *Lang
 
 	inner      *tview.Application
 	root       *tview.Pages
@@ -34,9 +33,8 @@ func NewDisplay(screen tcell.Screen, theme string) (*Display, error) {
 	}
 
 	d := Display{
-		theme:  th,
-		lang:   langEN,
-		screen: screen,
+		theme: th,
+		lang:  langEN,
 		inner: tview.NewApplication().
 			EnableMouse(true).
 			SetScreen(screen),
