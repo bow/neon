@@ -112,8 +112,8 @@ func (do *DisplayOperator) ToggleStatusBar(d *Display) {
 }
 
 //nolint:revive
-func (do *DisplayOperator) UnfocusPane(d *Display) {
-	panic("UnfocusPane is unimplemented")
+func (do *DisplayOperator) UnfocusFront(d *Display) {
+	panic("UnfocusCurrent is unimplemented")
 }
 
 func (do *DisplayOperator) frontPageName(d *Display) string {

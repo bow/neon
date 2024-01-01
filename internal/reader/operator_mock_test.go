@@ -259,14 +259,14 @@ func (mr *MockOperatorMockRecorder) ToggleStatusBar(d any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ToggleStatusBar", reflect.TypeOf((*MockOperator)(nil).ToggleStatusBar), d)
 }
 
-// UnfocusPane mocks base method.
-func (m *MockOperator) UnfocusPane(d *ui.Display) {
+// UnfocusFront mocks base method.
+func (m *MockOperator) UnfocusFront(d *ui.Display) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "UnfocusPane", d)
+	m.ctrl.Call(m, "UnfocusFront", d)
 }
 
-// UnfocusPane indicates an expected call of UnfocusPane.
-func (mr *MockOperatorMockRecorder) UnfocusPane(d any) *gomock.Call {
+// UnfocusFront indicates an expected call of UnfocusFront.
+func (mr *MockOperatorMockRecorder) UnfocusFront(d any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UnfocusPane", reflect.TypeOf((*MockOperator)(nil).UnfocusPane), d)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UnfocusFront", reflect.TypeOf((*MockOperator)(nil).UnfocusFront), d)
 }

@@ -24,5 +24,5 @@ type Operator interface {
 	ToggleIntroPopup(d *Display)
 	ToggleStatsPopup(d *Display, r repo.Repo)
 	ToggleStatusBar(d *Display)
-	UnfocusPane(d *Display)
+	UnfocusFront(d *Display)
 }

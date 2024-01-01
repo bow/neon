@@ -37,7 +37,7 @@ func (r *Reader) globalKeyHandler() ui.KeyHandler {
 			keyr = event.Rune()
 		)
 
-		// nolint:gocritic,revive,exhaustive
+		// nolint:exhaustive
 		switch key {
 
 		case tcell.KeyRune:
@@ -54,6 +54,10 @@ func (r *Reader) globalKeyHandler() ui.KeyHandler {
 				r.dsp.Stop()
 				return nil
 			}
+
+		case tcell.KeyEscape:
+			r.opr.UnfocusFront(r.dsp)
+			return nil
 		}
 
 		return event

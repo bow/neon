@@ -22,6 +22,7 @@ func TestToggleAboutPopupCalled(t *testing.T) {
 	rdr := draw()
 
 	opr.EXPECT().ToggleAboutPopup(rdr.dsp, rpo)
+
 	screen.InjectKey(tcell.KeyRune, 'A', tcell.ModNone)
 }
 
@@ -36,6 +37,16 @@ func TestToggleHelpPopupCalled(t *testing.T) {
 
 	screen.InjectKey(tcell.KeyRune, '?', tcell.ModNone)
 	screen.InjectKey(tcell.KeyRune, 'h', tcell.ModNone)
+}
+
+func TestUnfocusFrontCalled(t *testing.T) {
+	screen, opr, _, draw := setupReaderTest(t)
+
+	rdr := draw()
+
+	opr.EXPECT().UnfocusFront(rdr.dsp)
+
+	screen.InjectKey(tcell.KeyEscape, ' ', tcell.ModNone)
 }
 
 func TestStartSmoke(t *testing.T) {
