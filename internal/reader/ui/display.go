@@ -24,7 +24,7 @@ type Display struct {
 	aboutPopup *popup
 	helpPopup  *popup
 
-	initialized bool
+	handlersSet bool
 }
 
 func NewDisplay(screen tcell.Screen, theme string) (*Display, error) {
@@ -46,14 +46,14 @@ func NewDisplay(screen tcell.Screen, theme string) (*Display, error) {
 	return &d, nil
 }
 
-func (d *Display) Init(globalKeyHandler KeyHandler) {
+func (d *Display) SetHandlers(globalKeyHandler KeyHandler) {
 	d.inner = d.inner.SetInputCapture(globalKeyHandler)
-	d.initialized = true
+	d.handlersSet = true
 }
 
 func (d *Display) Start() error {
-	if !d.initialized {
-		return fmt.Errorf("display must be initialized before starting")
+	if !d.handlersSet {
+		return fmt.Errorf("display key handlers must be set before starting")
 	}
 	return d.inner.Run()
 }

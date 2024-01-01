@@ -140,7 +140,7 @@ func newTestDisplay(t *testing.T, screen tcell.Screen) *Display {
 	dsp, err := NewDisplay(screen, "dark")
 	r.NoError(err)
 	r.NotNil(dsp)
-	dsp.Init(func(ek *tcell.EventKey) *tcell.EventKey { return ek })
+	dsp.SetHandlers(func(ek *tcell.EventKey) *tcell.EventKey { return ek })
 	return dsp
 }
 

@@ -184,7 +184,7 @@ func (b *Builder) Build() (*Reader, error) {
 		opr: opr,
 		rpo: rpo,
 	}
-	rdr.dsp.Init(rdr.globalKeyHandler())
+	rdr.dsp.SetHandlers(rdr.globalKeyHandler())
 
 	return &rdr, nil
 }
