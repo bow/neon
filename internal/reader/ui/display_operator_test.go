@@ -148,9 +148,9 @@ func newTestDisplay(t *testing.T, screen tcell.Screen) *Display {
 func screenDrawn(t *testing.T, screen tcell.Screen) bool {
 	t.Helper()
 
-	for w := 0; w < screenW; w++ {
-		for h := 0; h < screenH; h++ {
-			pr, _, _, _ := screen.GetContent(w, h)
+	for y := 0; y < screenH; y++ {
+		for x := 0; x < screenW; x++ {
+			pr, _, _, _ := screen.GetContent(y, x)
 			if pr != ' ' && pr != '\x00' {
 				return true
 			}

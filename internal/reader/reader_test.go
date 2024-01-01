@@ -55,14 +55,14 @@ func TestStartSmoke(t *testing.T) {
 
 	// Since draw states are hidden at this level, the test just checks that
 	// precondition == all cells empty, postcondition == at least one cell non-empty
-	cellEmpty := func(w, h int) bool {
-		pr, _, _, _ := screen.GetContent(w, h)
+	cellEmpty := func(x, y int) bool {
+		pr, _, _, _ := screen.GetContent(x, y)
 		return pr == ' ' || pr == '\x00'
 	}
 	empty := func() bool {
-		for w := 0; w < screenW; w++ {
-			for h := 0; h < screenH; h++ {
-				if !cellEmpty(w, h) {
+		for y := 0; y < screenH; y++ {
+			for x := 0; x < screenW; x++ {
+				if !cellEmpty(x, y) {
 					return false
 				}
 			}
@@ -70,9 +70,9 @@ func TestStartSmoke(t *testing.T) {
 		return true
 	}
 	drawn := func() bool {
-		for w := 0; w < screenW; w++ {
-			for h := 0; h < screenH; h++ {
-				if !cellEmpty(w, h) {
+		for y := 0; y < screenH; y++ {
+			for x := 0; x < screenW; x++ {
+				if !cellEmpty(x, y) {
 					return true
 				}
 			}
