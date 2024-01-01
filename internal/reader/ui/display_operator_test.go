@@ -89,17 +89,18 @@ func TestToggleHelpPopup(t *testing.T) {
 func setupDisplayOperatorTest(t *testing.T) func() (*DisplayOperator, *Display) {
 	t.Helper()
 
-	r := require.New(t)
-	screen := tcell.NewSimulationScreen("UTF-8")
-	r.NoError(screen.Init())
-	screen.SetSize(screenW, screenH)
-
 	var (
-		stopWaiter sync.WaitGroup
-		dsp        *Display
+		r = require.New(t)
+
+		screen = tcell.NewSimulationScreen("UTF-8")
+		dsp    *Display
 	)
+	var stopWaiter sync.WaitGroup
 	drawf := func() (*DisplayOperator, *Display) {
 		dsp = newTestDisplay(t, screen)
+		// This is called here because the underlying App calls screen.Init, which,
+		// among other things, resets its size.
+		screen.SetSize(screenW, screenH)
 
 		stopWaiter.Add(1)
 		go func() {
@@ -150,7 +151,7 @@ func screenDrawn(t *testing.T, screen tcell.Screen) bool {
 	for w := 0; w < screenW; w++ {
 		for h := 0; h < screenH; h++ {
 			pr, _, _, _ := screen.GetContent(w, h)
-			if pr != ' ' {
+			if pr != ' ' && pr != '\x00' {
 				return true
 			}
 		}

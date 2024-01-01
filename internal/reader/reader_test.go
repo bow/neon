@@ -57,7 +57,7 @@ func TestStartSmoke(t *testing.T) {
 	// precondition == all cells empty, postcondition == at least one cell non-empty
 	cellEmpty := func(w, h int) bool {
 		pr, _, _, _ := screen.GetContent(w, h)
-		return pr == ' '
+		return pr == ' ' || pr == '\x00'
 	}
 	empty := func() bool {
 		for w := 0; w < screenW; w++ {
@@ -81,6 +81,7 @@ func TestStartSmoke(t *testing.T) {
 	}
 
 	assert.True(t, empty())
+
 	draw()
 	assert.Eventually(t, drawn, 2*time.Second, 100*time.Millisecond)
 
@@ -91,25 +92,23 @@ func TestStartSmoke(t *testing.T) {
 func setupReaderTest(
 	t *testing.T,
 ) (
-	screen tcell.SimulationScreen,
-	opr *MockOperator,
-	rpo *MockRepo,
-	drawf func() *Reader,
+	tcell.SimulationScreen,
+	*MockOperator,
+	*MockRepo,
+	func() *Reader,
 ) {
 	t.Helper()
 
-	r := require.New(t)
+	var (
+		r = require.New(t)
 
-	rpo = NewMockRepo(gomock.NewController(t))
-
-	screen = tcell.NewSimulationScreen("UTF-8")
-	r.NoError(screen.Init())
-	screen.SetSize(screenW, screenH)
-
-	opr = NewMockOperator(gomock.NewController(t))
+		screen = tcell.NewSimulationScreen("UTF-8")
+		opr    = NewMockOperator(gomock.NewController(t))
+		rpo    = NewMockRepo(gomock.NewController(t))
+	)
 
 	var wg sync.WaitGroup
-	drawf = func() *Reader {
+	drawf := func() *Reader {
 		rdr, err := NewBuilder().
 			repo(rpo).
 			screen(screen).
@@ -117,6 +116,10 @@ func setupReaderTest(
 			Build()
 		r.NoError(err)
 		r.NotNil(rdr)
+
+		// This is called here because the underlying App calls screen.Init, which,
+		// among other things, resets its size.
+		screen.SetSize(screenW, screenH)
 
 		wg.Add(1)
 		go func() {

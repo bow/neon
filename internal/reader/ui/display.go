@@ -88,6 +88,10 @@ func (d *Display) setRoot() {
 		AddPage(helpPageName, d.helpPopup, true, false).
 		AddPage(aboutPageName, d.aboutPopup, true, false)
 
+	// FIXME: Remove when we add mainPage proper, currently needed only to see if
+	//		  app is drawn.
+	pages.SetBorder(true)
+
 	d.root = pages
 	d.inner = d.inner.SetRoot(pages, true)
 }
