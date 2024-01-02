@@ -9,7 +9,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/adrg/xdg"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"golang.org/x/net/context"
@@ -19,11 +18,7 @@ import (
 
 const dbPathKey = "db-path"
 
-// FIXME: Update value for non-linux systems.
-var (
-	defaultDBPath     = "$XDG_DATA_HOME/neon/neon.db"
-	defaultServerAddr = "127.0.0.1:5151"
-)
+var defaultServerAddr = "127.0.0.1:5151"
 
 func newViper(cmdName string) *viper.Viper {
 	v := viper.New()
@@ -47,23 +42,6 @@ func fromCmdContext[T any](cmd *cobra.Command, key string) (T, error) {
 		return zero, fmt.Errorf("can not retrieve %T value %[1]q from command context", key)
 	}
 	return val, nil
-}
-
-// resolveDBPath attempts to resolve the filesystem path to the datastore.
-func resolveDBPath(path string) (string, error) {
-	var (
-		err    error
-		xdgDir = "$XDG_DATA_HOME/"
-	)
-
-	if strings.HasPrefix(path, xdgDir) {
-		rel := strings.TrimPrefix(path, xdgDir)
-		path, err = xdg.DataFile(rel)
-		if err != nil {
-			return "", err
-		}
-	}
-	return path, nil
 }
 
 // showBanner prints the application banner to the given writer.
