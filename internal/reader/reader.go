@@ -10,7 +10,7 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"google.golang.org/grpc"
 
-	rp "github.com/bow/neon/internal/reader/repo"
+	bknd "github.com/bow/neon/internal/reader/backend"
 	"github.com/bow/neon/internal/reader/ui"
 )
 
@@ -21,7 +21,7 @@ type Reader struct {
 
 	dsp *ui.Display
 	opr ui.Operator
-	rpo rp.Repo
+	be  bknd.Backend
 }
 
 func (r *Reader) Start() error {
@@ -43,7 +43,7 @@ func (r *Reader) globalKeyHandler() ui.KeyHandler {
 		case tcell.KeyRune:
 			switch keyr {
 			case 'A':
-				r.opr.ToggleAboutPopup(r.dsp, r.rpo)
+				r.opr.ToggleAboutPopup(r.dsp, r.be)
 				return nil
 
 			case 'h', '?':
@@ -73,8 +73,8 @@ func (r *Reader) mustDefinedFields() {
 		panic("can not set handler with nil operator")
 	}
 
-	if r.rpo == nil {
-		panic("can not set handler with nil repo")
+	if r.be == nil {
+		panic("can not set handler with nil backend")
 	}
 }
 
@@ -84,12 +84,12 @@ type Builder struct {
 	initPath  string
 	scr       tcell.Screen
 
-	// rpcRepo args.
+	// rpcBackend args.
 	addr  string
 	dopts []grpc.DialOption
 
 	// For testing.
-	rpo rp.Repo
+	be  bknd.Backend
 	opr ui.Operator
 }
 
@@ -127,8 +127,8 @@ func (b *Builder) Theme(name string) *Builder {
 	return b
 }
 
-func (b *Builder) repo(rpo rp.Repo) *Builder {
-	b.rpo = rpo
+func (b *Builder) backend(be bknd.Backend) *Builder {
+	b.be = be
 	return b
 }
 
@@ -144,18 +144,18 @@ func (b *Builder) operator(opr ui.Operator) *Builder {
 
 func (b *Builder) Build() (*Reader, error) {
 
-	if b.addr == "" && b.rpo == nil {
+	if b.addr == "" && b.be == nil {
 		return nil, fmt.Errorf("reader server address must be specified")
 	}
 
 	var (
-		rpo rp.Repo
+		be  bknd.Backend
 		err error
 	)
-	if b.rpo != nil {
-		rpo = b.rpo
+	if b.be != nil {
+		be = b.be
 	} else {
-		rpo, err = rp.NewRPC(b.ctx, b.addr, b.dopts...)
+		be, err = bknd.NewRPC(b.ctx, b.addr, b.dopts...)
 		if err != nil {
 			return nil, err
 		}
@@ -186,7 +186,7 @@ func (b *Builder) Build() (*Reader, error) {
 		ctx: b.ctx,
 		dsp: dsp,
 		opr: opr,
-		rpo: rpo,
+		be:  be,
 	}
 	rdr.dsp.SetHandlers(rdr.globalKeyHandler())
 

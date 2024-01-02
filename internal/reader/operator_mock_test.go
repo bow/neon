@@ -12,7 +12,7 @@ package reader
 import (
 	reflect "reflect"
 
-	repo "github.com/bow/neon/internal/reader/repo"
+	backend "github.com/bow/neon/internal/reader/backend"
 	ui "github.com/bow/neon/internal/reader/ui"
 	gomock "go.uber.org/mock/gomock"
 )
@@ -188,27 +188,27 @@ func (mr *MockOperatorMockRecorder) NotifyWarnf(d, text any, a ...any) *gomock.C
 }
 
 // ToggleAboutPopup mocks base method.
-func (m *MockOperator) ToggleAboutPopup(d *ui.Display, r repo.Repo) {
+func (m *MockOperator) ToggleAboutPopup(d *ui.Display, b backend.Backend) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "ToggleAboutPopup", d, r)
+	m.ctrl.Call(m, "ToggleAboutPopup", d, b)
 }
 
 // ToggleAboutPopup indicates an expected call of ToggleAboutPopup.
-func (mr *MockOperatorMockRecorder) ToggleAboutPopup(d, r any) *gomock.Call {
+func (mr *MockOperatorMockRecorder) ToggleAboutPopup(d, b any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ToggleAboutPopup", reflect.TypeOf((*MockOperator)(nil).ToggleAboutPopup), d, r)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ToggleAboutPopup", reflect.TypeOf((*MockOperator)(nil).ToggleAboutPopup), d, b)
 }
 
 // ToggleFeedsInPane mocks base method.
-func (m *MockOperator) ToggleFeedsInPane(d *ui.Display, r repo.Repo) {
+func (m *MockOperator) ToggleFeedsInPane(d *ui.Display, b backend.Backend) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "ToggleFeedsInPane", d, r)
+	m.ctrl.Call(m, "ToggleFeedsInPane", d, b)
 }
 
 // ToggleFeedsInPane indicates an expected call of ToggleFeedsInPane.
-func (mr *MockOperatorMockRecorder) ToggleFeedsInPane(d, r any) *gomock.Call {
+func (mr *MockOperatorMockRecorder) ToggleFeedsInPane(d, b any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ToggleFeedsInPane", reflect.TypeOf((*MockOperator)(nil).ToggleFeedsInPane), d, r)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ToggleFeedsInPane", reflect.TypeOf((*MockOperator)(nil).ToggleFeedsInPane), d, b)
 }
 
 // ToggleHelpPopup mocks base method.
@@ -236,15 +236,15 @@ func (mr *MockOperatorMockRecorder) ToggleIntroPopup(d any) *gomock.Call {
 }
 
 // ToggleStatsPopup mocks base method.
-func (m *MockOperator) ToggleStatsPopup(d *ui.Display, r repo.Repo) {
+func (m *MockOperator) ToggleStatsPopup(d *ui.Display, b backend.Backend) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "ToggleStatsPopup", d, r)
+	m.ctrl.Call(m, "ToggleStatsPopup", d, b)
 }
 
 // ToggleStatsPopup indicates an expected call of ToggleStatsPopup.
-func (mr *MockOperatorMockRecorder) ToggleStatsPopup(d, r any) *gomock.Call {
+func (mr *MockOperatorMockRecorder) ToggleStatsPopup(d, b any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ToggleStatsPopup", reflect.TypeOf((*MockOperator)(nil).ToggleStatsPopup), d, r)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ToggleStatsPopup", reflect.TypeOf((*MockOperator)(nil).ToggleStatsPopup), d, b)
 }
 
 // ToggleStatusBar mocks base method.

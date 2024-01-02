@@ -162,7 +162,7 @@ func (d *Display) setHelpPopup() {
 	)
 }
 
-func (d *Display) setAboutPopupText(backend string) {
+func (d *Display) setAboutPopupText(name fmt.Stringer) {
 	commit := internal.GitCommit()
 
 	var buildTime = internal.BuildTime()
@@ -178,7 +178,7 @@ func (d *Display) setAboutPopupText(backend string) {
 		internal.Version(),
 		commit,
 		buildTime,
-		backend,
+		name,
 	)
 
 	aboutWidget := tview.NewTextView().

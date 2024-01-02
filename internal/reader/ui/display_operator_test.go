@@ -22,7 +22,7 @@ func TestToggleAboutPopup(t *testing.T) {
 	a := assert.New(t)
 	r := require.New(t)
 	draw := setupDisplayOperatorTest(t)
-	rpo := NewMockRepo(gomock.NewController(t))
+	be := NewMockBackend(gomock.NewController(t))
 
 	opr, dsp := draw()
 
@@ -31,37 +31,37 @@ func TestToggleAboutPopup(t *testing.T) {
 	r.Equal(dsp.mainPage, item)
 	a.Nil(dsp.aboutPopup.content)
 
-	backend1 := uuid.NewString()
-	rpo.EXPECT().Backend().Return(backend1)
+	bn1 := uuid.NewString()
+	be.EXPECT().String().Return(bn1)
 
-	opr.ToggleAboutPopup(dsp, rpo)
+	opr.ToggleAboutPopup(dsp, be)
 	name, item = dsp.root.GetFrontPage()
 	a.Equal(aboutPageName, name)
 	r.Equal(dsp.aboutPopup, item)
 	r.NotNil(dsp.aboutPopup.content)
 	c1, typeok1 := dsp.aboutPopup.content.(*tview.TextView)
 	r.True(typeok1)
-	a.Contains(c1.GetText(true), backend1)
+	a.Contains(c1.GetText(true), bn1)
 
-	rpo.EXPECT().Backend().Times(0)
+	be.EXPECT().String().Times(0)
 
-	opr.ToggleAboutPopup(dsp, rpo)
+	opr.ToggleAboutPopup(dsp, be)
 	name, item = dsp.root.GetFrontPage()
 	a.Equal(mainPageName, name)
 	r.Equal(dsp.mainPage, item)
 	a.NotNil(dsp.aboutPopup.content)
 
-	backend2 := uuid.NewString()
-	rpo.EXPECT().Backend().Return(backend2)
+	bn2 := uuid.NewString()
+	be.EXPECT().String().Return(bn2)
 
-	opr.ToggleAboutPopup(dsp, rpo)
+	opr.ToggleAboutPopup(dsp, be)
 	name, item = dsp.root.GetFrontPage()
 	a.Equal(aboutPageName, name)
 	r.Equal(dsp.aboutPopup, item)
 	r.NotNil(dsp.aboutPopup.content)
 	c2, typeok2 := dsp.aboutPopup.content.(*tview.TextView)
 	r.True(typeok2)
-	a.Contains(c2.GetText(true), backend2)
+	a.Contains(c2.GetText(true), bn2)
 }
 
 func TestToggleHelpPopup(t *testing.T) {

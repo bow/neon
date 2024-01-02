@@ -17,11 +17,11 @@ import (
 const screenW, screenH = 210, 60
 
 func TestToggleAboutPopupCalled(t *testing.T) {
-	screen, opr, rpo, draw := setupReaderTest(t)
+	screen, opr, be, draw := setupReaderTest(t)
 
 	rdr := draw()
 
-	opr.EXPECT().ToggleAboutPopup(rdr.dsp, rpo)
+	opr.EXPECT().ToggleAboutPopup(rdr.dsp, be)
 
 	screen.InjectKey(tcell.KeyRune, 'A', tcell.ModNone)
 }
@@ -93,7 +93,7 @@ func setupReaderTest(
 ) (
 	tcell.SimulationScreen,
 	*MockOperator,
-	*MockRepo,
+	*MockBackend,
 	func() *Reader,
 ) {
 	t.Helper()
@@ -103,13 +103,13 @@ func setupReaderTest(
 
 		screen = tcell.NewSimulationScreen("UTF-8")
 		opr    = NewMockOperator(gomock.NewController(t))
-		rpo    = NewMockRepo(gomock.NewController(t))
+		be     = NewMockBackend(gomock.NewController(t))
 	)
 
 	var wg sync.WaitGroup
 	drawf := func() *Reader {
 		rdr, err := NewBuilder().
-			repo(rpo).
+			backend(be).
 			screen(screen).
 			operator(opr).
 			Build()
@@ -135,5 +135,5 @@ func setupReaderTest(
 		return rdr
 	}
 
-	return screen, opr, rpo, drawf
+	return screen, opr, be, drawf
 }

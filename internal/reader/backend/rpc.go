@@ -1,7 +1,7 @@
 // Copyright (c) 2023 Wibowo Arindrarto <contact@arindrarto.dev>
 // SPDX-License-Identifier: BSD-3-Clause
 
-package repo
+package backend
 
 import (
 	"context"
@@ -22,7 +22,7 @@ type RPC struct {
 }
 
 // Ensure rpcRepo implements Repo.
-var _ Repo = new(RPC)
+var _ Backend = new(RPC)
 
 func NewRPC(ctx context.Context, addr string, dialOpts ...grpc.DialOption) (*RPC, error) {
 	conn, err := grpc.DialContext(ctx, addr, dialOpts...)
@@ -54,6 +54,6 @@ func (r *RPC) PullFeeds(ctx context.Context) (<-chan *entity.Feed, error) {
 	panic("PullFeeds is unimplemented")
 }
 
-func (r *RPC) Backend() string {
+func (r *RPC) String() string {
 	return fmt.Sprintf("grpc://%s", r.addr)
 }

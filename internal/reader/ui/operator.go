@@ -3,7 +3,7 @@
 
 package ui
 
-import "github.com/bow/neon/internal/reader/repo"
+import "github.com/bow/neon/internal/reader/backend"
 
 // Operator describes high-level UI operations.
 type Operator interface {
@@ -18,11 +18,11 @@ type Operator interface {
 	NotifyErr(d *Display, err error)
 	NotifyErrf(d *Display, text string, a ...any)
 	NotifyWarnf(d *Display, text string, a ...any)
-	ToggleAboutPopup(d *Display, r repo.Repo)
-	ToggleFeedsInPane(d *Display, r repo.Repo)
+	ToggleAboutPopup(d *Display, b backend.Backend)
+	ToggleFeedsInPane(d *Display, b backend.Backend)
 	ToggleHelpPopup(d *Display)
 	ToggleIntroPopup(d *Display)
-	ToggleStatsPopup(d *Display, r repo.Repo)
+	ToggleStatsPopup(d *Display, b backend.Backend)
 	ToggleStatusBar(d *Display)
 	UnfocusFront(d *Display)
 }
