@@ -111,9 +111,13 @@ func (do *DisplayOperator) ToggleStatusBar(d *Display) {
 	panic("ToggleStatusBar is unimplemented")
 }
 
-//nolint:revive
 func (do *DisplayOperator) UnfocusFront(d *Display) {
-	panic("UnfocusCurrent is unimplemented")
+	name := do.frontPageName(d)
+	if name == mainPageName || name == "" {
+		d.inner.SetFocus(d.root)
+	} else {
+		do.hidePopup(d, name)
+	}
 }
 
 func (do *DisplayOperator) frontPageName(d *Display) string {

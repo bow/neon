@@ -86,6 +86,29 @@ func TestToggleHelpPopup(t *testing.T) {
 	r.Equal(dsp.mainPage, item)
 }
 
+func TestUnfocusFront(t *testing.T) {
+	a := assert.New(t)
+	r := require.New(t)
+	draw := setupDisplayOperatorTest(t)
+
+	opr, dsp := draw()
+
+	opr.UnfocusFront(dsp)
+	name, item := dsp.root.GetFrontPage()
+	a.Equal(mainPageName, name)
+	r.Equal(dsp.mainPage, item)
+
+	opr.ToggleHelpPopup(dsp)
+	name, item = dsp.root.GetFrontPage()
+	a.Equal(helpPageName, name)
+	r.Equal(dsp.helpPopup, item)
+
+	opr.UnfocusFront(dsp)
+	name, item = dsp.root.GetFrontPage()
+	a.Equal(mainPageName, name)
+	r.Equal(dsp.mainPage, item)
+}
+
 func setupDisplayOperatorTest(t *testing.T) func() (*DisplayOperator, *Display) {
 	t.Helper()
 
