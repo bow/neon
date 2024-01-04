@@ -141,7 +141,7 @@ lint:  ## Lint the code.
 .PHONY: mocks
 mocks: internal/datastore/parser_mock_test.go  ## Generate mocks from interfaces.
 mocks: internal/server/datastore_mock_test.go
-mocks: $(addprefix internal/reader/,operator_mock_test.go backend_mock_test.go)
+mocks: $(addprefix internal/reader/,operator_mock_test.go backend_mock_test.go state_mock_test.go)
 mocks: internal/reader/ui/backend_mock_test.go
 
 internal/datastore/parser_mock_test.go: internal/datastore/parser.go
@@ -155,6 +155,9 @@ internal/reader/operator_mock_test.go: internal/reader/ui/operator.go
 
 internal/reader/backend_mock_test.go: internal/reader/backend/backend.go
 	mockgen -source=$< -package=reader Backend > $@
+
+internal/reader/state_mock_test.go: internal/reader/state/state.go
+	mockgen -source=$< -package=reader State > $@
 
 internal/reader/ui/backend_mock_test.go: internal/reader/backend/backend.go
 	mockgen -source=$< -package=ui Backend > $@

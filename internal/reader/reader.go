@@ -11,17 +11,18 @@ import (
 	"google.golang.org/grpc"
 
 	bknd "github.com/bow/neon/internal/reader/backend"
+	st "github.com/bow/neon/internal/reader/state"
 	"github.com/bow/neon/internal/reader/ui"
 )
 
 //nolint:unused
 type Reader struct {
-	ctx      context.Context
-	initPath string
+	ctx context.Context
 
-	dsp *ui.Display
-	opr ui.Operator
-	be  bknd.Backend
+	dsp   *ui.Display
+	opr   ui.Operator
+	be    bknd.Backend
+	state st.State
 }
 
 func (r *Reader) Start() error {
@@ -81,7 +82,6 @@ func (r *Reader) mustDefinedFields() {
 type Builder struct {
 	ctx       context.Context
 	themeName string
-	initPath  string
 	scr       tcell.Screen
 
 	// rpcBackend args.
@@ -114,11 +114,6 @@ func (b *Builder) DialOpts(dialOpts ...grpc.DialOption) *Builder {
 
 func (b *Builder) Context(ctx context.Context) *Builder {
 	b.ctx = ctx
-	return b
-}
-
-func (b *Builder) InitPath(path string) *Builder {
-	b.initPath = path
 	return b
 }
 
@@ -183,10 +178,11 @@ func (b *Builder) Build() (*Reader, error) {
 	}
 
 	rdr := Reader{
-		ctx: b.ctx,
-		dsp: dsp,
-		opr: opr,
-		be:  be,
+		ctx:   b.ctx,
+		dsp:   dsp,
+		opr:   opr,
+		be:    be,
+		state: st.NewState(),
 	}
 	rdr.dsp.SetHandlers(rdr.globalKeyHandler())
 
