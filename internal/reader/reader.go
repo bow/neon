@@ -19,14 +19,14 @@ import (
 type Reader struct {
 	ctx context.Context
 
-	dsp   *ui.Display
-	opr   ui.Operator
-	be    bknd.Backend
-	state st.State
+	display *ui.Display
+	opr     ui.Operator
+	backend bknd.Backend
+	state   st.State
 }
 
 func (r *Reader) Start() error {
-	return r.dsp.Start()
+	return r.display.Start()
 }
 
 func (r *Reader) globalKeyHandler() ui.KeyHandler {
@@ -44,20 +44,20 @@ func (r *Reader) globalKeyHandler() ui.KeyHandler {
 		case tcell.KeyRune:
 			switch keyr {
 			case 'A':
-				r.opr.ToggleAboutPopup(r.dsp, r.be)
+				r.opr.ToggleAboutPopup(r.display, r.backend)
 				return nil
 
 			case 'h', '?':
-				r.opr.ToggleHelpPopup(r.dsp)
+				r.opr.ToggleHelpPopup(r.display)
 				return nil
 
 			case 'q':
-				r.dsp.Stop()
+				r.display.Stop()
 				return nil
 			}
 
 		case tcell.KeyEscape:
-			r.opr.UnfocusFront(r.dsp)
+			r.opr.UnfocusFront(r.display)
 			return nil
 		}
 
@@ -66,7 +66,7 @@ func (r *Reader) globalKeyHandler() ui.KeyHandler {
 }
 
 func (r *Reader) mustDefinedFields() {
-	if r.dsp == nil {
+	if r.display == nil {
 		panic("can not set handler with nil display")
 	}
 
@@ -74,7 +74,7 @@ func (r *Reader) mustDefinedFields() {
 		panic("can not set handler with nil operator")
 	}
 
-	if r.be == nil {
+	if r.backend == nil {
 		panic("can not set handler with nil backend")
 	}
 }
@@ -178,13 +178,13 @@ func (b *Builder) Build() (*Reader, error) {
 	}
 
 	rdr := Reader{
-		ctx:   b.ctx,
-		dsp:   dsp,
-		opr:   opr,
-		be:    be,
-		state: st.NewState(),
+		ctx:     b.ctx,
+		display: dsp,
+		opr:     opr,
+		backend: be,
+		state:   st.NewState(),
 	}
-	rdr.dsp.SetHandlers(rdr.globalKeyHandler())
+	rdr.display.SetHandlers(rdr.globalKeyHandler())
 
 	return &rdr, nil
 }

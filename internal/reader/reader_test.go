@@ -21,7 +21,7 @@ func TestToggleAboutPopupCalled(t *testing.T) {
 
 	rdr := draw()
 
-	opr.EXPECT().ToggleAboutPopup(rdr.dsp, be)
+	opr.EXPECT().ToggleAboutPopup(rdr.display, be)
 
 	screen.InjectKey(tcell.KeyRune, 'A', tcell.ModNone)
 }
@@ -32,7 +32,7 @@ func TestToggleHelpPopupCalled(t *testing.T) {
 	rdr := draw()
 
 	opr.EXPECT().
-		ToggleHelpPopup(rdr.dsp).
+		ToggleHelpPopup(rdr.display).
 		Times(2)
 
 	screen.InjectKey(tcell.KeyRune, '?', tcell.ModNone)
@@ -44,7 +44,7 @@ func TestUnfocusFrontCalled(t *testing.T) {
 
 	rdr := draw()
 
-	opr.EXPECT().UnfocusFront(rdr.dsp)
+	opr.EXPECT().UnfocusFront(rdr.display)
 
 	screen.InjectKey(tcell.KeyEscape, ' ', tcell.ModNone)
 }
