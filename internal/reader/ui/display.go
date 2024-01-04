@@ -22,6 +22,7 @@ type Display struct {
 	mainPage   *tview.Grid
 	aboutPopup *popup
 	helpPopup  *popup
+	introPopup *popup
 
 	handlersSet bool
 }
@@ -82,11 +83,13 @@ func (d *Display) setRoot() {
 	d.setMainPage()
 	d.setHelpPopup()
 	d.setAboutPopup()
+	d.setIntroPopup()
 
 	pages.
 		AddAndSwitchToPage(mainPageName, d.mainPage, true).
 		AddPage(helpPageName, d.helpPopup, true, false).
-		AddPage(aboutPageName, d.aboutPopup, true, false)
+		AddPage(aboutPageName, d.aboutPopup, true, false).
+		AddPage(introPageName, d.introPopup, true, false)
 
 	// FIXME: Remove when we add mainPage proper, currently needed only to see if
 	//		  app is drawn.
@@ -197,4 +200,27 @@ func (d *Display) setAboutPopupText(name fmt.Stringer) {
 	d.aboutPopup.setWidth(width)
 	d.aboutPopup.setGridRows([]int{-1, height, -3})
 	d.aboutPopup.setContent(aboutWidget)
+}
+
+func (d *Display) setIntroPopup() {
+	// TODO: Move some constants here into more commonly-accessible place.
+	introText := fmt.Sprintf(`Hello and welcome the %s reader.
+
+For help, press [yellow]h[-] or go to [yellow]https://github.com/bow/neon[-].
+
+To close this message, press [yellow]<Esc>[-].
+`, internal.AppName())
+
+	introWidget := tview.NewTextView().
+		SetDynamicColors(true).
+		SetText(introText)
+
+	d.introPopup = newFilledPopup(
+		d.lang.introPopupTitle,
+		introWidget,
+		d.theme.popupTitleFG,
+		1, 1,
+		popupWidth(introWidget.GetText(true)),
+		[]int{-1, popupHeight(introText), -3},
+	)
 }

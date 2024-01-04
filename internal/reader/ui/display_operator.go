@@ -96,9 +96,9 @@ func (do *DisplayOperator) ToggleHelpPopup(d *Display) {
 	}
 }
 
-//nolint:revive
 func (do *DisplayOperator) ToggleIntroPopup(d *Display) {
-	panic("ToggleIntroPopup is unimplemented")
+	d.dimMainPage()
+	d.root.ShowPage(introPageName)
 }
 
 //nolint:revive

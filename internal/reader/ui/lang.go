@@ -8,10 +8,10 @@ type Lang struct {
 	entriesPaneTitle string
 	readingPaneTitle string
 
-	aboutPopupTitle   string
-	helpPopupTitle    string
-	statsPopupTitle   string
-	welcomePopupTitle string
+	aboutPopupTitle string
+	helpPopupTitle  string
+	statsPopupTitle string
+	introPopupTitle string
 }
 
 var langEN = &Lang{
@@ -19,8 +19,8 @@ var langEN = &Lang{
 	entriesPaneTitle: "Entries",
 	readingPaneTitle: "",
 
-	aboutPopupTitle:   "About",
-	helpPopupTitle:    "Keys",
-	statsPopupTitle:   "Stats",
-	welcomePopupTitle: "Welcome",
+	aboutPopupTitle: "About",
+	helpPopupTitle:  "Keys",
+	statsPopupTitle: "Stats",
+	introPopupTitle: "Welcome",
 }
