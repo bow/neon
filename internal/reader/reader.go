@@ -95,6 +95,7 @@ type Builder struct {
 	// For testing.
 	be  bknd.Backend
 	opr ui.Operator
+	stt st.State
 }
 
 func NewBuilder() *Builder {
@@ -141,6 +142,11 @@ func (b *Builder) operator(opr ui.Operator) *Builder {
 	return b
 }
 
+func (b *Builder) state(stt st.State) *Builder {
+	b.stt = stt
+	return b
+}
+
 func (b *Builder) Build() (*Reader, error) {
 
 	if b.addr == "" && b.be == nil {
@@ -181,12 +187,19 @@ func (b *Builder) Build() (*Reader, error) {
 		opr = ui.NewDisplayOperator()
 	}
 
+	var stt st.State
+	if b.stt != nil {
+		stt = b.stt
+	} else {
+		stt = st.NewState()
+	}
+
 	rdr := Reader{
 		ctx:     b.ctx,
 		display: dsp,
 		opr:     opr,
 		backend: be,
-		state:   st.NewState(),
+		state:   stt,
 	}
 	rdr.display.SetHandlers(rdr.globalKeyHandler())
 

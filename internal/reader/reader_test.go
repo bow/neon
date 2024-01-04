@@ -17,9 +17,9 @@ import (
 const screenW, screenH = 210, 60
 
 func TestToggleAboutPopupCalled(t *testing.T) {
-	screen, opr, be, draw := setupReaderTest(t)
+	screen, opr, be, _, draw := setupReaderTest(t)
 
-	rdr := draw()
+	rdr := draw(true)
 
 	opr.EXPECT().ToggleAboutPopup(rdr.display, be)
 
@@ -27,9 +27,9 @@ func TestToggleAboutPopupCalled(t *testing.T) {
 }
 
 func TestToggleHelpPopupCalled(t *testing.T) {
-	screen, opr, _, draw := setupReaderTest(t)
+	screen, opr, _, _, draw := setupReaderTest(t)
 
-	rdr := draw()
+	rdr := draw(true)
 
 	opr.EXPECT().
 		ToggleHelpPopup(rdr.display).
@@ -39,10 +39,17 @@ func TestToggleHelpPopupCalled(t *testing.T) {
 	screen.InjectKey(tcell.KeyRune, 'h', tcell.ModNone)
 }
 
-func TestUnfocusFrontCalled(t *testing.T) {
-	screen, opr, _, draw := setupReaderTest(t)
+func TestToggleIntroPopupCalled(t *testing.T) {
+	_, opr, _, stt, draw := setupReaderTest(t)
+	stt.EXPECT().MarkIntroSeen()
+	opr.EXPECT().ToggleIntroPopup(gomock.Any())
+	draw(false)
+}
 
-	rdr := draw()
+func TestUnfocusFrontCalled(t *testing.T) {
+	screen, opr, _, _, draw := setupReaderTest(t)
+
+	rdr := draw(true)
 
 	opr.EXPECT().UnfocusFront(rdr.display)
 
@@ -51,7 +58,7 @@ func TestUnfocusFrontCalled(t *testing.T) {
 
 func TestStartSmoke(t *testing.T) {
 
-	screen, _, _, draw := setupReaderTest(t)
+	screen, _, _, _, draw := setupReaderTest(t)
 
 	// Since draw states are hidden at this level, the test just checks that
 	// precondition == all cells empty, postcondition == at least one cell non-empty
@@ -81,7 +88,7 @@ func TestStartSmoke(t *testing.T) {
 
 	assert.Eventually(t, empty, pollTimeout, tickFreq)
 
-	draw()
+	draw(true)
 	assert.Eventually(t, drawn, pollTimeout, tickFreq)
 
 	screen.InjectKey(tcell.KeyRune, 'q', tcell.ModNone)
@@ -94,7 +101,8 @@ func setupReaderTest(
 	tcell.SimulationScreen,
 	*MockOperator,
 	*MockBackend,
-	func() *Reader,
+	*MockState,
+	func(bool) *Reader,
 ) {
 	t.Helper()
 
@@ -104,14 +112,16 @@ func setupReaderTest(
 		screen = tcell.NewSimulationScreen("UTF-8")
 		opr    = NewMockOperator(gomock.NewController(t))
 		be     = NewMockBackend(gomock.NewController(t))
+		stt    = NewMockState(gomock.NewController(t))
 	)
 
 	var wg sync.WaitGroup
-	drawf := func() *Reader {
+	drawf := func(introSeen bool) *Reader {
 		rdr, err := NewBuilder().
 			backend(be).
 			screen(screen).
 			operator(opr).
+			state(stt).
 			Build()
 		r.NoError(err)
 		r.NotNil(rdr)
@@ -123,6 +133,7 @@ func setupReaderTest(
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
+			stt.EXPECT().IntroSeen().Return(introSeen)
 			rerr := rdr.Start()
 			r.NoError(rerr)
 		}()
@@ -135,5 +146,5 @@ func setupReaderTest(
 		return rdr
 	}
 
-	return screen, opr, be, drawf
+	return screen, opr, be, stt, drawf
 }
