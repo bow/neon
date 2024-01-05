@@ -27,7 +27,7 @@ type Reader struct {
 
 func (r *Reader) Start() error {
 	if !r.state.IntroSeen() {
-		r.opr.ToggleIntroPopup(r.display)
+		r.opr.ShowIntroPopup(r.display)
 		defer r.state.MarkIntroSeen()
 	}
 	return r.display.Start()

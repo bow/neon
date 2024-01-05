@@ -38,12 +38,12 @@ func TestToggleHelpPopupCalled(t *testing.T) {
 	tw.screen.InjectKey(tcell.KeyRune, 'h', tcell.ModNone)
 }
 
-func TestToggleIntroPopupCalled(t *testing.T) {
+func TestShowIntroPopupCalled(t *testing.T) {
 	tw := setupReaderTest(t)
 
 	tw.introSeen = false
 	tw.state.EXPECT().MarkIntroSeen()
-	tw.opr.EXPECT().ToggleIntroPopup(gomock.Any())
+	tw.opr.EXPECT().ShowIntroPopup(gomock.Any())
 	tw.draw()
 }
 

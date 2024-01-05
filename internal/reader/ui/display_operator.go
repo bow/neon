@@ -74,6 +74,11 @@ func (do *DisplayOperator) NotifyWarnf(d *Display, text string, a ...any) {
 	panic("NotifyWarnf is unimplemented")
 }
 
+func (do *DisplayOperator) ShowIntroPopup(d *Display) {
+	d.dimMainPage()
+	d.root.ShowPage(introPageName)
+}
+
 func (do *DisplayOperator) ToggleAboutPopup(d *Display, b backend.Backend) {
 	if name := do.frontPageName(d); name == aboutPageName {
 		do.hidePopup(d, name)
@@ -94,11 +99,6 @@ func (do *DisplayOperator) ToggleHelpPopup(d *Display) {
 	} else {
 		do.showPopup(d, helpPageName, name)
 	}
-}
-
-func (do *DisplayOperator) ToggleIntroPopup(d *Display) {
-	d.dimMainPage()
-	d.root.ShowPage(introPageName)
 }
 
 //nolint:revive

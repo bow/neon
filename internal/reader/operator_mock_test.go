@@ -187,6 +187,18 @@ func (mr *MockOperatorMockRecorder) NotifyWarnf(d, text any, a ...any) *gomock.C
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "NotifyWarnf", reflect.TypeOf((*MockOperator)(nil).NotifyWarnf), varargs...)
 }
 
+// ShowIntroPopup mocks base method.
+func (m *MockOperator) ShowIntroPopup(d *ui.Display) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "ShowIntroPopup", d)
+}
+
+// ShowIntroPopup indicates an expected call of ShowIntroPopup.
+func (mr *MockOperatorMockRecorder) ShowIntroPopup(d any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ShowIntroPopup", reflect.TypeOf((*MockOperator)(nil).ShowIntroPopup), d)
+}
+
 // ToggleAboutPopup mocks base method.
 func (m *MockOperator) ToggleAboutPopup(d *ui.Display, b backend.Backend) {
 	m.ctrl.T.Helper()
@@ -221,18 +233,6 @@ func (m *MockOperator) ToggleHelpPopup(d *ui.Display) {
 func (mr *MockOperatorMockRecorder) ToggleHelpPopup(d any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ToggleHelpPopup", reflect.TypeOf((*MockOperator)(nil).ToggleHelpPopup), d)
-}
-
-// ToggleIntroPopup mocks base method.
-func (m *MockOperator) ToggleIntroPopup(d *ui.Display) {
-	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "ToggleIntroPopup", d)
-}
-
-// ToggleIntroPopup indicates an expected call of ToggleIntroPopup.
-func (mr *MockOperatorMockRecorder) ToggleIntroPopup(d any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ToggleIntroPopup", reflect.TypeOf((*MockOperator)(nil).ToggleIntroPopup), d)
 }
 
 // ToggleStatsPopup mocks base method.

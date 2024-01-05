@@ -86,7 +86,7 @@ func TestToggleHelpPopup(t *testing.T) {
 	r.Equal(dsp.mainPage, item)
 }
 
-func TestToggleIntroPopup(t *testing.T) {
+func TestShowIntroPopup(t *testing.T) {
 	a := assert.New(t)
 	r := require.New(t)
 	draw, opr, dsp := setupDisplayOperatorTest(t)
