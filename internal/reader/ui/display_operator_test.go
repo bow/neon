@@ -21,10 +21,10 @@ const screenW, screenH = 210, 60
 func TestToggleAboutPopup(t *testing.T) {
 	a := assert.New(t)
 	r := require.New(t)
-	draw := setupDisplayOperatorTest(t)
+	draw, opr, dsp := setupDisplayOperatorTest(t)
 	be := NewMockBackend(gomock.NewController(t))
 
-	opr, dsp := draw()
+	draw()
 
 	name, item := dsp.root.GetFrontPage()
 	a.Equal(mainPageName, name)
@@ -67,9 +67,31 @@ func TestToggleAboutPopup(t *testing.T) {
 func TestToggleHelpPopup(t *testing.T) {
 	a := assert.New(t)
 	r := require.New(t)
-	draw := setupDisplayOperatorTest(t)
+	draw, opr, dsp := setupDisplayOperatorTest(t)
 
-	opr, dsp := draw()
+	draw()
+
+	name, item := dsp.root.GetFrontPage()
+	a.Equal(mainPageName, name)
+	r.Equal(dsp.mainPage, item)
+
+	opr.ToggleHelpPopup(dsp)
+	name, item = dsp.root.GetFrontPage()
+	a.Equal(helpPageName, name)
+	r.Equal(dsp.helpPopup, item)
+
+	opr.ToggleHelpPopup(dsp)
+	name, item = dsp.root.GetFrontPage()
+	a.Equal(mainPageName, name)
+	r.Equal(dsp.mainPage, item)
+}
+
+func TestToggleIntroPopup(t *testing.T) {
+	a := assert.New(t)
+	r := require.New(t)
+	draw, opr, dsp := setupDisplayOperatorTest(t)
+
+	draw()
 
 	name, item := dsp.root.GetFrontPage()
 	a.Equal(mainPageName, name)
@@ -89,9 +111,9 @@ func TestToggleHelpPopup(t *testing.T) {
 func TestUnfocusFront(t *testing.T) {
 	a := assert.New(t)
 	r := require.New(t)
-	draw := setupDisplayOperatorTest(t)
+	draw, opr, dsp := setupDisplayOperatorTest(t)
 
-	opr, dsp := draw()
+	draw()
 
 	opr.UnfocusFront(dsp)
 	name, item := dsp.root.GetFrontPage()
@@ -109,18 +131,21 @@ func TestUnfocusFront(t *testing.T) {
 	r.Equal(dsp.mainPage, item)
 }
 
-func setupDisplayOperatorTest(t *testing.T) func() (*DisplayOperator, *Display) {
+func setupDisplayOperatorTest(t *testing.T) (
+	func(),
+	*DisplayOperator,
+	*Display,
+) {
 	t.Helper()
 
 	var (
 		r = require.New(t)
 
 		screen = tcell.NewSimulationScreen("UTF-8")
-		dsp    *Display
+		dsp    = newTestDisplay(t, screen)
 	)
 	var stopWaiter sync.WaitGroup
-	drawf := func() (*DisplayOperator, *Display) {
-		dsp = newTestDisplay(t, screen)
+	drawf := func() {
 		// This is called here because the underlying App calls screen.Init, which,
 		// among other things, resets its size.
 		screen.SetSize(screenW, screenH)
@@ -143,8 +168,6 @@ func setupDisplayOperatorTest(t *testing.T) func() (*DisplayOperator, *Display) 
 			)
 		}()
 		startWaiter.Wait()
-
-		return NewDisplayOperator(), dsp
 	}
 
 	t.Cleanup(func() {
@@ -154,7 +177,7 @@ func setupDisplayOperatorTest(t *testing.T) func() (*DisplayOperator, *Display) 
 		}
 	})
 
-	return drawf
+	return drawf, NewDisplayOperator(), dsp
 }
 
 func newTestDisplay(t *testing.T, screen tcell.Screen) *Display {
