@@ -17,55 +17,56 @@ import (
 const screenW, screenH = 210, 60
 
 func TestToggleAboutPopupCalled(t *testing.T) {
-	screen, opr, be, _, draw := setupReaderTest(t)
+	tw := setupReaderTest(t)
 
-	rdr := draw(true)
+	rdr := tw.draw()
 
-	opr.EXPECT().ToggleAboutPopup(rdr.display, be)
-
-	screen.InjectKey(tcell.KeyRune, 'A', tcell.ModNone)
+	tw.opr.EXPECT().ToggleAboutPopup(rdr.display, tw.backend)
+	tw.screen.InjectKey(tcell.KeyRune, 'A', tcell.ModNone)
 }
 
 func TestToggleHelpPopupCalled(t *testing.T) {
-	screen, opr, _, _, draw := setupReaderTest(t)
+	tw := setupReaderTest(t)
 
-	rdr := draw(true)
+	rdr := tw.draw()
 
-	opr.EXPECT().
+	tw.opr.EXPECT().
 		ToggleHelpPopup(rdr.display).
 		Times(2)
 
-	screen.InjectKey(tcell.KeyRune, '?', tcell.ModNone)
-	screen.InjectKey(tcell.KeyRune, 'h', tcell.ModNone)
+	tw.screen.InjectKey(tcell.KeyRune, '?', tcell.ModNone)
+	tw.screen.InjectKey(tcell.KeyRune, 'h', tcell.ModNone)
 }
 
 func TestToggleIntroPopupCalled(t *testing.T) {
-	_, opr, _, stt, draw := setupReaderTest(t)
-	stt.EXPECT().MarkIntroSeen()
-	opr.EXPECT().ToggleIntroPopup(gomock.Any())
-	draw(false)
+	tw := setupReaderTest(t)
+
+	tw.introSeen = false
+	tw.state.EXPECT().MarkIntroSeen()
+	tw.opr.EXPECT().ToggleIntroPopup(gomock.Any())
+	tw.draw()
 }
 
 func TestUnfocusFrontCalled(t *testing.T) {
-	screen, opr, _, _, draw := setupReaderTest(t)
+	tw := setupReaderTest(t)
 
-	rdr := draw(true)
+	rdr := tw.draw()
 
-	opr.EXPECT().UnfocusFront(rdr.display)
+	tw.opr.EXPECT().UnfocusFront(rdr.display)
 
-	screen.InjectKey(tcell.KeyEscape, ' ', tcell.ModNone)
+	tw.screen.InjectKey(tcell.KeyEscape, ' ', tcell.ModNone)
 }
 
 func TestStartSmoke(t *testing.T) {
 
-	screen, _, _, _, draw := setupReaderTest(t)
+	tw := setupReaderTest(t)
 
 	// Since draw states are hidden at this level, the test just checks that
 	// precondition == all cells empty, postcondition == at least one cell non-empty
 	empty := func() bool {
 		for y := 0; y < screenH; y++ {
 			for x := 0; x < screenW; x++ {
-				pr, _, _, _ := screen.GetContent(x, y)
+				pr, _, _, _ := tw.screen.GetContent(x, y)
 				if pr != '\x00' {
 					return false
 				}
@@ -76,7 +77,7 @@ func TestStartSmoke(t *testing.T) {
 	drawn := func() bool {
 		for y := 0; y < screenH; y++ {
 			for x := 0; x < screenW; x++ {
-				pr, _, _, _ := screen.GetContent(x, y)
+				pr, _, _, _ := tw.screen.GetContent(x, y)
 				if pr != '\x00' && pr != ' ' {
 					return true
 				}
@@ -88,22 +89,24 @@ func TestStartSmoke(t *testing.T) {
 
 	assert.Eventually(t, empty, pollTimeout, tickFreq)
 
-	draw(true)
+	tw.draw()
 	assert.Eventually(t, drawn, pollTimeout, tickFreq)
 
-	screen.InjectKey(tcell.KeyRune, 'q', tcell.ModNone)
+	tw.screen.InjectKey(tcell.KeyRune, 'q', tcell.ModNone)
 	assert.Eventually(t, empty, pollTimeout, tickFreq)
 }
 
-func setupReaderTest(
-	t *testing.T,
-) (
-	tcell.SimulationScreen,
-	*MockOperator,
-	*MockBackend,
-	*MockState,
-	func(bool) *Reader,
-) {
+type testWrapper struct {
+	screen  tcell.SimulationScreen
+	opr     *MockOperator
+	backend *MockBackend
+	state   *MockState
+	draw    func() *Reader
+
+	introSeen bool
+}
+
+func setupReaderTest(t *testing.T) *testWrapper {
 	t.Helper()
 
 	var (
@@ -115,8 +118,11 @@ func setupReaderTest(
 		stt    = NewMockState(gomock.NewController(t))
 	)
 
+	tw := &testWrapper{}
+	tw.introSeen = true
+
 	var wg sync.WaitGroup
-	drawf := func(introSeen bool) *Reader {
+	drawf := func() *Reader {
 		rdr, err := NewBuilder().
 			backend(be).
 			screen(screen).
@@ -133,7 +139,7 @@ func setupReaderTest(
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			stt.EXPECT().IntroSeen().Return(introSeen)
+			stt.EXPECT().IntroSeen().Return(tw.introSeen)
 			rerr := rdr.Start()
 			r.NoError(rerr)
 		}()
@@ -146,5 +152,11 @@ func setupReaderTest(
 		return rdr
 	}
 
-	return screen, opr, be, stt, drawf
+	tw.screen = screen
+	tw.opr = opr
+	tw.backend = be
+	tw.state = stt
+	tw.draw = drawf
+
+	return tw
 }
