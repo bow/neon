@@ -75,8 +75,7 @@ func (do *DisplayOperator) NotifyWarnf(d *Display, text string, a ...any) {
 }
 
 func (do *DisplayOperator) ShowIntroPopup(d *Display) {
-	d.dimMainPage()
-	d.root.ShowPage(introPageName)
+	do.showPopup(d, introPageName)
 }
 
 func (do *DisplayOperator) ToggleAboutPopup(d *Display, b backend.Backend) {
@@ -84,7 +83,7 @@ func (do *DisplayOperator) ToggleAboutPopup(d *Display, b backend.Backend) {
 		do.hidePopup(d, name)
 	} else if name != introPageName {
 		d.setAboutPopupText(b)
-		do.showPopup(d, aboutPageName, name)
+		do.switchPopup(d, aboutPageName, name)
 	}
 }
 
@@ -97,7 +96,7 @@ func (do *DisplayOperator) ToggleHelpPopup(d *Display) {
 	if name := do.frontPageName(d); name == helpPageName {
 		do.hidePopup(d, name)
 	} else {
-		do.showPopup(d, helpPageName, name)
+		do.switchPopup(d, helpPageName, name)
 	}
 }
 
@@ -125,12 +124,16 @@ func (do *DisplayOperator) frontPageName(d *Display) string {
 	return name
 }
 
-func (do *DisplayOperator) showPopup(d *Display, name string, currentFront string) {
+func (do *DisplayOperator) switchPopup(d *Display, name string, currentFront string) {
 	if currentFront == mainPageName {
 		do.stashFocus(d)
 	} else {
 		d.root.HidePage(currentFront)
 	}
+	do.showPopup(d, name)
+}
+
+func (do *DisplayOperator) showPopup(d *Display, name string) {
 	d.dimMainPage()
 	d.root.ShowPage(name)
 }
