@@ -91,18 +91,16 @@ func TestShowIntroPopup(t *testing.T) {
 	r := require.New(t)
 	draw, opr, dsp := setupDisplayOperatorTest(t)
 
+	// This call before draw() is intentional and simulates expected use.
+	opr.ShowIntroPopup(dsp)
+
 	draw()
 
 	name, item := dsp.root.GetFrontPage()
-	a.Equal(mainPageName, name)
-	r.Equal(dsp.mainPage, item)
+	a.Equal(introPageName, name)
+	r.Equal(dsp.introPopup, item)
 
-	opr.ToggleHelpPopup(dsp)
-	name, item = dsp.root.GetFrontPage()
-	a.Equal(helpPageName, name)
-	r.Equal(dsp.helpPopup, item)
-
-	opr.ToggleHelpPopup(dsp)
+	opr.UnfocusFront(dsp)
 	name, item = dsp.root.GetFrontPage()
 	a.Equal(mainPageName, name)
 	r.Equal(dsp.mainPage, item)
