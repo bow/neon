@@ -11,8 +11,21 @@ import (
 
 // Backend describes the console backend.
 type Backend interface {
-	GetStats(context.Context) (<-chan *entity.Stats, error)
-	ListFeeds(context.Context) (<-chan *entity.Feed, error)
-	PullFeeds(context.Context) (<-chan *entity.Feed, error)
+	GetStats(context.Context) <-chan Result[*entity.Stats]
+	ListFeeds(context.Context) <-chan Result[*entity.Feed]
+	PullFeeds(context.Context) <-chan Result[*entity.Feed]
 	String() string
+}
+
+type Result[T any] struct {
+	Value T
+	Err   error
+}
+
+func okResult[T any](value T) Result[T] {
+	return Result[T]{Value: value, Err: nil}
+}
+
+func errResult[T any](err error) Result[T] {
+	return Result[T]{Err: err}
 }

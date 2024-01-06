@@ -14,6 +14,7 @@ import (
 	reflect "reflect"
 
 	entity "github.com/bow/neon/internal/entity"
+	backend "github.com/bow/neon/internal/reader/backend"
 	gomock "go.uber.org/mock/gomock"
 )
 
@@ -41,12 +42,11 @@ func (m *MockBackend) EXPECT() *MockBackendMockRecorder {
 }
 
 // GetStats mocks base method.
-func (m *MockBackend) GetStats(arg0 context.Context) (<-chan *entity.Stats, error) {
+func (m *MockBackend) GetStats(arg0 context.Context) <-chan backend.Result[*entity.Stats] {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetStats", arg0)
-	ret0, _ := ret[0].(<-chan *entity.Stats)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret0, _ := ret[0].(<-chan backend.Result[*entity.Stats])
+	return ret0
 }
 
 // GetStats indicates an expected call of GetStats.
@@ -56,12 +56,11 @@ func (mr *MockBackendMockRecorder) GetStats(arg0 any) *gomock.Call {
 }
 
 // ListFeeds mocks base method.
-func (m *MockBackend) ListFeeds(arg0 context.Context) (<-chan *entity.Feed, error) {
+func (m *MockBackend) ListFeeds(arg0 context.Context) <-chan backend.Result[*entity.Feed] {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ListFeeds", arg0)
-	ret0, _ := ret[0].(<-chan *entity.Feed)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret0, _ := ret[0].(<-chan backend.Result[*entity.Feed])
+	return ret0
 }
 
 // ListFeeds indicates an expected call of ListFeeds.
@@ -71,12 +70,11 @@ func (mr *MockBackendMockRecorder) ListFeeds(arg0 any) *gomock.Call {
 }
 
 // PullFeeds mocks base method.
-func (m *MockBackend) PullFeeds(arg0 context.Context) (<-chan *entity.Feed, error) {
+func (m *MockBackend) PullFeeds(arg0 context.Context) <-chan backend.Result[*entity.Feed] {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "PullFeeds", arg0)
-	ret0, _ := ret[0].(<-chan *entity.Feed)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret0, _ := ret[0].(<-chan backend.Result[*entity.Feed])
+	return ret0
 }
 
 // PullFeeds indicates an expected call of PullFeeds.

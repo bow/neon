@@ -40,17 +40,17 @@ func newRPCWithClient(addr string, client api.NeonClient) *RPC {
 }
 
 //nolint:unused
-func (r *RPC) GetStats(ctx context.Context) (<-chan *entity.Stats, error) {
+func (r *RPC) GetStats(ctx context.Context) <-chan Result[*entity.Stats] {
 	panic("GetStats is unimplemented")
 }
 
 //nolint:unused
-func (r *RPC) ListFeeds(ctx context.Context) (<-chan *entity.Feed, error) {
+func (r *RPC) ListFeeds(ctx context.Context) <-chan Result[*entity.Feed] {
 	panic("ListFeeds is unimplemented")
 }
 
 //nolint:unused
-func (r *RPC) PullFeeds(ctx context.Context) (<-chan *entity.Feed, error) {
+func (r *RPC) PullFeeds(ctx context.Context) <-chan Result[*entity.Feed] {
 	panic("PullFeeds is unimplemented")
 }
 
