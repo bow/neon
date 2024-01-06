@@ -14,6 +14,11 @@ func AppName() string {
 	return "neon"
 }
 
+// AppHomepage returns the application homepage.
+func AppHomepage() string {
+	return "https://github.com/bow/neon"
+}
+
 // EnvKey returns the environment variable key for configuration.
 func EnvKey(key string) string {
 	if key == "" {

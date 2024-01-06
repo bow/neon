@@ -207,10 +207,10 @@ func (d *Display) setIntroPopup() {
 	// TODO: Move some constants here into more commonly-accessible place.
 	introText := fmt.Sprintf(`Hello and welcome the %s reader.
 
-For help, press [yellow]h[-] or go to [yellow]https://github.com/bow/neon[-].
+For help, press [yellow]h[-] or go to [yellow]%s[-].
 
 To close this message, press [yellow]<Esc>[-].
-`, internal.AppName())
+`, internal.AppName(), internal.AppHomepage())
 
 	introWidget := tview.NewTextView().
 		SetDynamicColors(true).
