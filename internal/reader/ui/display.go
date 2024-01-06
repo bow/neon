@@ -84,9 +84,10 @@ func (d *Display) setRoot() {
 	pages := tview.NewPages()
 	d.setMainPage()
 	d.setHelpPopup()
-	d.setAboutPopup()
-	d.setStatsPopup()
 	d.setIntroPopup()
+
+	d.aboutPopup = newPopup(d.lang.aboutPopupTitle, d.theme.popupTitleFG, 0, 0)
+	d.statsPopup = newPopup(d.lang.statsPopupTitle, d.theme.popupTitleFG, 1, 1)
 
 	pages.
 		AddAndSwitchToPage(mainPageName, d.mainPage, true).
@@ -110,10 +111,6 @@ func (d *Display) setMainPage() {
 		SetBorders(false)
 
 	d.mainPage = grid
-}
-
-func (d *Display) setAboutPopup() {
-	d.aboutPopup = newPopup(d.lang.aboutPopupTitle, d.theme.popupTitleFG, 0, 0)
 }
 
 func (d *Display) setHelpPopup() {
@@ -204,10 +201,6 @@ func (d *Display) setAboutPopupText(name fmt.Stringer) {
 	d.aboutPopup.setWidth(width)
 	d.aboutPopup.setGridRows([]int{-1, height, -3})
 	d.aboutPopup.setContent(aboutWidget)
-}
-
-func (d *Display) setStatsPopup() {
-	d.statsPopup = newPopup(d.lang.statsPopupTitle, d.theme.popupTitleFG, 1, 1)
 }
 
 func (d *Display) setIntroPopup() {
