@@ -166,6 +166,29 @@ func (d *Display) setHelpPopup() {
 	)
 }
 
+func (d *Display) setIntroPopup() {
+	// TODO: Move some constants here into more commonly-accessible place.
+	introText := fmt.Sprintf(`Hello and welcome the %s reader.
+
+For help, press [yellow]h[-] or go to [yellow]%s[-].
+
+To close this message, press [yellow]<Esc>[-].
+`, internal.AppName(), internal.AppHomepage())
+
+	introWidget := tview.NewTextView().
+		SetDynamicColors(true).
+		SetText(introText)
+
+	d.introPopup = newFilledPopup(
+		d.lang.introPopupTitle,
+		introWidget,
+		d.theme.popupTitleFG,
+		1, 1,
+		popupWidth(introWidget.GetText(true)),
+		[]int{-1, popupHeight(introText), -3},
+	)
+}
+
 func (d *Display) setAboutPopupText(name fmt.Stringer) {
 	commit := internal.GitCommit()
 
@@ -201,27 +224,4 @@ func (d *Display) setAboutPopupText(name fmt.Stringer) {
 	d.aboutPopup.setWidth(width)
 	d.aboutPopup.setGridRows([]int{-1, height, -3})
 	d.aboutPopup.setContent(aboutWidget)
-}
-
-func (d *Display) setIntroPopup() {
-	// TODO: Move some constants here into more commonly-accessible place.
-	introText := fmt.Sprintf(`Hello and welcome the %s reader.
-
-For help, press [yellow]h[-] or go to [yellow]%s[-].
-
-To close this message, press [yellow]<Esc>[-].
-`, internal.AppName(), internal.AppHomepage())
-
-	introWidget := tview.NewTextView().
-		SetDynamicColors(true).
-		SetText(introText)
-
-	d.introPopup = newFilledPopup(
-		d.lang.introPopupTitle,
-		introWidget,
-		d.theme.popupTitleFG,
-		1, 1,
-		popupWidth(introWidget.GetText(true)),
-		[]int{-1, popupHeight(introText), -3},
-	)
 }
