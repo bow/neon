@@ -23,6 +23,7 @@ type Display struct {
 	aboutPopup *popup
 	helpPopup  *popup
 	introPopup *popup
+	statsPopup *popup
 
 	handlersSet bool
 }
@@ -74,6 +75,7 @@ const (
 	aboutPageName = "about"
 	helpPageName  = "help"
 	introPageName = "intro"
+	statsPageName = "stats"
 
 	longDateFormat = "2 January 2006 - 15:04:05 MST"
 )
@@ -83,12 +85,14 @@ func (d *Display) setRoot() {
 	d.setMainPage()
 	d.setHelpPopup()
 	d.setAboutPopup()
+	d.setStatsPopup()
 	d.setIntroPopup()
 
 	pages.
 		AddAndSwitchToPage(mainPageName, d.mainPage, true).
 		AddPage(helpPageName, d.helpPopup, true, false).
 		AddPage(aboutPageName, d.aboutPopup, true, false).
+		AddPage(statsPageName, d.statsPopup, true, false).
 		AddPage(introPageName, d.introPopup, true, false)
 
 	// FIXME: Remove when we add mainPage proper, currently needed only to see if
@@ -200,6 +204,10 @@ func (d *Display) setAboutPopupText(name fmt.Stringer) {
 	d.aboutPopup.setWidth(width)
 	d.aboutPopup.setGridRows([]int{-1, height, -3})
 	d.aboutPopup.setContent(aboutWidget)
+}
+
+func (d *Display) setStatsPopup() {
+	d.statsPopup = newPopup(d.lang.statsPopupTitle, d.theme.popupTitleFG, 1, 1)
 }
 
 func (d *Display) setIntroPopup() {
