@@ -73,7 +73,7 @@ all: help
 .PHONY: bin
 bin: $(BIN_PATH)  ## Compile an executable binary.
 
-$(BIN_PATH): $(shell find . -type f -name '*.go' -print) go.mod
+$(BIN_PATH): $(shell find . -type f -name '*.go' -print | $(GREP_EXE) -v '_mock_test') go.mod
 	go mod tidy && CGO_ENABLED=$(CGO_ENABLED) go build -trimpath -ldflags '$(LD_FLAGS)' -o $@
 
 
