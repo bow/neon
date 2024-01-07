@@ -4,18 +4,26 @@
 package ui
 
 import (
+	"context"
+	"time"
+
 	"github.com/rivo/tview"
 
 	"github.com/bow/neon/internal/reader/backend"
 )
 
 type DisplayOperator struct {
-	focusStack tview.Primitive
+	ctx            context.Context
+	focusStack     tview.Primitive
+	backendTimeout time.Duration
 }
 
-//nolint:revive
 func NewDisplayOperator() *DisplayOperator {
-	do := DisplayOperator{}
+	do := DisplayOperator{
+		// FIXME: Pass in these values instead of hard-coding.
+		ctx:            context.Background(),
+		backendTimeout: 2 * time.Second,
+	}
 	return &do
 }
 
@@ -102,7 +110,23 @@ func (do *DisplayOperator) ToggleHelpPopup(d *Display) {
 
 //nolint:revive
 func (do *DisplayOperator) ToggleStatsPopup(d *Display, b backend.Backend) {
-	panic("ToggleStatsPopup is unimplemented")
+	if name := do.frontPageName(d); name == statsPageName {
+		do.hidePopup(d, name)
+	} else if name != introPageName {
+		ctx, cancel := context.WithTimeout(do.ctx, do.backendTimeout)
+		defer cancel()
+
+		res := <-b.GetStats(ctx)
+		if res.Err != nil {
+			// FIXME: Show error in status bar.
+			panic(res.Err)
+		} else {
+			d.setStatsPopupValues(res.Value)
+			do.switchPopup(d, statsPageName, name)
+			// FIXME: Move to a more generic place.
+			d.inner.Draw()
+		}
+	}
 }
 
 //nolint:revive

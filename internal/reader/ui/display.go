@@ -11,6 +11,7 @@ import (
 	"github.com/rivo/tview"
 
 	"github.com/bow/neon/internal"
+	"github.com/bow/neon/internal/entity"
 )
 
 type Display struct {
@@ -224,4 +225,38 @@ func (d *Display) setAboutPopupText(name fmt.Stringer) {
 	d.aboutPopup.setWidth(width)
 	d.aboutPopup.setGridRows([]int{-1, height, -3})
 	d.aboutPopup.setContent(aboutWidget)
+}
+
+func (d *Display) setStatsPopupValues(values *entity.Stats) {
+
+	var lpt string
+	if values.LastPullTime != nil {
+		lpt = values.LastPullTime.Format(longDateFormat)
+	}
+
+	statsText := fmt.Sprintf(`[aqua]Feeds[-]
+[yellow]Total[-]: %d
+
+[aqua]Entries[-]
+[yellow]Unread[-]: %d
+[yellow]Total[-] : %d
+
+[aqua]Last pulled[-]
+%s`,
+		values.NumFeeds,
+		values.NumEntriesUnread,
+		values.NumEntries,
+		lpt,
+	)
+
+	statsWidget := tview.NewTextView().
+		SetDynamicColors(true).
+		SetText(statsText)
+
+	width := popupWidth(statsWidget.GetText(true))
+	height := popupHeight(statsText)
+
+	d.statsPopup.setWidth(width)
+	d.statsPopup.setGridRows([]int{-1, height, -3})
+	d.statsPopup.setContent(statsWidget)
 }

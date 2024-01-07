@@ -14,6 +14,9 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
+
+	"github.com/bow/neon/internal/entity"
+	"github.com/bow/neon/internal/reader/backend"
 )
 
 const screenW, screenH = 210, 60
@@ -81,6 +84,47 @@ func TestToggleHelpPopup(t *testing.T) {
 	r.Equal(dsp.helpPopup, item)
 
 	opr.ToggleHelpPopup(dsp)
+	name, item = dsp.root.GetFrontPage()
+	a.Equal(mainPageName, name)
+	r.Equal(dsp.mainPage, item)
+}
+
+func TestToggleStatsPopup(t *testing.T) {
+	a := assert.New(t)
+	r := require.New(t)
+	draw, opr, dsp := setupDisplayOperatorTest(t)
+
+	draw()
+
+	name, item := dsp.root.GetFrontPage()
+	a.Equal(mainPageName, name)
+	r.Equal(dsp.mainPage, item)
+
+	be := NewMockBackend(gomock.NewController(t))
+	stats := entity.Stats{
+		NumFeeds:         40,
+		NumEntries:       236,
+		NumEntriesUnread: 5,
+		// TODO: Test using non-nil value.
+		LastPullTime:         nil,
+		MostRecentUpdateTime: nil,
+	}
+	be.EXPECT().
+		GetStats(gomock.Any()).
+		Return(newOkCh(t, &stats)).
+		Times(1)
+
+	opr.ToggleStatsPopup(dsp, be)
+	name, item = dsp.root.GetFrontPage()
+	a.Equal(statsPageName, name)
+	r.Equal(dsp.statsPopup, item)
+	c, typeok := dsp.statsPopup.content.(*tview.TextView)
+	r.True(typeok)
+	a.Contains(c.GetText(true), "Total: 40")
+	a.Contains(c.GetText(true), "Total : 236")
+	a.Contains(c.GetText(true), "Unread: 5")
+
+	opr.ToggleStatsPopup(dsp, be)
 	name, item = dsp.root.GetFrontPage()
 	a.Equal(mainPageName, name)
 	r.Equal(dsp.mainPage, item)
@@ -202,4 +246,11 @@ func screenDrawn(t *testing.T, screen tcell.Screen) bool {
 		}
 	}
 	return false
+}
+
+func newOkCh[T any](t *testing.T, value T) chan backend.Result[T] {
+	t.Helper()
+	ch := make(chan backend.Result[T], 1)
+	go func() { ch <- backend.OkResult(value) }()
+	return ch
 }
