@@ -22,10 +22,10 @@ type Result[T any] struct {
 	Err   error
 }
 
-func okResult[T any](value T) Result[T] {
+func OkResult[T any](value T) Result[T] {
 	return Result[T]{Value: value, Err: nil}
 }
 
-func errResult[T any](err error) Result[T] {
+func ErrResult[T any](err error) Result[T] {
 	return Result[T]{Err: err}
 }
