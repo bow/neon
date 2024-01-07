@@ -8,6 +8,7 @@ import "github.com/bow/neon/internal/reader/backend"
 // Operator describes high-level UI operations.
 type Operator interface {
 	ClearStatusBar(d *Display)
+	Draw(d *Display)
 	FocusFeedsPane(d *Display)
 	FocusEntriesPane(d *Display)
 	FocusNextPane(d *Display)
