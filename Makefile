@@ -143,6 +143,7 @@ mocks: internal/datastore/parser_mock_test.go  ## Generate mocks from interfaces
 mocks: internal/server/datastore_mock_test.go
 mocks: $(addprefix internal/reader/,operator_mock_test.go backend_mock_test.go state_mock_test.go)
 mocks: internal/reader/ui/backend_mock_test.go
+mocks: internal/reader/backend/client_mock_test.go
 
 internal/datastore/parser_mock_test.go: internal/datastore/parser.go
 	mockgen -source=$< -package=datastore Parser > $@
@@ -161,6 +162,9 @@ internal/reader/state_mock_test.go: internal/reader/state/state.go
 
 internal/reader/ui/backend_mock_test.go: internal/reader/backend/backend.go
 	mockgen -source=$< -package=ui Backend > $@
+
+internal/reader/backend/client_mock_test.go: api/neon_grpc.pb.go
+	mockgen -source=$< -package=backend NeonClient > $@
 
 
 .PHONY: protos

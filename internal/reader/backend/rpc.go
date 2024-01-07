@@ -17,8 +17,6 @@ import (
 type RPC struct {
 	addr   string
 	client api.NeonClient
-
-	statsCache *entity.Stats
 }
 
 // Ensure rpcRepo implements Repo.
@@ -41,7 +39,18 @@ func newRPCWithClient(addr string, client api.NeonClient) *RPC {
 
 //nolint:unused
 func (r *RPC) GetStats(ctx context.Context) <-chan Result[*entity.Stats] {
-	panic("GetStats is unimplemented")
+	ch := make(chan Result[*entity.Stats])
+	go func() {
+		defer close(ch)
+		rsp, err := r.client.GetStats(ctx, &api.GetStatsRequest{})
+		if err != nil {
+			ch <- ErrResult[*entity.Stats](err)
+			return
+		}
+		stats := entity.FromStatsPb(rsp.GetGlobal())
+		ch <- OkResult(stats)
+	}()
+	return ch
 }
 
 //nolint:unused
