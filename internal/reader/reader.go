@@ -36,6 +36,8 @@ func (r *Reader) Start() error {
 func (r *Reader) globalKeyHandler() ui.KeyHandler {
 	r.mustDefinedFields()
 
+	statsPopupLock := make(chan struct{}, 1)
+
 	return func(event *tcell.EventKey) *tcell.EventKey {
 		var (
 			key  = event.Key()
@@ -49,6 +51,18 @@ func (r *Reader) globalKeyHandler() ui.KeyHandler {
 			switch keyr {
 			case 'A':
 				r.opr.ToggleAboutPopup(r.display, r.backend)
+				return nil
+
+			case 'S':
+				go func() {
+					select {
+					case statsPopupLock <- struct{}{}:
+						defer func() { <-statsPopupLock }()
+					default:
+						return
+					}
+					r.opr.ToggleStatsPopup(r.display, r.backend)
+				}()
 				return nil
 
 			case 'h', '?':

@@ -38,6 +38,16 @@ func TestToggleHelpPopupCalled(t *testing.T) {
 	tw.screen.InjectKey(tcell.KeyRune, 'h', tcell.ModNone)
 }
 
+func TestToggleStatsPopupCalled(t *testing.T) {
+	tw := setupReaderTest(t)
+
+	rdr := tw.draw()
+
+	tw.opr.EXPECT().ToggleStatsPopup(rdr.display, rdr.backend)
+
+	tw.screen.InjectKey(tcell.KeyRune, 'S', tcell.ModNone)
+}
+
 func TestShowIntroPopupCalled(t *testing.T) {
 	tw := setupReaderTest(t)
 
