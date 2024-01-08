@@ -18,10 +18,10 @@ type DisplayOperator struct {
 	backendTimeout time.Duration
 }
 
-func NewDisplayOperator() *DisplayOperator {
+func NewDisplayOperator(ctx context.Context) *DisplayOperator {
 	do := DisplayOperator{
 		// FIXME: Pass in these values instead of hard-coding.
-		ctx:            context.Background(),
+		ctx:            ctx,
 		backendTimeout: 2 * time.Second,
 	}
 	return &do

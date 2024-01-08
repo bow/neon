@@ -4,6 +4,7 @@
 package ui
 
 import (
+	"context"
 	"sync"
 	"testing"
 	"time"
@@ -219,7 +220,7 @@ func setupDisplayOperatorTest(t *testing.T) (
 		}
 	})
 
-	return drawf, NewDisplayOperator(), dsp
+	return drawf, NewDisplayOperator(context.Background()), dsp
 }
 
 func newTestDisplay(t *testing.T, screen tcell.Screen) *Display {

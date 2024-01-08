@@ -199,7 +199,7 @@ func (b *Builder) Build() (*Reader, error) {
 	if b.opr != nil {
 		opr = b.opr
 	} else {
-		opr = ui.NewDisplayOperator()
+		opr = ui.NewDisplayOperator(b.ctx)
 	}
 
 	var stt st.State
