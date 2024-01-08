@@ -97,19 +97,46 @@ func (d *Display) setRoot() {
 		AddPage(statsPageName, d.statsPopup, true, false).
 		AddPage(introPageName, d.introPopup, true, false)
 
-	// FIXME: Remove when we add mainPage proper, currently needed only to see if
-	//		  app is drawn.
-	pages.SetBorder(true)
-
 	d.root = pages
 	d.inner = d.inner.SetRoot(pages, true)
 }
 
 func (d *Display) setMainPage() {
-	// TODO: Add inner flexes.
+
+	feedsPane := newPane(d.lang.feedsPaneTitle, d.theme, false)
+	entriesPane := newPane(d.lang.entriesPaneTitle, d.theme, false)
+	readingPane := newPane(d.lang.readingPaneTitle, d.theme, true)
+
+	narrowFlex := tview.NewFlex().
+		SetDirection(tview.FlexRow).
+		AddItem(feedsPane, 0, 3, false).
+		AddItem(entriesPane, 0, 4, false).
+		AddItem(readingPane, 0, 5, false).
+		AddItem(newNarrowStatusBarBorder(d.theme), 1, 0, false)
+
+	wideFlex := tview.NewFlex().
+		SetDirection(tview.FlexRow).
+		AddItem(
+			tview.NewFlex().
+				SetDirection(tview.FlexColumn).
+				AddItem(feedsPane, 45, 0, false).
+				AddItem(newPaneDivider(d.theme), 1, 0, false).
+				AddItem(
+					tview.NewFlex().
+						SetDirection(tview.FlexRow).
+						AddItem(entriesPane, 0, 1, false).
+						AddItem(readingPane, 0, 2, false),
+					0, 1, false,
+				),
+			0, 1, false,
+		).
+		AddItem(newWideStatusBarBorder(d.theme, 45), 1, 0, false)
+
 	grid := tview.NewGrid().
 		SetRows(0).
-		SetBorders(false)
+		SetBorders(false).
+		AddItem(narrowFlex, 0, 0, 1, 1, 0, 0, false).
+		AddItem(wideFlex, 0, 0, 1, 1, 0, d.theme.WideViewMinWidth, false)
 
 	d.mainPage = grid
 }
@@ -259,4 +286,97 @@ func (d *Display) setStatsPopupValues(values *entity.Stats) {
 	d.statsPopup.setWidth(width)
 	d.statsPopup.setGridRows([]int{-1, height, -3})
 	d.statsPopup.setContent(statsWidget)
+}
+
+func newPane(title string, theme *Theme, addTopLeftBorderTip bool) *tview.Box {
+
+	var unfocused, focused string
+	if title != "" {
+		unfocused = fmt.Sprintf(" %s ", title)
+		focused = fmt.Sprintf("[::b]▶ %s[::-] ", title)
+	} else {
+		focused = "[::b]▶[::-] "
+	}
+
+	makedrawf := func(
+		title string,
+		leftPad int,
+	) func(screen tcell.Screen, x int, y int, width int, height int) (int, int, int, int) {
+
+		return func(screen tcell.Screen, x int, y int, width int, height int) (int, int, int, int) {
+			style := theme.lineStyle()
+			// Draw top and optionally bottom borders.
+			for cx := x; cx < x+width; cx++ {
+				screen.SetContent(cx, y, tview.BoxDrawingsLightHorizontal, nil, style)
+			}
+			if addTopLeftBorderTip {
+				screen.SetContent(x-1, y, tview.BoxDrawingsLightVerticalAndRight, nil, style)
+			}
+
+			// Write the title text.
+			tview.Print(
+				screen,
+				title,
+				x+leftPad,
+				y,
+				width-2,
+				tview.AlignLeft,
+				theme.titleFG,
+			)
+
+			return x + 2, y + 1, width - 2, height - 1
+		}
+	}
+
+	box := tview.NewBox().SetDrawFunc(makedrawf(unfocused, 1))
+
+	box.SetFocusFunc(func() { box.SetDrawFunc(makedrawf(focused, 0)) })
+	box.SetBlurFunc(func() { box.SetDrawFunc(makedrawf(unfocused, 1)) })
+
+	return box
+}
+
+func newNarrowStatusBarBorder(theme *Theme) *tview.Box {
+
+	drawf := func(screen tcell.Screen, x int, y int, width int, height int) (int, int, int, int) {
+		style := theme.lineStyle()
+		for cx := x; cx < x+width; cx++ {
+			screen.SetContent(cx, y, tview.BoxDrawingsLightHorizontal, nil, style)
+		}
+		return x + 1, y + 1, width - 2, height - 1
+	}
+
+	return tview.NewBox().SetBorder(false).SetDrawFunc(drawf)
+}
+
+func newWideStatusBarBorder(theme *Theme, branchPoint int) *tview.Box {
+
+	drawf := func(screen tcell.Screen, x int, y int, width int, height int) (int, int, int, int) {
+		style := theme.lineStyle()
+		for cx := x; cx < x+width; cx++ {
+			if cx == branchPoint {
+				screen.SetContent(cx, y, tview.BoxDrawingsLightUpAndHorizontal, nil, style)
+			} else {
+				screen.SetContent(cx, y, tview.BoxDrawingsLightHorizontal, nil, style)
+			}
+		}
+
+		return x + 1, y + 1, width - 2, height - 1
+	}
+
+	return tview.NewBox().SetBorder(false).SetDrawFunc(drawf)
+}
+
+func newPaneDivider(theme *Theme) *tview.Box {
+
+	drawf := func(screen tcell.Screen, x int, y int, width int, height int) (int, int, int, int) {
+		style := theme.lineStyle()
+		screen.SetContent(x, y, tview.BoxDrawingsLightDownAndHorizontal, nil, style)
+		for cy := y + 1; cy < y+height; cy++ {
+			screen.SetContent(x, cy, tview.BoxDrawingsLightVertical, nil, style)
+		}
+		return x + 1, y + 1, width - 2, height - 1
+	}
+
+	return tview.NewBox().SetBorder(false).SetDrawFunc(drawf)
 }
