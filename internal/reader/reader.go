@@ -67,7 +67,7 @@ func (r *Reader) globalKeyHandler() ui.KeyHandler {
 				}()
 				return nil
 
-			case 'h', '?':
+			case 'H', '?':
 				r.opr.ToggleHelpPopup(r.display)
 				return nil
 

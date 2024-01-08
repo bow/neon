@@ -36,7 +36,7 @@ func TestToggleHelpPopupCalled(t *testing.T) {
 		Times(2)
 
 	tw.screen.InjectKey(tcell.KeyRune, '?', tcell.ModNone)
-	tw.screen.InjectKey(tcell.KeyRune, 'h', tcell.ModNone)
+	tw.screen.InjectKey(tcell.KeyRune, 'H', tcell.ModNone)
 }
 
 func TestToggleStatsPopupCalled(t *testing.T) {

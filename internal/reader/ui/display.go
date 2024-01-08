@@ -150,7 +150,7 @@ func (d *Display) setHelpPopup() {
 [yellow]Esc[-]     : Unset current focus or close open frame
 [yellow]S[-]       : Toggle stats popup
 [yellow]A[-]       : Toggle 'about' popup
-[yellow]h,?[-]     : Toggle this help
+[yellow]H,?[-]     : Toggle this help
 [yellow]q,Ctrl-C[-]: Quit reader`
 
 	helpWidget := tview.NewTextView().
@@ -171,7 +171,7 @@ func (d *Display) setIntroPopup() {
 	// TODO: Move some constants here into more commonly-accessible place.
 	introText := fmt.Sprintf(`Hello and welcome the %s reader.
 
-For help, press [yellow]h[-] or go to [yellow]%s[-].
+For help, press [yellow]?[-] or go to [yellow]%s[-].
 
 To close this message, press [yellow]<Esc>[-].
 `, internal.AppName(), internal.AppHomepage())
