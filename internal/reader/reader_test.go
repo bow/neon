@@ -4,6 +4,7 @@
 package reader
 
 import (
+	"context"
 	"sync"
 	"testing"
 	"time"
@@ -134,7 +135,7 @@ func setupReaderTest(t *testing.T) *testWrapper {
 
 	var wg sync.WaitGroup
 	drawf := func() *Reader {
-		rdr, err := NewBuilder().
+		rdr, err := NewBuilder(context.Background()).
 			backend(be).
 			screen(screen).
 			operator(opr).

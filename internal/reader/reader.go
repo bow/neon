@@ -113,9 +113,9 @@ type Builder struct {
 	stt st.State
 }
 
-func NewBuilder() *Builder {
+func NewBuilder(ctx context.Context) *Builder {
 	b := Builder{
-		ctx:       context.Background(),
+		ctx:       ctx,
 		themeName: "dark",
 		dopts:     nil,
 	}
