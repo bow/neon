@@ -6,6 +6,7 @@ package reader
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/gdamore/tcell/v2"
 	"google.golang.org/grpc"
@@ -104,8 +105,9 @@ type Builder struct {
 	scr       tcell.Screen
 
 	// rpcBackend args.
-	addr  string
-	dopts []grpc.DialOption
+	addr        string
+	dopts       []grpc.DialOption
+	callTimeout time.Duration
 
 	// For testing.
 	be  bknd.Backend
@@ -115,9 +117,10 @@ type Builder struct {
 
 func NewBuilder(ctx context.Context) *Builder {
 	b := Builder{
-		ctx:       ctx,
-		themeName: "dark",
-		dopts:     nil,
+		ctx:         ctx,
+		themeName:   "dark",
+		dopts:       nil,
+		callTimeout: 2 * time.Second,
 	}
 	return &b
 }
@@ -129,6 +132,11 @@ func (b *Builder) Address(addr string) *Builder {
 
 func (b *Builder) DialOpts(dialOpts ...grpc.DialOption) *Builder {
 	b.dopts = dialOpts
+	return b
+}
+
+func (b *Builder) CallTimeout(timeout time.Duration) *Builder {
+	b.callTimeout = timeout
 	return b
 }
 
@@ -199,7 +207,7 @@ func (b *Builder) Build() (*Reader, error) {
 	if b.opr != nil {
 		opr = b.opr
 	} else {
-		opr = ui.NewDisplayOperator(b.ctx)
+		opr = ui.NewDisplayOperator(b.ctx, b.callTimeout)
 	}
 
 	var stt st.State

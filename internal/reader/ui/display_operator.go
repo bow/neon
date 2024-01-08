@@ -13,16 +13,18 @@ import (
 )
 
 type DisplayOperator struct {
-	ctx            context.Context
-	focusStack     tview.Primitive
-	backendTimeout time.Duration
+	ctx         context.Context
+	focusStack  tview.Primitive
+	callTimeout time.Duration
 }
 
-func NewDisplayOperator(ctx context.Context) *DisplayOperator {
+func NewDisplayOperator(
+	ctx context.Context,
+	callTimeout time.Duration,
+) *DisplayOperator {
 	do := DisplayOperator{
-		// FIXME: Pass in these values instead of hard-coding.
-		ctx:            ctx,
-		backendTimeout: 2 * time.Second,
+		ctx:         ctx,
+		callTimeout: callTimeout,
 	}
 	return &do
 }
@@ -117,7 +119,7 @@ func (do *DisplayOperator) ToggleStatsPopup(d *Display, b backend.Backend) {
 	if name := do.frontPageName(d); name == statsPageName {
 		do.hidePopup(d, name)
 	} else if name != introPageName {
-		ctx, cancel := context.WithTimeout(do.ctx, do.backendTimeout)
+		ctx, cancel := context.WithTimeout(do.ctx, do.callTimeout)
 		defer cancel()
 
 		res := <-b.GetStats(ctx)

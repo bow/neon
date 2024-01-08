@@ -220,7 +220,7 @@ func setupDisplayOperatorTest(t *testing.T) (
 		}
 	})
 
-	return drawf, NewDisplayOperator(context.Background()), dsp
+	return drawf, NewDisplayOperator(context.Background(), 1*time.Second), dsp
 }
 
 func newTestDisplay(t *testing.T, screen tcell.Screen) *Display {
