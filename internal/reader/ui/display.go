@@ -26,6 +26,8 @@ type Display struct {
 	introPopup *popup
 	statsPopup *popup
 
+	bar *statusBar
+
 	handlersSet bool
 }
 
@@ -78,7 +80,8 @@ const (
 	introPageName = "intro"
 	statsPageName = "stats"
 
-	longDateFormat = "2 January 2006 - 15:04:05 MST"
+	longDateFormat  = "2 January 2006 - 15:04:05 MST"
+	shortDateFormat = "02/Jan/06 15:04"
 )
 
 func (d *Display) setRoot() {
@@ -86,6 +89,9 @@ func (d *Display) setRoot() {
 	d.setMainPage()
 	d.setHelpPopup()
 	d.setIntroPopup()
+
+	d.bar = newStatusBar(d.theme)
+	d.addStatusBar()
 
 	d.aboutPopup = newPopup(d.lang.aboutPopupTitle, d.theme.popupTitleFG, 0, 0)
 	d.statsPopup = newPopup(d.lang.statsPopupTitle, d.theme.popupTitleFG, 1, 1)
@@ -139,6 +145,10 @@ func (d *Display) setMainPage() {
 		AddItem(wideFlex, 0, 0, 1, 1, 0, d.theme.WideViewMinWidth, false)
 
 	d.mainPage = grid
+}
+
+func (d *Display) addStatusBar() {
+	d.mainPage.SetRows(0, 1).AddItem(d.bar, 1, 0, 1, 1, 0, 0, false)
 }
 
 func (d *Display) setHelpPopup() {

@@ -32,9 +32,9 @@ type Theme struct {
 	feedsGroupNormal tcell.Color
 	feedsGroupDim    tcell.Color
 
-	lastPullFG       tcell.Color
-	lastPullNormalFG tcell.Color
-	lastPullDimFG    tcell.Color
+	statusBarFG       tcell.Color
+	statusBarNormalFG tcell.Color
+	statusBarDimFG    tcell.Color
 
 	eventInfoFG       tcell.Color
 	eventInfoNormalFG tcell.Color
@@ -58,7 +58,7 @@ type Theme struct {
 func (theme *Theme) dim() {
 	theme.borderFG = theme.borderDimFG
 	theme.titleFG = theme.titleDimFG
-	theme.lastPullFG = theme.lastPullDimFG
+	theme.statusBarFG = theme.statusBarDimFG
 	theme.eventInfoFG = theme.eventInfoDimFG
 	theme.feedsGroup = theme.feedsGroupDim
 }
@@ -67,7 +67,7 @@ func (theme *Theme) dim() {
 func (theme *Theme) normalize() {
 	theme.borderFG = theme.borderNormalFG
 	theme.titleFG = theme.titleNormalFG
-	theme.lastPullFG = theme.lastPullNormalFG
+	theme.statusBarFG = theme.statusBarNormalFG
 	theme.eventInfoFG = theme.eventInfoNormalFG
 	theme.feedsGroup = theme.feedsGroupNormal
 }
@@ -96,9 +96,9 @@ var DarkTheme = &Theme{
 	feedsGroupNormal: tcell.ColorGrey,
 	feedsGroupDim:    darkForegroundDim,
 
-	lastPullFG:       tcell.ColorGray,
-	lastPullNormalFG: tcell.ColorGray,
-	lastPullDimFG:    darkForegroundDim,
+	statusBarFG:       tcell.ColorGray,
+	statusBarNormalFG: tcell.ColorGray,
+	statusBarDimFG:    darkForegroundDim,
 
 	eventInfoFG:       tcell.ColorOliveDrab,
 	eventInfoNormalFG: tcell.ColorOliveDrab,
