@@ -133,9 +133,8 @@ func (do *DisplayOperator) ToggleStatsPopup(d *Display, b backend.Backend) {
 	}
 }
 
-//nolint:revive
 func (do *DisplayOperator) ToggleStatusBar(d *Display) {
-	panic("ToggleStatusBar is unimplemented")
+	d.toggleStatusBar()
 }
 
 func (do *DisplayOperator) UnfocusFront(d *Display) {

@@ -26,7 +26,8 @@ type Display struct {
 	introPopup *popup
 	statsPopup *popup
 
-	bar *statusBar
+	bar        *statusBar
+	barVisible bool
 
 	handlersSet bool
 }
@@ -149,6 +150,20 @@ func (d *Display) setMainPage() {
 
 func (d *Display) addStatusBar() {
 	d.mainPage.SetRows(0, 1).AddItem(d.bar, 1, 0, 1, 1, 0, 0, false)
+	d.barVisible = true
+}
+
+func (d *Display) removeStatusBar() {
+	d.mainPage.RemoveItem(d.bar).SetRows(0)
+	d.barVisible = false
+}
+
+func (d *Display) toggleStatusBar() {
+	if d.barVisible {
+		d.removeStatusBar()
+	} else {
+		d.addStatusBar()
+	}
 }
 
 func (d *Display) setHelpPopup() {

@@ -71,6 +71,10 @@ func (r *Reader) globalKeyHandler() ui.KeyHandler {
 				r.opr.ToggleHelpPopup(r.display)
 				return nil
 
+			case 'b':
+				r.opr.ToggleStatusBar(r.display)
+				return nil
+
 			case 'q':
 				r.display.Stop()
 				return nil
