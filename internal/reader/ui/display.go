@@ -200,7 +200,7 @@ func (d *Display) setHelpPopup() {
 [yellow]X[-]       : Export feeds to OPML
 [yellow]I[-]       : Import feeds from OPML
 [yellow]Esc[-]     : Unset current focus or close open frame
-[yellow]S[-]       : Toggle stats popup
+[yellow]S[-]       : Toggle stats popup and show latest values
 [yellow]A[-]       : Toggle 'about' popup
 [yellow]H,?[-]     : Toggle this help
 [yellow]q,Ctrl-C[-]: Quit reader`
