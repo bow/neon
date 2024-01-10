@@ -42,12 +42,12 @@ func (p *popup) setGridRows(rows []int) {
 func newPopup(
 	title string,
 	titleColorFG tcell.Color,
-	top, bottom int,
+	topPadding, bottomPadding int,
 ) *popup {
 	var content tview.Primitive = nil
 
 	frame := tview.NewFrame(content).
-		SetBorders(top, bottom, 0, 0, leftPopupMargin, rightPopupMargin)
+		SetBorders(topPadding, bottomPadding, 0, 0, leftPopupMargin, rightPopupMargin)
 
 	frame.SetBorder(true).
 		SetTitle(fmt.Sprintf(" %s ", title)).
@@ -65,13 +65,13 @@ func newFilledPopup(
 	title string,
 	content tview.Primitive,
 	titleColorFG tcell.Color,
-	top, bottom int,
+	topPadding, bottomPadding int,
 	width int,
 	gridRows []int,
 ) *popup {
 
 	frame := tview.NewFrame(content).
-		SetBorders(top, bottom, 0, 0, leftPopupMargin, rightPopupMargin)
+		SetBorders(topPadding, bottomPadding, 0, 0, leftPopupMargin, rightPopupMargin)
 
 	frame.SetBorder(true).
 		SetTitle(fmt.Sprintf(" %s ", title)).
