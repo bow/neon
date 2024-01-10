@@ -24,6 +24,9 @@ type popup struct {
 
 	content tview.Primitive
 	frame   *tview.Frame
+
+	topSpacing    int
+	bottomSpacing int
 }
 
 func (p *popup) setContent(prim tview.Primitive) {
@@ -35,14 +38,15 @@ func (p *popup) setWidth(w int) {
 	p.Grid.SetColumns(0, w, 0)
 }
 
-func (p *popup) setGridRows(rows []int) {
-	p.Grid.SetRows(rows...)
+func (p *popup) setHeight(h int) {
+	p.Grid.SetRows(p.topSpacing, h, p.bottomSpacing)
 }
 
 func newPopup(
 	title string,
 	titleColorFG tcell.Color,
 	topPadding, bottomPadding int,
+	topSpacing, bottomSpacing int,
 ) *popup {
 	var content tview.Primitive = nil
 
@@ -54,9 +58,16 @@ func newPopup(
 		SetTitleColor(titleColorFG)
 
 	grid := tview.NewGrid().
-		AddItem(frame, 1, 1, 1, 1, 0, 0, true)
+		AddItem(frame, 1, 1, 1, 1, 0, 0, true).
+		SetRows(topSpacing, 0, bottomSpacing)
 
-	p := popup{Grid: *grid, frame: frame, content: content}
+	p := popup{
+		Grid:          *grid,
+		frame:         frame,
+		content:       content,
+		topSpacing:    topSpacing,
+		bottomSpacing: bottomSpacing,
+	}
 
 	return &p
 }
@@ -65,9 +76,9 @@ func newFilledPopup(
 	title string,
 	content tview.Primitive,
 	titleColorFG tcell.Color,
+	width, height int,
 	topPadding, bottomPadding int,
-	width int,
-	gridRows []int,
+	topSpacing, bottomSpacing int,
 ) *popup {
 
 	frame := tview.NewFrame(content).
@@ -79,10 +90,16 @@ func newFilledPopup(
 
 	grid := tview.NewGrid().
 		SetColumns(0, width, 0).
-		SetRows(gridRows...).
+		SetRows(topSpacing, height, bottomSpacing).
 		AddItem(frame, 1, 1, 1, 1, 0, 0, true)
 
-	p := popup{Grid: *grid, frame: frame, content: content}
+	p := popup{
+		Grid:          *grid,
+		frame:         frame,
+		content:       content,
+		topSpacing:    topSpacing,
+		bottomSpacing: bottomSpacing,
+	}
 
 	return &p
 }

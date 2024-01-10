@@ -98,8 +98,18 @@ func (d *Display) setRoot() {
 	d.bar = newStatusBar(d.theme)
 	d.addStatusBar()
 
-	d.aboutPopup = newPopup(d.lang.aboutPopupTitle, d.theme.popupTitleFG, 0, 0)
-	d.statsPopup = newPopup(d.lang.statsPopupTitle, d.theme.popupTitleFG, 1, 1)
+	d.aboutPopup = newPopup(
+		d.lang.aboutPopupTitle,
+		d.theme.popupTitleFG,
+		0, 0,
+		-1, -3,
+	)
+	d.statsPopup = newPopup(
+		d.lang.statsPopupTitle,
+		d.theme.popupTitleFG,
+		1, 1,
+		-1, -3,
+	)
 
 	pages.
 		AddAndSwitchToPage(mainPageName, d.mainPage, true).
@@ -217,9 +227,10 @@ func (d *Display) setHelpPopup() {
 		d.lang.helpPopupTitle,
 		helpWidget,
 		d.theme.popupTitleFG,
-		1, 1,
 		popupWidth(helpWidget.GetText(true)),
-		[]int{0, popupHeight(helpText), 0},
+		popupHeight(helpText),
+		1, 1,
+		0, 0,
 	)
 }
 
@@ -240,9 +251,10 @@ To close this message, press [yellow]<Esc>[-].
 		d.lang.introPopupTitle,
 		introWidget,
 		d.theme.popupTitleFG,
-		1, 1,
 		popupWidth(introWidget.GetText(true)),
-		[]int{-1, popupHeight(introText), -3},
+		popupHeight(introText),
+		1, 1,
+		-1, -3,
 	)
 }
 
@@ -276,10 +288,8 @@ func (d *Display) setAboutPopupText(name fmt.Stringer) {
 
 	aboutWidget.SetText(aboutText)
 
-	height := popupHeight(aboutText) - 1
-
 	d.aboutPopup.setWidth(width)
-	d.aboutPopup.setGridRows([]int{-1, height, -3})
+	d.aboutPopup.setHeight(popupHeight(aboutText) - 1)
 	d.aboutPopup.setContent(aboutWidget)
 }
 
@@ -309,11 +319,8 @@ func (d *Display) setStatsPopupValues(values *entity.Stats) {
 		SetDynamicColors(true).
 		SetText(statsText)
 
-	width := popupWidth(statsWidget.GetText(true))
-	height := popupHeight(statsText)
-
-	d.statsPopup.setWidth(width)
-	d.statsPopup.setGridRows([]int{-1, height, -3})
+	d.statsPopup.setWidth(popupWidth(statsWidget.GetText(true)))
+	d.statsPopup.setHeight(popupHeight(statsText))
 	d.statsPopup.setContent(statsWidget)
 }
 
