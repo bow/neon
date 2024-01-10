@@ -50,26 +50,16 @@ func newPopup(
 ) *popup {
 	var content tview.Primitive = nil
 
-	frame := tview.NewFrame(content).
-		SetBorders(topPadding, bottomPadding, 0, 0, leftPopupMargin, rightPopupMargin)
+	p := newFilledPopup(
+		title,
+		content,
+		titleColorFG,
+		0, 0,
+		topPadding, bottomPadding,
+		topSpacing, bottomSpacing,
+	)
 
-	frame.SetBorder(true).
-		SetTitle(fmt.Sprintf(" %s ", title)).
-		SetTitleColor(titleColorFG)
-
-	grid := tview.NewGrid().
-		AddItem(frame, 1, 1, 1, 1, 0, 0, true).
-		SetRows(topSpacing, 0, bottomSpacing)
-
-	p := popup{
-		Grid:          *grid,
-		frame:         frame,
-		content:       content,
-		topSpacing:    topSpacing,
-		bottomSpacing: bottomSpacing,
-	}
-
-	return &p
+	return p
 }
 
 func newFilledPopup(
