@@ -52,18 +52,6 @@ func (mr *MockOperatorMockRecorder) ClearStatusBar(d any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ClearStatusBar", reflect.TypeOf((*MockOperator)(nil).ClearStatusBar), d)
 }
 
-// Draw mocks base method.
-func (m *MockOperator) Draw(d *ui.Display) {
-	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "Draw", d)
-}
-
-// Draw indicates an expected call of Draw.
-func (mr *MockOperatorMockRecorder) Draw(d any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Draw", reflect.TypeOf((*MockOperator)(nil).Draw), d)
-}
-
 // FocusEntriesPane mocks base method.
 func (m *MockOperator) FocusEntriesPane(d *ui.Display) {
 	m.ctrl.T.Helper()

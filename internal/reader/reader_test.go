@@ -45,7 +45,6 @@ func TestToggleStatsPopupCalled(t *testing.T) {
 	rdr := tw.draw()
 
 	tw.opr.EXPECT().ToggleStatsPopup(rdr.display, rdr.backend)
-	tw.opr.EXPECT().Draw(rdr.display)
 
 	tw.screen.InjectKey(tcell.KeyRune, 'S', tcell.ModNone)
 }

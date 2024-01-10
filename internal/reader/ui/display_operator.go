@@ -34,10 +34,6 @@ func (do *DisplayOperator) ClearStatusBar(d *Display) {
 	panic("ClearStatusBar is unimplemented")
 }
 
-func (do *DisplayOperator) Draw(d *Display) {
-	d.inner.Draw()
-}
-
 //nolint:revive
 func (do *DisplayOperator) FocusFeedsPane(d *Display) {
 	panic("FocusFeedsPane is unimplemented")

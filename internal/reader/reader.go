@@ -63,7 +63,7 @@ func (r *Reader) globalKeyHandler() ui.KeyHandler {
 						return
 					}
 					r.opr.ToggleStatsPopup(r.display, r.backend)
-					r.opr.Draw(r.display)
+					r.display.Draw()
 				}()
 				return nil
 
