@@ -7,14 +7,11 @@ import (
 	"context"
 	"time"
 
-	"github.com/rivo/tview"
-
 	"github.com/bow/neon/internal/reader/backend"
 )
 
 type DisplayOperator struct {
 	ctx         context.Context
-	focusStack  tview.Primitive
 	callTimeout time.Duration
 }
 
@@ -85,15 +82,15 @@ func (do *DisplayOperator) NotifyWarnf(d *Display, text string, a ...any) {
 }
 
 func (do *DisplayOperator) ShowIntroPopup(d *Display) {
-	do.showPopup(d, introPageName)
+	d.showPopup(introPageName)
 }
 
 func (do *DisplayOperator) ToggleAboutPopup(d *Display, b backend.Backend) {
-	if name := do.frontPageName(d); name == aboutPageName {
-		do.hidePopup(d, name)
+	if name := d.frontPageName(); name == aboutPageName {
+		d.hidePopup(name)
 	} else if name != introPageName {
 		d.setAboutPopupText(b)
-		do.switchPopup(d, aboutPageName, name)
+		d.switchPopup(aboutPageName, name)
 	}
 }
 
@@ -103,17 +100,16 @@ func (do *DisplayOperator) ToggleFeedsInPane(d *Display, b backend.Backend) {
 }
 
 func (do *DisplayOperator) ToggleHelpPopup(d *Display) {
-	if name := do.frontPageName(d); name == helpPageName {
-		do.hidePopup(d, name)
+	if name := d.frontPageName(); name == helpPageName {
+		d.hidePopup(name)
 	} else {
-		do.switchPopup(d, helpPageName, name)
+		d.switchPopup(helpPageName, name)
 	}
 }
 
-//nolint:revive
 func (do *DisplayOperator) ToggleStatsPopup(d *Display, b backend.Backend) {
-	if name := do.frontPageName(d); name == statsPageName {
-		do.hidePopup(d, name)
+	if name := d.frontPageName(); name == statsPageName {
+		d.hidePopup(name)
 	} else if name != introPageName {
 		ctx, cancel := context.WithTimeout(do.ctx, do.callTimeout)
 		defer cancel()
@@ -124,7 +120,7 @@ func (do *DisplayOperator) ToggleStatsPopup(d *Display, b backend.Backend) {
 			panic(res.Err)
 		} else {
 			d.setStats(res.Value)
-			do.switchPopup(d, statsPageName, name)
+			d.switchPopup(statsPageName, name)
 		}
 	}
 }
@@ -134,44 +130,12 @@ func (do *DisplayOperator) ToggleStatusBar(d *Display) {
 }
 
 func (do *DisplayOperator) UnfocusFront(d *Display) {
-	name := do.frontPageName(d)
+	name := d.frontPageName()
 	if name == mainPageName || name == "" {
 		d.inner.SetFocus(d.root)
 	} else {
-		do.hidePopup(d, name)
+		d.hidePopup(name)
 	}
-}
-
-func (do *DisplayOperator) frontPageName(d *Display) string {
-	name, _ := d.root.GetFrontPage()
-	return name
-}
-
-func (do *DisplayOperator) switchPopup(d *Display, name string, currentFront string) {
-	if currentFront == mainPageName {
-		do.stashFocus(d)
-	} else {
-		d.root.HidePage(currentFront)
-	}
-	do.showPopup(d, name)
-}
-
-func (do *DisplayOperator) showPopup(d *Display, name string) {
-	d.dimMainPage()
-	d.root.ShowPage(name)
-}
-
-func (do *DisplayOperator) hidePopup(d *Display, name string) {
-	d.root.HidePage(name)
-	d.normalizeMainPage()
-	if top := do.focusStack; top != nil {
-		d.inner.SetFocus(top)
-	}
-	do.focusStack = nil
-}
-
-func (do *DisplayOperator) stashFocus(d *Display) {
-	do.focusStack = d.inner.GetFocus()
 }
 
 // Ensure DisplayOperator implements Operator.

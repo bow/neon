@@ -30,6 +30,8 @@ type Display struct {
 	barVisible bool
 
 	handlersSet bool
+
+	focusStack tview.Primitive
 }
 
 func NewDisplay(screen tcell.Screen, theme string) (*Display, error) {
@@ -329,6 +331,38 @@ func (d *Display) setStatsPopupValues(values *entity.Stats) {
 	d.statsPopup.setWidth(popupWidth(statsWidget.GetText(true)))
 	d.statsPopup.setHeight(popupHeight(statsText))
 	d.statsPopup.setContent(statsWidget)
+}
+
+func (d *Display) frontPageName() string {
+	name, _ := d.root.GetFrontPage()
+	return name
+}
+
+func (d *Display) switchPopup(name string, currentFront string) {
+	if currentFront == mainPageName {
+		d.stashFocus()
+	} else {
+		d.root.HidePage(currentFront)
+	}
+	d.showPopup(name)
+}
+
+func (d *Display) showPopup(name string) {
+	d.dimMainPage()
+	d.root.ShowPage(name)
+}
+
+func (d *Display) hidePopup(name string) {
+	d.root.HidePage(name)
+	d.normalizeMainPage()
+	if top := d.focusStack; top != nil {
+		d.inner.SetFocus(top)
+	}
+	d.focusStack = nil
+}
+
+func (d *Display) stashFocus() {
+	d.focusStack = d.inner.GetFocus()
 }
 
 func newPane(title string, theme *Theme, addTopLeftBorderTip bool) *tview.Box {
