@@ -4,8 +4,13 @@
 package ui
 
 import (
+	"time"
+
+	"github.com/bow/neon/internal/entity"
 	"github.com/rivo/tview"
 )
+
+const iconAllRead = "✔"
 
 type statusBar struct {
 	tview.Flex
@@ -46,8 +51,27 @@ func newStatusBar(theme *Theme) *statusBar {
 
 	return &bar
 }
+func (b *statusBar) setStats(stats *entity.Stats) {
+	if stats.NumFeeds < 1 {
+		return
+	}
+	b.setLastPullTime(stats.LastPullTime)
+	if stats.NumEntriesUnread == 0 {
+		b.setAllRead()
+	}
+}
 
 func (b *statusBar) refreshColors() {
 	b.readStatusWidget.SetTextColor(b.theme.statusBarFG)
 	b.lastPullWidget.SetTextColor(b.theme.statusBarFG)
+}
+
+func (b *statusBar) setAllRead() {
+	b.readStatusWidget.SetText(iconAllRead)
+}
+
+func (b *statusBar) setLastPullTime(value *time.Time) {
+	if value != nil {
+		b.lastPullWidget.SetText(value.Local().Format(shortDateFormat))
+	}
 }

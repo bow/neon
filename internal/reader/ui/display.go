@@ -72,10 +72,12 @@ func (d *Display) Stop() {
 
 func (d *Display) dimMainPage() {
 	d.theme.dim()
+	d.bar.refreshColors()
 }
 
 func (d *Display) normalizeMainPage() {
 	d.theme.normalize()
+	d.bar.refreshColors()
 }
 
 const (
@@ -291,6 +293,11 @@ func (d *Display) setAboutPopupText(name fmt.Stringer) {
 	d.aboutPopup.setWidth(width)
 	d.aboutPopup.setHeight(popupHeight(aboutText) - 1)
 	d.aboutPopup.setContent(aboutWidget)
+}
+
+func (d *Display) setStats(stats *entity.Stats) {
+	d.setStatsPopupValues(stats)
+	d.bar.setStats(stats)
 }
 
 func (d *Display) setStatsPopupValues(values *entity.Stats) {
