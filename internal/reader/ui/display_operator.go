@@ -91,7 +91,7 @@ func (do *DisplayOperator) ToggleStatsPopup(d *Display, b backend.Backend) {
 	if name := d.frontPageName(); name == statsPageName {
 		d.hidePopup(name)
 	} else if name != introPageName {
-		ctx, cancel := context.WithTimeout(do.ctx, do.callTimeout)
+		ctx, cancel := do.callCtx()
 		defer cancel()
 
 		res := <-b.GetStats(ctx)
@@ -115,6 +115,10 @@ func (do *DisplayOperator) UnfocusFront(d *Display) {
 	} else {
 		d.hidePopup(name)
 	}
+}
+
+func (do *DisplayOperator) callCtx() (context.Context, context.CancelFunc) {
+	return context.WithTimeout(do.ctx, do.callTimeout)
 }
 
 // Ensure DisplayOperator implements Operator.
