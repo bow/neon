@@ -96,12 +96,11 @@ func (do *DisplayOperator) ToggleStatsPopup(d *Display, b backend.Backend) {
 
 		res := <-b.GetStats(ctx)
 		if res.Err != nil {
-			// FIXME: Show error in status bar.
-			panic(res.Err)
-		} else {
-			d.setStats(res.Value)
-			d.switchPopup(statsPageName, name)
+			d.errEvent(res.Err)
+			return
 		}
+		d.setStats(res.Value)
+		d.switchPopup(statsPageName, name)
 	}
 }
 

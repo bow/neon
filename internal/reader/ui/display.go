@@ -28,6 +28,7 @@ type Display struct {
 
 	bar        *statusBar
 	barVisible bool
+	eventsCh   chan *event
 
 	handlersSet bool
 
@@ -48,6 +49,7 @@ func NewDisplay(screen tcell.Screen, theme string) (*Display, error) {
 			SetScreen(screen),
 	}
 	d.setRoot()
+	d.eventsCh = make(chan *event)
 
 	return &d, nil
 }
@@ -61,6 +63,9 @@ func (d *Display) Start() error {
 	if !d.handlersSet {
 		return fmt.Errorf("display key handlers must be set before starting")
 	}
+	stop := d.startEventPoll()
+	defer stop()
+
 	return d.inner.Run()
 }
 
@@ -164,6 +169,28 @@ func (d *Display) setMainPage() {
 		AddItem(wideFlex, 0, 0, 1, 1, 0, d.theme.wideViewMinWidth, false)
 
 	d.mainPage = grid
+}
+
+func (d *Display) startEventPoll() (stop func()) {
+	done := make(chan struct{})
+	stop = func() {
+		defer close(done)
+		done <- struct{}{}
+	}
+
+	go func() {
+		defer close(d.eventsCh)
+		for {
+			select {
+			case <-done:
+				return
+			case ev := <-d.eventsCh:
+				d.bar.showEvent(ev)
+			}
+		}
+	}()
+
+	return stop
 }
 
 func (d *Display) addStatusBar() {
@@ -365,6 +392,26 @@ func (d *Display) stashFocus() {
 	d.focusStack = d.inner.GetFocus()
 }
 
+// nolint:unused
+func (d *Display) infoEventf(text string, a ...any) { d.eventf(eventLevelInfo, text, a...) }
+
+// nolint:unused
+func (d *Display) warnEventf(text string, a ...any) { d.eventf(eventLevelWarn, text, a...) }
+
+// nolint:unused
+func (d *Display) errEventf(text string, a ...any) {
+	d.eventf(eventLevelErr, fmt.Sprintf(text, a...))
+}
+
+func (d *Display) errEvent(err error) {
+	d.eventf(eventLevelErr, fmt.Sprintf("%s", err))
+}
+
+func (d *Display) eventf(level eventLevel, text string, a ...any) {
+	ev := event{level: level, timestamp: time.Now(), text: fmt.Sprintf(text, a...)}
+	go func() { d.eventsCh <- &ev }()
+}
+
 func newPane(title string, theme *Theme, addTopLeftBorderTip bool) *tview.Box {
 
 	var unfocused, focused string
@@ -457,3 +504,17 @@ func newPaneDivider(theme *Theme) *tview.Box {
 
 	return tview.NewBox().SetBorder(false).SetDrawFunc(drawf)
 }
+
+type event struct {
+	level     eventLevel
+	timestamp time.Time
+	text      string
+}
+
+type eventLevel uint8
+
+const (
+	eventLevelInfo eventLevel = iota
+	eventLevelWarn
+	eventLevelErr
+)

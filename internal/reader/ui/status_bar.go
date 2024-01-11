@@ -4,9 +4,11 @@
 package ui
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/bow/neon/internal/entity"
+	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
 
@@ -74,4 +76,20 @@ func (b *statusBar) setLastPullTime(value *time.Time) {
 	if value != nil {
 		b.lastPullWidget.SetText(value.Local().Format(shortDateFormat))
 	}
+}
+
+func (b *statusBar) showEvent(ev *event) {
+	var color tcell.Color
+	switch ev.level {
+	case eventLevelInfo:
+		color = b.theme.eventInfoFG
+	case eventLevelWarn:
+		color = b.theme.eventWarnFG
+	case eventLevelErr:
+		color = b.theme.eventErrFG
+	default:
+		panic(fmt.Sprintf("unsupported event level: %v", ev.level))
+	}
+	b.eventsWidget.SetTextColor(color).Clear()
+	fmt.Fprintf(b.eventsWidget, "%s\n", ev.text)
 }
