@@ -19,7 +19,7 @@ type statusBar struct {
 
 	theme *Theme
 
-	eventsWidget     *tview.TextView
+	eventsWidget     *eventsTextView
 	readStatusWidget *tview.TextView
 	lastPullWidget   *tview.TextView
 }
@@ -27,10 +27,11 @@ type statusBar struct {
 func newStatusBar(theme *Theme) *statusBar {
 
 	var (
-		eventsWidget     = tview.NewTextView().SetTextAlign(tview.AlignLeft)
 		readStatusWidget = tview.NewTextView().SetTextAlign(tview.AlignCenter)
 		lastPullWidget   = tview.NewTextView().SetTextAlign(tview.AlignRight)
 	)
+	eventsWidget := newEventsTextView(theme)
+	eventsWidget.SetTextAlign(tview.AlignLeft)
 
 	quickStatusFlex := tview.NewFlex().
 		SetDirection(tview.FlexColumn).
@@ -64,6 +65,7 @@ func (b *statusBar) setStats(stats *entity.Stats) {
 }
 
 func (b *statusBar) refreshColors() {
+	b.eventsWidget.refreshColors()
 	b.readStatusWidget.SetTextColor(b.theme.statusBarFG)
 	b.lastPullWidget.SetTextColor(b.theme.statusBarFG)
 }
@@ -79,17 +81,41 @@ func (b *statusBar) setLastPullTime(value *time.Time) {
 }
 
 func (b *statusBar) showEvent(ev *event) {
-	var color tcell.Color
-	switch ev.level {
-	case eventLevelInfo:
-		color = b.theme.eventInfoFG
-	case eventLevelWarn:
-		color = b.theme.eventWarnFG
-	case eventLevelErr:
-		color = b.theme.eventErrFG
-	default:
-		panic(fmt.Sprintf("unsupported event level: %v", ev.level))
+	b.eventsWidget.show(ev)
+}
+
+type eventsTextView struct {
+	tview.TextView
+	theme   *Theme
+	current *event
+}
+
+func newEventsTextView(theme *Theme) *eventsTextView {
+	etv := eventsTextView{TextView: *tview.NewTextView(), theme: theme}
+	return &etv
+}
+
+func (etv *eventsTextView) show(ev *event) {
+	etv.current = ev
+	etv.refreshColors()
+	etv.Clear()
+	fmt.Fprintf(&etv.TextView, "%s\n", ev.text)
+}
+
+func (etv *eventsTextView) refreshColors() {
+	if etv.current == nil {
+		return
 	}
-	b.eventsWidget.SetTextColor(color).Clear()
-	fmt.Fprintf(b.eventsWidget, "%s\n", ev.text)
+	var color tcell.Color
+	switch etv.current.level {
+	case eventLevelInfo:
+		color = etv.theme.eventInfoFG
+	case eventLevelWarn:
+		color = etv.theme.eventWarnFG
+	case eventLevelErr:
+		color = etv.theme.eventErrFG
+	default:
+		panic(fmt.Sprintf("unsupported event level: %v", etv.current.level))
+	}
+	etv.SetTextColor(color)
 }

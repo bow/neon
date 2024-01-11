@@ -53,6 +53,8 @@ func (t *Theme) dim() {
 	t.titleFG = t.titleDimFG
 	t.statusBarFG = t.statusBarDimFG
 	t.eventInfoFG = t.eventInfoDimFG
+	t.eventWarnFG = t.eventWarnDimFG
+	t.eventErrFG = t.eventErrDimFG
 	t.feedsGroup = t.feedsGroupDim
 }
 
@@ -62,6 +64,8 @@ func (t *Theme) normalize() {
 	t.titleFG = t.titleNormalFG
 	t.statusBarFG = t.statusBarNormalFG
 	t.eventInfoFG = t.eventInfoNormalFG
+	t.eventWarnFG = t.eventWarnNormalFG
+	t.eventErrFG = t.eventErrNormalFG
 	t.feedsGroup = t.feedsGroupNormal
 }
 
