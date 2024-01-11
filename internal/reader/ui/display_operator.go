@@ -61,26 +61,6 @@ func (do *DisplayOperator) HideIntroPopup(d *Display) {
 	panic("HideIntroPopup is unimplemented")
 }
 
-//nolint:revive
-func (do *DisplayOperator) NotifyInfof(d *Display, text string, a ...any) {
-	panic("NotifyInfof is unimplemented")
-}
-
-//nolint:revive
-func (do *DisplayOperator) NotifyErr(d *Display, err error) {
-	panic("NotifyErr is unimplemented")
-}
-
-//nolint:revive
-func (do *DisplayOperator) NotifyErrf(d *Display, text string, a ...any) {
-	panic("NotifyErrf is unimplemented")
-}
-
-//nolint:revive
-func (do *DisplayOperator) NotifyWarnf(d *Display, text string, a ...any) {
-	panic("NotifyWarnf is unimplemented")
-}
-
 func (do *DisplayOperator) ShowIntroPopup(d *Display) {
 	d.showPopup(introPageName)
 }

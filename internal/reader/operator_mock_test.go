@@ -124,69 +124,6 @@ func (mr *MockOperatorMockRecorder) HideIntroPopup(d any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HideIntroPopup", reflect.TypeOf((*MockOperator)(nil).HideIntroPopup), d)
 }
 
-// NotifyErr mocks base method.
-func (m *MockOperator) NotifyErr(d *ui.Display, err error) {
-	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "NotifyErr", d, err)
-}
-
-// NotifyErr indicates an expected call of NotifyErr.
-func (mr *MockOperatorMockRecorder) NotifyErr(d, err any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "NotifyErr", reflect.TypeOf((*MockOperator)(nil).NotifyErr), d, err)
-}
-
-// NotifyErrf mocks base method.
-func (m *MockOperator) NotifyErrf(d *ui.Display, text string, a ...any) {
-	m.ctrl.T.Helper()
-	varargs := []any{d, text}
-	for _, a_2 := range a {
-		varargs = append(varargs, a_2)
-	}
-	m.ctrl.Call(m, "NotifyErrf", varargs...)
-}
-
-// NotifyErrf indicates an expected call of NotifyErrf.
-func (mr *MockOperatorMockRecorder) NotifyErrf(d, text any, a ...any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	varargs := append([]any{d, text}, a...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "NotifyErrf", reflect.TypeOf((*MockOperator)(nil).NotifyErrf), varargs...)
-}
-
-// NotifyInfof mocks base method.
-func (m *MockOperator) NotifyInfof(d *ui.Display, text string, a ...any) {
-	m.ctrl.T.Helper()
-	varargs := []any{d, text}
-	for _, a_2 := range a {
-		varargs = append(varargs, a_2)
-	}
-	m.ctrl.Call(m, "NotifyInfof", varargs...)
-}
-
-// NotifyInfof indicates an expected call of NotifyInfof.
-func (mr *MockOperatorMockRecorder) NotifyInfof(d, text any, a ...any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	varargs := append([]any{d, text}, a...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "NotifyInfof", reflect.TypeOf((*MockOperator)(nil).NotifyInfof), varargs...)
-}
-
-// NotifyWarnf mocks base method.
-func (m *MockOperator) NotifyWarnf(d *ui.Display, text string, a ...any) {
-	m.ctrl.T.Helper()
-	varargs := []any{d, text}
-	for _, a_2 := range a {
-		varargs = append(varargs, a_2)
-	}
-	m.ctrl.Call(m, "NotifyWarnf", varargs...)
-}
-
-// NotifyWarnf indicates an expected call of NotifyWarnf.
-func (mr *MockOperatorMockRecorder) NotifyWarnf(d, text any, a ...any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	varargs := append([]any{d, text}, a...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "NotifyWarnf", reflect.TypeOf((*MockOperator)(nil).NotifyWarnf), varargs...)
-}
-
 // ShowIntroPopup mocks base method.
 func (m *MockOperator) ShowIntroPopup(d *ui.Display) {
 	m.ctrl.T.Helper()
