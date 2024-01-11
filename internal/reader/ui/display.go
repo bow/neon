@@ -33,7 +33,7 @@ type Display struct {
 }
 
 func NewDisplay(screen tcell.Screen, theme string) (*Display, error) {
-	th, err := LoadTheme(theme)
+	th, err := loadTheme(theme)
 	if err != nil {
 		return nil, err
 	}
@@ -159,7 +159,7 @@ func (d *Display) setMainPage() {
 		SetRows(0).
 		SetBorders(false).
 		AddItem(narrowFlex, 0, 0, 1, 1, 0, 0, false).
-		AddItem(wideFlex, 0, 0, 1, 1, 0, d.theme.WideViewMinWidth, false)
+		AddItem(wideFlex, 0, 0, 1, 1, 0, d.theme.wideViewMinWidth, false)
 
 	d.mainPage = grid
 }

@@ -10,13 +10,6 @@ import (
 	"github.com/rivo/tview"
 )
 
-func LoadTheme(name string) (*Theme, error) {
-	if name == "dark" {
-		return DarkTheme, nil
-	}
-	return nil, fmt.Errorf("theme %q does not exist", name)
-}
-
 type Theme struct {
 	bg tcell.Color
 
@@ -51,7 +44,7 @@ type Theme struct {
 	popupTitleFG  tcell.Color
 	popupBorderFG tcell.Color
 
-	WideViewMinWidth int
+	wideViewMinWidth int
 }
 
 // nolint:unused
@@ -77,6 +70,13 @@ func (theme *Theme) lineStyle() tcell.Style {
 	return tcell.StyleDefault.
 		Background(theme.bg).
 		Foreground(theme.borderFG)
+}
+
+func loadTheme(name string) (*Theme, error) {
+	if name == "dark" {
+		return DarkTheme, nil
+	}
+	return nil, fmt.Errorf("theme %q does not exist", name)
 }
 
 const darkForegroundDim = tcell.ColorDimGray
@@ -115,7 +115,7 @@ var DarkTheme = &Theme{
 	popupBorderFG: tcell.ColorGray,
 	popupTitleFG:  tcell.ColorAqua,
 
-	WideViewMinWidth: 150,
+	wideViewMinWidth: 150,
 }
 
 func init() {
