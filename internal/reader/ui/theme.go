@@ -13,9 +13,9 @@ import (
 type Theme struct {
 	bg tcell.Color
 
-	borderFG       tcell.Color
-	borderNormalFG tcell.Color
-	borderDimFG    tcell.Color
+	lineFG       tcell.Color
+	lineNormalFG tcell.Color
+	lineDimFG    tcell.Color
 
 	titleFG       tcell.Color
 	titleNormalFG tcell.Color
@@ -48,28 +48,28 @@ type Theme struct {
 }
 
 // nolint:unused
-func (theme *Theme) dim() {
-	theme.borderFG = theme.borderDimFG
-	theme.titleFG = theme.titleDimFG
-	theme.statusBarFG = theme.statusBarDimFG
-	theme.eventInfoFG = theme.eventInfoDimFG
-	theme.feedsGroup = theme.feedsGroupDim
+func (t *Theme) dim() {
+	t.lineFG = t.lineDimFG
+	t.titleFG = t.titleDimFG
+	t.statusBarFG = t.statusBarDimFG
+	t.eventInfoFG = t.eventInfoDimFG
+	t.feedsGroup = t.feedsGroupDim
 }
 
 // nolint:unused
-func (theme *Theme) normalize() {
-	theme.borderFG = theme.borderNormalFG
-	theme.titleFG = theme.titleNormalFG
-	theme.statusBarFG = theme.statusBarNormalFG
-	theme.eventInfoFG = theme.eventInfoNormalFG
-	theme.feedsGroup = theme.feedsGroupNormal
+func (t *Theme) normalize() {
+	t.lineFG = t.lineNormalFG
+	t.titleFG = t.titleNormalFG
+	t.statusBarFG = t.statusBarNormalFG
+	t.eventInfoFG = t.eventInfoNormalFG
+	t.feedsGroup = t.feedsGroupNormal
 }
 
 //nolint:unused
-func (theme *Theme) lineStyle() tcell.Style {
+func (t *Theme) lineStyle() tcell.Style {
 	return tcell.StyleDefault.
-		Background(theme.bg).
-		Foreground(theme.borderFG)
+		Background(t.bg).
+		Foreground(t.lineFG)
 }
 
 func loadTheme(name string) (*Theme, error) {
@@ -84,9 +84,9 @@ const darkForegroundDim = tcell.ColorDimGray
 var DarkTheme = &Theme{
 	bg: tcell.ColorBlack,
 
-	borderFG:       tcell.ColorWhite,
-	borderNormalFG: tcell.ColorWhite,
-	borderDimFG:    darkForegroundDim,
+	lineFG:       tcell.ColorWhite,
+	lineNormalFG: tcell.ColorWhite,
+	lineDimFG:    darkForegroundDim,
 
 	titleFG:       tcell.ColorYellow,
 	titleNormalFG: tcell.ColorYellow,
