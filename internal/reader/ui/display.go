@@ -179,7 +179,6 @@ func (d *Display) startEventPoll() (stop func()) {
 	}
 
 	go func() {
-		defer close(d.eventsCh)
 		for {
 			select {
 			case <-done:
