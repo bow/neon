@@ -48,12 +48,12 @@ func (r *RPC) GetStats(ctx context.Context) (*entity.Stats, error) {
 }
 
 //nolint:unused
-func (r *RPC) ListFeeds(ctx context.Context) <-chan Result[*entity.Feed] {
+func (r *RPC) ListFeeds(ctx context.Context) ([]*entity.Feed, error) {
 	panic("ListFeeds is unimplemented")
 }
 
 //nolint:unused
-func (r *RPC) PullFeeds(ctx context.Context) <-chan Result[*entity.Feed] {
+func (r *RPC) PullFeeds(ctx context.Context, _ []entity.ID) <-chan entity.PullResult {
 	panic("PullFeeds is unimplemented")
 }
 

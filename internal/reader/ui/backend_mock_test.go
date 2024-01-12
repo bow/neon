@@ -14,7 +14,6 @@ import (
 	reflect "reflect"
 
 	entity "github.com/bow/neon/internal/entity"
-	backend "github.com/bow/neon/internal/reader/backend"
 	gomock "go.uber.org/mock/gomock"
 )
 
@@ -57,11 +56,12 @@ func (mr *MockBackendMockRecorder) GetStats(arg0 any) *gomock.Call {
 }
 
 // ListFeeds mocks base method.
-func (m *MockBackend) ListFeeds(arg0 context.Context) <-chan backend.Result[*entity.Feed] {
+func (m *MockBackend) ListFeeds(arg0 context.Context) ([]*entity.Feed, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ListFeeds", arg0)
-	ret0, _ := ret[0].(<-chan backend.Result[*entity.Feed])
-	return ret0
+	ret0, _ := ret[0].([]*entity.Feed)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // ListFeeds indicates an expected call of ListFeeds.
@@ -71,17 +71,17 @@ func (mr *MockBackendMockRecorder) ListFeeds(arg0 any) *gomock.Call {
 }
 
 // PullFeeds mocks base method.
-func (m *MockBackend) PullFeeds(arg0 context.Context) <-chan backend.Result[*entity.Feed] {
+func (m *MockBackend) PullFeeds(arg0 context.Context, arg1 []entity.ID) <-chan entity.PullResult {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "PullFeeds", arg0)
-	ret0, _ := ret[0].(<-chan backend.Result[*entity.Feed])
+	ret := m.ctrl.Call(m, "PullFeeds", arg0, arg1)
+	ret0, _ := ret[0].(<-chan entity.PullResult)
 	return ret0
 }
 
 // PullFeeds indicates an expected call of PullFeeds.
-func (mr *MockBackendMockRecorder) PullFeeds(arg0 any) *gomock.Call {
+func (mr *MockBackendMockRecorder) PullFeeds(arg0, arg1 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PullFeeds", reflect.TypeOf((*MockBackend)(nil).PullFeeds), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PullFeeds", reflect.TypeOf((*MockBackend)(nil).PullFeeds), arg0, arg1)
 }
 
 // String mocks base method.
