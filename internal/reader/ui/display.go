@@ -18,17 +18,22 @@ type Display struct {
 	theme *Theme
 	lang  *Lang
 
-	inner      *tview.Application
-	root       *tview.Pages
-	mainPage   *tview.Grid
-	aboutPopup *popup
-	helpPopup  *popup
-	introPopup *popup
-	statsPopup *popup
+	inner *tview.Application
+	root  *tview.Pages
+
+	mainPage *tview.Grid
+
+	feedsCh   chan *entity.Feed
+	feedsPane *feedsPane
 
 	bar        *statusBar
 	barVisible bool
 	eventsCh   chan *event
+
+	aboutPopup *popup
+	helpPopup  *popup
+	introPopup *popup
+	statsPopup *popup
 
 	handlersSet bool
 
@@ -50,6 +55,7 @@ func NewDisplay(screen tcell.Screen, theme string) (*Display, error) {
 	}
 	d.setRoot()
 	d.eventsCh = make(chan *event)
+	d.feedsCh = make(chan *entity.Feed)
 
 	return &d, nil
 }
@@ -65,6 +71,8 @@ func (d *Display) Start() error {
 	}
 	stop := d.startEventPoll()
 	defer stop()
+	// TODO: Consider making this similar to event polling.
+	go d.feedsPane.startFeedsPoll(d.feedsCh)
 
 	return d.inner.Run()
 }
@@ -79,11 +87,13 @@ func (d *Display) Stop() {
 
 func (d *Display) dimMainPage() {
 	d.theme.dim()
+	d.feedsPane.refreshColors()
 	d.bar.refreshColors()
 }
 
 func (d *Display) normalizeMainPage() {
 	d.theme.normalize()
+	d.feedsPane.refreshColors()
 	d.bar.refreshColors()
 }
 
@@ -133,7 +143,9 @@ func (d *Display) setRoot() {
 
 func (d *Display) setMainPage() {
 
-	feedsPane := newPane(d.lang.feedsPaneTitle, d.theme, false)
+	d.feedsCh = make(chan *entity.Feed)
+	feedsPane := newFeedsPane(d.theme, d.lang)
+
 	entriesPane := newPane(d.lang.entriesPaneTitle, d.theme, false)
 	readingPane := newPane(d.lang.readingPaneTitle, d.theme, true)
 
@@ -169,6 +181,7 @@ func (d *Display) setMainPage() {
 		AddItem(wideFlex, 0, 0, 1, 1, 0, d.theme.wideViewMinWidth, false)
 
 	d.mainPage = grid
+	d.feedsPane = feedsPane
 }
 
 func (d *Display) startEventPoll() (stop func()) {

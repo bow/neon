@@ -12,6 +12,12 @@ type Lang struct {
 	helpPopupTitle  string
 	statsPopupTitle string
 	introPopupTitle string
+
+	updatedTodayText     string
+	updatedThisWeekText  string
+	updatedThisMonthText string
+	updatedEarlierText   string
+	updatedUnknownText   string
 }
 
 var langEN = &Lang{
@@ -23,4 +29,10 @@ var langEN = &Lang{
 	helpPopupTitle:  "Keys",
 	statsPopupTitle: "Stats",
 	introPopupTitle: "Welcome",
+
+	updatedTodayText:     "Today",
+	updatedThisWeekText:  "This Week",
+	updatedThisMonthText: "This Month",
+	updatedEarlierText:   "Earlier",
+	updatedUnknownText:   "Unknown",
 }

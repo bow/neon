@@ -21,9 +21,13 @@ type Theme struct {
 	titleNormalFG tcell.Color
 	titleDimFG    tcell.Color
 
-	feedsGroup       tcell.Color
-	feedsGroupNormal tcell.Color
-	feedsGroupDim    tcell.Color
+	feedNode       tcell.Color
+	feedNodeNormal tcell.Color
+	feedNodeDim    tcell.Color
+
+	feedGroupNode       tcell.Color
+	feedGroupNodeNormal tcell.Color
+	feedGroupNodeDim    tcell.Color
 
 	statusBarFG       tcell.Color
 	statusBarNormalFG tcell.Color
@@ -51,22 +55,28 @@ type Theme struct {
 func (t *Theme) dim() {
 	t.lineFG = t.lineDimFG
 	t.titleFG = t.titleDimFG
+
 	t.statusBarFG = t.statusBarDimFG
 	t.eventInfoFG = t.eventInfoDimFG
 	t.eventWarnFG = t.eventWarnDimFG
 	t.eventErrFG = t.eventErrDimFG
-	t.feedsGroup = t.feedsGroupDim
+
+	t.feedNode = t.feedNodeDim
+	t.feedGroupNode = t.feedGroupNodeDim
 }
 
 // nolint:unused
 func (t *Theme) normalize() {
 	t.lineFG = t.lineNormalFG
 	t.titleFG = t.titleNormalFG
+
 	t.statusBarFG = t.statusBarNormalFG
 	t.eventInfoFG = t.eventInfoNormalFG
 	t.eventWarnFG = t.eventWarnNormalFG
 	t.eventErrFG = t.eventErrNormalFG
-	t.feedsGroup = t.feedsGroupNormal
+
+	t.feedNode = t.feedNodeNormal
+	t.feedGroupNode = t.feedGroupNodeNormal
 }
 
 //nolint:unused
@@ -92,13 +102,17 @@ var DarkTheme = &Theme{
 	lineNormalFG: tcell.ColorWhite,
 	lineDimFG:    darkForegroundDim,
 
-	titleFG:       tcell.ColorYellow,
-	titleNormalFG: tcell.ColorYellow,
+	titleFG:       tcell.ColorAqua,
+	titleNormalFG: tcell.ColorAqua,
 	titleDimFG:    darkForegroundDim,
 
-	feedsGroup:       tcell.ColorGrey,
-	feedsGroupNormal: tcell.ColorGrey,
-	feedsGroupDim:    darkForegroundDim,
+	feedNode:       tcell.ColorWhite,
+	feedNodeNormal: tcell.ColorWhite,
+	feedNodeDim:    darkForegroundDim,
+
+	feedGroupNode:       tcell.ColorGrey,
+	feedGroupNodeNormal: tcell.ColorGrey,
+	feedGroupNodeDim:    darkForegroundDim,
 
 	statusBarFG:       tcell.ColorGray,
 	statusBarNormalFG: tcell.ColorGray,

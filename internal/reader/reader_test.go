@@ -161,6 +161,7 @@ func setupReaderTest(t *testing.T) *testWrapper {
 		go func() {
 			defer wg.Done()
 			stt.EXPECT().IntroSeen().Return(tw.introSeen)
+			opr.EXPECT().ShowFeedsInPane(gomock.Any(), tw.backend)
 			rerr := rdr.Start()
 			r.NoError(rerr)
 		}()

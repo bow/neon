@@ -61,9 +61,20 @@ func (do *DisplayOperator) HideIntroPopup(d *Display) {
 	panic("HideIntroPopup is unimplemented")
 }
 
-//nolint:revive
 func (do *DisplayOperator) ShowFeedsInPane(d *Display, b backend.Backend) {
-	panic("ShowFeedsInPane is unimplemented")
+	ctx, cancel := do.callCtx()
+	defer cancel()
+
+	feeds, err := b.ListFeeds(ctx)
+	if err != nil {
+		d.errEvent(err)
+		return
+	}
+	go func() {
+		for _, feed := range feeds {
+			d.feedsCh <- feed
+		}
+	}()
 }
 
 func (do *DisplayOperator) ShowIntroPopup(d *Display) {

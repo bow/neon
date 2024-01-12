@@ -47,9 +47,17 @@ func (r *RPC) GetStats(ctx context.Context) (*entity.Stats, error) {
 	return stats, nil
 }
 
-//nolint:unused
 func (r *RPC) ListFeeds(ctx context.Context) ([]*entity.Feed, error) {
-	panic("ListFeeds is unimplemented")
+	rsp, err := r.client.ListFeeds(ctx, &api.ListFeedsRequest{})
+	if err != nil {
+		return nil, err
+	}
+	rfeeds := rsp.GetFeeds()
+	feeds := make([]*entity.Feed, len(rfeeds))
+	for i, rfeed := range rfeeds {
+		feeds[i] = entity.FromFeedPb(rfeed)
+	}
+	return feeds, nil
 }
 
 //nolint:unused
