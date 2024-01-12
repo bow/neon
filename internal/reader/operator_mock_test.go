@@ -124,6 +124,18 @@ func (mr *MockOperatorMockRecorder) HideIntroPopup(d any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HideIntroPopup", reflect.TypeOf((*MockOperator)(nil).HideIntroPopup), d)
 }
 
+// ShowFeedsInPane mocks base method.
+func (m *MockOperator) ShowFeedsInPane(d *ui.Display, b backend.Backend) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "ShowFeedsInPane", d, b)
+}
+
+// ShowFeedsInPane indicates an expected call of ShowFeedsInPane.
+func (mr *MockOperatorMockRecorder) ShowFeedsInPane(d, b any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ShowFeedsInPane", reflect.TypeOf((*MockOperator)(nil).ShowFeedsInPane), d, b)
+}
+
 // ShowIntroPopup mocks base method.
 func (m *MockOperator) ShowIntroPopup(d *ui.Display) {
 	m.ctrl.T.Helper()
@@ -146,18 +158,6 @@ func (m *MockOperator) ToggleAboutPopup(d *ui.Display, b backend.Backend) {
 func (mr *MockOperatorMockRecorder) ToggleAboutPopup(d, b any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ToggleAboutPopup", reflect.TypeOf((*MockOperator)(nil).ToggleAboutPopup), d, b)
-}
-
-// ToggleFeedsInPane mocks base method.
-func (m *MockOperator) ToggleFeedsInPane(d *ui.Display, b backend.Backend) {
-	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "ToggleFeedsInPane", d, b)
-}
-
-// ToggleFeedsInPane indicates an expected call of ToggleFeedsInPane.
-func (mr *MockOperatorMockRecorder) ToggleFeedsInPane(d, b any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ToggleFeedsInPane", reflect.TypeOf((*MockOperator)(nil).ToggleFeedsInPane), d, b)
 }
 
 // ToggleHelpPopup mocks base method.

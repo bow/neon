@@ -61,6 +61,11 @@ func (do *DisplayOperator) HideIntroPopup(d *Display) {
 	panic("HideIntroPopup is unimplemented")
 }
 
+//nolint:revive
+func (do *DisplayOperator) ShowFeedsInPane(d *Display, b backend.Backend) {
+	panic("ShowFeedsInPane is unimplemented")
+}
+
 func (do *DisplayOperator) ShowIntroPopup(d *Display) {
 	d.showPopup(introPageName)
 }
@@ -72,11 +77,6 @@ func (do *DisplayOperator) ToggleAboutPopup(d *Display, b backend.Backend) {
 		d.setAboutPopupText(b)
 		d.switchPopup(aboutPageName, name)
 	}
-}
-
-//nolint:revive
-func (do *DisplayOperator) ToggleFeedsInPane(d *Display, b backend.Backend) {
-	panic("ToggleFeedsInPane is unimplemented")
 }
 
 func (do *DisplayOperator) ToggleHelpPopup(d *Display) {
