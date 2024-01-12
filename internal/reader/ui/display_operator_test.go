@@ -17,7 +17,6 @@ import (
 	"go.uber.org/mock/gomock"
 
 	"github.com/bow/neon/internal/entity"
-	"github.com/bow/neon/internal/reader/backend"
 )
 
 const screenW, screenH = 210, 60
@@ -112,7 +111,7 @@ func TestToggleStatsPopup(t *testing.T) {
 	}
 	be.EXPECT().
 		GetStats(gomock.Any()).
-		Return(newOkCh(t, &stats)).
+		Return(&stats, nil).
 		Times(1)
 
 	opr.ToggleStatsPopup(dsp, be)
@@ -247,11 +246,4 @@ func screenDrawn(t *testing.T, screen tcell.Screen) bool {
 		}
 	}
 	return false
-}
-
-func newOkCh[T any](t *testing.T, value T) chan backend.Result[T] {
-	t.Helper()
-	ch := make(chan backend.Result[T], 1)
-	go func() { ch <- backend.OkResult(value) }()
-	return ch
 }

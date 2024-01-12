@@ -11,7 +11,7 @@ import (
 
 // Backend describes the console backend.
 type Backend interface {
-	GetStats(context.Context) <-chan Result[*entity.Stats]
+	GetStats(context.Context) (*entity.Stats, error)
 	ListFeeds(context.Context) <-chan Result[*entity.Feed]
 	PullFeeds(context.Context) <-chan Result[*entity.Feed]
 	String() string

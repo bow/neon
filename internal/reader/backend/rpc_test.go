@@ -28,9 +28,9 @@ func TestGetStatsOk(t *testing.T) {
 			nil,
 		)
 
-	res := <-rpc.GetStats(ctx)
-	r.NoError(res.Err)
-	a.Equal(uint32(5), res.Value.NumFeeds)
+	stats, err := rpc.GetStats(ctx)
+	r.NoError(err)
+	a.Equal(uint32(5), stats.NumFeeds)
 }
 
 func TestGetStatsErr(t *testing.T) {
@@ -43,9 +43,9 @@ func TestGetStatsErr(t *testing.T) {
 		GetStats(ctx, gomock.Any()).
 		Return(nil, fmt.Errorf("nope"))
 
-	res := <-rpc.GetStats(ctx)
-	r.Nil(res.Value)
-	a.EqualError(res.Err, "nope")
+	stats, err := rpc.GetStats(ctx)
+	r.Nil(stats)
+	a.EqualError(err, "nope")
 }
 
 func newBackendRPCTest(t *testing.T) (*RPC, *MockNeonClient) {

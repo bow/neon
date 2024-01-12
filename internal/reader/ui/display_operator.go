@@ -94,12 +94,12 @@ func (do *DisplayOperator) ToggleStatsPopup(d *Display, b backend.Backend) {
 		ctx, cancel := do.callCtx()
 		defer cancel()
 
-		res := <-b.GetStats(ctx)
-		if res.Err != nil {
-			d.errEvent(res.Err)
+		stats, err := b.GetStats(ctx)
+		if err != nil {
+			d.errEvent(err)
 			return
 		}
-		d.setStats(res.Value)
+		d.setStats(stats)
 		d.switchPopup(statsPageName, name)
 	}
 }

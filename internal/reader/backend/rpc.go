@@ -38,19 +38,13 @@ func newRPCWithClient(addr string, client api.NeonClient) *RPC {
 }
 
 //nolint:unused
-func (r *RPC) GetStats(ctx context.Context) <-chan Result[*entity.Stats] {
-	ch := make(chan Result[*entity.Stats])
-	go func() {
-		defer close(ch)
-		rsp, err := r.client.GetStats(ctx, &api.GetStatsRequest{})
-		if err != nil {
-			ch <- ErrResult[*entity.Stats](err)
-			return
-		}
-		stats := entity.FromStatsPb(rsp.GetGlobal())
-		ch <- OkResult(stats)
-	}()
-	return ch
+func (r *RPC) GetStats(ctx context.Context) (*entity.Stats, error) {
+	rsp, err := r.client.GetStats(ctx, &api.GetStatsRequest{})
+	if err != nil {
+		return nil, err
+	}
+	stats := entity.FromStatsPb(rsp.GetGlobal())
+	return stats, nil
 }
 
 //nolint:unused
