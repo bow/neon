@@ -84,6 +84,10 @@ func (b *statusBar) showEvent(ev *event) {
 	b.eventsWidget.show(ev)
 }
 
+func (b *statusBar) clearLatestEvent() {
+	b.eventsWidget.Clear()
+}
+
 type eventsTextView struct {
 	tview.TextView
 	theme   *Theme

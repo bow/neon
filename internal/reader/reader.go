@@ -89,6 +89,10 @@ func (r *Reader) globalKeyHandler() ui.KeyHandler {
 				r.opr.ToggleStatusBar(r.display)
 				return nil
 
+			case 'c':
+				r.opr.ClearStatusBar(r.display)
+				return nil
+
 			case 'q':
 				r.display.Stop()
 				return nil

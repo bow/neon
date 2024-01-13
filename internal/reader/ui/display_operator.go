@@ -26,9 +26,8 @@ func NewDisplayOperator(
 	return &do
 }
 
-//nolint:revive
 func (do *DisplayOperator) ClearStatusBar(d *Display) {
-	panic("ClearStatusBar is unimplemented")
+	d.clearEvent()
 }
 
 func (do *DisplayOperator) FocusFeedsPane(d *Display) {

@@ -228,6 +228,10 @@ func (d *Display) toggleStatusBar() {
 	}
 }
 
+func (d *Display) clearEvent() {
+	d.bar.clearLatestEvent()
+}
+
 func (d *Display) setHelpPopup() {
 	// TODO: Consider moving the content out into where handlers are defined.
 	helpText := `[aqua]Feeds pane[-]

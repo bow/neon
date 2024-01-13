@@ -17,6 +17,15 @@ import (
 
 const screenW, screenH = 210, 60
 
+func TestClearStatusBar(t *testing.T) {
+	tw := setupReaderTest(t)
+
+	rdr := tw.draw()
+
+	tw.opr.EXPECT().ClearStatusBar(rdr.display)
+	tw.screen.InjectKey(tcell.KeyRune, 'c', tcell.ModNone)
+}
+
 func TestToggleAboutPopupCalled(t *testing.T) {
 	tw := setupReaderTest(t)
 

@@ -5,6 +5,7 @@ package ui
 
 import (
 	"context"
+	"fmt"
 	"sync"
 	"testing"
 	"time"
@@ -20,6 +21,22 @@ import (
 )
 
 const screenW, screenH = 210, 60
+
+func TestClearStatusBar(t *testing.T) {
+	r := require.New(t)
+	draw, opr, dsp := setupDisplayOperatorTest(t)
+
+	draw()
+
+	w := dsp.bar.eventsWidget
+
+	r.Empty(w.GetText(true))
+	fmt.Fprintf(&w.TextView, "foobar")
+
+	r.NotEmpty(w.GetText(true))
+	opr.ClearStatusBar(dsp)
+	r.Empty(w.GetText(true))
+}
 
 func TestToggleAboutPopup(t *testing.T) {
 	a := assert.New(t)
@@ -286,7 +303,7 @@ func setupDisplayOperatorTest(t *testing.T) (
 			r.Eventually(
 				func() bool { return screenDrawn(t, screen) },
 				2*time.Second,
-				250*time.Millisecond,
+				100*time.Millisecond,
 			)
 		}()
 		startWaiter.Wait()
