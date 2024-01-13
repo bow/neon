@@ -67,6 +67,30 @@ func TestToggleAboutPopup(t *testing.T) {
 	a.Contains(c2.GetText(true), bn2)
 }
 
+func TestFocusEntriesPane(t *testing.T) {
+	r := require.New(t)
+	draw, opr, dsp := setupDisplayOperatorTest(t)
+
+	draw()
+
+	r.Equal(dsp.mainPage, dsp.inner.GetFocus())
+
+	opr.FocusEntriesPane(dsp)
+	r.Equal(dsp.entriesPane, dsp.inner.GetFocus())
+}
+
+func TestFocusReadingPane(t *testing.T) {
+	r := require.New(t)
+	draw, opr, dsp := setupDisplayOperatorTest(t)
+
+	draw()
+
+	r.Equal(dsp.mainPage, dsp.inner.GetFocus())
+
+	opr.FocusReadingPane(dsp)
+	r.Equal(dsp.readingPane, dsp.inner.GetFocus())
+}
+
 func TestFocusFeedPane(t *testing.T) {
 	r := require.New(t)
 	draw, opr, dsp := setupDisplayOperatorTest(t)

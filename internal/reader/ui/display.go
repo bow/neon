@@ -26,6 +26,9 @@ type Display struct {
 	feedsCh   chan *entity.Feed
 	feedsPane *feedsPane
 
+	entriesPane *tview.Box
+	readingPane *tview.Box
+
 	bar        *statusBar
 	barVisible bool
 	eventsCh   chan *event
@@ -182,6 +185,8 @@ func (d *Display) setMainPage() {
 
 	d.mainPage = grid
 	d.feedsPane = feedsPane
+	d.entriesPane = entriesPane
+	d.readingPane = readingPane
 }
 
 func (d *Display) startEventPoll() (stop func()) {
@@ -402,6 +407,16 @@ func (d *Display) hidePopup(name string) {
 
 func (d *Display) stashFocus() {
 	d.focusStack = d.inner.GetFocus()
+}
+
+func (d *Display) focusPane(pane tview.Primitive) {
+	front := d.frontPageName()
+	if front != mainPageName {
+		d.root.HidePage(front)
+		d.normalizeMainPage()
+	}
+	d.inner.SetFocus(pane)
+	d.stashFocus()
 }
 
 // nolint:unused

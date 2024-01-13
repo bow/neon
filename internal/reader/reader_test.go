@@ -26,13 +26,31 @@ func TestToggleAboutPopupCalled(t *testing.T) {
 	tw.screen.InjectKey(tcell.KeyRune, 'A', tcell.ModNone)
 }
 
-func TestFocusFeedPane(t *testing.T) {
+func TestFocusEntriesPane(t *testing.T) {
+	tw := setupReaderTest(t)
+
+	rdr := tw.draw()
+
+	tw.opr.EXPECT().FocusEntriesPane(rdr.display)
+	tw.screen.InjectKey(tcell.KeyRune, 'E', tcell.ModNone)
+}
+
+func TestFocusFeedsPane(t *testing.T) {
 	tw := setupReaderTest(t)
 
 	rdr := tw.draw()
 
 	tw.opr.EXPECT().FocusFeedsPane(rdr.display)
 	tw.screen.InjectKey(tcell.KeyRune, 'F', tcell.ModNone)
+}
+
+func TestFocusReadingPane(t *testing.T) {
+	tw := setupReaderTest(t)
+
+	rdr := tw.draw()
+
+	tw.opr.EXPECT().FocusReadingPane(rdr.display)
+	tw.screen.InjectKey(tcell.KeyRune, 'R', tcell.ModNone)
 }
 
 func TestToggleHelpPopupCalled(t *testing.T) {
