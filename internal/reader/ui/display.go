@@ -419,6 +419,35 @@ func (d *Display) focusPane(pane tview.Primitive) {
 	d.stashFocus()
 }
 
+func (d *Display) focusAdjacentPane(reverse bool) {
+	if front := d.frontPageName(); front != mainPageName {
+		d.hidePopup(front)
+	}
+	targets := []tview.Primitive{d.feedsPane, d.entriesPane, d.readingPane}
+	current := d.inner.GetFocus()
+	idx := 0
+	if reverse {
+		switch current {
+		case d.entriesPane:
+			idx = 0
+		case d.readingPane:
+			idx = 1
+		default:
+			idx = 2
+		}
+	} else {
+		switch current {
+		case d.entriesPane:
+			idx = 2
+		case d.feedsPane:
+			idx = 1
+		default:
+			idx = 0
+		}
+	}
+	d.inner.SetFocus(targets[idx])
+}
+
 // nolint:unused
 func (d *Display) infoEventf(text string, a ...any) { d.eventf(eventLevelInfo, text, a...) }
 

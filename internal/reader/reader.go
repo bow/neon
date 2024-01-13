@@ -35,6 +35,7 @@ func (r *Reader) Start() error {
 	return r.display.Start()
 }
 
+// nolint:revive
 func (r *Reader) globalKeyHandler() ui.KeyHandler {
 	r.mustDefinedFields()
 
@@ -92,6 +93,14 @@ func (r *Reader) globalKeyHandler() ui.KeyHandler {
 				r.display.Stop()
 				return nil
 			}
+
+		case tcell.KeyTab:
+			if event.Modifiers()&tcell.ModAlt == 0 {
+				r.opr.FocusNextPane(r.display)
+			} else {
+				r.opr.FocusPreviousPane(r.display)
+			}
+			return nil
 
 		case tcell.KeyEscape:
 			r.opr.UnfocusFront(r.display)

@@ -39,14 +39,12 @@ func (do *DisplayOperator) FocusEntriesPane(d *Display) {
 	d.focusPane(d.entriesPane)
 }
 
-//nolint:revive
 func (do *DisplayOperator) FocusNextPane(d *Display) {
-	panic("FocusNextPane is unimplemented")
+	d.focusAdjacentPane(false)
 }
 
-//nolint:revive
 func (do *DisplayOperator) FocusPreviousPane(d *Display) {
-	panic("FocusPreviousPane is unimplemented")
+	d.focusAdjacentPane(true)
 }
 
 func (do *DisplayOperator) FocusReadingPane(d *Display) {

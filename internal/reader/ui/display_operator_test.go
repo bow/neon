@@ -79,6 +79,50 @@ func TestFocusEntriesPane(t *testing.T) {
 	r.Equal(dsp.entriesPane, dsp.inner.GetFocus())
 }
 
+func TestFocusNextPane(t *testing.T) {
+	r := require.New(t)
+
+	draw, opr, dsp := setupDisplayOperatorTest(t)
+
+	draw()
+
+	r.Equal(dsp.mainPage, dsp.inner.GetFocus())
+
+	opr.FocusNextPane(dsp)
+	r.Equal(dsp.feedsPane, dsp.inner.GetFocus())
+
+	opr.FocusNextPane(dsp)
+	r.Equal(dsp.entriesPane, dsp.inner.GetFocus())
+
+	opr.FocusNextPane(dsp)
+	r.Equal(dsp.readingPane, dsp.inner.GetFocus())
+
+	opr.FocusNextPane(dsp)
+	r.Equal(dsp.feedsPane, dsp.inner.GetFocus())
+}
+
+func TestFocusPreviousPane(t *testing.T) {
+	r := require.New(t)
+
+	draw, opr, dsp := setupDisplayOperatorTest(t)
+
+	draw()
+
+	r.Equal(dsp.mainPage, dsp.inner.GetFocus())
+
+	opr.FocusPreviousPane(dsp)
+	r.Equal(dsp.readingPane, dsp.inner.GetFocus())
+
+	opr.FocusPreviousPane(dsp)
+	r.Equal(dsp.entriesPane, dsp.inner.GetFocus())
+
+	opr.FocusPreviousPane(dsp)
+	r.Equal(dsp.feedsPane, dsp.inner.GetFocus())
+
+	opr.FocusPreviousPane(dsp)
+	r.Equal(dsp.readingPane, dsp.inner.GetFocus())
+}
+
 func TestFocusReadingPane(t *testing.T) {
 	r := require.New(t)
 	draw, opr, dsp := setupDisplayOperatorTest(t)

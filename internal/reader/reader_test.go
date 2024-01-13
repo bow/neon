@@ -44,6 +44,24 @@ func TestFocusFeedsPane(t *testing.T) {
 	tw.screen.InjectKey(tcell.KeyRune, 'F', tcell.ModNone)
 }
 
+func TestFocusNextPane(t *testing.T) {
+	tw := setupReaderTest(t)
+
+	rdr := tw.draw()
+
+	tw.opr.EXPECT().FocusNextPane(rdr.display)
+	tw.screen.InjectKey(tcell.KeyTab, ' ', tcell.ModNone)
+}
+
+func TestFocusPreviousPane(t *testing.T) {
+	tw := setupReaderTest(t)
+
+	rdr := tw.draw()
+
+	tw.opr.EXPECT().FocusPreviousPane(rdr.display)
+	tw.screen.InjectKey(tcell.KeyTab, ' ', tcell.ModAlt)
+}
+
 func TestFocusReadingPane(t *testing.T) {
 	tw := setupReaderTest(t)
 
