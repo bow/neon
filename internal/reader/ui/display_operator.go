@@ -51,11 +51,6 @@ func (do *DisplayOperator) FocusReadingPane(d *Display) {
 	d.focusPane(d.readingPane)
 }
 
-//nolint:revive
-func (do *DisplayOperator) HideIntroPopup(d *Display) {
-	panic("HideIntroPopup is unimplemented")
-}
-
 func (do *DisplayOperator) ShowFeedsInPane(d *Display, b backend.Backend) {
 	ctx, cancel := do.callCtx()
 	defer cancel()

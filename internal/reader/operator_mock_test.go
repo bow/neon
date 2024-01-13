@@ -112,18 +112,6 @@ func (mr *MockOperatorMockRecorder) FocusReadingPane(d any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FocusReadingPane", reflect.TypeOf((*MockOperator)(nil).FocusReadingPane), d)
 }
 
-// HideIntroPopup mocks base method.
-func (m *MockOperator) HideIntroPopup(d *ui.Display) {
-	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "HideIntroPopup", d)
-}
-
-// HideIntroPopup indicates an expected call of HideIntroPopup.
-func (mr *MockOperatorMockRecorder) HideIntroPopup(d any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HideIntroPopup", reflect.TypeOf((*MockOperator)(nil).HideIntroPopup), d)
-}
-
 // ShowFeedsInPane mocks base method.
 func (m *MockOperator) ShowFeedsInPane(d *ui.Display, b backend.Backend) {
 	m.ctrl.T.Helper()
