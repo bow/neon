@@ -62,15 +62,16 @@ func (db *SQLite) PullFeeds(
 		return nil
 	}
 
-	db.mu.Lock()
-	defer db.mu.Unlock()
-
 	go func() {
 		defer func() {
 			wg.Wait()
 			close(c)
 		}()
 		wg.Add(1)
+
+		db.mu.Lock()
+		defer db.mu.Unlock()
+
 		err := db.withTx(ctx, dbFunc)
 		if err != nil {
 			c <- entity.NewPullResultFromError(nil, fail(err))
