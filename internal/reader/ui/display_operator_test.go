@@ -247,6 +247,21 @@ func TestToggleStatsPopup(t *testing.T) {
 	r.Equal(dsp.mainPage, item)
 }
 
+func TestToggleStatusBar(t *testing.T) {
+	a := assert.New(t)
+	draw, opr, dsp := setupDisplayOperatorTest(t)
+
+	draw()
+
+	a.True(dsp.barVisible)
+
+	opr.ToggleStatusBar(dsp)
+	a.False(dsp.barVisible)
+
+	opr.ToggleStatusBar(dsp)
+	a.True(dsp.barVisible)
+}
+
 func TestUnfocusFront(t *testing.T) {
 	a := assert.New(t)
 	r := require.New(t)
