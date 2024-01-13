@@ -55,6 +55,10 @@ func (r *Reader) globalKeyHandler() ui.KeyHandler {
 				r.opr.ToggleAboutPopup(r.display, r.backend)
 				return nil
 
+			case 'F':
+				r.opr.FocusFeedsPane(r.display)
+				return nil
+
 			case 'S':
 				go func() {
 					select {

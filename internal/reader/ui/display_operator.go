@@ -31,9 +31,14 @@ func (do *DisplayOperator) ClearStatusBar(d *Display) {
 	panic("ClearStatusBar is unimplemented")
 }
 
-//nolint:revive
 func (do *DisplayOperator) FocusFeedsPane(d *Display) {
-	panic("FocusFeedsPane is unimplemented")
+	front := d.frontPageName()
+	if front != mainPageName {
+		d.root.HidePage(front)
+		d.normalizeMainPage()
+	}
+	d.inner.SetFocus(d.feedsPane)
+	d.stashFocus()
 }
 
 //nolint:revive

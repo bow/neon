@@ -26,6 +26,15 @@ func TestToggleAboutPopupCalled(t *testing.T) {
 	tw.screen.InjectKey(tcell.KeyRune, 'A', tcell.ModNone)
 }
 
+func TestFocusFeedPane(t *testing.T) {
+	tw := setupReaderTest(t)
+
+	rdr := tw.draw()
+
+	tw.opr.EXPECT().FocusFeedsPane(rdr.display)
+	tw.screen.InjectKey(tcell.KeyRune, 'F', tcell.ModNone)
+}
+
 func TestToggleHelpPopupCalled(t *testing.T) {
 	tw := setupReaderTest(t)
 
