@@ -13,6 +13,6 @@ import (
 type Backend interface {
 	GetStatsF(context.Context) func() (*entity.Stats, error)
 	ListFeedsF(context.Context) func() ([]*entity.Feed, error)
-	PullFeeds(context.Context, []entity.ID) <-chan entity.PullResult
+	PullFeedsF(context.Context, []entity.ID) func() <-chan entity.PullResult
 	StringF() func() string
 }

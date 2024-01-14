@@ -69,7 +69,7 @@ func (r *RPC) ListFeedsF(ctx context.Context) func() ([]*entity.Feed, error) {
 }
 
 //nolint:unused
-func (r *RPC) PullFeeds(ctx context.Context, _ []entity.ID) <-chan entity.PullResult {
+func (r *RPC) PullFeedsF(ctx context.Context, _ []entity.ID) func() <-chan entity.PullResult {
 	panic("PullFeeds is unimplemented")
 }
 
