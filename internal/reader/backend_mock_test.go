@@ -54,19 +54,18 @@ func (mr *MockBackendMockRecorder) GetStatsF() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetStatsF", reflect.TypeOf((*MockBackend)(nil).GetStatsF))
 }
 
-// ListFeeds mocks base method.
-func (m *MockBackend) ListFeeds(arg0 context.Context) ([]*entity.Feed, error) {
+// ListFeedsF mocks base method.
+func (m *MockBackend) ListFeedsF() func() ([]*entity.Feed, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ListFeeds", arg0)
-	ret0, _ := ret[0].([]*entity.Feed)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret := m.ctrl.Call(m, "ListFeedsF")
+	ret0, _ := ret[0].(func() ([]*entity.Feed, error))
+	return ret0
 }
 
-// ListFeeds indicates an expected call of ListFeeds.
-func (mr *MockBackendMockRecorder) ListFeeds(arg0 any) *gomock.Call {
+// ListFeedsF indicates an expected call of ListFeedsF.
+func (mr *MockBackendMockRecorder) ListFeedsF() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListFeeds", reflect.TypeOf((*MockBackend)(nil).ListFeeds), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListFeedsF", reflect.TypeOf((*MockBackend)(nil).ListFeedsF))
 }
 
 // PullFeeds mocks base method.

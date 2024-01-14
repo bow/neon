@@ -13,7 +13,6 @@ import (
 	reflect "reflect"
 
 	entity "github.com/bow/neon/internal/entity"
-	backend "github.com/bow/neon/internal/reader/backend"
 	ui "github.com/bow/neon/internal/reader/ui"
 	gomock "go.uber.org/mock/gomock"
 )
@@ -114,7 +113,7 @@ func (mr *MockOperatorMockRecorder) FocusReadingPane(arg0 any) *gomock.Call {
 }
 
 // ShowAllFeeds mocks base method.
-func (m *MockOperator) ShowAllFeeds(arg0 *ui.Display, arg1 backend.Backend) {
+func (m *MockOperator) ShowAllFeeds(arg0 *ui.Display, arg1 func() ([]*entity.Feed, error)) {
 	m.ctrl.T.Helper()
 	m.ctrl.Call(m, "ShowAllFeeds", arg0, arg1)
 }

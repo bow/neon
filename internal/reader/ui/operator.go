@@ -3,10 +3,7 @@
 
 package ui
 
-import (
-	"github.com/bow/neon/internal/entity"
-	"github.com/bow/neon/internal/reader/backend"
-)
+import "github.com/bow/neon/internal/entity"
 
 // Operator describes high-level UI operations.
 type Operator interface {
@@ -16,7 +13,7 @@ type Operator interface {
 	FocusNextPane(*Display)
 	FocusPreviousPane(*Display)
 	FocusReadingPane(*Display)
-	ShowAllFeeds(*Display, backend.Backend)
+	ShowAllFeeds(*Display, func() ([]*entity.Feed, error))
 	ShowIntroPopup(*Display)
 	ToggleAboutPopup(*Display, func() string)
 	ToggleHelpPopup(*Display)

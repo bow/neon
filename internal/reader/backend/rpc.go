@@ -66,17 +66,23 @@ func (r *RPC) GetStatsF() func() (*entity.Stats, error) {
 	}
 }
 
-func (r *RPC) ListFeeds(ctx context.Context) ([]*entity.Feed, error) {
-	rsp, err := r.client.ListFeeds(ctx, &api.ListFeedsRequest{})
-	if err != nil {
-		return nil, err
+func (r *RPC) ListFeedsF() func() ([]*entity.Feed, error) {
+	return func() ([]*entity.Feed, error) {
+		ctx, cancel := r.callCtx()
+		defer cancel()
+
+		rsp, err := r.client.ListFeeds(ctx, &api.ListFeedsRequest{})
+		if err != nil {
+			return nil, err
+		}
+		rfeeds := rsp.GetFeeds()
+		feeds := make([]*entity.Feed, len(rfeeds))
+		for i, rfeed := range rfeeds {
+			feeds[i] = entity.FromFeedPb(rfeed)
+		}
+
+		return feeds, nil
 	}
-	rfeeds := rsp.GetFeeds()
-	feeds := make([]*entity.Feed, len(rfeeds))
-	for i, rfeed := range rfeeds {
-		feeds[i] = entity.FromFeedPb(rfeed)
-	}
-	return feeds, nil
 }
 
 //nolint:unused

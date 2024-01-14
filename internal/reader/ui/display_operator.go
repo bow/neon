@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/bow/neon/internal/entity"
-	"github.com/bow/neon/internal/reader/backend"
 )
 
 type DisplayOperator struct {
@@ -51,11 +50,8 @@ func (do *DisplayOperator) FocusReadingPane(d *Display) {
 	d.focusPane(d.readingPane)
 }
 
-func (do *DisplayOperator) ShowAllFeeds(d *Display, b backend.Backend) {
-	ctx, cancel := do.callCtx()
-	defer cancel()
-
-	feeds, err := b.ListFeeds(ctx)
+func (do *DisplayOperator) ShowAllFeeds(d *Display, f func() ([]*entity.Feed, error)) {
+	feeds, err := f()
 	if err != nil {
 		d.errEvent(err)
 		return
@@ -113,10 +109,6 @@ func (do *DisplayOperator) UnfocusFront(d *Display) {
 	} else {
 		d.hidePopup(name)
 	}
-}
-
-func (do *DisplayOperator) callCtx() (context.Context, context.CancelFunc) {
-	return context.WithTimeout(do.ctx, do.callTimeout)
 }
 
 // Ensure DisplayOperator implements Operator.
