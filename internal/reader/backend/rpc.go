@@ -65,6 +65,6 @@ func (r *RPC) PullFeeds(ctx context.Context, _ []entity.ID) <-chan entity.PullRe
 	panic("PullFeeds is unimplemented")
 }
 
-func (r *RPC) String() string {
-	return fmt.Sprintf("grpc://%s", r.addr)
+func (r *RPC) StringF() func() string {
+	return func() string { return fmt.Sprintf("grpc://%s", r.addr) }
 }

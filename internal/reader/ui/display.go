@@ -310,7 +310,7 @@ To close this message, press [yellow]<Esc>[-].
 	)
 }
 
-func (d *Display) setAboutPopupText(name fmt.Stringer) {
+func (d *Display) setAboutPopupText(name string) {
 	commit := internal.GitCommit()
 
 	var buildTime = internal.BuildTime()

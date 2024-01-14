@@ -11,7 +11,6 @@ import (
 	"time"
 
 	"github.com/gdamore/tcell/v2"
-	"github.com/google/uuid"
 	"github.com/rivo/tview"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -142,7 +141,6 @@ func TestToggleAboutPopup(t *testing.T) {
 	a := assert.New(t)
 	r := require.New(t)
 	draw, opr, dsp := setupDisplayOperatorTest(t)
-	be := NewMockBackend(gomock.NewController(t))
 
 	draw()
 
@@ -151,10 +149,10 @@ func TestToggleAboutPopup(t *testing.T) {
 	r.Equal(dsp.mainPage, item)
 	a.Nil(dsp.aboutPopup.content)
 
-	bn1 := uuid.NewString()
-	be.EXPECT().String().Return(bn1)
+	bn1 := "6541de58-41ed-4117-920b-24d472057c2c"
+	f1 := func() string { return bn1 }
 
-	opr.ToggleAboutPopup(dsp, be)
+	opr.ToggleAboutPopup(dsp, f1)
 	name, item = dsp.root.GetFrontPage()
 	a.Equal(aboutPageName, name)
 	r.Equal(dsp.aboutPopup, item)
@@ -163,18 +161,16 @@ func TestToggleAboutPopup(t *testing.T) {
 	r.True(typeok1)
 	a.Contains(c1.GetText(true), bn1)
 
-	be.EXPECT().String().Times(0)
-
-	opr.ToggleAboutPopup(dsp, be)
+	opr.ToggleAboutPopup(dsp, func() string { return "" })
 	name, item = dsp.root.GetFrontPage()
 	a.Equal(mainPageName, name)
 	r.Equal(dsp.mainPage, item)
 	a.NotNil(dsp.aboutPopup.content)
 
-	bn2 := uuid.NewString()
-	be.EXPECT().String().Return(bn2)
+	bn2 := "411068b3-51e5-4565-b768-d53e17af98e6"
+	f2 := func() string { return bn2 }
 
-	opr.ToggleAboutPopup(dsp, be)
+	opr.ToggleAboutPopup(dsp, f2)
 	name, item = dsp.root.GetFrontPage()
 	a.Equal(aboutPageName, name)
 	r.Equal(dsp.aboutPopup, item)

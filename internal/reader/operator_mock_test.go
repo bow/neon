@@ -137,7 +137,7 @@ func (mr *MockOperatorMockRecorder) ShowIntroPopup(arg0 any) *gomock.Call {
 }
 
 // ToggleAboutPopup mocks base method.
-func (m *MockOperator) ToggleAboutPopup(arg0 *ui.Display, arg1 backend.Backend) {
+func (m *MockOperator) ToggleAboutPopup(arg0 *ui.Display, arg1 func() string) {
 	m.ctrl.T.Helper()
 	m.ctrl.Call(m, "ToggleAboutPopup", arg0, arg1)
 }

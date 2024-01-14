@@ -14,5 +14,5 @@ type Backend interface {
 	GetStats(context.Context) (*entity.Stats, error)
 	ListFeeds(context.Context) ([]*entity.Feed, error)
 	PullFeeds(context.Context, []entity.ID) <-chan entity.PullResult
-	String() string
+	StringF() func() string
 }
