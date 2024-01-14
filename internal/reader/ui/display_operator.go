@@ -50,7 +50,7 @@ func (do *DisplayOperator) FocusReadingPane(d *Display) {
 	d.focusPane(d.readingPane)
 }
 
-func (do *DisplayOperator) ShowFeedsInPane(d *Display, b backend.Backend) {
+func (do *DisplayOperator) ShowAllFeeds(d *Display, b backend.Backend) {
 	ctx, cancel := do.callCtx()
 	defer cancel()
 

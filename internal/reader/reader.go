@@ -31,7 +31,7 @@ func (r *Reader) Start() error {
 		r.opr.ShowIntroPopup(r.display)
 		defer r.state.MarkIntroSeen()
 	}
-	r.opr.ShowFeedsInPane(r.display, r.backend)
+	r.opr.ShowAllFeeds(r.display, r.backend)
 	return r.display.Start()
 }
 

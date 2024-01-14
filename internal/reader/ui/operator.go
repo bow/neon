@@ -13,7 +13,7 @@ type Operator interface {
 	FocusNextPane(d *Display)
 	FocusPreviousPane(d *Display)
 	FocusReadingPane(d *Display)
-	ShowFeedsInPane(d *Display, b backend.Backend)
+	ShowAllFeeds(d *Display, b backend.Backend)
 	ShowIntroPopup(d *Display)
 	ToggleAboutPopup(d *Display, b backend.Backend)
 	ToggleHelpPopup(d *Display)

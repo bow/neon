@@ -112,16 +112,16 @@ func (mr *MockOperatorMockRecorder) FocusReadingPane(d any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FocusReadingPane", reflect.TypeOf((*MockOperator)(nil).FocusReadingPane), d)
 }
 
-// ShowFeedsInPane mocks base method.
-func (m *MockOperator) ShowFeedsInPane(d *ui.Display, b backend.Backend) {
+// ShowAllFeeds mocks base method.
+func (m *MockOperator) ShowAllFeeds(d *ui.Display, b backend.Backend) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "ShowFeedsInPane", d, b)
+	m.ctrl.Call(m, "ShowAllFeeds", d, b)
 }
 
-// ShowFeedsInPane indicates an expected call of ShowFeedsInPane.
-func (mr *MockOperatorMockRecorder) ShowFeedsInPane(d, b any) *gomock.Call {
+// ShowAllFeeds indicates an expected call of ShowAllFeeds.
+func (mr *MockOperatorMockRecorder) ShowAllFeeds(d, b any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ShowFeedsInPane", reflect.TypeOf((*MockOperator)(nil).ShowFeedsInPane), d, b)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ShowAllFeeds", reflect.TypeOf((*MockOperator)(nil).ShowAllFeeds), d, b)
 }
 
 // ShowIntroPopup mocks base method.
