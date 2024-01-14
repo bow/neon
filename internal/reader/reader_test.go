@@ -101,7 +101,8 @@ func TestToggleStatsPopupCalled(t *testing.T) {
 
 	rdr := tw.draw()
 
-	tw.backend.EXPECT().GetStatsF().Return(func() (*entity.Stats, error) { return nil, nil })
+	tw.backend.EXPECT().GetStatsF(gomock.Any()).
+		Return(func() (*entity.Stats, error) { return nil, nil })
 	tw.opr.EXPECT().ToggleStatsPopup(rdr.display, gomock.Any())
 
 	tw.screen.InjectKey(tcell.KeyRune, 'S', tcell.ModNone)
@@ -220,7 +221,8 @@ func setupReaderTest(t *testing.T) *testWrapper {
 			defer wg.Done()
 
 			stt.EXPECT().IntroSeen().Return(tw.introSeen)
-			be.EXPECT().ListFeedsF().Return(func() ([]*entity.Feed, error) { return nil, nil })
+			be.EXPECT().ListFeedsF(gomock.Any()).
+				Return(func() ([]*entity.Feed, error) { return nil, nil })
 			opr.EXPECT().ShowAllFeeds(gomock.Any(), gomock.Any())
 
 			rerr := rdr.Start()

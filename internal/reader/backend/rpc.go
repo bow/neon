@@ -7,7 +7,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"time"
 
 	"github.com/bow/neon/api"
 	"github.com/bow/neon/internal/entity"
@@ -18,20 +17,12 @@ import (
 type RPC struct {
 	addr   string
 	client api.NeonClient
-
-	ctx         context.Context
-	callTimeout time.Duration
 }
 
 // Ensure rpcRepo implements Repo.
 var _ Backend = new(RPC)
 
-func NewRPC(
-	ctx context.Context,
-	callTimeout time.Duration,
-	addr string,
-	dialOpts ...grpc.DialOption,
-) (*RPC, error) {
+func NewRPC(ctx context.Context, addr string, dialOpts ...grpc.DialOption) (*RPC, error) {
 	conn, err := grpc.DialContext(ctx, addr, dialOpts...)
 	if err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {
@@ -39,24 +30,19 @@ func NewRPC(
 		}
 		return nil, err
 	}
-	return newRPCWithClient(ctx, callTimeout, addr, api.NewNeonClient(conn)), nil
+	return newRPCWithClient(addr, api.NewNeonClient(conn)), nil
 }
 
 func newRPCWithClient(
-	ctx context.Context,
-	callTimeout time.Duration,
 	addr string,
 	client api.NeonClient,
 ) *RPC {
-	return &RPC{ctx: ctx, addr: addr, client: client, callTimeout: callTimeout}
+	return &RPC{addr: addr, client: client}
 }
 
 //nolint:unused
-func (r *RPC) GetStatsF() func() (*entity.Stats, error) {
+func (r *RPC) GetStatsF(ctx context.Context) func() (*entity.Stats, error) {
 	return func() (*entity.Stats, error) {
-		ctx, cancel := r.callCtx()
-		defer cancel()
-
 		rsp, err := r.client.GetStats(ctx, &api.GetStatsRequest{})
 		if err != nil {
 			return nil, err
@@ -66,11 +52,8 @@ func (r *RPC) GetStatsF() func() (*entity.Stats, error) {
 	}
 }
 
-func (r *RPC) ListFeedsF() func() ([]*entity.Feed, error) {
+func (r *RPC) ListFeedsF(ctx context.Context) func() ([]*entity.Feed, error) {
 	return func() ([]*entity.Feed, error) {
-		ctx, cancel := r.callCtx()
-		defer cancel()
-
 		rsp, err := r.client.ListFeeds(ctx, &api.ListFeedsRequest{})
 		if err != nil {
 			return nil, err
@@ -92,8 +75,4 @@ func (r *RPC) PullFeeds(ctx context.Context, _ []entity.ID) <-chan entity.PullRe
 
 func (r *RPC) StringF() func() string {
 	return func() string { return fmt.Sprintf("grpc://%s", r.addr) }
-}
-
-func (r *RPC) callCtx() (context.Context, context.CancelFunc) {
-	return context.WithTimeout(r.ctx, r.callTimeout)
 }

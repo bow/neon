@@ -33,7 +33,7 @@ func (r *Reader) Start() error {
 		r.opr.ShowIntroPopup(r.display)
 		defer r.state.MarkIntroSeen()
 	}
-	r.opr.ShowAllFeeds(r.display, r.backend.ListFeedsF())
+	r.opr.ShowAllFeeds(r.display, r.backend.ListFeedsF(r.ctx))
 	return r.display.Start()
 }
 
@@ -78,7 +78,9 @@ func (r *Reader) globalKeyHandler() ui.KeyHandler {
 					default:
 						return
 					}
-					r.opr.ToggleStatsPopup(r.display, r.backend.GetStatsF())
+					ctx, cancel := r.callCtx()
+					defer cancel()
+					r.opr.ToggleStatsPopup(r.display, r.backend.GetStatsF(ctx))
 					r.display.Draw()
 				}()
 				return nil
@@ -117,6 +119,10 @@ func (r *Reader) globalKeyHandler() ui.KeyHandler {
 	}
 }
 
+func (r *Reader) callCtx() (context.Context, context.CancelFunc) {
+	return context.WithTimeout(r.ctx, r.callTimeout)
+}
+
 func (r *Reader) mustDefinedFields() {
 	if r.display == nil {
 		panic("can not set handler with nil display")
@@ -152,7 +158,7 @@ func NewBuilder(ctx context.Context) *Builder {
 		ctx:         ctx,
 		themeName:   "dark",
 		dopts:       nil,
-		callTimeout: 2 * time.Second,
+		callTimeout: 3 * time.Second,
 	}
 	return &b
 }
@@ -215,7 +221,7 @@ func (b *Builder) Build() (*Reader, error) {
 	if b.be != nil {
 		be = b.be
 	} else {
-		be, err = bknd.NewRPC(b.ctx, b.callTimeout, b.addr, b.dopts...)
+		be, err = bknd.NewRPC(b.ctx, b.addr, b.dopts...)
 		if err != nil {
 			return nil, err
 		}
@@ -255,6 +261,8 @@ func (b *Builder) Build() (*Reader, error) {
 		opr:     opr,
 		backend: be,
 		state:   stt,
+
+		callTimeout: b.callTimeout,
 	}
 	rdr.display.SetHandlers(rdr.globalKeyHandler())
 
