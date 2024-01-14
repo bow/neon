@@ -24,6 +24,8 @@ type Reader struct {
 	opr     ui.Operator
 	backend bknd.Backend
 	state   st.State
+
+	callTimeout time.Duration
 }
 
 func (r *Reader) Start() error {
@@ -76,7 +78,7 @@ func (r *Reader) globalKeyHandler() ui.KeyHandler {
 					default:
 						return
 					}
-					r.opr.ToggleStatsPopup(r.display, r.backend)
+					r.opr.ToggleStatsPopup(r.display, r.backend.GetStatsF())
 					r.display.Draw()
 				}()
 				return nil
@@ -213,7 +215,7 @@ func (b *Builder) Build() (*Reader, error) {
 	if b.be != nil {
 		be = b.be
 	} else {
-		be, err = bknd.NewRPC(b.ctx, b.addr, b.dopts...)
+		be, err = bknd.NewRPC(b.ctx, b.callTimeout, b.addr, b.dopts...)
 		if err != nil {
 			return nil, err
 		}

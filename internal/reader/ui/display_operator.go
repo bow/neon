@@ -7,6 +7,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/bow/neon/internal/entity"
 	"github.com/bow/neon/internal/reader/backend"
 )
 
@@ -87,14 +88,11 @@ func (do *DisplayOperator) ToggleHelpPopup(d *Display) {
 	}
 }
 
-func (do *DisplayOperator) ToggleStatsPopup(d *Display, b backend.Backend) {
+func (do *DisplayOperator) ToggleStatsPopup(d *Display, f func() (*entity.Stats, error)) {
 	if name := d.frontPageName(); name == statsPageName {
 		d.hidePopup(name)
 	} else if name != introPageName {
-		ctx, cancel := do.callCtx()
-		defer cancel()
-
-		stats, err := b.GetStats(ctx)
+		stats, err := f()
 		if err != nil {
 			d.errEvent(err)
 			return

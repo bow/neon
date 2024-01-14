@@ -14,7 +14,6 @@ import (
 	"github.com/rivo/tview"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"go.uber.org/mock/gomock"
 
 	"github.com/bow/neon/internal/entity"
 )
@@ -213,7 +212,6 @@ func TestToggleStatsPopup(t *testing.T) {
 	a.Equal(mainPageName, name)
 	r.Equal(dsp.mainPage, item)
 
-	be := NewMockBackend(gomock.NewController(t))
 	stats := entity.Stats{
 		NumFeeds:         40,
 		NumEntries:       236,
@@ -222,12 +220,9 @@ func TestToggleStatsPopup(t *testing.T) {
 		LastPullTime:         nil,
 		MostRecentUpdateTime: nil,
 	}
-	be.EXPECT().
-		GetStats(gomock.Any()).
-		Return(&stats, nil).
-		Times(1)
+	f := func() (*entity.Stats, error) { return &stats, nil }
 
-	opr.ToggleStatsPopup(dsp, be)
+	opr.ToggleStatsPopup(dsp, f)
 	name, item = dsp.root.GetFrontPage()
 	a.Equal(statsPageName, name)
 	r.Equal(dsp.statsPopup, item)
@@ -237,7 +232,7 @@ func TestToggleStatsPopup(t *testing.T) {
 	a.Contains(c.GetText(true), "Total : 236")
 	a.Contains(c.GetText(true), "Unread: 5")
 
-	opr.ToggleStatsPopup(dsp, be)
+	opr.ToggleStatsPopup(dsp, f)
 	name, item = dsp.root.GetFrontPage()
 	a.Equal(mainPageName, name)
 	r.Equal(dsp.mainPage, item)

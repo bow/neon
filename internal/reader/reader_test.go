@@ -9,6 +9,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/bow/neon/internal/entity"
 	"github.com/gdamore/tcell/v2"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -100,7 +101,8 @@ func TestToggleStatsPopupCalled(t *testing.T) {
 
 	rdr := tw.draw()
 
-	tw.opr.EXPECT().ToggleStatsPopup(rdr.display, tw.backend)
+	tw.backend.EXPECT().GetStatsF().Return(func() (*entity.Stats, error) { return nil, nil })
+	tw.opr.EXPECT().ToggleStatsPopup(rdr.display, gomock.Any())
 
 	tw.screen.InjectKey(tcell.KeyRune, 'S', tcell.ModNone)
 }

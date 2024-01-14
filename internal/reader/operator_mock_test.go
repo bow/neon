@@ -12,6 +12,7 @@ package reader
 import (
 	reflect "reflect"
 
+	entity "github.com/bow/neon/internal/entity"
 	backend "github.com/bow/neon/internal/reader/backend"
 	ui "github.com/bow/neon/internal/reader/ui"
 	gomock "go.uber.org/mock/gomock"
@@ -161,7 +162,7 @@ func (mr *MockOperatorMockRecorder) ToggleHelpPopup(arg0 any) *gomock.Call {
 }
 
 // ToggleStatsPopup mocks base method.
-func (m *MockOperator) ToggleStatsPopup(arg0 *ui.Display, arg1 backend.Backend) {
+func (m *MockOperator) ToggleStatsPopup(arg0 *ui.Display, arg1 func() (*entity.Stats, error)) {
 	m.ctrl.T.Helper()
 	m.ctrl.Call(m, "ToggleStatsPopup", arg0, arg1)
 }

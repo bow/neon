@@ -7,6 +7,7 @@ import (
 	"context"
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -19,16 +20,15 @@ func TestGetStatsOk(t *testing.T) {
 	r := require.New(t)
 	a := assert.New(t)
 	rpc, client := newBackendRPCTest(t)
-	ctx := context.Background()
 
 	client.EXPECT().
-		GetStats(ctx, gomock.Any()).
+		GetStats(gomock.Any(), gomock.Any()).
 		Return(
 			&api.GetStatsResponse{Global: &api.GetStatsResponse_Stats{NumFeeds: 5}},
 			nil,
 		)
 
-	stats, err := rpc.GetStats(ctx)
+	stats, err := rpc.GetStatsF()()
 	r.NoError(err)
 	a.Equal(uint32(5), stats.NumFeeds)
 }
@@ -37,13 +37,12 @@ func TestGetStatsErr(t *testing.T) {
 	r := require.New(t)
 	a := assert.New(t)
 	rpc, client := newBackendRPCTest(t)
-	ctx := context.Background()
 
 	client.EXPECT().
-		GetStats(ctx, gomock.Any()).
+		GetStats(gomock.Any(), gomock.Any()).
 		Return(nil, fmt.Errorf("nope"))
 
-	stats, err := rpc.GetStats(ctx)
+	stats, err := rpc.GetStatsF()()
 	r.Nil(stats)
 	a.EqualError(err, "nope")
 }
@@ -51,5 +50,5 @@ func TestGetStatsErr(t *testing.T) {
 func newBackendRPCTest(t *testing.T) (*RPC, *MockNeonClient) {
 	t.Helper()
 	client := NewMockNeonClient(gomock.NewController(t))
-	return newRPCWithClient("", client), client
+	return newRPCWithClient(context.Background(), 5*time.Second, "", client), client
 }
