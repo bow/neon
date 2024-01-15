@@ -59,17 +59,17 @@ func TestListFeedsFOk(t *testing.T) {
 			&api.ListFeedsResponse{
 				Feeds: []*api.Feed{
 					{
-						Id: uint32(5),
-						Title: "F1",
-						FeedUrl: "https://f1.com/feed.xml",
-						SubTime: timestamppb.New(time.Now()),
+						Id:           uint32(5),
+						Title:        "F1",
+						FeedUrl:      "https://f1.com/feed.xml",
+						SubTime:      timestamppb.New(time.Now()),
 						LastPullTime: timestamppb.New(time.Now()),
 					},
 					{
-						Id: uint32(8),
-						Title: "F3",
-						FeedUrl: "https://f3.com/feed.xml",
-						SubTime: timestamppb.New(time.Now()),
+						Id:           uint32(8),
+						Title:        "F3",
+						FeedUrl:      "https://f3.com/feed.xml",
+						SubTime:      timestamppb.New(time.Now()),
 						LastPullTime: timestamppb.New(time.Now()),
 					},
 				},
