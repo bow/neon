@@ -15,7 +15,7 @@ type Operator interface {
 	FocusReadingPane(*Display)
 	ShowAllFeeds(*Display, func() ([]*entity.Feed, error))
 	ShowIntroPopup(*Display)
-	ToggleAboutPopup(*Display, func() string)
+	ToggleAboutPopup(*Display, string)
 	ToggleHelpPopup(*Display)
 	ToggleStatsPopup(*Display, func() (*entity.Stats, error))
 	ToggleStatusBar(*Display)

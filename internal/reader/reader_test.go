@@ -32,8 +32,9 @@ func TestToggleAboutPopupCalled(t *testing.T) {
 
 	rdr := tw.draw()
 
-	tw.backend.EXPECT().StringF().Return(func() string { return "- " })
-	tw.opr.EXPECT().ToggleAboutPopup(rdr.display, gomock.Any())
+	bn := "caecd498-0493-4ebe-827c-ccc9f041c218"
+	tw.backend.EXPECT().String().Return(bn)
+	tw.opr.EXPECT().ToggleAboutPopup(rdr.display, bn)
 
 	tw.screen.InjectKey(tcell.KeyRune, 'A', tcell.ModNone)
 }

@@ -14,5 +14,5 @@ type Backend interface {
 	GetStatsF(context.Context) func() (*entity.Stats, error)
 	ListFeedsF(context.Context) func() ([]*entity.Feed, error)
 	PullFeedsF(context.Context, []entity.ID) func() (<-chan entity.PullResult, error)
-	StringF() func() string
+	String() string
 }

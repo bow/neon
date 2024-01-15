@@ -67,11 +67,11 @@ func (do *DisplayOperator) ShowIntroPopup(d *Display) {
 	d.showPopup(introPageName)
 }
 
-func (do *DisplayOperator) ToggleAboutPopup(d *Display, f func() string) {
+func (do *DisplayOperator) ToggleAboutPopup(d *Display, backend string) {
 	if name := d.frontPageName(); name == aboutPageName {
 		d.hidePopup(name)
 	} else if name != introPageName {
-		d.setAboutPopupText(f())
+		d.setAboutPopupText(backend)
 		d.switchPopup(aboutPageName, name)
 	}
 }

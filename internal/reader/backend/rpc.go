@@ -76,6 +76,6 @@ func (r *RPC) PullFeedsF(
 	panic("PullFeeds is unimplemented")
 }
 
-func (r *RPC) StringF() func() string {
-	return func() string { return fmt.Sprintf("grpc://%s", r.addr) }
+func (r *RPC) String() string {
+	return fmt.Sprintf("grpc://%s", r.addr)
 }

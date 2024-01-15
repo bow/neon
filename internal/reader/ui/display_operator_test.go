@@ -149,9 +149,7 @@ func TestToggleAboutPopup(t *testing.T) {
 	a.Nil(dsp.aboutPopup.content)
 
 	bn1 := "6541de58-41ed-4117-920b-24d472057c2c"
-	f1 := func() string { return bn1 }
-
-	opr.ToggleAboutPopup(dsp, f1)
+	opr.ToggleAboutPopup(dsp, bn1)
 	name, item = dsp.root.GetFrontPage()
 	a.Equal(aboutPageName, name)
 	r.Equal(dsp.aboutPopup, item)
@@ -160,16 +158,14 @@ func TestToggleAboutPopup(t *testing.T) {
 	r.True(typeok1)
 	a.Contains(c1.GetText(true), bn1)
 
-	opr.ToggleAboutPopup(dsp, func() string { return "" })
+	opr.ToggleAboutPopup(dsp, "")
 	name, item = dsp.root.GetFrontPage()
 	a.Equal(mainPageName, name)
 	r.Equal(dsp.mainPage, item)
 	a.NotNil(dsp.aboutPopup.content)
 
 	bn2 := "411068b3-51e5-4565-b768-d53e17af98e6"
-	f2 := func() string { return bn2 }
-
-	opr.ToggleAboutPopup(dsp, f2)
+	opr.ToggleAboutPopup(dsp, bn2)
 	name, item = dsp.root.GetFrontPage()
 	a.Equal(aboutPageName, name)
 	r.Equal(dsp.aboutPopup, item)
