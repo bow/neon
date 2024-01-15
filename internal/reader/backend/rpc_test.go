@@ -15,7 +15,7 @@ import (
 	"github.com/bow/neon/api"
 )
 
-func TestGetStatsOk(t *testing.T) {
+func TestGetStatsFOk(t *testing.T) {
 	r := require.New(t)
 	a := assert.New(t)
 	rpc, client := newBackendRPCTest(t)
@@ -32,7 +32,7 @@ func TestGetStatsOk(t *testing.T) {
 	a.Equal(uint32(5), stats.NumFeeds)
 }
 
-func TestGetStatsErr(t *testing.T) {
+func TestGetStatsFErr(t *testing.T) {
 	r := require.New(t)
 	a := assert.New(t)
 	rpc, client := newBackendRPCTest(t)
