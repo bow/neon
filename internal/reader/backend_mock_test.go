@@ -69,10 +69,10 @@ func (mr *MockBackendMockRecorder) ListFeedsF(arg0 any) *gomock.Call {
 }
 
 // PullFeedsF mocks base method.
-func (m *MockBackend) PullFeedsF(arg0 context.Context, arg1 []entity.ID) func() <-chan entity.PullResult {
+func (m *MockBackend) PullFeedsF(arg0 context.Context, arg1 []entity.ID) func() (<-chan entity.PullResult, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "PullFeedsF", arg0, arg1)
-	ret0, _ := ret[0].(func() <-chan entity.PullResult)
+	ret0, _ := ret[0].(func() (<-chan entity.PullResult, error))
 	return ret0
 }
 
