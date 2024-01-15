@@ -102,8 +102,8 @@ var DarkTheme = &Theme{
 	lineNormalFG: tcell.ColorWhite,
 	lineDimFG:    darkForegroundDim,
 
-	titleFG:       tcell.ColorAqua,
-	titleNormalFG: tcell.ColorAqua,
+	titleFG:       tcell.ColorYellowGreen,
+	titleNormalFG: tcell.ColorYellowGreen,
 	titleDimFG:    darkForegroundDim,
 
 	feedNode:       tcell.ColorWhite,
@@ -118,8 +118,8 @@ var DarkTheme = &Theme{
 	statusBarNormalFG: tcell.ColorGray,
 	statusBarDimFG:    darkForegroundDim,
 
-	eventInfoFG:       tcell.ColorOliveDrab,
-	eventInfoNormalFG: tcell.ColorOliveDrab,
+	eventInfoFG:       tcell.ColorYellowGreen,
+	eventInfoNormalFG: tcell.ColorYellowGreen,
 	eventInfoDimFG:    darkForegroundDim,
 
 	eventWarnFG:       tcell.ColorDarkGoldenrod,
