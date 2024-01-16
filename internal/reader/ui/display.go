@@ -118,6 +118,7 @@ func (d *Display) setRoot() {
 	d.setIntroPopup()
 
 	d.bar = newStatusBar(d.theme)
+	d.bar.setChangedFunc(func() { d.inner.Draw() })
 	d.addStatusBar()
 
 	d.aboutPopup = newPopup(

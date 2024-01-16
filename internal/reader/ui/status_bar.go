@@ -54,6 +54,13 @@ func newStatusBar(theme *Theme) *statusBar {
 
 	return &bar
 }
+
+func (b *statusBar) setChangedFunc(f func()) {
+	b.eventsWidget.SetChangedFunc(f)
+	b.readStatusWidget.SetChangedFunc(f)
+	b.lastPullWidget.SetChangedFunc(f)
+}
+
 func (b *statusBar) setStats(stats *entity.Stats) {
 	if stats.NumFeeds < 1 {
 		return
