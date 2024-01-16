@@ -160,7 +160,7 @@ internal/reader/state_mock_test.go: internal/reader/state/state.go
 	mockgen -source=$< -package=reader State > $@
 
 internal/reader/backend/client_mock_test.go: api/neon_grpc.pb.go
-	mockgen -source=$< -package=backend NeonClient > $@
+	mockgen -source=$< -package=backend NeonClient,Neon_PullFeedsClient > $@
 
 
 .PHONY: protos
