@@ -51,7 +51,6 @@ type Theme struct {
 	wideViewMinWidth int
 }
 
-// nolint:unused
 func (t *Theme) dim() {
 	t.lineFG = t.lineDimFG
 	t.titleFG = t.titleDimFG
@@ -65,7 +64,6 @@ func (t *Theme) dim() {
 	t.feedGroupNode = t.feedGroupNodeDim
 }
 
-// nolint:unused
 func (t *Theme) normalize() {
 	t.lineFG = t.lineNormalFG
 	t.titleFG = t.titleNormalFG
@@ -79,7 +77,6 @@ func (t *Theme) normalize() {
 	t.feedGroupNode = t.feedGroupNodeNormal
 }
 
-//nolint:unused
 func (t *Theme) lineStyle() tcell.Style {
 	return tcell.StyleDefault.
 		Background(t.bg).

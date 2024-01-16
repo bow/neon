@@ -14,7 +14,6 @@ import (
 	"google.golang.org/grpc"
 )
 
-//nolint:unused
 type RPC struct {
 	addr   string
 	client api.NeonClient
@@ -41,7 +40,6 @@ func newRPCWithClient(
 	return &RPC{addr: addr, client: client}
 }
 
-//nolint:unused
 func (r *RPC) GetStatsF(ctx context.Context) func() (*entity.Stats, error) {
 	return func() (*entity.Stats, error) {
 		rsp, err := r.client.GetStats(ctx, &api.GetStatsRequest{})

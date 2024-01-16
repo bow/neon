@@ -7,5 +7,4 @@ import "github.com/gdamore/tcell/v2"
 
 type KeyHandler = func(*tcell.EventKey) *tcell.EventKey
 
-//nolint:unused
 type drawFunc func(screen tcell.Screen, x int, y int, w int, h int) (ix int, iy int, iw int, ih int)

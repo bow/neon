@@ -457,13 +457,10 @@ func (d *Display) focusAdjacentPane(reverse bool) {
 	d.inner.SetFocus(targets[idx])
 }
 
-// nolint:unused
 func (d *Display) infoEventf(text string, a ...any) { d.eventf(eventLevelInfo, text, a...) }
 
-// nolint:unused
 func (d *Display) warnEventf(text string, a ...any) { d.eventf(eventLevelWarn, text, a...) }
 
-// nolint:unused
 func (d *Display) errEventf(text string, a ...any) {
 	d.eventf(eventLevelErr, fmt.Sprintf(text, a...))
 }
