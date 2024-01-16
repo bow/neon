@@ -7,8 +7,6 @@ import (
 	"context"
 	"fmt"
 	"net"
-	"os"
-	"path/filepath"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -16,7 +14,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
-	"github.com/bow/neon/internal/oreader"
+	"github.com/bow/neon/internal/reader"
 	"github.com/bow/neon/internal/server"
 )
 
@@ -41,6 +39,7 @@ func newReaderCommand() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 
 			var (
+				err         error
 				connectAddr net.Addr
 				ctx         = cmd.Context()
 				dialOpts    = []grpc.DialOption{
@@ -48,11 +47,6 @@ func newReaderCommand() *cobra.Command {
 				}
 				addr = resolveAddr(v, addrKey, connectKey, defaultConnectAddr, defaultStartAddr)
 			)
-
-			initPath, err := readerInitPath()
-			if err != nil {
-				return err
-			}
 
 			if v.GetBool(connectKey) {
 				connectAddr, err = makeConnectAddr(addr)
@@ -78,18 +72,17 @@ func newReaderCommand() *cobra.Command {
 				connectAddr = server.Addr()
 			}
 
-			rdr, err := oreader.NewBuilder().
+			rdr, err := reader.NewBuilder(cmd.Context()).
 				Context(ctx).
 				Address(connectAddr.String()).
 				DialOpts(dialOpts...).
-				InitPath(initPath).
 				Build()
 
 			if err != nil {
 				return err
 			}
 
-			return rdr.Show()
+			return rdr.Start()
 		},
 	}
 
@@ -118,23 +111,6 @@ func newReaderCommand() *cobra.Command {
 	}
 
 	return &command
-}
-
-func readerInitPath() (string, error) {
-	sd, err := stateDir()
-	if err != nil {
-		return "", err
-	}
-	_, err = os.Stat(sd)
-	if err != nil {
-		if !os.IsNotExist(err) {
-			return "", err
-		}
-		if err := os.MkdirAll(sd, os.ModeDir|0o700); err != nil {
-			return "", err
-		}
-	}
-	return filepath.Join(sd, "reader.initialized"), nil
 }
 
 func resolveAddr(

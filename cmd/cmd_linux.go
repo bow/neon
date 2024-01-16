@@ -6,12 +6,9 @@
 package cmd
 
 import (
-	"path/filepath"
 	"strings"
 
 	"github.com/adrg/xdg"
-
-	"github.com/bow/neon/internal"
 )
 
 var defaultDBPath = "$XDG_DATA_HOME/neon/neon.db"
@@ -30,8 +27,4 @@ func resolveDBPath(path string) (string, error) {
 		}
 	}
 	return path, nil
-}
-
-func stateDir() (string, error) {
-	return filepath.Join(xdg.StateHome, internal.AppName()), nil
 }
