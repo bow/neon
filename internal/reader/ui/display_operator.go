@@ -50,6 +50,15 @@ func (do *DisplayOperator) FocusReadingPane(d *Display) {
 	d.focusPane(d.readingPane)
 }
 
+func (do *DisplayOperator) RefreshStats(d *Display, f func() (*entity.Stats, error)) {
+	stats, err := f()
+	if err != nil {
+		d.errEvent(err)
+		return
+	}
+	d.setStats(stats)
+}
+
 func (do *DisplayOperator) ShowAllFeeds(d *Display, f func() ([]*entity.Feed, error)) {
 	feeds, err := f()
 	if err != nil {
@@ -88,12 +97,7 @@ func (do *DisplayOperator) ToggleStatsPopup(d *Display, f func() (*entity.Stats,
 	if name := d.frontPageName(); name == statsPageName {
 		d.hidePopup(name)
 	} else if name != introPageName {
-		stats, err := f()
-		if err != nil {
-			d.errEvent(err)
-			return
-		}
-		d.setStats(stats)
+		do.RefreshStats(d, f)
 		d.switchPopup(statsPageName, name)
 	}
 }
