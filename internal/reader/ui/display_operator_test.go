@@ -6,6 +6,7 @@ package ui
 import (
 	"context"
 	"fmt"
+	"strings"
 	"sync"
 	"testing"
 	"time"
@@ -114,6 +115,95 @@ func TestFocusFeedPane(t *testing.T) {
 
 	opr.FocusFeedsPane(dsp)
 	r.Equal(dsp.feedsPane, dsp.inner.GetFocus())
+}
+
+func TestShowAllFeedsErr(t *testing.T) {
+	r := require.New(t)
+	a := assert.New(t)
+	draw, opr, dsp := setupDisplayOperatorTest(t)
+
+	draw()
+
+	r.Empty(dsp.feedsPane.GetRoot().GetChildren())
+	opr.ShowAllFeeds(
+		dsp,
+		func() ([]*entity.Feed, error) { return nil, fmt.Errorf("fail") },
+	)
+	a.Empty(dsp.feedsPane.GetRoot().GetChildren())
+	a.Eventually(
+		func() bool { return strings.Contains(dsp.bar.eventsWidget.GetText(true), "fail") },
+		2*time.Second,
+		500*time.Millisecond,
+	)
+}
+
+func TestShowAllFeedsOk(t *testing.T) {
+	r := require.New(t)
+	a := assert.New(t)
+	draw, opr, dsp := setupDisplayOperatorTest(t)
+
+	groupNodes := func() []*tview.TreeNode {
+		return dsp.feedsPane.GetRoot().GetChildren()
+	}
+
+	feedNodes := func() []*tview.TreeNode {
+		fns := make([]*tview.TreeNode, 0)
+		for _, gn := range groupNodes() {
+			fns = append(fns, gn.GetChildren()...)
+		}
+		return fns
+	}
+
+	draw()
+
+	r.Empty(groupNodes())
+	opr.ShowAllFeeds(
+		dsp,
+		func() ([]*entity.Feed, error) {
+			feeds := []*entity.Feed{
+				{
+					ID:         entity.ID(1),
+					Title:      "Feed W",
+					FeedURL:    "http://w.com/feed.xml",
+					Subscribed: twoWeeksAgo,
+					LastPulled: twoWeeksAgo,
+					Updated:    &twoWeeksAgo,
+				},
+				{
+					ID:         entity.ID(2),
+					Title:      "Feed D",
+					FeedURL:    "http://d.com/feed.xml",
+					Subscribed: threeDaysAgo,
+					LastPulled: yesterday,
+					Updated:    &threeDaysAgo,
+				},
+				{
+					ID:         entity.ID(6),
+					Title:      "Feed Y",
+					FeedURL:    "http://y.com/feed.xml",
+					Subscribed: yesterday,
+					LastPulled: yesterday,
+					Updated:    &yesterday,
+				},
+				{
+					ID:         entity.ID(8),
+					Title:      "Feed N",
+					FeedURL:    "http://n.com/feed.xml",
+					Subscribed: yesterday,
+					LastPulled: now,
+					Updated:    &now,
+				},
+			}
+			return feeds, nil
+		},
+	)
+
+	a.Eventually(
+		func() bool { return len(groupNodes()) == 3 },
+		2*time.Second,
+		500*time.Millisecond,
+	)
+	a.Len(feedNodes(), 4)
 }
 
 func TestShowIntroPopup(t *testing.T) {
