@@ -222,6 +222,11 @@ func setupReaderTest(t *testing.T) *testWrapper {
 			defer wg.Done()
 
 			stt.EXPECT().IntroSeen().Return(tw.introSeen)
+
+			be.EXPECT().GetStatsF(gomock.Any()).
+				Return(func() (*entity.Stats, error) { return nil, nil })
+			opr.EXPECT().RefreshStats(gomock.Any(), gomock.Any())
+
 			be.EXPECT().ListFeedsF(gomock.Any()).
 				Return(func() ([]*entity.Feed, error) { return nil, nil })
 			opr.EXPECT().ShowAllFeeds(gomock.Any(), gomock.Any())
