@@ -7,6 +7,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 
 	"github.com/bow/neon/api"
 	"github.com/bow/neon/internal/entity"
@@ -68,12 +69,40 @@ func (r *RPC) ListFeedsF(ctx context.Context) func() ([]*entity.Feed, error) {
 	}
 }
 
-//nolint:unused
 func (r *RPC) PullFeedsF(
 	ctx context.Context,
 	_ []entity.ID,
 ) func() (<-chan entity.PullResult, error) {
-	panic("PullFeeds is unimplemented")
+	return func() (<-chan entity.PullResult, error) {
+		stream, err := r.client.PullFeeds(ctx, &api.PullFeedsRequest{})
+		if err != nil {
+			return nil, err
+		}
+
+		ch := make(chan entity.PullResult)
+		go func() {
+			defer close(ch)
+			for {
+				rsp, serr := stream.Recv()
+				if serr == io.EOF {
+					break
+				}
+				var pr entity.PullResult
+				if serr != nil {
+					pr = entity.NewPullResultFromError(nil, serr)
+				} else {
+					if perr := rsp.Error; perr != nil {
+						pr = entity.NewPullResultFromError(&rsp.Url, fmt.Errorf("%s", *perr))
+					} else {
+						feed := rsp.GetFeed()
+						pr = entity.NewPullResultFromFeed(&rsp.Url, entity.FromFeedPb(feed))
+					}
+				}
+				ch <- pr
+			}
+		}()
+		return ch, nil
+	}
 }
 
 func (r *RPC) String() string {

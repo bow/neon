@@ -112,6 +112,18 @@ func (mr *MockOperatorMockRecorder) FocusReadingPane(arg0 any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FocusReadingPane", reflect.TypeOf((*MockOperator)(nil).FocusReadingPane), arg0)
 }
 
+// RefreshFeeds mocks base method.
+func (m *MockOperator) RefreshFeeds(arg0 *ui.Display, arg1 func() (<-chan entity.PullResult, error)) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "RefreshFeeds", arg0, arg1)
+}
+
+// RefreshFeeds indicates an expected call of RefreshFeeds.
+func (mr *MockOperatorMockRecorder) RefreshFeeds(arg0, arg1 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RefreshFeeds", reflect.TypeOf((*MockOperator)(nil).RefreshFeeds), arg0, arg1)
+}
+
 // RefreshStats mocks base method.
 func (m *MockOperator) RefreshStats(arg0 *ui.Display, arg1 func() (*entity.Stats, error)) {
 	m.ctrl.T.Helper()

@@ -59,6 +59,45 @@ func (do *DisplayOperator) RefreshStats(d *Display, f func() (*entity.Stats, err
 	d.setStats(stats)
 }
 
+func (do *DisplayOperator) RefreshFeeds(d *Display, f func() (<-chan entity.PullResult, error)) {
+	d.infoEventf("Pulling feeds")
+
+	var okc, errc, totalc int
+	ch, err := f()
+	if err != nil {
+		d.errEvent(err)
+		return
+	}
+	for pr := range ch {
+		if perr := pr.Error(); perr != nil {
+			d.errEventf("Pull failed for %s: %s", pr.URL(), perr)
+			errc++
+		} else {
+			d.infoEventf("Pulled %s", pr.URL())
+			// TODO: Actually process the pulled feed here.
+			okc++
+		}
+		totalc++
+	}
+	if errc == 0 {
+		switch okc {
+		case 0:
+			d.infoEventf("No feeds to pull")
+		case 1:
+			d.infoEventf("%d/%d feed pulled successfully", okc, totalc)
+		default:
+			d.infoEventf("%d/%d feeds pulled successfully", okc, totalc)
+		}
+	} else {
+		switch okc {
+		case 0:
+			d.errEventf("Failed to pull any feeds")
+		default:
+			d.warnEventf("Only %d/%d feeds pulled successfully", okc, totalc)
+		}
+	}
+}
+
 func (do *DisplayOperator) ShowAllFeeds(d *Display, f func() ([]*entity.Feed, error)) {
 	feeds, err := f()
 	if err != nil {

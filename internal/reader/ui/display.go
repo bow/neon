@@ -63,8 +63,12 @@ func NewDisplay(screen tcell.Screen, theme string) (*Display, error) {
 	return &d, nil
 }
 
-func (d *Display) SetHandlers(globalKeyHandler KeyHandler) {
-	d.inner = d.inner.SetInputCapture(globalKeyHandler)
+func (d *Display) SetHandlers(
+	globalKeyHandler KeyHandler,
+	feedsPaneKeyHandler KeyHandler,
+) {
+	d.inner.SetInputCapture(globalKeyHandler)
+	d.feedsPane.SetInputCapture(feedsPaneKeyHandler)
 	d.handlersSet = true
 }
 

@@ -13,6 +13,7 @@ type Operator interface {
 	FocusNextPane(*Display)
 	FocusPreviousPane(*Display)
 	FocusReadingPane(*Display)
+	RefreshFeeds(*Display, func() (<-chan entity.PullResult, error))
 	RefreshStats(*Display, func() (*entity.Stats, error))
 	ShowAllFeeds(*Display, func() ([]*entity.Feed, error))
 	ShowIntroPopup(*Display)

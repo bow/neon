@@ -119,6 +119,36 @@ func (r *Reader) globalKeyHandler() ui.KeyHandler {
 	}
 }
 
+func (r *Reader) feedsPaneKeyHandler() ui.KeyHandler {
+	pullFeedsLock := make(chan struct{}, 1)
+
+	return func(event *tcell.EventKey) *tcell.EventKey {
+		keyr := event.Rune()
+
+		if keyr == 'P' {
+			go func() {
+				select {
+				case pullFeedsLock <- struct{}{}:
+					defer func() { <-pullFeedsLock }()
+				default:
+					return
+				}
+				ctxf, cancelf := r.callCtx()
+				defer cancelf()
+				r.opr.RefreshFeeds(r.display, r.backend.PullFeedsF(ctxf, nil))
+
+				ctxs, cancels := r.callCtx()
+				defer cancels()
+				r.opr.RefreshStats(r.display, r.backend.GetStatsF(ctxs))
+
+				r.display.Draw()
+			}()
+			return nil
+		}
+		return event
+	}
+}
+
 func (r *Reader) callCtx() (context.Context, context.CancelFunc) {
 	return context.WithTimeout(r.ctx, r.callTimeout)
 }
@@ -264,7 +294,10 @@ func (b *Builder) Build() (*Reader, error) {
 
 		callTimeout: b.callTimeout,
 	}
-	rdr.display.SetHandlers(rdr.globalKeyHandler())
+	rdr.display.SetHandlers(
+		rdr.globalKeyHandler(),
+		rdr.feedsPaneKeyHandler(),
+	)
 
 	return &rdr, nil
 }
