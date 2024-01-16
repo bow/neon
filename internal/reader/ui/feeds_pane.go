@@ -183,7 +183,7 @@ func (ug feedUpdatePeriod) Text(lang *Lang) string {
 
 func feedNode(feed *entity.Feed, theme *Theme) *tview.TreeNode {
 	return tview.NewTreeNode(feed.Title).
-		SetReference(feed.FeedURL).
+		SetReference(feed).
 		SetColor(theme.feedNode).
 		SetSelectable(true)
 }
