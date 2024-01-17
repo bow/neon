@@ -275,7 +275,7 @@ func (b *Builder) Build() (*Reader, error) {
 	if b.opr != nil {
 		opr = b.opr
 	} else {
-		opr = ui.NewDisplayOperator(b.ctx, b.callTimeout)
+		opr = ui.NewDisplayOperator()
 	}
 
 	var stt st.State

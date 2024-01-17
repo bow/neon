@@ -3,27 +3,12 @@
 
 package ui
 
-import (
-	"context"
-	"time"
+import "github.com/bow/neon/internal/entity"
 
-	"github.com/bow/neon/internal/entity"
-)
+type DisplayOperator struct{}
 
-type DisplayOperator struct {
-	ctx         context.Context
-	callTimeout time.Duration
-}
-
-func NewDisplayOperator(
-	ctx context.Context,
-	callTimeout time.Duration,
-) *DisplayOperator {
-	do := DisplayOperator{
-		ctx:         ctx,
-		callTimeout: callTimeout,
-	}
-	return &do
+func NewDisplayOperator() *DisplayOperator {
+	return &DisplayOperator{}
 }
 
 func (do *DisplayOperator) ClearStatusBar(d *Display) {
