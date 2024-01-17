@@ -197,7 +197,7 @@ func groupNode(ug feedUpdatePeriod, theme *Theme, lang *Lang) *tview.TreeNode {
 	return tview.NewTreeNode(ug.Text(lang)).
 		SetReference(ug).
 		SetColor(theme.feedGroupNode).
-		SetSelectable(true)
+		SetSelectable(false)
 }
 
 func whenUpdated(feed *entity.Feed) feedUpdatePeriod {
