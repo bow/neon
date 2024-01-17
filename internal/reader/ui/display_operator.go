@@ -74,7 +74,7 @@ func (do *DisplayOperator) RefreshFeeds(d *Display, f func() (<-chan entity.Pull
 			errc++
 		} else {
 			d.infoEventf("Pulled %s", pr.URL())
-			// TODO: Actually process the pulled feed here.
+			go func() { d.feedsCh <- pr.Feed() }()
 			okc++
 		}
 		totalc++
