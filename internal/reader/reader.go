@@ -16,7 +16,6 @@ import (
 	"github.com/bow/neon/internal/reader/ui"
 )
 
-//nolint:unused
 type Reader struct {
 	ctx context.Context
 
