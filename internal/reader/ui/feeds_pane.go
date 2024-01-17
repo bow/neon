@@ -68,6 +68,7 @@ func (fp *feedsPane) startFeedsPoll(ch <-chan *entity.Feed) {
 					root.RemoveChild(existingGNode)
 				}
 			}
+			setFeedNodeDisplay(fnode, fp.theme)
 		}
 		if len(targetGNode.GetChildren()) == 1 && !exists {
 			root.AddChild(targetGNode)
@@ -82,8 +83,8 @@ func (fp *feedsPane) initTree() {
 	tree := tview.NewTreeView().
 		SetRoot(root).
 		SetGraphics(false).
-		SetPrefixes([]string{"", "· "}).
 		SetCurrentNode(root).
+		SetPrefixes([]string{"  ", "· "}).
 		SetTopLevel(1)
 
 	fp.TreeView = *tree
@@ -140,7 +141,7 @@ func (fp *feedsPane) makeDrawFuncs() (focusf, unfocusf drawFunc) {
 				fp.theme.titleFG,
 			)
 
-			return x + 2, y + 1, width - 2, height - 1
+			return x, y + 1, width - 2, height - 1
 		}
 	}
 
@@ -187,10 +188,22 @@ func (ug feedUpdatePeriod) Text(lang *Lang) string {
 }
 
 func feedNode(feed *entity.Feed, theme *Theme) *tview.TreeNode {
-	return tview.NewTreeNode(feed.Title).
+	node := tview.NewTreeNode("").
 		SetReference(feed).
-		SetColor(theme.feedNode).
 		SetSelectable(true)
+	setFeedNodeDisplay(node, theme)
+	return node
+}
+
+func setFeedNodeDisplay(fnode *tview.TreeNode, theme *Theme) {
+	feed := fnode.GetReference().(*entity.Feed)
+	if c := feed.NumEntriesUnread(); c > 0 {
+		fnode.SetText(fmt.Sprintf("%s (%d)", feed.Title, c)).
+			SetColor(tcell.ColorYellow)
+	} else {
+		fnode.SetText(feed.Title).
+			SetColor(theme.feedNode)
+	}
 }
 
 func groupNode(ug feedUpdatePeriod, theme *Theme, lang *Lang) *tview.TreeNode {
