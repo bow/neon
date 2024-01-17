@@ -45,27 +45,32 @@ func newFeedsPane(theme *Theme, lang *Lang) *feedsPane {
 }
 
 // TODO: How to handle feeds being removed altogether?
+// TODO: How to maintain ordering of most-recently updated feeds first?
 func (fp *feedsPane) startFeedsPoll(ch <-chan *entity.Feed) {
 	root := fp.GetRoot()
 	for feed := range ch {
 		fnode, exists := fp.feedNodes[feed.FeedURL]
 		newGroup := whenUpdated(feed)
-		if exists {
-			oldGroup := whenUpdated(fnode.GetReference().(*entity.Feed))
-			if oldGroup != newGroup {
-				fp.groupNodes[oldGroup].RemoveChild(fnode)
-			}
-		} else {
+		targetGNode := fp.groupNodes[newGroup]
+
+		if !exists {
 			fnode = feedNode(feed, fp.theme)
 			fp.feedNodes[feed.FeedURL] = fnode
-		}
-		fp.groupNodes[newGroup].AddChild(fnode)
-
-		root.ClearChildren()
-		for _, gnode := range fp.groupOrder {
-			if len(gnode.GetChildren()) > 0 {
-				root.AddChild(gnode)
+			targetGNode.AddChild(fnode)
+		} else {
+			oldFeed := fnode.GetReference().(*entity.Feed)
+			oldGroup := whenUpdated(oldFeed)
+			// TODO: Combine entries for existing feeds, set fnode reference, add to target.
+			if oldGroup != newGroup {
+				existingGNode := fp.groupNodes[oldGroup]
+				existingGNode.RemoveChild(fnode)
+				if len(existingGNode.GetChildren()) == 0 {
+					root.RemoveChild(existingGNode)
+				}
 			}
+		}
+		if len(targetGNode.GetChildren()) == 1 && !exists {
+			root.AddChild(targetGNode)
 		}
 	}
 }
