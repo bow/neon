@@ -57,6 +57,9 @@ func (fp *feedsPane) startFeedsPoll(ch <-chan *entity.Feed) {
 			fnode = feedNode(feed, fp.theme)
 			fp.feedNodes[feed.FeedURL] = fnode
 			targetGNode.AddChild(fnode)
+			if len(targetGNode.GetChildren()) == 1 {
+				root.AddChild(targetGNode)
+			}
 		} else {
 			oldFeed := fnode.GetReference().(*entity.Feed)
 			oldGroup := whenUpdated(oldFeed)
@@ -66,12 +69,10 @@ func (fp *feedsPane) startFeedsPoll(ch <-chan *entity.Feed) {
 				existingGNode.RemoveChild(fnode)
 				if len(existingGNode.GetChildren()) == 0 {
 					root.RemoveChild(existingGNode)
+					root.AddChild(targetGNode)
 				}
 			}
 			setFeedNodeDisplay(fnode, fp.theme)
-		}
-		if len(targetGNode.GetChildren()) == 1 && !exists {
-			root.AddChild(targetGNode)
 		}
 	}
 }
