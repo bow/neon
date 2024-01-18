@@ -56,7 +56,7 @@ func TestListFeedsFOk(t *testing.T) {
 	rpc, client := newBackendRPCTest(t)
 
 	client.EXPECT().
-		ListFeeds(gomock.Any(), gomock.Any()).
+		ListFeeds(gomock.Any(), gomock.Any(), gomock.Any()).
 		Return(
 			&api.ListFeedsResponse{
 				Feeds: []*api.Feed{
@@ -96,7 +96,7 @@ func TestListFeedsFErr(t *testing.T) {
 	rpc, client := newBackendRPCTest(t)
 
 	client.EXPECT().
-		ListFeeds(gomock.Any(), gomock.Any()).
+		ListFeeds(gomock.Any(), gomock.Any(), gomock.Any()).
 		Return(nil, fmt.Errorf("nope"))
 
 	feeds, err := rpc.ListFeedsF(context.Background())()
