@@ -82,21 +82,17 @@ func (r *RPC) PullFeedsF(
 			defer close(ch)
 			for {
 				rsp, serr := stream.Recv()
-				if serr == io.EOF {
-					break
-				}
-				var pr entity.PullResult
 				if serr != nil {
-					pr = entity.NewPullResultFromError(nil, serr)
-				} else {
-					if perr := rsp.Error; perr != nil {
-						pr = entity.NewPullResultFromError(&rsp.Url, fmt.Errorf("%s", *perr))
-					} else {
-						feed := rsp.GetFeed()
-						pr = entity.NewPullResultFromFeed(&rsp.Url, entity.FromFeedPb(feed))
+					if serr != io.EOF {
+						ch <- entity.NewPullResultFromError(nil, serr)
 					}
+					return
 				}
-				ch <- pr
+				if perr := rsp.Error; perr != nil {
+					ch <- entity.NewPullResultFromError(&rsp.Url, fmt.Errorf("%s", *perr))
+					continue
+				}
+				ch <- entity.NewPullResultFromFeed(&rsp.Url, entity.FromFeedPb(rsp.GetFeed()))
 			}
 		}()
 		return ch, nil

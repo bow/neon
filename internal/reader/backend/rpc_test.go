@@ -191,9 +191,6 @@ func TestPullFeedsFErrStream(t *testing.T) {
 	streamClient.EXPECT().
 		Recv().
 		Return(nil, fmt.Errorf("stream fail"))
-	streamClient.EXPECT().
-		Recv().
-		Return(nil, io.EOF)
 
 	ch, err := rpc.PullFeedsF(context.Background(), nil)()
 	r.NoError(err)
