@@ -47,7 +47,7 @@ func (do *DisplayOperator) RefreshStats(d *Display, f func() (*entity.Stats, err
 func (do *DisplayOperator) RefreshFeeds(d *Display, f func() (<-chan entity.PullResult, error)) {
 	d.infoEventf("Pulling feeds")
 
-	var okc, errc, totalc int
+	var okc, errc int
 	ch, err := f()
 	if err != nil {
 		d.errEvent(err)
@@ -62,23 +62,22 @@ func (do *DisplayOperator) RefreshFeeds(d *Display, f func() (<-chan entity.Pull
 			go func() { d.feedsCh <- pr.Feed() }()
 			okc++
 		}
-		totalc++
 	}
 	if errc == 0 {
 		switch okc {
 		case 0:
 			d.infoEventf("No feeds to pull")
 		case 1:
-			d.infoEventf("%d/%d feed pulled successfully", okc, totalc)
+			d.infoEventf("%d feed pulled successfully", okc)
 		default:
-			d.infoEventf("%d/%d feeds pulled successfully", okc, totalc)
+			d.infoEventf("%d feeds pulled successfully", okc)
 		}
 	} else {
 		switch okc {
 		case 0:
 			d.errEventf("Failed to pull any feeds")
 		default:
-			d.warnEventf("Only %d/%d feeds pulled successfully", okc, totalc)
+			d.warnEventf("Only %d/%d feeds pulled successfully", okc, okc+errc)
 		}
 	}
 }
