@@ -52,6 +52,7 @@ type Datastore interface {
 	PullFeeds(
 		ctx context.Context,
 		ids []entity.ID,
+		isRead *bool,
 	) (
 		results <-chan entity.PullResult,
 	)

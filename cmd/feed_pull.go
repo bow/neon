@@ -45,11 +45,12 @@ func newFeedPullCommand() *cobra.Command {
 				return err
 			}
 
+			entriesReadStatus := false
 			var (
 				errs []error
 				n    int
 				s    = newPullSpinner(rawIDs)
-				ch   = db.PullFeeds(cmd.Context(), ids)
+				ch   = db.PullFeeds(cmd.Context(), ids, &entriesReadStatus)
 			)
 
 			s.Start()

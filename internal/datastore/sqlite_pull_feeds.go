@@ -16,6 +16,7 @@ import (
 func (db *SQLite) PullFeeds(
 	ctx context.Context,
 	ids []entity.ID,
+	entryReadStatus *bool,
 ) <-chan entity.PullResult {
 
 	var (
@@ -48,7 +49,7 @@ func (db *SQLite) PullFeeds(
 
 		chs := make([]<-chan entity.PullResult, len(pks))
 		for i, pk := range pks {
-			chs[i] = pullNewFeedEntries(ctx, tx, pk, db.parser)
+			chs[i] = pullFeedEntries(ctx, tx, pk, db.parser, entryReadStatus)
 		}
 
 		for pr := range merge(chs) {
@@ -155,11 +156,12 @@ func getAllPullKeys(ctx context.Context, tx *sql.Tx) ([]pullKey, error) {
 	return pks, nil
 }
 
-func pullNewFeedEntries(
+func pullFeedEntries(
 	ctx context.Context,
 	tx *sql.Tx,
 	pk pullKey,
 	parser Parser,
+	entryReadStatus *bool,
 ) chan entity.PullResult {
 
 	pullTime := time.Now().UTC()
@@ -186,8 +188,7 @@ func pullNewFeedEntries(
 			return pk.err(err)
 		}
 
-		defaultReadStatus := false
-		unreadEntries, err := getEntries(ctx, tx, []ID{pk.feedID}, &defaultReadStatus, nil)
+		unreadEntries, err := getEntries(ctx, tx, []ID{pk.feedID}, entryReadStatus, nil)
 		if err != nil {
 			return pk.err(err)
 		}

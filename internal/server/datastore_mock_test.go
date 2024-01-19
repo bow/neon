@@ -193,17 +193,17 @@ func (mr *MockDatastoreMockRecorder) ListFeeds(ctx any) *gomock.Call {
 }
 
 // PullFeeds mocks base method.
-func (m *MockDatastore) PullFeeds(ctx context.Context, ids []entity.ID) <-chan entity.PullResult {
+func (m *MockDatastore) PullFeeds(ctx context.Context, ids []entity.ID, isRead *bool) <-chan entity.PullResult {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "PullFeeds", ctx, ids)
+	ret := m.ctrl.Call(m, "PullFeeds", ctx, ids, isRead)
 	ret0, _ := ret[0].(<-chan entity.PullResult)
 	return ret0
 }
 
 // PullFeeds indicates an expected call of PullFeeds.
-func (mr *MockDatastoreMockRecorder) PullFeeds(ctx, ids any) *gomock.Call {
+func (mr *MockDatastoreMockRecorder) PullFeeds(ctx, ids, isRead any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PullFeeds", reflect.TypeOf((*MockDatastore)(nil).PullFeeds), ctx, ids)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PullFeeds", reflect.TypeOf((*MockDatastore)(nil).PullFeeds), ctx, ids, isRead)
 }
 
 // MockeditableTable is a mock of editableTable interface.
