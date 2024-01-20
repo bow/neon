@@ -204,125 +204,10 @@ func TestPullFeedsAllOkNoNewEntries(t *testing.T) {
 	a.ElementsMatch(want, got)
 }
 
-func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
+func TestPullFeedsAllOkSomeNewEntriesUnread(t *testing.T) {
 	t.Parallel()
-
 	a := assert.New(t)
-	r := require.New(t)
-	db := newTestSQLiteDB(t)
-
-	dbFeeds := []*feedRecord{ // nolint:dupl
-		{
-			title:      "Feed A",
-			feedURL:    "http://a.com/feed.xml",
-			subscribed: mustTime(t, "2022-07-18T22:04:37Z"),
-			lastPulled: mustTime(t, "2022-07-18T22:04:37Z"),
-			updated:    toNullTime(mustTime(t, "2022-03-19T16:23:18.600+02:00")),
-			entries: []*entryRecord{
-				{
-					// This entry should not be returned later; 'updated' remains the same.
-					title:   "Entry A1",
-					extID:   "A1",
-					isRead:  true,
-					updated: toNullTime(mustTime(t, "2022-07-16T23:39:07.383+02:00")),
-					url:     toNullString("http://a.com/a1.html"),
-				},
-				{
-					// This entry should not be returned later; 'updated' remains the same.
-					title:   "Entry A2",
-					extID:   "A2",
-					isRead:  false,
-					updated: toNullTime(mustTime(t, "2022-07-16T23:42:24.988+02:00")),
-					url:     toNullString("http://a.com/a2.html"),
-				},
-				{
-					// This entry should be returned later; 'updated' will be changed.
-					title:   "Entry A3",
-					extID:   "A3",
-					isRead:  true,
-					updated: toNullTime(mustTime(t, "2022-03-18T22:51:49.404+02:00")),
-					url:     toNullString("http://a.com/a3.html"),
-				},
-			},
-		},
-		{
-			title:      "Feed X",
-			feedURL:    "http://x.com/feed.xml",
-			subscribed: mustTime(t, "2022-07-18T22:04:45Z"),
-			lastPulled: mustTime(t, "2022-07-18T22:04:45Z"),
-			updated:    toNullTime(mustTime(t, "2022-04-20T16:32:30.760+02:00")),
-			entries: []*entryRecord{
-				{
-					// This entry should not be returned later; 'updated' remains the same.
-					title:   "Entry X1",
-					extID:   "X1",
-					isRead:  true,
-					updated: toNullTime(mustTime(t, "2022-07-16T23:43:12.759+02:00")),
-					url:     toNullString("http://x.com/x1.html"),
-				},
-			},
-		},
-	}
-
-	keys := db.addFeeds(dbFeeds)
-	r.Equal(2, db.countFeeds())
-
-	pulledFeeds := []*feedRecord{
-		{
-			title:   dbFeeds[0].title,
-			feedURL: dbFeeds[0].feedURL,
-			updated: toNullTime(mustTime(t, "2022-07-18T22:51:49.404+02:00")),
-			entries: []*entryRecord{
-				{
-					title:   dbFeeds[0].entries[0].title,
-					extID:   dbFeeds[0].entries[0].extID,
-					updated: dbFeeds[0].entries[0].updated,
-					url:     dbFeeds[0].entries[0].url,
-				},
-				{
-					title:   dbFeeds[0].entries[1].title,
-					extID:   dbFeeds[0].entries[1].extID,
-					updated: dbFeeds[0].entries[1].updated,
-					url:     dbFeeds[0].entries[1].url,
-				},
-				{
-					title:   dbFeeds[0].entries[2].title,
-					extID:   dbFeeds[0].entries[2].extID,
-					updated: toNullTime(mustTime(t, "2022-07-19T16:23:18.600+02:00")),
-					url:     dbFeeds[0].entries[2].url,
-				},
-			},
-		},
-		{
-			title:   dbFeeds[1].title,
-			feedURL: dbFeeds[1].feedURL,
-			updated: toNullTime(mustTime(t, "2022-07-18T22:21:41.647+02:00")),
-			entries: []*entryRecord{
-				{
-					title:   dbFeeds[1].entries[0].title,
-					extID:   dbFeeds[1].entries[0].extID,
-					updated: dbFeeds[1].entries[0].updated,
-					url:     dbFeeds[1].entries[0].url,
-				},
-				{
-					title:   "Entry X2",
-					extID:   "X2",
-					updated: toNullTime(mustTime(t, "2022-07-18T22:21:41.647+02:00")),
-					url:     toNullString("http://x.com/x2.html"),
-				},
-			},
-		},
-	}
-
-	db.parser.EXPECT().
-		ParseURLWithContext(dbFeeds[0].feedURL, gomock.Any()).
-		MaxTimes(1).
-		Return(toGFeed(t, pulledFeeds[0]), nil)
-
-	db.parser.EXPECT().
-		ParseURLWithContext(dbFeeds[1].feedURL, gomock.Any()).
-		MaxTimes(1).
-		Return(toGFeed(t, pulledFeeds[1]), nil)
+	db, dbFeeds, keys, pulledFeeds := setupComplexDBFixture(t)
 
 	c := db.PullFeeds(context.Background(), nil, pointer(false))
 
@@ -453,7 +338,7 @@ func TestPullFeedsSelectedOkSomeNewEntries(t *testing.T) {
 			updated:    toNullTime(mustTime(t, "2022-04-20T16:32:30.760+02:00")),
 			entries: []*entryRecord{
 				{
-					// This entry should not be returned later; 'updated' remains the same.
+					// This entry will not have its read status updated; 'updated' remains the same.
 					title:   "Entry X1",
 					extID:   "X1",
 					isRead:  true,
@@ -577,4 +462,131 @@ func toGFeed(t *testing.T, feed *feedRecord) *gofeed.Feed {
 		gfeed.Items = append(gfeed.Items, &item)
 	}
 	return &gfeed
+}
+
+func setupComplexDBFixture(t *testing.T) (
+	testSQLiteDB,
+	[]*feedRecord,
+	map[string]feedKey,
+	[]*feedRecord,
+) {
+	t.Helper()
+
+	r := require.New(t)
+	db := newTestSQLiteDB(t)
+
+	dbFeeds := []*feedRecord{ // nolint:dupl
+		{
+			title:      "Feed A",
+			feedURL:    "http://a.com/feed.xml",
+			subscribed: mustTime(t, "2022-07-18T22:04:37Z"),
+			lastPulled: mustTime(t, "2022-07-18T22:04:37Z"),
+			updated:    toNullTime(mustTime(t, "2022-03-19T16:23:18.600+02:00")),
+			entries: []*entryRecord{
+				{
+					// This entry will not have its read status updated; 'updated' remains the same.
+					title:   "Entry A1",
+					extID:   "A1",
+					isRead:  true,
+					updated: toNullTime(mustTime(t, "2022-07-16T23:39:07.383+02:00")),
+					url:     toNullString("http://a.com/a1.html"),
+				},
+				{
+					// This entry will not have its read status updated; 'updated' remains the same.
+					title:   "Entry A2",
+					extID:   "A2",
+					isRead:  false,
+					updated: toNullTime(mustTime(t, "2022-07-16T23:42:24.988+02:00")),
+					url:     toNullString("http://a.com/a2.html"),
+				},
+				{
+					// This entry will have its read status set to 'false'; 'updated' will be changed.
+					title:   "Entry A3",
+					extID:   "A3",
+					isRead:  true,
+					updated: toNullTime(mustTime(t, "2022-03-18T22:51:49.404+02:00")),
+					url:     toNullString("http://a.com/a3.html"),
+				},
+			},
+		},
+		{
+			title:      "Feed X",
+			feedURL:    "http://x.com/feed.xml",
+			subscribed: mustTime(t, "2022-07-18T22:04:45Z"),
+			lastPulled: mustTime(t, "2022-07-18T22:04:45Z"),
+			updated:    toNullTime(mustTime(t, "2022-04-20T16:32:30.760+02:00")),
+			entries: []*entryRecord{
+				{
+					// This entry will not have its read status updated; 'updated' remains the same.
+					title:   "Entry X1",
+					extID:   "X1",
+					isRead:  true,
+					updated: toNullTime(mustTime(t, "2022-07-16T23:43:12.759+02:00")),
+					url:     toNullString("http://x.com/x1.html"),
+				},
+			},
+		},
+	}
+
+	keys := db.addFeeds(dbFeeds)
+	r.Equal(2, db.countFeeds())
+
+	pulledFeeds := []*feedRecord{
+		{
+			title:   dbFeeds[0].title,
+			feedURL: dbFeeds[0].feedURL,
+			updated: toNullTime(mustTime(t, "2022-07-18T22:51:49.404+02:00")),
+			entries: []*entryRecord{
+				{
+					title:   dbFeeds[0].entries[0].title,
+					extID:   dbFeeds[0].entries[0].extID,
+					updated: dbFeeds[0].entries[0].updated,
+					url:     dbFeeds[0].entries[0].url,
+				},
+				{
+					title:   dbFeeds[0].entries[1].title,
+					extID:   dbFeeds[0].entries[1].extID,
+					updated: dbFeeds[0].entries[1].updated,
+					url:     dbFeeds[0].entries[1].url,
+				},
+				{
+					title:   dbFeeds[0].entries[2].title,
+					extID:   dbFeeds[0].entries[2].extID,
+					updated: toNullTime(mustTime(t, "2022-07-19T16:23:18.600+02:00")),
+					url:     dbFeeds[0].entries[2].url,
+				},
+			},
+		},
+		{
+			title:   dbFeeds[1].title,
+			feedURL: dbFeeds[1].feedURL,
+			updated: toNullTime(mustTime(t, "2022-07-18T22:21:41.647+02:00")),
+			entries: []*entryRecord{
+				{
+					title:   dbFeeds[1].entries[0].title,
+					extID:   dbFeeds[1].entries[0].extID,
+					updated: dbFeeds[1].entries[0].updated,
+					url:     dbFeeds[1].entries[0].url,
+				},
+				{
+					title:   "Entry X2",
+					extID:   "X2",
+					updated: toNullTime(mustTime(t, "2022-07-18T22:21:41.647+02:00")),
+					url:     toNullString("http://x.com/x2.html"),
+				},
+			},
+		},
+	}
+
+	db.parser.EXPECT().
+		ParseURLWithContext(dbFeeds[0].feedURL, gomock.Any()).
+		MaxTimes(1).
+		Return(toGFeed(t, pulledFeeds[0]), nil)
+
+	db.parser.EXPECT().
+		ParseURLWithContext(dbFeeds[1].feedURL, gomock.Any()).
+		MaxTimes(1).
+		Return(toGFeed(t, pulledFeeds[1]), nil)
+
+	return db, dbFeeds, keys, pulledFeeds
 }
