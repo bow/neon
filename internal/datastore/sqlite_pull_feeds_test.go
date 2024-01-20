@@ -204,6 +204,112 @@ func TestPullFeedsAllOkNoNewEntries(t *testing.T) {
 	a.ElementsMatch(want, got)
 }
 
+func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
+	t.Parallel()
+	a := assert.New(t)
+	db, dbFeeds, keys, pulledFeeds := setupComplexDBFixture(t)
+
+	c := db.PullFeeds(context.Background(), nil, nil)
+
+	got := make([]entity.PullResult, 0)
+	for res := range c {
+		got = append(got, res)
+	}
+
+	feedURL0 := pulledFeeds[0].feedURL
+	feedURL1 := pulledFeeds[1].feedURL
+
+	want := []entity.PullResult{
+		entity.NewPullResultFromFeed(
+			&dbFeeds[0].feedURL,
+			&entity.Feed{
+				ID:         keys[pulledFeeds[0].title].ID,
+				Title:      pulledFeeds[0].title,
+				FeedURL:    pulledFeeds[0].feedURL,
+				Updated:    db.getFeedUpdateTime(feedURL0),
+				Subscribed: db.getFeedSubTime(feedURL0),
+				LastPulled: time.Time{},
+				Entries: []*entity.Entry{
+					{
+						ID:        db.getEntryID(feedURL0, pulledFeeds[0].entries[0].extID),
+						FeedID:    keys[pulledFeeds[0].title].ID,
+						Title:     pulledFeeds[0].entries[0].title,
+						ExtID:     pulledFeeds[0].entries[0].extID,
+						Updated:   db.getEntryUpdateTime(feedURL0, pulledFeeds[0].entries[0].extID),
+						Published: db.getEntryPubTime(feedURL0, pulledFeeds[0].entries[0].extID),
+						URL:       fromNullString(pulledFeeds[0].entries[0].url),
+						IsRead:    true,
+					},
+					{
+						ID:        db.getEntryID(feedURL0, pulledFeeds[0].entries[1].extID),
+						FeedID:    keys[pulledFeeds[0].title].ID,
+						Title:     pulledFeeds[0].entries[1].title,
+						ExtID:     pulledFeeds[0].entries[1].extID,
+						Updated:   db.getEntryUpdateTime(feedURL0, pulledFeeds[0].entries[1].extID),
+						Published: db.getEntryPubTime(feedURL0, pulledFeeds[0].entries[1].extID),
+						URL:       fromNullString(pulledFeeds[0].entries[1].url),
+						IsRead:    false,
+					},
+					{
+						ID:        db.getEntryID(feedURL0, pulledFeeds[0].entries[2].extID),
+						FeedID:    keys[pulledFeeds[0].title].ID,
+						Title:     pulledFeeds[0].entries[2].title,
+						ExtID:     pulledFeeds[0].entries[2].extID,
+						Updated:   db.getEntryUpdateTime(feedURL0, pulledFeeds[0].entries[2].extID),
+						Published: db.getEntryPubTime(feedURL0, pulledFeeds[0].entries[2].extID),
+						URL:       fromNullString(pulledFeeds[0].entries[2].url),
+						IsRead:    false,
+					},
+				},
+			},
+		),
+		entity.NewPullResultFromFeed(
+			&dbFeeds[1].feedURL,
+			&entity.Feed{
+				ID:         keys[pulledFeeds[1].title].ID,
+				Title:      pulledFeeds[1].title,
+				FeedURL:    pulledFeeds[1].feedURL,
+				Updated:    db.getFeedUpdateTime(feedURL1),
+				Subscribed: db.getFeedSubTime(feedURL1),
+				LastPulled: time.Time{},
+				Entries: []*entity.Entry{
+					{
+						ID:        db.getEntryID(feedURL1, pulledFeeds[1].entries[0].extID),
+						FeedID:    keys[pulledFeeds[1].title].ID,
+						Title:     pulledFeeds[1].entries[0].title,
+						ExtID:     pulledFeeds[1].entries[0].extID,
+						Updated:   db.getEntryUpdateTime(feedURL1, pulledFeeds[1].entries[0].extID),
+						Published: db.getEntryPubTime(feedURL1, pulledFeeds[1].entries[0].extID),
+						URL:       fromNullString(pulledFeeds[1].entries[0].url),
+						IsRead:    true,
+					},
+					{
+						ID:        db.getEntryID(feedURL1, pulledFeeds[1].entries[1].extID),
+						FeedID:    keys[pulledFeeds[1].title].ID,
+						Title:     pulledFeeds[1].entries[1].title,
+						ExtID:     pulledFeeds[1].entries[1].extID,
+						Updated:   db.getEntryUpdateTime(feedURL1, pulledFeeds[1].entries[1].extID),
+						Published: db.getEntryPubTime(feedURL1, pulledFeeds[1].entries[1].extID),
+						URL:       fromNullString(pulledFeeds[1].entries[1].url),
+						IsRead:    false,
+					},
+				},
+			},
+		),
+	}
+
+	// Sort inner entries first, since ElementsMatch cares about inner array elements order.
+	sortPullResultEntries(want)
+	sortPullResultEntries(got)
+
+	// Set LastPulled fields to the zero value as this value is always updated on every pull.
+	for _, item := range got {
+		item.Feed().LastPulled = time.Time{}
+	}
+
+	a.ElementsMatch(want, got)
+}
+
 func TestPullFeedsAllOkSomeNewEntriesUnread(t *testing.T) {
 	t.Parallel()
 	a := assert.New(t)
