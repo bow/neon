@@ -188,11 +188,11 @@ func pullFeedEntries(
 			return pk.err(err)
 		}
 
-		unreadEntries, err := getEntries(ctx, tx, []ID{pk.feedID}, entryReadStatus, nil)
+		entries, err := getEntries(ctx, tx, []ID{pk.feedID}, entryReadStatus, nil)
 		if err != nil {
 			return pk.err(err)
 		}
-		if len(unreadEntries) == 0 {
+		if len(entries) == 0 {
 			return pk.ok(nil)
 		}
 
@@ -201,7 +201,7 @@ func pullFeedEntries(
 			return pk.err(err)
 		}
 
-		rec.entries = unreadEntries
+		rec.entries = entries
 
 		return pk.ok(rec.feed())
 	}
