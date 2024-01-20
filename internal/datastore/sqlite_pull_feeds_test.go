@@ -30,7 +30,7 @@ func TestPullFeedsAllOkEmptyDB(t *testing.T) {
 		ParseURLWithContext(gomock.Any(), gomock.Any()).
 		MaxTimes(0)
 
-	c := db.PullFeeds(context.Background(), nil, nil)
+	c := db.PullFeeds(context.Background(), nil, true)
 	a.Empty(c)
 }
 
@@ -69,7 +69,7 @@ func TestPullFeedsAllOkEmptyEntries(t *testing.T) {
 		MaxTimes(1).
 		Return(toGFeed(t, dbFeeds[1]), nil)
 
-	c := db.PullFeeds(context.Background(), nil, nil)
+	c := db.PullFeeds(context.Background(), nil, true)
 
 	got := make([]entity.PullResult, 0)
 	for res := range c {
@@ -183,7 +183,7 @@ func TestPullFeedsAllOkNoNewEntries(t *testing.T) {
 		MaxTimes(1).
 		Return(toGFeed(t, pulledFeeds[1]), nil)
 
-	c := db.PullFeeds(context.Background(), nil, pointer(false))
+	c := db.PullFeeds(context.Background(), nil, true)
 
 	got := make([]entity.PullResult, 0)
 	for res := range c {
@@ -204,12 +204,12 @@ func TestPullFeedsAllOkNoNewEntries(t *testing.T) {
 	a.ElementsMatch(want, got)
 }
 
-func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
+func TestPullFeedsAllOkSomeNewEntriesAll(t *testing.T) {
 	t.Parallel()
 	a := assert.New(t)
 	db, dbFeeds, keys, pulledFeeds := setupComplexDBFixture(t)
 
-	c := db.PullFeeds(context.Background(), nil, nil)
+	c := db.PullFeeds(context.Background(), nil, false)
 
 	got := make([]entity.PullResult, 0)
 	for res := range c {
@@ -310,12 +310,12 @@ func TestPullFeedsAllOkSomeNewEntries(t *testing.T) {
 	a.ElementsMatch(want, got)
 }
 
-func TestPullFeedsAllOkSomeNewEntriesUnread(t *testing.T) {
+func TestPullFeedsAllOkSomeNewEntriesOnlyUnread(t *testing.T) {
 	t.Parallel()
 	a := assert.New(t)
 	db, dbFeeds, keys, pulledFeeds := setupComplexDBFixture(t)
 
-	c := db.PullFeeds(context.Background(), nil, pointer(false))
+	c := db.PullFeeds(context.Background(), nil, true)
 
 	got := make([]entity.PullResult, 0)
 	for res := range c {
@@ -483,7 +483,7 @@ func TestPullFeedsSelectedOkSomeNewEntries(t *testing.T) {
 		MaxTimes(1).
 		Return(toGFeed(t, pulledFeed), nil)
 
-	c := db.PullFeeds(context.Background(), []ID{keys[pulledFeed.title].ID}, pointer(false))
+	c := db.PullFeeds(context.Background(), []ID{keys[pulledFeed.title].ID}, true)
 
 	got := make([]entity.PullResult, 0)
 	for res := range c {

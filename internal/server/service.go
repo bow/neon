@@ -127,8 +127,7 @@ func (svc *service) PullFeeds(
 	}
 
 	// TODO: Expose isRead in proto.
-	isRead := false
-	ch := svc.ds.PullFeeds(stream.Context(), ids, &isRead)
+	ch := svc.ds.PullFeeds(stream.Context(), ids, true)
 
 	for pr := range ch {
 		payload, err := convert(pr)
