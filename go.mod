@@ -9,7 +9,7 @@ require (
 	github.com/golang-migrate/migrate/v4 v4.17.0
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.0.1
 	github.com/mmcdole/gofeed v1.2.1
-	github.com/rivo/tview v0.0.0-20240101144852-b3bd1aa5e9f2
+	github.com/rivo/tview v0.0.0-20240120095012-7568c3f71cfa
 	github.com/rs/zerolog v1.31.0
 	github.com/spf13/cobra v1.8.0
 	github.com/spf13/viper v1.18.2
@@ -60,18 +60,18 @@ require (
 	github.com/subosito/gotenv v1.6.0 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
-	golang.org/x/exp v0.0.0-20240112132812-db7319d0e0e3 // indirect
+	golang.org/x/exp v0.0.0-20240119083558-1b970713d09a // indirect
 	golang.org/x/mod v0.14.0 // indirect
 	golang.org/x/sys v0.16.0 // indirect
 	golang.org/x/term v0.16.0 // indirect
 	golang.org/x/tools v0.17.0 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20240108191215-35c7eff3a6b1 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20240116215550-a9fa1716bcac // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	lukechampine.com/uint128 v1.3.0 // indirect
 	modernc.org/cc/v3 v3.41.0 // indirect
 	modernc.org/ccgo/v3 v3.16.15 // indirect
-	modernc.org/libc v1.40.1 // indirect
+	modernc.org/libc v1.40.6 // indirect
 	modernc.org/mathutil v1.6.0 // indirect
 	modernc.org/memory v1.7.2 // indirect
 	modernc.org/opt v0.1.3 // indirect
