@@ -120,6 +120,7 @@ message ListFeedsResponse {
 
 message PullFeedsRequest {
   repeated uint32 feed_ids = 1;
+  bool return_all_entries = 2;
 }
 
 message PullFeedsResponse {

@@ -77,7 +77,7 @@ func (r *RPC) PullFeedsF(
 	_ []entity.ID,
 ) func() (<-chan entity.PullResult, error) {
 	return func() (<-chan entity.PullResult, error) {
-		stream, err := r.client.PullFeeds(ctx, &api.PullFeedsRequest{})
+		stream, err := r.client.PullFeeds(ctx, &api.PullFeedsRequest{ReturnAllEntries: false})
 		if err != nil {
 			return nil, err
 		}
