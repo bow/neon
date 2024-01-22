@@ -49,7 +49,7 @@ func newFeedPullCommand() *cobra.Command {
 				errs []error
 				n    int
 				s    = newPullSpinner(rawIDs)
-				ch   = db.PullFeeds(cmd.Context(), ids, true)
+				ch   = db.PullFeeds(cmd.Context(), ids, false)
 			)
 
 			s.Start()
