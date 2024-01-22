@@ -75,9 +75,11 @@ func (r *RPC) ListFeedsF(ctx context.Context) func() ([]*entity.Feed, error) {
 func (r *RPC) PullFeedsF(
 	ctx context.Context,
 	_ []entity.ID,
+	returnAllEntries bool,
 ) func() (<-chan entity.PullResult, error) {
 	return func() (<-chan entity.PullResult, error) {
-		stream, err := r.client.PullFeeds(ctx, &api.PullFeedsRequest{ReturnAllEntries: false})
+		req := api.PullFeedsRequest{ReturnAllEntries: returnAllEntries}
+		stream, err := r.client.PullFeeds(ctx, &req)
 		if err != nil {
 			return nil, err
 		}

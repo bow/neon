@@ -135,7 +135,7 @@ func (r *Reader) feedsPaneKeyHandler() ui.KeyHandler {
 				}
 				ctxf, cancelf := r.callCtx()
 				defer cancelf()
-				r.opr.RefreshFeeds(r.display, r.backend.PullFeedsF(ctxf, nil))
+				r.opr.RefreshFeeds(r.display, r.backend.PullFeedsF(ctxf, nil, false))
 
 				ctxs, cancels := r.callCtx()
 				defer cancels()

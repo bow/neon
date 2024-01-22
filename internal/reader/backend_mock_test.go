@@ -69,17 +69,17 @@ func (mr *MockBackendMockRecorder) ListFeedsF(arg0 any) *gomock.Call {
 }
 
 // PullFeedsF mocks base method.
-func (m *MockBackend) PullFeedsF(arg0 context.Context, arg1 []entity.ID) func() (<-chan entity.PullResult, error) {
+func (m *MockBackend) PullFeedsF(arg0 context.Context, arg1 []entity.ID, arg2 bool) func() (<-chan entity.PullResult, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "PullFeedsF", arg0, arg1)
+	ret := m.ctrl.Call(m, "PullFeedsF", arg0, arg1, arg2)
 	ret0, _ := ret[0].(func() (<-chan entity.PullResult, error))
 	return ret0
 }
 
 // PullFeedsF indicates an expected call of PullFeedsF.
-func (mr *MockBackendMockRecorder) PullFeedsF(arg0, arg1 any) *gomock.Call {
+func (mr *MockBackendMockRecorder) PullFeedsF(arg0, arg1, arg2 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PullFeedsF", reflect.TypeOf((*MockBackend)(nil).PullFeedsF), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PullFeedsF", reflect.TypeOf((*MockBackend)(nil).PullFeedsF), arg0, arg1, arg2)
 }
 
 // String mocks base method.
