@@ -112,7 +112,9 @@ message EditFeedsResponse {
   repeated Feed feeds = 1;
 }
 
-message ListFeedsRequest {}
+message ListFeedsRequest {
+  bool with_entries = 1;
+}
 
 message ListFeedsResponse {
   repeated Feed feeds = 1;

@@ -49,11 +49,10 @@ func (svc *service) AddFeed(
 // ListFeeds satisfies the service API.
 func (svc *service) ListFeeds(
 	ctx context.Context,
-	_ *api.ListFeedsRequest,
+	req *api.ListFeedsRequest,
 ) (*api.ListFeedsResponse, error) {
 
-	// TODO: Expose all args in proto.
-	feeds, err := svc.ds.ListFeeds(ctx, true)
+	feeds, err := svc.ds.ListFeeds(ctx, req.GetWithEntries())
 	if err != nil {
 		return nil, err
 	}
