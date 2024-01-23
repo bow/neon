@@ -7,6 +7,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"fmt"
 
 	"github.com/bow/neon/internal/entity"
 )
@@ -19,7 +20,8 @@ func (db *SQLite) ListEntries(
 
 	recs := make([]*entryRecord, 0)
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
-		irecs, err := getEntries(ctx, tx, feedIDs, nil, isBookmarked)
+		// TODO: Expose num arg in function signature.
+		irecs, err := getEntries(ctx, tx, feedIDs, nil, nil, isBookmarked)
 		if err != nil {
 			return err
 		}
@@ -44,6 +46,7 @@ func getEntries(
 	ctx context.Context,
 	tx *sql.Tx,
 	feedIDs []ID,
+	numMaxEntries *uint32,
 	isRead *bool,
 	isBookmarked *bool,
 ) ([]*entryRecord, error) {
@@ -70,6 +73,14 @@ func getEntries(
 		ORDER BY
 			COALESCE(e.update_time, e.pub_time) DESC
 `
+
+	if numMaxEntries != nil {
+		nmax := *numMaxEntries
+		if nmax == 0 {
+			return nil, nil
+		}
+		sql1 += fmt.Sprintf("\nLIMIT %d", nmax)
+	}
 
 	scanRow := func(rows *sql.Rows) (*entryRecord, error) {
 		var entry entryRecord

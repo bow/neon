@@ -44,7 +44,7 @@ type Datastore interface {
 
 	ListFeeds(
 		ctx context.Context,
-		withoutEntries bool,
+		maxEntriesPerFeed *uint32,
 	) (
 		feeds []*entity.Feed,
 		err error,

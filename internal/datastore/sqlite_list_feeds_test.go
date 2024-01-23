@@ -18,13 +18,13 @@ func TestListFeedsOkMinimal(t *testing.T) {
 	r := require.New(t)
 	db := newTestSQLiteDB(t)
 
-	feeds, err := db.ListFeeds(context.Background(), true)
+	feeds, err := db.ListFeeds(context.Background(), nil)
 	r.NoError(err)
 
 	a.Empty(feeds)
 }
 
-func TestListFeedsOkExtended(t *testing.T) {
+func TestListFeedsOkExtendedAllEntries(t *testing.T) {
 	t.Parallel()
 
 	a := assert.New(t)
@@ -55,7 +55,7 @@ func TestListFeedsOkExtended(t *testing.T) {
 
 	r.Equal(2, db.countFeeds())
 
-	feeds, err := db.ListFeeds(context.Background(), true)
+	feeds, err := db.ListFeeds(context.Background(), nil)
 	r.NoError(err)
 	r.NotEmpty(feeds)
 
@@ -70,7 +70,7 @@ func TestListFeedsOkExtended(t *testing.T) {
 	a.Len(feed1.Entries, len(dbFeeds[0].entries))
 }
 
-func TestListFeedsOkExtendedWithoutEntries(t *testing.T) {
+func TestListFeedsOkExtendedLimitedEntries(t *testing.T) {
 	t.Parallel()
 
 	a := assert.New(t)
@@ -101,7 +101,7 @@ func TestListFeedsOkExtendedWithoutEntries(t *testing.T) {
 
 	r.Equal(2, db.countFeeds())
 
-	feeds, err := db.ListFeeds(context.Background(), false)
+	feeds, err := db.ListFeeds(context.Background(), pointer(uint32(2)))
 	r.NoError(err)
 	r.NotEmpty(feeds)
 
@@ -109,9 +109,9 @@ func TestListFeedsOkExtendedWithoutEntries(t *testing.T) {
 
 	feed0 := feeds[0]
 	a.Equal(feed0.FeedURL, dbFeeds[1].feedURL)
-	a.Empty(feed0.Entries)
+	a.Len(feed0.Entries, 2)
 
 	feed1 := feeds[1]
 	a.Equal(feed1.FeedURL, dbFeeds[0].feedURL)
-	a.Empty(feed0.Entries)
+	a.Len(feed1.Entries, 1)
 }

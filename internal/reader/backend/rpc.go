@@ -53,9 +53,10 @@ func (r *RPC) GetStatsF(ctx context.Context) func() (*entity.Stats, error) {
 
 func (r *RPC) ListFeedsF(ctx context.Context) func() ([]*entity.Feed, error) {
 	return func() ([]*entity.Feed, error) {
+		nmax := uint32(0)
 		rsp, err := r.client.ListFeeds(
 			ctx,
-			&api.ListFeedsRequest{WithEntries: false},
+			&api.ListFeedsRequest{MaxEntriesPerFeed: &nmax},
 		)
 		if err != nil {
 			return nil, err

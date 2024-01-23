@@ -113,7 +113,7 @@ message EditFeedsResponse {
 }
 
 message ListFeedsRequest {
-  bool with_entries = 1;
+  optional uint32 max_entries_per_feed = 1;
 }
 
 message ListFeedsResponse {

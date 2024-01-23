@@ -12,7 +12,7 @@ import (
 
 func (db *SQLite) ListFeeds(
 	ctx context.Context,
-	withEntries bool,
+	maxEntriesPerFeed *uint32,
 ) ([]*entity.Feed, error) {
 
 	recs := make([]*feedRecord, 0)
@@ -24,13 +24,11 @@ func (db *SQLite) ListFeeds(
 		}
 		for _, ifeed := range irecs {
 			ifeed := ifeed
-			if withEntries {
-				entries, err := getEntries(ctx, tx, []ID{ifeed.id}, nil, nil)
-				if err != nil {
-					return err
-				}
-				ifeed.entries = entries
+			entries, err := getEntries(ctx, tx, []ID{ifeed.id}, maxEntriesPerFeed, nil, nil)
+			if err != nil {
+				return err
 			}
+			ifeed.entries = entries
 		}
 		recs = irecs
 

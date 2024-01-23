@@ -28,7 +28,7 @@ func newFeedListCommand() *cobra.Command {
 				return err
 			}
 
-			feeds, err := db.ListFeeds(cmd.Context(), false)
+			feeds, err := db.ListFeeds(cmd.Context(), nil)
 			if err != nil {
 				return err
 			}

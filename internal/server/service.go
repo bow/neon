@@ -52,7 +52,7 @@ func (svc *service) ListFeeds(
 	req *api.ListFeedsRequest,
 ) (*api.ListFeedsResponse, error) {
 
-	feeds, err := svc.ds.ListFeeds(ctx, req.GetWithEntries())
+	feeds, err := svc.ds.ListFeeds(ctx, req.MaxEntriesPerFeed)
 	if err != nil {
 		return nil, err
 	}

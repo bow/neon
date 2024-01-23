@@ -193,7 +193,7 @@ func pullFeedEntries(
 			entryReadStatus = nil
 		}
 
-		entries, err := getEntries(ctx, tx, []ID{pk.feedID}, entryReadStatus, nil)
+		entries, err := getEntries(ctx, tx, []ID{pk.feedID}, nil, entryReadStatus, nil)
 		if err != nil {
 			return pk.err(err)
 		}

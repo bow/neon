@@ -77,7 +77,7 @@ func TestListFeedsOk(t *testing.T) {
 	r := require.New(t)
 	client, ds := setupServerTest(t)
 
-	req := api.ListFeedsRequest{WithEntries: true}
+	req := api.ListFeedsRequest{}
 	feeds := []*entity.Feed{
 		{
 			ID:         entity.ID(2),
@@ -98,7 +98,7 @@ func TestListFeedsOk(t *testing.T) {
 	}
 
 	ds.EXPECT().
-		ListFeeds(gomock.Any(), req.GetWithEntries()).
+		ListFeeds(gomock.Any(), req.MaxEntriesPerFeed).
 		Return(feeds, nil)
 
 	rsp, err := client.ListFeeds(context.Background(), &req)
