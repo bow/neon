@@ -21,7 +21,7 @@ service Neon {
   // ListFeeds lists all added feed sources.
   rpc ListFeeds (ListFeedsRequest) returns (ListFeedsResponse) {}
 
-  // PullFeeds checks feeds for updates and returns all unread entries.
+  // PullFeeds checks feeds for updates and returns them.
   rpc PullFeeds (PullFeedsRequest) returns (stream PullFeedsResponse) {}
 
   // DeleteFeeds removes one or more feed sources.
