@@ -55,9 +55,7 @@ func (r *RPC) ListFeedsF(ctx context.Context) func() ([]*entity.Feed, error) {
 	return func() ([]*entity.Feed, error) {
 		rsp, err := r.client.ListFeeds(
 			ctx,
-			&api.ListFeedsRequest{},
-			// FIXME: Use pull instead or introduce pagination.
-			grpc.MaxCallRecvMsgSize(10*1024*1024),
+			&api.ListFeedsRequest{WithEntries: false},
 		)
 		if err != nil {
 			return nil, err
