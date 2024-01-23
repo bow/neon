@@ -178,18 +178,18 @@ func (mr *MockDatastoreMockRecorder) ListEntries(ctx, feedIDs, isBookmarked any)
 }
 
 // ListFeeds mocks base method.
-func (m *MockDatastore) ListFeeds(ctx context.Context) ([]*entity.Feed, error) {
+func (m *MockDatastore) ListFeeds(ctx context.Context, withoutEntries bool) ([]*entity.Feed, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ListFeeds", ctx)
+	ret := m.ctrl.Call(m, "ListFeeds", ctx, withoutEntries)
 	ret0, _ := ret[0].([]*entity.Feed)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ListFeeds indicates an expected call of ListFeeds.
-func (mr *MockDatastoreMockRecorder) ListFeeds(ctx any) *gomock.Call {
+func (mr *MockDatastoreMockRecorder) ListFeeds(ctx, withoutEntries any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListFeeds", reflect.TypeOf((*MockDatastore)(nil).ListFeeds), ctx)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListFeeds", reflect.TypeOf((*MockDatastore)(nil).ListFeeds), ctx, withoutEntries)
 }
 
 // PullFeeds mocks base method.

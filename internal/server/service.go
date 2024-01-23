@@ -52,7 +52,8 @@ func (svc *service) ListFeeds(
 	_ *api.ListFeedsRequest,
 ) (*api.ListFeedsResponse, error) {
 
-	feeds, err := svc.ds.ListFeeds(ctx)
+	// TODO: Expose all args in proto.
+	feeds, err := svc.ds.ListFeeds(ctx, true)
 	if err != nil {
 		return nil, err
 	}

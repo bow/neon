@@ -10,7 +10,10 @@ import (
 	"github.com/bow/neon/internal/entity"
 )
 
-func (db *SQLite) ListFeeds(ctx context.Context) ([]*entity.Feed, error) {
+func (db *SQLite) ListFeeds(
+	ctx context.Context,
+	withEntries bool,
+) ([]*entity.Feed, error) {
 
 	recs := make([]*feedRecord, 0)
 	dbFunc := func(ctx context.Context, tx *sql.Tx) error {
@@ -21,11 +24,13 @@ func (db *SQLite) ListFeeds(ctx context.Context) ([]*entity.Feed, error) {
 		}
 		for _, ifeed := range irecs {
 			ifeed := ifeed
-			entries, err := getEntries(ctx, tx, []ID{ifeed.id}, nil, nil)
-			if err != nil {
-				return err
+			if withEntries {
+				entries, err := getEntries(ctx, tx, []ID{ifeed.id}, nil, nil)
+				if err != nil {
+					return err
+				}
+				ifeed.entries = entries
 			}
-			ifeed.entries = entries
 		}
 		recs = irecs
 

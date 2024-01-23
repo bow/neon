@@ -97,8 +97,9 @@ func TestListFeedsOk(t *testing.T) {
 		},
 	}
 
+	// TODO: Expose all args in proto.
 	ds.EXPECT().
-		ListFeeds(gomock.Any()).
+		ListFeeds(gomock.Any(), true).
 		Return(feeds, nil)
 
 	rsp, err := client.ListFeeds(context.Background(), &req)
