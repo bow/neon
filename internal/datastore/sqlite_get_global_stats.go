@@ -25,8 +25,8 @@ func (db *SQLite) GetGlobalStats(ctx context.Context) (*entity.Stats, error) {
 
 	fail := failF("SQLite.GetGlobalStats")
 
-	db.mu.Lock()
-	defer db.mu.Unlock()
+	db.mu.RLock()
+	defer db.mu.RUnlock()
 
 	err := db.withTx(ctx, dbFunc)
 	if err != nil {

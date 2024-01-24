@@ -31,8 +31,8 @@ func (db *SQLite) ListEntries(
 
 	fail := failF("SQLite.ListEntries")
 
-	db.mu.Lock()
-	defer db.mu.Unlock()
+	db.mu.RLock()
+	defer db.mu.RUnlock()
 
 	err := db.withTx(ctx, dbFunc)
 	if err != nil {
