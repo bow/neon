@@ -79,7 +79,7 @@ func TestListFeedsFOk(t *testing.T) {
 			nil,
 		)
 
-	feeds, err := rpc.ListFeedsF(context.Background())()
+	feeds, err := rpc.GetAllFeedsF(context.Background())()
 	r.NoError(err)
 	a.Len(feeds, 2)
 	a.Equal(uint32(5), feeds[0].ID)
@@ -99,7 +99,7 @@ func TestListFeedsFErr(t *testing.T) {
 		ListFeeds(gomock.Any(), gomock.Any(), gomock.Any()).
 		Return(nil, fmt.Errorf("nope"))
 
-	feeds, err := rpc.ListFeedsF(context.Background())()
+	feeds, err := rpc.GetAllFeedsF(context.Background())()
 	r.Nil(feeds)
 	a.EqualError(err, "nope")
 }

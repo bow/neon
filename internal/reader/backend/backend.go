@@ -12,7 +12,7 @@ import (
 // Backend describes the console backend.
 type Backend interface {
 	GetStatsF(context.Context) func() (*entity.Stats, error)
-	ListFeedsF(context.Context) func() ([]*entity.Feed, error)
+	GetAllFeedsF(context.Context) func() ([]*entity.Feed, error)
 	PullFeedsF(context.Context, []entity.ID, bool) func() (<-chan entity.PullResult, error)
 	String() string
 }

@@ -51,7 +51,8 @@ func (r *RPC) GetStatsF(ctx context.Context) func() (*entity.Stats, error) {
 	}
 }
 
-func (r *RPC) ListFeedsF(ctx context.Context) func() ([]*entity.Feed, error) {
+func (r *RPC) GetAllFeedsF(ctx context.Context) func() ([]*entity.Feed, error) {
+	// FIXME: Actually implement querying all feeds.
 	return func() ([]*entity.Feed, error) {
 		nmax := uint32(0)
 		rsp, err := r.client.ListFeeds(

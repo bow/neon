@@ -227,7 +227,7 @@ func setupReaderTest(t *testing.T) *testWrapper {
 				Return(func() (*entity.Stats, error) { return nil, nil })
 			opr.EXPECT().RefreshStats(gomock.Any(), gomock.Any())
 
-			be.EXPECT().ListFeedsF(gomock.Any()).
+			be.EXPECT().GetAllFeedsF(gomock.Any()).
 				Return(func() ([]*entity.Feed, error) { return nil, nil })
 			opr.EXPECT().ShowAllFeeds(gomock.Any(), gomock.Any())
 

@@ -40,6 +40,20 @@ func (m *MockBackend) EXPECT() *MockBackendMockRecorder {
 	return m.recorder
 }
 
+// GetAllFeedsF mocks base method.
+func (m *MockBackend) GetAllFeedsF(arg0 context.Context) func() ([]*entity.Feed, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAllFeedsF", arg0)
+	ret0, _ := ret[0].(func() ([]*entity.Feed, error))
+	return ret0
+}
+
+// GetAllFeedsF indicates an expected call of GetAllFeedsF.
+func (mr *MockBackendMockRecorder) GetAllFeedsF(arg0 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllFeedsF", reflect.TypeOf((*MockBackend)(nil).GetAllFeedsF), arg0)
+}
+
 // GetStatsF mocks base method.
 func (m *MockBackend) GetStatsF(arg0 context.Context) func() (*entity.Stats, error) {
 	m.ctrl.T.Helper()
@@ -52,20 +66,6 @@ func (m *MockBackend) GetStatsF(arg0 context.Context) func() (*entity.Stats, err
 func (mr *MockBackendMockRecorder) GetStatsF(arg0 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetStatsF", reflect.TypeOf((*MockBackend)(nil).GetStatsF), arg0)
-}
-
-// ListFeedsF mocks base method.
-func (m *MockBackend) ListFeedsF(arg0 context.Context) func() ([]*entity.Feed, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ListFeedsF", arg0)
-	ret0, _ := ret[0].(func() ([]*entity.Feed, error))
-	return ret0
-}
-
-// ListFeedsF indicates an expected call of ListFeedsF.
-func (mr *MockBackendMockRecorder) ListFeedsF(arg0 any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListFeedsF", reflect.TypeOf((*MockBackend)(nil).ListFeedsF), arg0)
 }
 
 // PullFeedsF mocks base method.

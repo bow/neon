@@ -32,7 +32,7 @@ func (r *Reader) Start() error {
 		r.opr.ShowIntroPopup(r.display)
 		defer r.state.MarkIntroSeen()
 	}
-	r.opr.ShowAllFeeds(r.display, r.backend.ListFeedsF(r.ctx))
+	r.opr.ShowAllFeeds(r.display, r.backend.GetAllFeedsF(r.ctx))
 	r.opr.RefreshStats(r.display, r.backend.GetStatsF(r.ctx))
 	return r.display.Start()
 }
