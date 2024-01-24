@@ -116,7 +116,7 @@ func TestFocusFeedPane(t *testing.T) {
 	r.Equal(dsp.feedsPane, dsp.inner.GetFocus())
 }
 
-func TestShowAllFeedsErr(t *testing.T) {
+func TestPopulateFeedsPaneErr(t *testing.T) {
 	r := require.New(t)
 	a := assert.New(t)
 	draw, opr, dsp := setupDisplayOperatorTest(t)
@@ -124,7 +124,7 @@ func TestShowAllFeedsErr(t *testing.T) {
 	draw()
 
 	r.Empty(dsp.feedsPane.GetRoot().GetChildren())
-	opr.ShowAllFeeds(
+	opr.PopulateFeedsPane(
 		dsp,
 		func() ([]*entity.Feed, error) { return nil, fmt.Errorf("fail") },
 	)
@@ -136,7 +136,7 @@ func TestShowAllFeedsErr(t *testing.T) {
 	)
 }
 
-func TestShowAllFeedsOk(t *testing.T) {
+func TestPopulateFeedsPaneOk(t *testing.T) {
 	r := require.New(t)
 	a := assert.New(t)
 	draw, opr, dsp := setupDisplayOperatorTest(t)
@@ -156,7 +156,7 @@ func TestShowAllFeedsOk(t *testing.T) {
 	draw()
 
 	r.Empty(groupNodes())
-	opr.ShowAllFeeds(
+	opr.PopulateFeedsPane(
 		dsp,
 		func() ([]*entity.Feed, error) {
 			feeds := []*entity.Feed{

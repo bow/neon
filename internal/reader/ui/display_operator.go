@@ -82,7 +82,7 @@ func (do *DisplayOperator) RefreshFeeds(d *Display, f func() (<-chan entity.Pull
 	}
 }
 
-func (do *DisplayOperator) ShowAllFeeds(d *Display, f func() ([]*entity.Feed, error)) {
+func (do *DisplayOperator) PopulateFeedsPane(d *Display, f func() ([]*entity.Feed, error)) {
 	feeds, err := f()
 	if err != nil {
 		d.errEvent(err)

@@ -15,7 +15,7 @@ type Operator interface {
 	FocusReadingPane(*Display)
 	RefreshFeeds(*Display, func() (<-chan entity.PullResult, error))
 	RefreshStats(*Display, func() (*entity.Stats, error))
-	ShowAllFeeds(*Display, func() ([]*entity.Feed, error))
+	PopulateFeedsPane(*Display, func() ([]*entity.Feed, error))
 	ShowIntroPopup(*Display)
 	ToggleAboutPopup(*Display, string)
 	ToggleHelpPopup(*Display)

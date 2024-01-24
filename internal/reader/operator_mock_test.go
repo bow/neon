@@ -112,6 +112,18 @@ func (mr *MockOperatorMockRecorder) FocusReadingPane(arg0 any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FocusReadingPane", reflect.TypeOf((*MockOperator)(nil).FocusReadingPane), arg0)
 }
 
+// PopulateFeedsPane mocks base method.
+func (m *MockOperator) PopulateFeedsPane(arg0 *ui.Display, arg1 func() ([]*entity.Feed, error)) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "PopulateFeedsPane", arg0, arg1)
+}
+
+// PopulateFeedsPane indicates an expected call of PopulateFeedsPane.
+func (mr *MockOperatorMockRecorder) PopulateFeedsPane(arg0, arg1 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PopulateFeedsPane", reflect.TypeOf((*MockOperator)(nil).PopulateFeedsPane), arg0, arg1)
+}
+
 // RefreshFeeds mocks base method.
 func (m *MockOperator) RefreshFeeds(arg0 *ui.Display, arg1 func() (<-chan entity.PullResult, error)) {
 	m.ctrl.T.Helper()
@@ -134,18 +146,6 @@ func (m *MockOperator) RefreshStats(arg0 *ui.Display, arg1 func() (*entity.Stats
 func (mr *MockOperatorMockRecorder) RefreshStats(arg0, arg1 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RefreshStats", reflect.TypeOf((*MockOperator)(nil).RefreshStats), arg0, arg1)
-}
-
-// ShowAllFeeds mocks base method.
-func (m *MockOperator) ShowAllFeeds(arg0 *ui.Display, arg1 func() ([]*entity.Feed, error)) {
-	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "ShowAllFeeds", arg0, arg1)
-}
-
-// ShowAllFeeds indicates an expected call of ShowAllFeeds.
-func (mr *MockOperatorMockRecorder) ShowAllFeeds(arg0, arg1 any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ShowAllFeeds", reflect.TypeOf((*MockOperator)(nil).ShowAllFeeds), arg0, arg1)
 }
 
 // ShowIntroPopup mocks base method.

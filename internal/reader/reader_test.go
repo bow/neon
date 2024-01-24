@@ -229,7 +229,7 @@ func setupReaderTest(t *testing.T) *testWrapper {
 
 			be.EXPECT().GetAllFeedsF(gomock.Any()).
 				Return(func() ([]*entity.Feed, error) { return nil, nil })
-			opr.EXPECT().ShowAllFeeds(gomock.Any(), gomock.Any())
+			opr.EXPECT().PopulateFeedsPane(gomock.Any(), gomock.Any())
 
 			rerr := rdr.Start()
 			r.NoError(rerr)
