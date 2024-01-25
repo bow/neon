@@ -52,7 +52,7 @@ func (db *SQLite) PullFeeds(
 			chs[i] = pullFeedEntries(ctx, tx, pk, db.parser, returnAllEntries)
 		}
 
-		for pr := range merge(chs) {
+		for pr := range internal.Merge(chs) {
 			pr := pr
 			if e := pr.Error(); e != nil {
 				pr.SetError(fail(e))
@@ -229,30 +229,4 @@ func pullFeedEntries(
 	}()
 
 	return oc
-}
-
-func merge[T any](chs []<-chan T) chan T {
-	var (
-		wg     sync.WaitGroup
-		merged = make(chan T, len(chs))
-	)
-
-	forward := func(ch <-chan T) {
-		for msg := range ch {
-			merged <- msg
-		}
-		wg.Done()
-	}
-
-	wg.Add(len(chs))
-	for _, ch := range chs {
-		go forward(ch)
-	}
-
-	go func() {
-		wg.Wait()
-		close(merged)
-	}()
-
-	return merged
 }

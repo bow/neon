@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"sync"
 )
 
 // AppName returns the application name.
@@ -49,6 +50,32 @@ func Dedup[T comparable](values []T) []T {
 	}
 
 	return nodup
+}
+
+func Merge[T any](chs []<-chan T) chan T {
+	var (
+		wg     sync.WaitGroup
+		merged = make(chan T, len(chs))
+	)
+
+	forward := func(ch <-chan T) {
+		for msg := range ch {
+			merged <- msg
+		}
+		wg.Done()
+	}
+
+	wg.Add(len(chs))
+	for _, ch := range chs {
+		go forward(ch)
+	}
+
+	go func() {
+		wg.Wait()
+		close(merged)
+	}()
+
+	return merged
 }
 
 // envPrefix returns the environment variable prefix for configuration.
