@@ -38,8 +38,26 @@ func newFeedsPane(theme *Theme, lang *Lang) *feedsPane {
 
 	focusf, unfocusf := fp.makeDrawFuncs()
 	fp.SetDrawFunc(unfocusf)
-	fp.SetFocusFunc(func() { fp.SetDrawFunc(focusf) })
-	fp.SetBlurFunc(func() { fp.SetDrawFunc(unfocusf) })
+	fp.SetFocusFunc(
+		func() {
+			fp.SetDrawFunc(focusf)
+			if root := fp.GetRoot(); root != nil {
+				if gnodes := root.GetChildren(); len(gnodes) > 0 {
+					if fnodes := gnodes[0].GetChildren(); len(fnodes) > 0 {
+						// TODO: Store last focused item and restore instead of always
+						//       focusing on first item.
+						fp.TreeView.SetCurrentNode(fnodes[0])
+					}
+				}
+			}
+		},
+	)
+	fp.SetBlurFunc(
+		func() {
+			fp.SetDrawFunc(unfocusf)
+			fp.TreeView.SetCurrentNode(nil)
+		},
+	)
 
 	return &fp
 }
