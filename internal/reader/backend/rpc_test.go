@@ -20,6 +20,8 @@ import (
 )
 
 func TestGetStatsFOk(t *testing.T) {
+	t.Parallel()
+
 	r := require.New(t)
 	a := assert.New(t)
 	rpc, client := newBackendRPCTest(t)
@@ -37,6 +39,8 @@ func TestGetStatsFOk(t *testing.T) {
 }
 
 func TestGetStatsFErr(t *testing.T) {
+	t.Parallel()
+
 	r := require.New(t)
 	a := assert.New(t)
 	rpc, client := newBackendRPCTest(t)
@@ -51,6 +55,8 @@ func TestGetStatsFErr(t *testing.T) {
 }
 
 func TestListFeedsFOk(t *testing.T) {
+	t.Parallel()
+
 	r := require.New(t)
 	a := assert.New(t)
 	rpc, client := newBackendRPCTest(t)
@@ -91,6 +97,8 @@ func TestListFeedsFOk(t *testing.T) {
 }
 
 func TestListFeedsFErr(t *testing.T) {
+	t.Parallel()
+
 	r := require.New(t)
 	a := assert.New(t)
 	rpc, client := newBackendRPCTest(t)
@@ -104,7 +112,124 @@ func TestListFeedsFErr(t *testing.T) {
 	a.EqualError(err, "nope")
 }
 
+func TestGetAllFeedsFErrStream(t *testing.T) {
+	t.Parallel()
+
+	r := require.New(t)
+	a := assert.New(t)
+	rpc, client := newBackendRPCTest(t)
+	streamClient1 := NewMockNeon_StreamEntriesClient(gomock.NewController(t))
+
+	client.EXPECT().
+		ListFeeds(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return(
+			&api.ListFeedsResponse{
+				Feeds: []*api.Feed{
+					{
+						Id:           uint32(5),
+						Title:        "F1",
+						FeedUrl:      "https://f1.com/feed.xml",
+						SubTime:      timestamppb.New(time.Now()),
+						LastPullTime: timestamppb.New(time.Now()),
+					},
+					{
+						Id:           uint32(8),
+						Title:        "F3",
+						FeedUrl:      "https://f3.com/feed.xml",
+						SubTime:      timestamppb.New(time.Now()),
+						LastPullTime: timestamppb.New(time.Now()),
+					},
+				},
+			},
+			nil,
+		)
+
+	client.EXPECT().
+		StreamEntries(gomock.Any(), gomock.Any()).
+		Return(streamClient1, nil)
+	streamClient1.EXPECT().
+		Recv().
+		Return(&api.StreamEntriesResponse{Entry: &api.Entry{Title: "F1-A"}}, nil)
+	streamClient1.EXPECT().
+		Recv().
+		Return(&api.StreamEntriesResponse{Entry: &api.Entry{Title: "F1-B"}}, nil)
+	streamClient1.EXPECT().
+		Recv().
+		Return(nil, io.EOF)
+
+	client.EXPECT().
+		StreamEntries(gomock.Any(), gomock.Any()).
+		Return(nil, fmt.Errorf("bzzt"))
+
+	feeds, err := rpc.GetAllFeedsF(context.Background())()
+	r.Nil(feeds)
+	a.EqualError(err, "bzzt")
+}
+
+func TestGetAllFeedsFErrStreamRecv(t *testing.T) {
+	t.Parallel()
+
+	r := require.New(t)
+	a := assert.New(t)
+	rpc, client := newBackendRPCTest(t)
+	streamClient1 := NewMockNeon_StreamEntriesClient(gomock.NewController(t))
+	streamClient2 := NewMockNeon_StreamEntriesClient(gomock.NewController(t))
+
+	client.EXPECT().
+		ListFeeds(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return(
+			&api.ListFeedsResponse{
+				Feeds: []*api.Feed{
+					{
+						Id:           uint32(5),
+						Title:        "F1",
+						FeedUrl:      "https://f1.com/feed.xml",
+						SubTime:      timestamppb.New(time.Now()),
+						LastPullTime: timestamppb.New(time.Now()),
+					},
+					{
+						Id:           uint32(8),
+						Title:        "F3",
+						FeedUrl:      "https://f3.com/feed.xml",
+						SubTime:      timestamppb.New(time.Now()),
+						LastPullTime: timestamppb.New(time.Now()),
+					},
+				},
+			},
+			nil,
+		)
+
+	client.EXPECT().
+		StreamEntries(gomock.Any(), gomock.Any()).
+		Return(streamClient1, nil)
+	streamClient1.EXPECT().
+		Recv().
+		Return(&api.StreamEntriesResponse{Entry: &api.Entry{Title: "F1-A"}}, nil)
+	streamClient1.EXPECT().
+		Recv().
+		Return(&api.StreamEntriesResponse{Entry: &api.Entry{Title: "F1-B"}}, nil)
+	streamClient1.EXPECT().
+		Recv().
+		Return(nil, io.EOF)
+
+	client.EXPECT().
+		StreamEntries(gomock.Any(), gomock.Any()).
+		Return(streamClient2, nil)
+	streamClient2.EXPECT().
+		Recv().
+		Return(&api.StreamEntriesResponse{Entry: &api.Entry{Title: "F3-A"}}, nil)
+	streamClient2.EXPECT().
+		Recv().
+		Return(nil, fmt.Errorf("cracck"))
+
+	feeds, err := rpc.GetAllFeedsF(context.Background())()
+	r.Nil(feeds)
+	a.EqualError(err, "cracck")
+}
+
 func TestPullFeedsFExtended(t *testing.T) {
+	t.Parallel()
+
 	r := require.New(t)
 	a := assert.New(t)
 	rpc, client := newBackendRPCTest(t)
@@ -166,6 +291,8 @@ func TestPullFeedsFExtended(t *testing.T) {
 }
 
 func TestPullFeedsFErr(t *testing.T) {
+	t.Parallel()
+
 	r := require.New(t)
 	a := assert.New(t)
 	rpc, client := newBackendRPCTest(t)
@@ -180,6 +307,8 @@ func TestPullFeedsFErr(t *testing.T) {
 }
 
 func TestPullFeedsFErrStream(t *testing.T) {
+	t.Parallel()
+
 	r := require.New(t)
 	a := assert.New(t)
 	rpc, client := newBackendRPCTest(t)

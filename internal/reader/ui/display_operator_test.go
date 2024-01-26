@@ -21,6 +21,8 @@ import (
 const screenW, screenH = 210, 60
 
 func TestClearStatusBar(t *testing.T) {
+	t.Parallel()
+
 	r := require.New(t)
 	draw, opr, dsp := setupDisplayOperatorTest(t)
 
@@ -37,6 +39,8 @@ func TestClearStatusBar(t *testing.T) {
 }
 
 func TestFocusEntriesPane(t *testing.T) {
+	t.Parallel()
+
 	r := require.New(t)
 	draw, opr, dsp := setupDisplayOperatorTest(t)
 
@@ -49,6 +53,8 @@ func TestFocusEntriesPane(t *testing.T) {
 }
 
 func TestFocusNextPane(t *testing.T) {
+	t.Parallel()
+
 	r := require.New(t)
 
 	draw, opr, dsp := setupDisplayOperatorTest(t)
@@ -71,6 +77,8 @@ func TestFocusNextPane(t *testing.T) {
 }
 
 func TestFocusPreviousPane(t *testing.T) {
+	t.Parallel()
+
 	r := require.New(t)
 
 	draw, opr, dsp := setupDisplayOperatorTest(t)
@@ -93,6 +101,8 @@ func TestFocusPreviousPane(t *testing.T) {
 }
 
 func TestFocusReadingPane(t *testing.T) {
+	t.Parallel()
+
 	r := require.New(t)
 	draw, opr, dsp := setupDisplayOperatorTest(t)
 
@@ -105,6 +115,8 @@ func TestFocusReadingPane(t *testing.T) {
 }
 
 func TestFocusFeedPane(t *testing.T) {
+	t.Parallel()
+
 	r := require.New(t)
 	draw, opr, dsp := setupDisplayOperatorTest(t)
 
@@ -117,6 +129,8 @@ func TestFocusFeedPane(t *testing.T) {
 }
 
 func TestPopulateFeedsPaneErr(t *testing.T) {
+	t.Parallel()
+
 	r := require.New(t)
 	a := assert.New(t)
 	draw, opr, dsp := setupDisplayOperatorTest(t)
@@ -137,6 +151,8 @@ func TestPopulateFeedsPaneErr(t *testing.T) {
 }
 
 func TestPopulateFeedsPaneOk(t *testing.T) {
+	t.Parallel()
+
 	r := require.New(t)
 	a := assert.New(t)
 	draw, opr, dsp := setupDisplayOperatorTest(t)
@@ -206,6 +222,8 @@ func TestPopulateFeedsPaneOk(t *testing.T) {
 }
 
 func TestShowIntroPopup(t *testing.T) {
+	t.Parallel()
+
 	a := assert.New(t)
 	r := require.New(t)
 	draw, opr, dsp := setupDisplayOperatorTest(t)
@@ -226,6 +244,8 @@ func TestShowIntroPopup(t *testing.T) {
 }
 
 func TestToggleAboutPopup(t *testing.T) {
+	t.Parallel()
+
 	a := assert.New(t)
 	r := require.New(t)
 	draw, opr, dsp := setupDisplayOperatorTest(t)
@@ -265,6 +285,8 @@ func TestToggleAboutPopup(t *testing.T) {
 }
 
 func TestToggleHelpPopup(t *testing.T) {
+	t.Parallel()
+
 	a := assert.New(t)
 	r := require.New(t)
 	draw, opr, dsp := setupDisplayOperatorTest(t)
@@ -287,6 +309,8 @@ func TestToggleHelpPopup(t *testing.T) {
 }
 
 func TestToggleStatsPopup(t *testing.T) {
+	t.Parallel()
+
 	a := assert.New(t)
 	r := require.New(t)
 	draw, opr, dsp := setupDisplayOperatorTest(t)
@@ -324,6 +348,8 @@ func TestToggleStatsPopup(t *testing.T) {
 }
 
 func TestToggleStatusBar(t *testing.T) {
+	t.Parallel()
+
 	a := assert.New(t)
 	draw, opr, dsp := setupDisplayOperatorTest(t)
 
@@ -339,6 +365,8 @@ func TestToggleStatusBar(t *testing.T) {
 }
 
 func TestUnfocusFront(t *testing.T) {
+	t.Parallel()
+
 	a := assert.New(t)
 	r := require.New(t)
 	draw, opr, dsp := setupDisplayOperatorTest(t)
