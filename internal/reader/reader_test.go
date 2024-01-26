@@ -249,12 +249,16 @@ func setupReaderTest(t *testing.T) *testWrapper {
 			stt.EXPECT().IntroSeen().Return(tw.introSeen)
 
 			be.EXPECT().GetStatsF(gomock.Any()).
+				MinTimes(0).
 				Return(func() (*entity.Stats, error) { return nil, nil })
-			opr.EXPECT().RefreshStats(gomock.Any(), gomock.Any())
+			opr.EXPECT().RefreshStats(gomock.Any(), gomock.Any()).
+				MinTimes(0)
 
 			be.EXPECT().GetAllFeedsF(gomock.Any()).
+				MinTimes(0).
 				Return(func() ([]*entity.Feed, error) { return nil, nil })
-			opr.EXPECT().PopulateFeedsPane(gomock.Any(), gomock.Any())
+			opr.EXPECT().PopulateFeedsPane(gomock.Any(), gomock.Any()).
+				MinTimes(0)
 
 			rerr := rdr.Start()
 			r.NoError(rerr)
