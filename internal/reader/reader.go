@@ -33,8 +33,10 @@ func (r *Reader) Start() error {
 		defer r.state.MarkIntroSeen()
 	}
 	go func() {
-		r.opr.PopulateFeedsPane(r.display, r.backend.GetAllFeedsF(r.ctx))
-		r.opr.RefreshStats(r.display, r.backend.GetStatsF(r.ctx))
+		ctx, cancel := r.callCtx()
+		defer cancel()
+		r.opr.PopulateFeedsPane(r.display, r.backend.GetAllFeedsF(ctx))
+		r.opr.RefreshStats(r.display, r.backend.GetStatsF(ctx))
 	}()
 	return r.display.Start()
 }
