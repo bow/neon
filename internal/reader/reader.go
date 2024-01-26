@@ -175,9 +175,10 @@ type Builder struct {
 	scr       tcell.Screen
 
 	// rpcBackend args.
-	addr        string
-	dopts       []grpc.DialOption
-	callTimeout time.Duration
+	addr           string
+	dopts          []grpc.DialOption
+	callTimeout    time.Duration
+	connectTimeout time.Duration
 
 	// For testing.
 	be  bknd.Backend
@@ -197,6 +198,11 @@ func NewBuilder(ctx context.Context) *Builder {
 
 func (b *Builder) Address(addr string) *Builder {
 	b.addr = addr
+	return b
+}
+
+func (b *Builder) ConnectTimeout(timeout time.Duration) *Builder {
+	b.connectTimeout = timeout
 	return b
 }
 
@@ -247,13 +253,19 @@ func (b *Builder) Build() (*Reader, error) {
 	}
 
 	var (
-		be  bknd.Backend
-		err error
+		be         bknd.Backend
+		err        error
+		connectCtx = b.ctx
+		cancel     context.CancelFunc
 	)
 	if b.be != nil {
 		be = b.be
 	} else {
-		be, err = bknd.NewRPC(b.ctx, b.addr, b.dopts...)
+		if b.connectTimeout > 0 {
+			connectCtx, cancel = context.WithTimeout(b.ctx, b.connectTimeout)
+			defer cancel()
+		}
+		be, err = bknd.NewRPC(connectCtx, b.addr, b.dopts...)
 		if err != nil {
 			return nil, err
 		}

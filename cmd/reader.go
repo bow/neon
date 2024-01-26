@@ -4,7 +4,6 @@
 package cmd
 
 import (
-	"context"
 	"fmt"
 	"net"
 	"time"
@@ -39,10 +38,11 @@ func newReaderCommand() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 
 			var (
-				err         error
-				connectAddr net.Addr
-				ctx         = cmd.Context()
-				dialOpts    = []grpc.DialOption{
+				err            error
+				connectAddr    net.Addr
+				connectTimeout time.Duration
+				ctx            = cmd.Context()
+				dialOpts       = []grpc.DialOption{
 					grpc.WithTransportCredentials(insecure.NewCredentials()),
 				}
 				addr = resolveAddr(v, addrKey, connectKey, defaultConnectAddr, defaultStartAddr)
@@ -54,9 +54,7 @@ func newReaderCommand() *cobra.Command {
 					return err
 				}
 				dialOpts = append(dialOpts, grpc.WithBlock())
-				var cancel context.CancelFunc
-				ctx, cancel = context.WithTimeout(ctx, v.GetDuration(connectTimeoutKey))
-				defer cancel()
+				connectTimeout = v.GetDuration(connectTimeoutKey)
 
 			} else {
 				server, ierr := makeServer(cmd, v, addr)
@@ -74,6 +72,7 @@ func newReaderCommand() *cobra.Command {
 
 			rdr, err := reader.NewBuilder(cmd.Context()).
 				Context(ctx).
+				ConnectTimeout(connectTimeout).
 				Address(connectAddr.String()).
 				DialOpts(dialOpts...).
 				Build()
