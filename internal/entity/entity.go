@@ -166,6 +166,16 @@ func FromFeedPb(pb *api.Feed) *Feed {
 	}
 }
 
+func FromFeedPbs(pbs []*api.Feed) []*Feed {
+	feeds := make([]*Feed, 0)
+	for _, pb := range pbs {
+		if feed := FromFeedPb(pb); feed != nil {
+			feeds = append(feeds, feed)
+		}
+	}
+	return feeds
+}
+
 type FeedEditOp struct {
 	ID          ID
 	Title       *string
