@@ -662,6 +662,53 @@ func TestEditEntriesOk(t *testing.T) {
 	a.Equal(entries[1].IsBookmarked, entry1.IsBookmarked)
 }
 
+func TestStreamEntriesAllOk(t *testing.T) {
+	t.Parallel()
+
+	r := require.New(t)
+	a := assert.New(t)
+	client, ds := setupServerTest(t)
+
+	req := api.StreamEntriesRequest{FeedId: uint32(8)}
+	entries := []*entity.Entry{
+		{Title: "Entry 1"},
+		{Title: "Entry 2"},
+		{Title: "Entry 3"},
+	}
+
+	ds.EXPECT().
+		ListEntries(gomock.Any(), []entity.ID{8}, nil).
+		Return(entries, nil)
+
+	stream, err := client.StreamEntries(context.Background(), &req)
+	r.NoError(err)
+
+	var (
+		rsp       *api.StreamEntriesResponse
+		errStream error
+		rsps      = make([]*api.StreamEntriesResponse, 3)
+	)
+	for i := 0; i < len(rsps); i++ {
+		rsp, errStream = stream.Recv()
+		a.NoError(errStream)
+		a.NotNil(rsp)
+		rsps[i] = rsp
+	}
+
+	rsp, errStream = stream.Recv()
+	a.ErrorIs(errStream, io.EOF)
+	a.Nil(rsp)
+
+	// Sort responses so tests are insensitive to input order.
+	sort.SliceStable(rsps, func(i, j int) bool {
+		return rsps[i].GetEntry().GetTitle() < rsps[j].GetEntry().GetTitle()
+	})
+
+	a.Equal("Entry 1", rsps[0].GetEntry().GetTitle())
+	a.Equal("Entry 2", rsps[1].GetEntry().GetTitle())
+	a.Equal("Entry 3", rsps[2].GetEntry().GetTitle())
+}
+
 func TestGetEntryOk(t *testing.T) {
 	t.Parallel()
 

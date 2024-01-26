@@ -27,6 +27,9 @@ service Neon {
   // DeleteFeeds removes one or more feed sources.
   rpc DeleteFeeds (DeleteFeedsRequest) returns (DeleteFeedsResponse) {}
 
+  // StreamEntries streams entries of a specific feed.
+  rpc StreamEntries (StreamEntriesRequest) returns (stream StreamEntriesResponse) {}
+
   // ListEntries lists entries of a specific feed.
   rpc ListEntries (ListEntriesRequest) returns (ListEntriesResponse) {}
 
@@ -162,6 +165,14 @@ message EditEntriesRequest {
 
 message EditEntriesResponse {
   repeated Entry entries = 1;
+}
+
+message StreamEntriesRequest {
+  uint32 feed_id = 1;
+}
+
+message StreamEntriesResponse {
+  Entry entry = 1;
 }
 
 message GetEntryRequest {

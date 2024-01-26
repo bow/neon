@@ -177,6 +177,25 @@ func (svc *service) EditEntries(
 	return &rsp, nil
 }
 
+// StreamEntries satisfies the service API.
+func (svc *service) StreamEntries(
+	req *api.StreamEntriesRequest,
+	stream api.Neon_StreamEntriesServer,
+) error {
+	entries, err := svc.ds.ListEntries(stream.Context(), []entity.ID{req.GetFeedId()}, nil)
+	if err != nil {
+		return err
+	}
+	for _, entry := range entries {
+		entry := entry
+		rsp := api.StreamEntriesResponse{Entry: toEntryPb(entry)}
+		if err := stream.Send(&rsp); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 // GetEntry satisfies the service API.
 func (svc *service) GetEntry(
 	ctx context.Context,

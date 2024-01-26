@@ -24,18 +24,19 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Neon_AddFeed_FullMethodName     = "/neon.Neon/AddFeed"
-	Neon_EditFeeds_FullMethodName   = "/neon.Neon/EditFeeds"
-	Neon_ListFeeds_FullMethodName   = "/neon.Neon/ListFeeds"
-	Neon_PullFeeds_FullMethodName   = "/neon.Neon/PullFeeds"
-	Neon_DeleteFeeds_FullMethodName = "/neon.Neon/DeleteFeeds"
-	Neon_ListEntries_FullMethodName = "/neon.Neon/ListEntries"
-	Neon_EditEntries_FullMethodName = "/neon.Neon/EditEntries"
-	Neon_GetEntry_FullMethodName    = "/neon.Neon/GetEntry"
-	Neon_ExportOPML_FullMethodName  = "/neon.Neon/ExportOPML"
-	Neon_ImportOPML_FullMethodName  = "/neon.Neon/ImportOPML"
-	Neon_GetStats_FullMethodName    = "/neon.Neon/GetStats"
-	Neon_GetInfo_FullMethodName     = "/neon.Neon/GetInfo"
+	Neon_AddFeed_FullMethodName       = "/neon.Neon/AddFeed"
+	Neon_EditFeeds_FullMethodName     = "/neon.Neon/EditFeeds"
+	Neon_ListFeeds_FullMethodName     = "/neon.Neon/ListFeeds"
+	Neon_PullFeeds_FullMethodName     = "/neon.Neon/PullFeeds"
+	Neon_DeleteFeeds_FullMethodName   = "/neon.Neon/DeleteFeeds"
+	Neon_StreamEntries_FullMethodName = "/neon.Neon/StreamEntries"
+	Neon_ListEntries_FullMethodName   = "/neon.Neon/ListEntries"
+	Neon_EditEntries_FullMethodName   = "/neon.Neon/EditEntries"
+	Neon_GetEntry_FullMethodName      = "/neon.Neon/GetEntry"
+	Neon_ExportOPML_FullMethodName    = "/neon.Neon/ExportOPML"
+	Neon_ImportOPML_FullMethodName    = "/neon.Neon/ImportOPML"
+	Neon_GetStats_FullMethodName      = "/neon.Neon/GetStats"
+	Neon_GetInfo_FullMethodName       = "/neon.Neon/GetInfo"
 )
 
 // NeonClient is the client API for Neon service.
@@ -52,6 +53,8 @@ type NeonClient interface {
 	PullFeeds(ctx context.Context, in *PullFeedsRequest, opts ...grpc.CallOption) (Neon_PullFeedsClient, error)
 	// DeleteFeeds removes one or more feed sources.
 	DeleteFeeds(ctx context.Context, in *DeleteFeedsRequest, opts ...grpc.CallOption) (*DeleteFeedsResponse, error)
+	// StreamEntries streams entries of a specific feed.
+	StreamEntries(ctx context.Context, in *StreamEntriesRequest, opts ...grpc.CallOption) (Neon_StreamEntriesClient, error)
 	// ListEntries lists entries of a specific feed.
 	ListEntries(ctx context.Context, in *ListEntriesRequest, opts ...grpc.CallOption) (*ListEntriesResponse, error)
 	// EditEntries sets one or more fields of an entry.
@@ -144,6 +147,38 @@ func (c *neonClient) DeleteFeeds(ctx context.Context, in *DeleteFeedsRequest, op
 	return out, nil
 }
 
+func (c *neonClient) StreamEntries(ctx context.Context, in *StreamEntriesRequest, opts ...grpc.CallOption) (Neon_StreamEntriesClient, error) {
+	stream, err := c.cc.NewStream(ctx, &Neon_ServiceDesc.Streams[1], Neon_StreamEntries_FullMethodName, opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &neonStreamEntriesClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type Neon_StreamEntriesClient interface {
+	Recv() (*StreamEntriesResponse, error)
+	grpc.ClientStream
+}
+
+type neonStreamEntriesClient struct {
+	grpc.ClientStream
+}
+
+func (x *neonStreamEntriesClient) Recv() (*StreamEntriesResponse, error) {
+	m := new(StreamEntriesResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 func (c *neonClient) ListEntries(ctx context.Context, in *ListEntriesRequest, opts ...grpc.CallOption) (*ListEntriesResponse, error) {
 	out := new(ListEntriesResponse)
 	err := c.cc.Invoke(ctx, Neon_ListEntries_FullMethodName, in, out, opts...)
@@ -221,6 +256,8 @@ type NeonServer interface {
 	PullFeeds(*PullFeedsRequest, Neon_PullFeedsServer) error
 	// DeleteFeeds removes one or more feed sources.
 	DeleteFeeds(context.Context, *DeleteFeedsRequest) (*DeleteFeedsResponse, error)
+	// StreamEntries streams entries of a specific feed.
+	StreamEntries(*StreamEntriesRequest, Neon_StreamEntriesServer) error
 	// ListEntries lists entries of a specific feed.
 	ListEntries(context.Context, *ListEntriesRequest) (*ListEntriesResponse, error)
 	// EditEntries sets one or more fields of an entry.
@@ -256,6 +293,9 @@ func (UnimplementedNeonServer) PullFeeds(*PullFeedsRequest, Neon_PullFeedsServer
 }
 func (UnimplementedNeonServer) DeleteFeeds(context.Context, *DeleteFeedsRequest) (*DeleteFeedsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteFeeds not implemented")
+}
+func (UnimplementedNeonServer) StreamEntries(*StreamEntriesRequest, Neon_StreamEntriesServer) error {
+	return status.Errorf(codes.Unimplemented, "method StreamEntries not implemented")
 }
 func (UnimplementedNeonServer) ListEntries(context.Context, *ListEntriesRequest) (*ListEntriesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListEntries not implemented")
@@ -382,6 +422,27 @@ func _Neon_DeleteFeeds_Handler(srv interface{}, ctx context.Context, dec func(in
 		return srv.(NeonServer).DeleteFeeds(ctx, req.(*DeleteFeedsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
+}
+
+func _Neon_StreamEntries_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(StreamEntriesRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(NeonServer).StreamEntries(m, &neonStreamEntriesServer{stream})
+}
+
+type Neon_StreamEntriesServer interface {
+	Send(*StreamEntriesResponse) error
+	grpc.ServerStream
+}
+
+type neonStreamEntriesServer struct {
+	grpc.ServerStream
+}
+
+func (x *neonStreamEntriesServer) Send(m *StreamEntriesResponse) error {
+	return x.ServerStream.SendMsg(m)
 }
 
 func _Neon_ListEntries_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -566,6 +627,11 @@ var Neon_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "PullFeeds",
 			Handler:       _Neon_PullFeeds_Handler,
+			ServerStreams: true,
+		},
+		{
+			StreamName:    "StreamEntries",
+			Handler:       _Neon_StreamEntries_Handler,
 			ServerStreams: true,
 		},
 	},
