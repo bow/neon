@@ -10,6 +10,7 @@ import (
 	"io"
 
 	"github.com/bow/neon/api"
+	"github.com/bow/neon/internal"
 	"github.com/bow/neon/internal/entity"
 	"google.golang.org/grpc"
 )
@@ -52,23 +53,12 @@ func (r *RPC) GetStatsF(ctx context.Context) func() (*entity.Stats, error) {
 }
 
 func (r *RPC) GetAllFeedsF(ctx context.Context) func() ([]*entity.Feed, error) {
-	// FIXME: Actually implement querying all feeds.
 	return func() ([]*entity.Feed, error) {
-		nmax := uint32(0)
-		rsp, err := r.client.ListFeeds(
-			ctx,
-			&api.ListFeedsRequest{MaxEntriesPerFeed: &nmax},
-		)
+		feeds, err := r.listEmptyFeeds(ctx)
 		if err != nil {
 			return nil, err
 		}
-		rfeeds := rsp.GetFeeds()
-		feeds := make([]*entity.Feed, len(rfeeds))
-		for i, rfeed := range rfeeds {
-			feeds[i] = entity.FromFeedPb(rfeed)
-		}
-
-		return feeds, nil
+		return r.fillEmptyFeeds(ctx, feeds)
 	}
 }
 
@@ -108,4 +98,63 @@ func (r *RPC) PullFeedsF(
 
 func (r *RPC) String() string {
 	return fmt.Sprintf("grpc://%s", r.addr)
+}
+
+func (r *RPC) listEmptyFeeds(ctx context.Context) ([]*entity.Feed, error) {
+	nmax := uint32(0)
+	rsp, err := r.client.ListFeeds(
+		ctx,
+		&api.ListFeedsRequest{MaxEntriesPerFeed: &nmax},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return entity.FromFeedPbs(rsp.GetFeeds()), nil
+}
+
+func (r *RPC) fillEmptyFeeds(
+	ctx context.Context,
+	feeds []*entity.Feed,
+) ([]*entity.Feed, error) {
+
+	chs := make([]<-chan result[*entity.Feed], len(feeds))
+	for i, feed := range feeds {
+		feed := feed
+		ch := make(chan result[*entity.Feed])
+		chs[i] = ch
+		go func() {
+			defer close(ch)
+			stream, err := r.client.StreamEntries(
+				ctx,
+				&api.StreamEntriesRequest{FeedId: feed.ID},
+			)
+			if err != nil {
+				ch <- errResult[*entity.Feed](err)
+				return
+			}
+			for {
+				srsp, serr := stream.Recv()
+				if serr != nil {
+					if serr != io.EOF {
+						ch <- errResult[*entity.Feed](serr)
+					} else {
+						ch <- okResult(feed)
+					}
+					return
+				}
+				feed.Entries = append(feed.Entries, entity.FromEntryPb(srsp.GetEntry()))
+			}
+		}()
+	}
+
+	filled := make([]*entity.Feed, 0)
+	for res := range internal.Merge(chs) {
+		res := res
+		if err := res.err; err != nil {
+			return nil, err
+		}
+		filled = append(filled, res.value)
+	}
+	return filled, nil
 }

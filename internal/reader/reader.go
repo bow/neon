@@ -32,8 +32,10 @@ func (r *Reader) Start() error {
 		r.opr.ShowIntroPopup(r.display)
 		defer r.state.MarkIntroSeen()
 	}
-	r.opr.PopulateFeedsPane(r.display, r.backend.GetAllFeedsF(r.ctx))
-	r.opr.RefreshStats(r.display, r.backend.GetStatsF(r.ctx))
+	go func() {
+		r.opr.PopulateFeedsPane(r.display, r.backend.GetAllFeedsF(r.ctx))
+		r.opr.RefreshStats(r.display, r.backend.GetStatsF(r.ctx))
+	}()
 	return r.display.Start()
 }
 

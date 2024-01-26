@@ -16,3 +16,16 @@ type Backend interface {
 	PullFeedsF(context.Context, []entity.ID, bool) func() (<-chan entity.PullResult, error)
 	String() string
 }
+
+type result[T any] struct {
+	value T
+	err   error
+}
+
+func okResult[T any](value T) result[T] {
+	return result[T]{value: value, err: nil}
+}
+
+func errResult[T any](err error) result[T] {
+	return result[T]{err: err}
+}

@@ -7,6 +7,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"sort"
 	"testing"
 	"time"
 
@@ -54,12 +55,14 @@ func TestGetStatsFErr(t *testing.T) {
 	a.EqualError(err, "nope")
 }
 
-func TestListFeedsFOk(t *testing.T) {
+func TestGetAllFeedsFOk(t *testing.T) {
 	t.Parallel()
 
 	r := require.New(t)
 	a := assert.New(t)
 	rpc, client := newBackendRPCTest(t)
+	streamClient1 := NewMockNeon_StreamEntriesClient(gomock.NewController(t))
+	streamClient2 := NewMockNeon_StreamEntriesClient(gomock.NewController(t))
 
 	client.EXPECT().
 		ListFeeds(gomock.Any(), gomock.Any(), gomock.Any()).
@@ -85,18 +88,63 @@ func TestListFeedsFOk(t *testing.T) {
 			nil,
 		)
 
+	client.EXPECT().
+		StreamEntries(
+			gomock.Any(),
+			gomock.Cond(
+				func(v any) bool {
+					req, ok := v.(*api.StreamEntriesRequest)
+					return ok && req.GetFeedId() == uint32(5)
+				},
+			),
+		).
+		Return(streamClient1, nil)
+	streamClient1.EXPECT().
+		Recv().
+		Return(&api.StreamEntriesResponse{Entry: &api.Entry{Title: "F1-A"}}, nil)
+	streamClient1.EXPECT().
+		Recv().
+		Return(&api.StreamEntriesResponse{Entry: &api.Entry{Title: "F1-B"}}, nil)
+	streamClient1.EXPECT().
+		Recv().
+		Return(nil, io.EOF)
+
+	client.EXPECT().
+		StreamEntries(
+			gomock.Any(),
+			gomock.Cond(
+				func(v any) bool {
+					req, ok := v.(*api.StreamEntriesRequest)
+					return ok && req.GetFeedId() == uint32(8)
+				},
+			),
+		).
+		Return(streamClient2, nil)
+	streamClient2.EXPECT().
+		Recv().
+		Return(&api.StreamEntriesResponse{Entry: &api.Entry{Title: "F3-A"}}, nil)
+	streamClient2.EXPECT().
+		Recv().
+		Return(nil, io.EOF)
+
 	feeds, err := rpc.GetAllFeedsF(context.Background())()
 	r.NoError(err)
-	a.Len(feeds, 2)
+	r.Len(feeds, 2)
+
+	sort.SliceStable(feeds, func(i, j int) bool { return feeds[i].ID < feeds[j].ID })
+
 	a.Equal(uint32(5), feeds[0].ID)
 	a.Equal("F1", feeds[0].Title)
 	a.Equal("https://f1.com/feed.xml", feeds[0].FeedURL)
+	a.Len(feeds[0].Entries, 2)
+
 	a.Equal(uint32(8), feeds[1].ID)
 	a.Equal("F3", feeds[1].Title)
 	a.Equal("https://f3.com/feed.xml", feeds[1].FeedURL)
+	a.Len(feeds[1].Entries, 1)
 }
 
-func TestListFeedsFErr(t *testing.T) {
+func TestGetAllFeedsFErrList(t *testing.T) {
 	t.Parallel()
 
 	r := require.New(t)
