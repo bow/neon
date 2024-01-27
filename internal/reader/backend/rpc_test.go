@@ -316,7 +316,7 @@ func TestPullFeedsFExtended(t *testing.T) {
 		Recv().
 		Return(nil, io.EOF)
 
-	ch, err := rpc.PullFeedsF(context.Background(), nil, false)()
+	ch, err := rpc.PullFeedsF(context.Background(), nil)()
 	r.NoError(err)
 	a.NotNil(ch)
 
@@ -349,7 +349,7 @@ func TestPullFeedsFErr(t *testing.T) {
 		PullFeeds(gomock.Any(), gomock.Any()).
 		Return(nil, fmt.Errorf("call fail"))
 
-	ch, err := rpc.PullFeedsF(context.Background(), nil, false)()
+	ch, err := rpc.PullFeedsF(context.Background(), nil)()
 	r.Nil(ch)
 	a.EqualError(err, "call fail")
 }
@@ -369,7 +369,7 @@ func TestPullFeedsFErrStream(t *testing.T) {
 		Recv().
 		Return(nil, fmt.Errorf("stream fail"))
 
-	ch, err := rpc.PullFeedsF(context.Background(), nil, false)()
+	ch, err := rpc.PullFeedsF(context.Background(), nil)()
 	r.NoError(err)
 	a.NotNil(ch)
 

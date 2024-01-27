@@ -13,7 +13,7 @@ import (
 type Backend interface {
 	GetStatsF(context.Context) func() (*entity.Stats, error)
 	GetAllFeedsF(context.Context) func() ([]*entity.Feed, error)
-	PullFeedsF(context.Context, []entity.ID, bool) func() (<-chan entity.PullResult, error)
+	PullFeedsF(context.Context, []entity.ID) func() (<-chan entity.PullResult, error)
 	String() string
 }
 
