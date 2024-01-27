@@ -92,6 +92,10 @@ type entryRecords []*entryRecord
 
 func (recs entryRecords) entries() []*entity.Entry {
 
+	if len(recs) == 0 {
+		return nil
+	}
+
 	entries := make([]*entity.Entry, len(recs))
 	for i, rec := range recs {
 		entries[i] = rec.entry()

@@ -30,7 +30,7 @@ func TestPullFeedsAllOkEmptyDB(t *testing.T) {
 		ParseURLWithContext(gomock.Any(), gomock.Any()).
 		MaxTimes(0)
 
-	c := db.PullFeeds(context.Background(), nil, false)
+	c := db.PullFeeds(context.Background(), nil, nil, nil)
 	a.Empty(c)
 }
 
@@ -69,7 +69,7 @@ func TestPullFeedsAllOkEmptyEntries(t *testing.T) {
 		MaxTimes(1).
 		Return(toGFeed(t, dbFeeds[1]), nil)
 
-	c := db.PullFeeds(context.Background(), nil, false)
+	c := db.PullFeeds(context.Background(), nil, nil, nil)
 
 	got := make([]entity.PullResult, 0)
 	for res := range c {
@@ -183,7 +183,7 @@ func TestPullFeedsAllOkNoNewEntries(t *testing.T) {
 		MaxTimes(1).
 		Return(toGFeed(t, pulledFeeds[1]), nil)
 
-	c := db.PullFeeds(context.Background(), nil, false)
+	c := db.PullFeeds(context.Background(), nil, pointer(false), nil)
 
 	got := make([]entity.PullResult, 0)
 	for res := range c {
@@ -209,7 +209,7 @@ func TestPullFeedsAllOkSomeNewEntriesAll(t *testing.T) {
 	a := assert.New(t)
 	db, dbFeeds, keys, pulledFeeds := setupComplexDBFixture(t)
 
-	c := db.PullFeeds(context.Background(), nil, true)
+	c := db.PullFeeds(context.Background(), nil, nil, nil)
 
 	got := make([]entity.PullResult, 0)
 	for res := range c {
@@ -310,12 +310,66 @@ func TestPullFeedsAllOkSomeNewEntriesAll(t *testing.T) {
 	a.ElementsMatch(want, got)
 }
 
+func TestPullFeedsAllOkSomeNewEntriesNoneReturned(t *testing.T) {
+	t.Parallel()
+	a := assert.New(t)
+	db, dbFeeds, keys, pulledFeeds := setupComplexDBFixture(t)
+
+	c := db.PullFeeds(context.Background(), nil, nil, pointer(uint32(0)))
+
+	got := make([]entity.PullResult, 0)
+	for res := range c {
+		got = append(got, res)
+	}
+
+	feedURL0 := pulledFeeds[0].feedURL
+	feedURL1 := pulledFeeds[1].feedURL
+
+	want := []entity.PullResult{
+		entity.NewPullResultFromFeed(
+			&dbFeeds[0].feedURL,
+			&entity.Feed{
+				ID:         keys[pulledFeeds[0].title].ID,
+				Title:      pulledFeeds[0].title,
+				FeedURL:    pulledFeeds[0].feedURL,
+				Updated:    db.getFeedUpdateTime(feedURL0),
+				Subscribed: db.getFeedSubTime(feedURL0),
+				LastPulled: time.Time{},
+				Entries:    nil,
+			},
+		),
+		entity.NewPullResultFromFeed(
+			&dbFeeds[1].feedURL,
+			&entity.Feed{
+				ID:         keys[pulledFeeds[1].title].ID,
+				Title:      pulledFeeds[1].title,
+				FeedURL:    pulledFeeds[1].feedURL,
+				Updated:    db.getFeedUpdateTime(feedURL1),
+				Subscribed: db.getFeedSubTime(feedURL1),
+				LastPulled: time.Time{},
+				Entries:    nil,
+			},
+		),
+	}
+
+	// Sort inner entries first, since ElementsMatch cares about inner array elements order.
+	sortPullResultEntries(want)
+	sortPullResultEntries(got)
+
+	// Set LastPulled fields to the zero value as this value is always updated on every pull.
+	for _, item := range got {
+		item.Feed().LastPulled = time.Time{}
+	}
+
+	a.ElementsMatch(want, got)
+}
+
 func TestPullFeedsAllOkSomeNewEntriesOnlyUnread(t *testing.T) {
 	t.Parallel()
 	a := assert.New(t)
 	db, dbFeeds, keys, pulledFeeds := setupComplexDBFixture(t)
 
-	c := db.PullFeeds(context.Background(), nil, false)
+	c := db.PullFeeds(context.Background(), nil, pointer(false), nil)
 
 	got := make([]entity.PullResult, 0)
 	for res := range c {
@@ -483,7 +537,7 @@ func TestPullFeedsSelectedOkSomeNewEntries(t *testing.T) {
 		MaxTimes(1).
 		Return(toGFeed(t, pulledFeed), nil)
 
-	c := db.PullFeeds(context.Background(), []ID{keys[pulledFeed.title].ID}, false)
+	c := db.PullFeeds(context.Background(), []ID{keys[pulledFeed.title].ID}, pointer(false), nil)
 
 	got := make([]entity.PullResult, 0)
 	for res := range c {

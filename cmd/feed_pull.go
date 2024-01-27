@@ -49,7 +49,8 @@ func newFeedPullCommand() *cobra.Command {
 				errs []error
 				n    int
 				s    = newPullSpinner(rawIDs)
-				ch   = db.PullFeeds(cmd.Context(), ids, false)
+				max  = uint32(0)
+				ch   = db.PullFeeds(cmd.Context(), ids, nil, &max)
 			)
 
 			s.Start()

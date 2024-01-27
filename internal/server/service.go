@@ -126,7 +126,12 @@ func (svc *service) PullFeeds(
 		ids[i] = id
 	}
 
-	ch := svc.ds.PullFeeds(stream.Context(), ids, req.GetReturnAllEntries())
+	ch := svc.ds.PullFeeds(
+		stream.Context(),
+		ids,
+		nil,
+		nil,
+	)
 
 	for pr := range ch {
 		payload, err := convert(pr)
