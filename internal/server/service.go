@@ -130,7 +130,7 @@ func (svc *service) PullFeeds(
 		stream.Context(),
 		ids,
 		nil,
-		nil,
+		req.MaxEntriesPerFeed,
 	)
 
 	for pr := range ch {
