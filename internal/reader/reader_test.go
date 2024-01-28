@@ -19,8 +19,6 @@ import (
 const screenW, screenH = 210, 60
 
 func TestClearStatusBar(t *testing.T) {
-	t.Parallel()
-
 	tw := setupReaderTest(t)
 
 	rdr := tw.draw()
@@ -30,8 +28,6 @@ func TestClearStatusBar(t *testing.T) {
 }
 
 func TestToggleAboutPopupCalled(t *testing.T) {
-	t.Parallel()
-
 	tw := setupReaderTest(t)
 
 	rdr := tw.draw()
@@ -44,8 +40,6 @@ func TestToggleAboutPopupCalled(t *testing.T) {
 }
 
 func TestFocusEntriesPane(t *testing.T) {
-	t.Parallel()
-
 	tw := setupReaderTest(t)
 
 	rdr := tw.draw()
@@ -55,8 +49,6 @@ func TestFocusEntriesPane(t *testing.T) {
 }
 
 func TestFocusFeedsPane(t *testing.T) {
-	t.Parallel()
-
 	tw := setupReaderTest(t)
 
 	rdr := tw.draw()
@@ -66,8 +58,6 @@ func TestFocusFeedsPane(t *testing.T) {
 }
 
 func TestFocusNextPane(t *testing.T) {
-	t.Parallel()
-
 	tw := setupReaderTest(t)
 
 	rdr := tw.draw()
@@ -77,8 +67,6 @@ func TestFocusNextPane(t *testing.T) {
 }
 
 func TestFocusPreviousPane(t *testing.T) {
-	t.Parallel()
-
 	tw := setupReaderTest(t)
 
 	rdr := tw.draw()
@@ -88,8 +76,6 @@ func TestFocusPreviousPane(t *testing.T) {
 }
 
 func TestFocusReadingPane(t *testing.T) {
-	t.Parallel()
-
 	tw := setupReaderTest(t)
 
 	rdr := tw.draw()
@@ -99,8 +85,6 @@ func TestFocusReadingPane(t *testing.T) {
 }
 
 func TestToggleHelpPopupCalled(t *testing.T) {
-	t.Parallel()
-
 	tw := setupReaderTest(t)
 
 	rdr := tw.draw()
@@ -114,8 +98,6 @@ func TestToggleHelpPopupCalled(t *testing.T) {
 }
 
 func TestToggleStatsPopupCalled(t *testing.T) {
-	t.Parallel()
-
 	tw := setupReaderTest(t)
 
 	rdr := tw.draw()
@@ -128,8 +110,6 @@ func TestToggleStatsPopupCalled(t *testing.T) {
 }
 
 func TestToggleStatusBarCalled(t *testing.T) {
-	t.Parallel()
-
 	tw := setupReaderTest(t)
 
 	rdr := tw.draw()
@@ -140,8 +120,6 @@ func TestToggleStatusBarCalled(t *testing.T) {
 }
 
 func TestShowIntroPopupCalled(t *testing.T) {
-	t.Parallel()
-
 	tw := setupReaderTest(t)
 
 	tw.introSeen = false
@@ -151,8 +129,6 @@ func TestShowIntroPopupCalled(t *testing.T) {
 }
 
 func TestUnfocusFrontCalled(t *testing.T) {
-	t.Parallel()
-
 	tw := setupReaderTest(t)
 
 	rdr := tw.draw()
@@ -163,8 +139,6 @@ func TestUnfocusFrontCalled(t *testing.T) {
 }
 
 func TestStartSmoke(t *testing.T) {
-	t.Parallel()
-
 	tw := setupReaderTest(t)
 
 	// Since draw states are hidden at this level, the test just checks that
