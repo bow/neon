@@ -41,6 +41,53 @@ func (f *Feed) NumEntriesUnread() int {
 	return f.NumEntriesTotal() - f.NumEntriesRead()
 }
 
+// Sort entries by read status (unread first), update date (oldest first), and published date
+// (oldest first).
+func (f *Feed) SortEntries() { // nolint:revive
+	sortDate := func(e *Entry) *time.Time {
+		if e.Updated != nil {
+			return e.Updated
+		}
+		if e.Published != nil {
+			return e.Published
+		}
+		return nil
+	}
+	isRead := func(e1, e2 *Entry) int {
+		if e1.IsRead && !e2.IsRead {
+			return 1
+		}
+		if !e1.IsRead && e2.IsRead {
+			return -1
+		}
+		return 0
+	}
+	date := func(e1, e2 *Entry) int {
+		d1 := sortDate(e1)
+		d2 := sortDate(e2)
+		if d1 != nil && d2 != nil {
+			if d1.Before(*d2) {
+				return 1
+			}
+			if d2.Before(*d1) {
+				return -1
+			}
+			return 0
+		}
+		if d1 != nil {
+			return -1
+		}
+		if d2 != nil {
+			return 1
+		}
+		return 0
+	}
+
+	ordered[*Entry]().
+		By(isRead, date).
+		Sort(f.Entries)
+}
+
 func (f *Feed) Outline() (*opml.Outline, error) {
 	outl := opml.Outline{
 		Text:        f.Title,

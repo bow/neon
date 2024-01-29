@@ -4,6 +4,7 @@
 package entity
 
 import (
+	"sort"
 	"strconv"
 	"time"
 
@@ -112,3 +113,47 @@ func FromTimestampPb(pb *timestamppb.Timestamp) *time.Time {
 }
 
 const defaultExportTitle = "neon export"
+
+type compFunc[T any] func(v1, v2 T) int
+
+type sorter[T any] struct {
+	items  []T
+	compfs []compFunc[T]
+}
+
+func ordered[T any]() *sorter[T] {
+	return &sorter[T]{compfs: make([]compFunc[T], 0)}
+}
+
+func (s *sorter[T]) By(compf ...compFunc[T]) *sorter[T] {
+	s.compfs = append(s.compfs, compf...)
+	return s
+}
+
+func (s *sorter[T]) Len() int {
+	return len(s.items)
+}
+
+func (s *sorter[T]) Swap(i, j int) {
+	s.items[i], s.items[j] = s.items[j], s.items[i]
+}
+
+func (s *sorter[T]) Less(i, j int) bool {
+	p, q := s.items[i], s.items[j]
+	var k int
+	for k = 0; k < len(s.compfs)-1; k++ {
+		comp := s.compfs[k](p, q)
+		if comp < 0 {
+			return true
+		}
+		if comp > 0 {
+			return false
+		}
+	}
+	return s.compfs[k](p, q) < 0
+}
+
+func (s *sorter[T]) Sort(items []T) {
+	s.items = items
+	sort.Sort(s)
+}
