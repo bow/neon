@@ -7,8 +7,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-
-	"github.com/bow/neon/internal/entity"
 )
 
 func TestDedup(t *testing.T) {
@@ -16,44 +14,44 @@ func TestDedup(t *testing.T) {
 
 	tests := []struct {
 		name  string
-		input []entity.ID
-		want  []entity.ID
+		input []uint32
+		want  []uint32
 	}{
-		{name: "empty input", input: []entity.ID{}, want: []entity.ID{}},
+		{name: "empty input", input: []uint32{}, want: []uint32{}},
 		{
 			"one item",
-			[]entity.ID{3},
-			[]entity.ID{3},
+			[]uint32{3},
+			[]uint32{3},
 		},
 		{
 			"multiple items, no duplicates",
-			[]entity.ID{2, 7, 3},
-			[]entity.ID{2, 7, 3},
+			[]uint32{2, 7, 3},
+			[]uint32{2, 7, 3},
 		},
 		{
 			"multiple items, duplicates at start",
-			[]entity.ID{2, 2, 7, 3},
-			[]entity.ID{2, 7, 3},
+			[]uint32{2, 2, 7, 3},
+			[]uint32{2, 7, 3},
 		},
 		{
 			"multiple items, duplicates in the middle",
-			[]entity.ID{2, 7, 7, 3},
-			[]entity.ID{2, 7, 3},
+			[]uint32{2, 7, 7, 3},
+			[]uint32{2, 7, 3},
 		},
 		{
 			"multiple items, duplicates at end",
-			[]entity.ID{2, 7, 3, 3, 3, 3},
-			[]entity.ID{2, 7, 3},
+			[]uint32{2, 7, 3, 3, 3, 3},
+			[]uint32{2, 7, 3},
 		},
 		{
 			"multiple items, duplicates in several places",
-			[]entity.ID{1, 2, 5, 5, 7, 3, 3, 3, 3},
-			[]entity.ID{1, 2, 5, 7, 3},
+			[]uint32{1, 2, 5, 5, 7, 3, 3, 3, 3},
+			[]uint32{1, 2, 5, 7, 3},
 		},
 		{
 			"multiple items, duplicates across several places",
-			[]entity.ID{1, 2, 5, 5, 7, 3, 3, 2, 2, 3, 3},
-			[]entity.ID{1, 2, 5, 7, 3},
+			[]uint32{1, 2, 5, 5, 7, 3, 3, 2, 2, 3, 3},
+			[]uint32{1, 2, 5, 7, 3},
 		},
 	}
 

@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/bow/neon/internal/opml"
+	"github.com/bow/neon/internal/sliceutil"
 )
 
 type Feed struct {
@@ -83,7 +84,7 @@ func (f *Feed) SortEntries() { // nolint:revive
 		return 0
 	}
 
-	ordered[*Entry]().
+	sliceutil.Ordered[*Entry]().
 		By(isRead, date).
 		Sort(f.Entries)
 }
