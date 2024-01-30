@@ -10,7 +10,7 @@ import (
 	"io"
 
 	"github.com/bow/neon/api"
-	"github.com/bow/neon/internal"
+	"github.com/bow/neon/internal/chanutil"
 	"github.com/bow/neon/internal/entity"
 	"google.golang.org/grpc"
 )
@@ -149,7 +149,7 @@ func (r *RPC) fillEmptyFeeds(
 	}
 
 	filled := make([]*entity.Feed, 0)
-	for res := range internal.Merge(chs) {
+	for res := range chanutil.Merge(chs) {
 		res := res
 		if err := res.err; err != nil {
 			return nil, err

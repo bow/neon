@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/bow/neon/internal"
+	"github.com/bow/neon/internal/chanutil"
 	"github.com/bow/neon/internal/entity"
 )
 
@@ -60,7 +61,7 @@ func (db *SQLite) PullFeeds(
 			)
 		}
 
-		for pr := range internal.Merge(chs) {
+		for pr := range chanutil.Merge(chs) {
 			pr := pr
 			if e := pr.Error(); e != nil {
 				pr.SetError(fail(e))
