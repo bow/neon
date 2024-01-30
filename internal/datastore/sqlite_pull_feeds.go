@@ -9,9 +9,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/bow/neon/internal"
 	"github.com/bow/neon/internal/chanutil"
 	"github.com/bow/neon/internal/entity"
+	"github.com/bow/neon/internal/sliceutil"
 )
 
 func (db *SQLite) PullFeeds(
@@ -36,7 +36,7 @@ func (db *SQLite) PullFeeds(
 			pks []pullKey
 			err error
 		)
-		if dedups := internal.Dedup(ids); len(dedups) == 0 {
+		if dedups := sliceutil.Dedup(ids); len(dedups) == 0 {
 			pks, err = getAllPullKeys(ctx, tx)
 		} else {
 			pks, err = getPullKeys(ctx, tx, dedups)

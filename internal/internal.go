@@ -36,21 +36,6 @@ func Banner() string {
 /_/ |_/ \___/ \____//_/ /_/`
 }
 
-func Dedup[T comparable](values []T) []T {
-	seen := make(map[T]struct{})
-	nodup := make([]T, 0)
-
-	for _, val := range values {
-		if _, exists := seen[val]; exists {
-			continue
-		}
-		seen[val] = struct{}{}
-		nodup = append(nodup, val)
-	}
-
-	return nodup
-}
-
 // envPrefix returns the environment variable prefix for configuration.
 func envPrefix() string {
 	return strings.ToUpper(AppName())

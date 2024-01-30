@@ -1,7 +1,7 @@
-// Copyright (c) 2023 Wibowo Arindrarto <contact@arindrarto.dev>
+// Copyright (c) 2023-2024 Wibowo Arindrarto <contact@arindrarto.dev>
 // SPDX-License-Identifier: BSD-3-Clause
 
-package internal
+package sliceutil
 
 import (
 	"testing"

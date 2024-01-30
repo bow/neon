@@ -13,8 +13,8 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 
-	"github.com/bow/neon/internal"
 	"github.com/bow/neon/internal/entity"
+	"github.com/bow/neon/internal/sliceutil"
 )
 
 func newFeedPullCommand() *cobra.Command {
@@ -39,7 +39,7 @@ func newFeedPullCommand() *cobra.Command {
 				return err
 			}
 
-			rawIDs := internal.Dedup(args)
+			rawIDs := sliceutil.Dedup(args)
 			ids, err := entity.ToFeedIDs(rawIDs)
 			if err != nil {
 				return err

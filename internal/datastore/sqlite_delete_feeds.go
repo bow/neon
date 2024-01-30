@@ -7,8 +7,8 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/bow/neon/internal"
 	"github.com/bow/neon/internal/entity"
+	"github.com/bow/neon/internal/sliceutil"
 )
 
 func (db *SQLite) DeleteFeeds(ctx context.Context, ids []entity.ID) error {
@@ -36,7 +36,7 @@ func (db *SQLite) DeleteFeeds(ctx context.Context, ids []entity.ID) error {
 			return nil
 		}
 
-		for _, id := range internal.Dedup(ids) {
+		for _, id := range sliceutil.Dedup(ids) {
 			if err := deleteFunc(ctx, id); err != nil {
 				return err
 			}
