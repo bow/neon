@@ -7,6 +7,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"os"
 	"strings"
 	"time"
 	"unicode"
@@ -219,4 +220,19 @@ func InterceptorLogger(l zerolog.Logger) logging.Logger {
 			}
 		},
 	)
+}
+
+func getOrExit[T any](key string, f func(string) (T, error), fallback T) T {
+	var (
+		err    error
+		parsed = fallback
+	)
+	if raw := os.Getenv(EnvKey(key)); raw != "" {
+		parsed, err = f(raw)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error: %s\n", err)
+			os.Exit(1) //nolint:revive
+		}
+	}
+	return parsed
 }

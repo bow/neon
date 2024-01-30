@@ -5,7 +5,6 @@ package internal
 
 import (
 	"fmt"
-	"os"
 	"strings"
 )
 
@@ -39,19 +38,4 @@ func Banner() string {
 // envPrefix returns the environment variable prefix for configuration.
 func envPrefix() string {
 	return strings.ToUpper(AppName())
-}
-
-func getOrExit[T any](key string, f func(string) (T, error), fallback T) T {
-	var (
-		err    error
-		parsed = fallback
-	)
-	if raw := os.Getenv(EnvKey(key)); raw != "" {
-		parsed, err = f(raw)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error: %s\n", err)
-			os.Exit(1) //nolint:revive
-		}
-	}
-	return parsed
 }
