@@ -83,6 +83,15 @@ func (f *Feed) EntriesSlice() []*Entry { // nolint:revive
 		}
 		return 0
 	}
+	id := func(e1, e2 *Entry) int {
+		if e1.ID < e2.ID {
+			return -1
+		}
+		if e1.ID > e2.ID {
+			return 1
+		}
+		return 0
+	}
 
 	entries := make([]*Entry, 0)
 	for _, entry := range f.Entries {
@@ -90,7 +99,7 @@ func (f *Feed) EntriesSlice() []*Entry { // nolint:revive
 	}
 
 	sliceutil.Ordered[*Entry]().
-		By(isRead, date).
+		By(isRead, date, id).
 		Sort(entries)
 
 	return entries
