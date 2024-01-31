@@ -82,13 +82,14 @@ func FromEntryPb(pb *api.Entry) *Entry {
 	}
 }
 
-func fromEntryPbs(pbs []*api.Entry) []*Entry {
-	entries := make([]*Entry, 0)
+func fromEntryPbs(pbs []*api.Entry) map[ID]*Entry {
+	entries := make(map[ID]*Entry)
 	for _, pb := range pbs {
 		if pb == nil {
 			continue
 		}
-		entries = append(entries, FromEntryPb(pb))
+		entry := FromEntryPb(pb)
+		entries[entry.ID] = entry
 	}
 	return entries
 }

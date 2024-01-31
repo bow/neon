@@ -21,7 +21,7 @@ type Feed struct {
 	Updated     *time.Time
 	IsStarred   bool
 	Tags        []string
-	Entries     []*Entry
+	Entries     map[ID]*Entry
 }
 
 func (f *Feed) NumEntriesTotal() int {
@@ -42,9 +42,9 @@ func (f *Feed) NumEntriesUnread() int {
 	return f.NumEntriesTotal() - f.NumEntriesRead()
 }
 
-// Sort entries by read status (unread first), update date (oldest first), and published date
-// (oldest first).
-func (f *Feed) SortEntries() { // nolint:revive
+// EntriesSlice returns a slice of entries sorted by read status (unread first),
+// update date (oldest first), and published date (oldest first).
+func (f *Feed) EntriesSlice() []*Entry { // nolint:revive
 	sortDate := func(e *Entry) *time.Time {
 		if e.Updated != nil {
 			return e.Updated
@@ -84,9 +84,16 @@ func (f *Feed) SortEntries() { // nolint:revive
 		return 0
 	}
 
+	entries := make([]*Entry, 0)
+	for _, entry := range f.Entries {
+		entries = append(entries, entry)
+	}
+
 	sliceutil.Ordered[*Entry]().
 		By(isRead, date).
-		Sort(f.Entries)
+		Sort(entries)
+
+	return entries
 }
 
 func (f *Feed) Outline() (*opml.Outline, error) {

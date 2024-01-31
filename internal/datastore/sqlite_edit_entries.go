@@ -51,7 +51,7 @@ func (db *SQLite) EditEntries(
 		return nil, fail(err)
 	}
 
-	return entryRecords(recs).entries(), nil
+	return entryRecords(recs).entriesSlice(), nil
 }
 
 var (

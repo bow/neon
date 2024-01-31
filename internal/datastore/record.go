@@ -42,7 +42,7 @@ func (rec *feedRecord) feed() *entity.Feed {
 		Updated:     fromNullTime(rec.updated),
 		IsStarred:   rec.isStarred,
 		Tags:        []string(rec.tags),
-		Entries:     entryRecords(rec.entries).entries(),
+		Entries:     entryRecords(rec.entries).entriesMap(),
 	}
 }
 
@@ -90,7 +90,22 @@ func (rec *entryRecord) entry() *entity.Entry {
 
 type entryRecords []*entryRecord
 
-func (recs entryRecords) entries() []*entity.Entry {
+func (recs entryRecords) entriesMap() map[ID]*entity.Entry {
+
+	if len(recs) == 0 {
+		return nil
+	}
+
+	entries := make(map[ID]*entity.Entry)
+	for _, rec := range recs {
+		entry := rec.entry()
+		entries[entry.ID] = entry
+	}
+
+	return entries
+}
+
+func (recs entryRecords) entriesSlice() []*entity.Entry {
 
 	if len(recs) == 0 {
 		return nil

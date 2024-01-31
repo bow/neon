@@ -101,10 +101,16 @@ func TestGetAllFeedsFOk(t *testing.T) {
 		Return(streamClient1, nil)
 	streamClient1.EXPECT().
 		Recv().
-		Return(&api.StreamEntriesResponse{Entry: &api.Entry{Title: "F1-A"}}, nil)
+		Return(
+			&api.StreamEntriesResponse{Entry: &api.Entry{Id: uint32(1), Title: "F1-A"}},
+			nil,
+		)
 	streamClient1.EXPECT().
 		Recv().
-		Return(&api.StreamEntriesResponse{Entry: &api.Entry{Title: "F1-B"}}, nil)
+		Return(
+			&api.StreamEntriesResponse{Entry: &api.Entry{Id: uint32(2), Title: "F1-B"}},
+			nil,
+		)
 	streamClient1.EXPECT().
 		Recv().
 		Return(nil, io.EOF)
@@ -122,7 +128,10 @@ func TestGetAllFeedsFOk(t *testing.T) {
 		Return(streamClient2, nil)
 	streamClient2.EXPECT().
 		Recv().
-		Return(&api.StreamEntriesResponse{Entry: &api.Entry{Title: "F3-A"}}, nil)
+		Return(
+			&api.StreamEntriesResponse{Entry: &api.Entry{Id: uint32(3), Title: "F3-A"}},
+			nil,
+		)
 	streamClient2.EXPECT().
 		Recv().
 		Return(nil, io.EOF)

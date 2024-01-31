@@ -143,7 +143,8 @@ func (r *RPC) fillEmptyFeeds(
 					}
 					return
 				}
-				feed.Entries = append(feed.Entries, entity.FromEntryPb(srsp.GetEntry()))
+				entry := entity.FromEntryPb(srsp.GetEntry())
+				feed.Entries[entry.ID] = entry
 			}
 		}()
 	}

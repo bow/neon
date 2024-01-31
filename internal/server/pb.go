@@ -24,7 +24,7 @@ func toFeedPb(feed *entity.Feed) *api.Feed {
 		SubTime:      timestamppb.New(feed.Subscribed),
 		LastPullTime: timestamppb.New(feed.LastPulled),
 		UpdateTime:   toTimestampPb(feed.Updated),
-		Entries:      toEntryPbs(feed.Entries),
+		Entries:      toEntryPbs(feed.EntriesSlice()),
 	}
 }
 

@@ -5,7 +5,6 @@ package datastore
 
 import (
 	"context"
-	"sort"
 	"testing"
 	"time"
 
@@ -229,8 +228,8 @@ func TestPullFeedsAllOkSomeNewEntriesAll(t *testing.T) {
 				Updated:    db.getFeedUpdateTime(feedURL0),
 				Subscribed: db.getFeedSubTime(feedURL0),
 				LastPulled: time.Time{},
-				Entries: []*entity.Entry{
-					{
+				Entries: map[entity.ID]*entity.Entry{
+					db.getEntryID(feedURL0, pulledFeeds[0].entries[0].extID): {
 						ID:        db.getEntryID(feedURL0, pulledFeeds[0].entries[0].extID),
 						FeedID:    keys[pulledFeeds[0].title].ID,
 						Title:     pulledFeeds[0].entries[0].title,
@@ -240,7 +239,7 @@ func TestPullFeedsAllOkSomeNewEntriesAll(t *testing.T) {
 						URL:       fromNullString(pulledFeeds[0].entries[0].url),
 						IsRead:    true,
 					},
-					{
+					db.getEntryID(feedURL0, pulledFeeds[0].entries[1].extID): {
 						ID:        db.getEntryID(feedURL0, pulledFeeds[0].entries[1].extID),
 						FeedID:    keys[pulledFeeds[0].title].ID,
 						Title:     pulledFeeds[0].entries[1].title,
@@ -250,7 +249,7 @@ func TestPullFeedsAllOkSomeNewEntriesAll(t *testing.T) {
 						URL:       fromNullString(pulledFeeds[0].entries[1].url),
 						IsRead:    false,
 					},
-					{
+					db.getEntryID(feedURL0, pulledFeeds[0].entries[2].extID): {
 						ID:        db.getEntryID(feedURL0, pulledFeeds[0].entries[2].extID),
 						FeedID:    keys[pulledFeeds[0].title].ID,
 						Title:     pulledFeeds[0].entries[2].title,
@@ -272,8 +271,8 @@ func TestPullFeedsAllOkSomeNewEntriesAll(t *testing.T) {
 				Updated:    db.getFeedUpdateTime(feedURL1),
 				Subscribed: db.getFeedSubTime(feedURL1),
 				LastPulled: time.Time{},
-				Entries: []*entity.Entry{
-					{
+				Entries: map[entity.ID]*entity.Entry{
+					db.getEntryID(feedURL1, pulledFeeds[1].entries[0].extID): {
 						ID:        db.getEntryID(feedURL1, pulledFeeds[1].entries[0].extID),
 						FeedID:    keys[pulledFeeds[1].title].ID,
 						Title:     pulledFeeds[1].entries[0].title,
@@ -283,7 +282,7 @@ func TestPullFeedsAllOkSomeNewEntriesAll(t *testing.T) {
 						URL:       fromNullString(pulledFeeds[1].entries[0].url),
 						IsRead:    true,
 					},
-					{
+					db.getEntryID(feedURL1, pulledFeeds[1].entries[1].extID): {
 						ID:        db.getEntryID(feedURL1, pulledFeeds[1].entries[1].extID),
 						FeedID:    keys[pulledFeeds[1].title].ID,
 						Title:     pulledFeeds[1].entries[1].title,
@@ -297,10 +296,6 @@ func TestPullFeedsAllOkSomeNewEntriesAll(t *testing.T) {
 			},
 		),
 	}
-
-	// Sort inner entries first, since ElementsMatch cares about inner array elements order.
-	sortPullResultEntries(want)
-	sortPullResultEntries(got)
 
 	// Set LastPulled fields to the zero value as this value is always updated on every pull.
 	for _, item := range got {
@@ -352,10 +347,6 @@ func TestPullFeedsAllOkSomeNewEntriesNoneReturned(t *testing.T) {
 		),
 	}
 
-	// Sort inner entries first, since ElementsMatch cares about inner array elements order.
-	sortPullResultEntries(want)
-	sortPullResultEntries(got)
-
 	// Set LastPulled fields to the zero value as this value is always updated on every pull.
 	for _, item := range got {
 		item.Feed().LastPulled = time.Time{}
@@ -389,8 +380,8 @@ func TestPullFeedsAllOkSomeNewEntriesOnlyUnread(t *testing.T) {
 				Updated:    db.getFeedUpdateTime(feedURL0),
 				Subscribed: db.getFeedSubTime(feedURL0),
 				LastPulled: time.Time{},
-				Entries: []*entity.Entry{
-					{
+				Entries: map[entity.ID]*entity.Entry{
+					db.getEntryID(feedURL0, pulledFeeds[0].entries[1].extID): {
 						ID:        db.getEntryID(feedURL0, pulledFeeds[0].entries[1].extID),
 						FeedID:    keys[pulledFeeds[0].title].ID,
 						Title:     pulledFeeds[0].entries[1].title,
@@ -400,7 +391,7 @@ func TestPullFeedsAllOkSomeNewEntriesOnlyUnread(t *testing.T) {
 						URL:       fromNullString(pulledFeeds[0].entries[1].url),
 						IsRead:    false,
 					},
-					{
+					db.getEntryID(feedURL0, pulledFeeds[0].entries[2].extID): {
 						ID:        db.getEntryID(feedURL0, pulledFeeds[0].entries[2].extID),
 						FeedID:    keys[pulledFeeds[0].title].ID,
 						Title:     pulledFeeds[0].entries[2].title,
@@ -422,8 +413,8 @@ func TestPullFeedsAllOkSomeNewEntriesOnlyUnread(t *testing.T) {
 				Updated:    db.getFeedUpdateTime(feedURL1),
 				Subscribed: db.getFeedSubTime(feedURL1),
 				LastPulled: time.Time{},
-				Entries: []*entity.Entry{
-					{
+				Entries: map[entity.ID]*entity.Entry{
+					db.getEntryID(feedURL1, pulledFeeds[1].entries[1].extID): {
 						ID:        db.getEntryID(feedURL1, pulledFeeds[1].entries[1].extID),
 						FeedID:    keys[pulledFeeds[1].title].ID,
 						Title:     pulledFeeds[1].entries[1].title,
@@ -437,10 +428,6 @@ func TestPullFeedsAllOkSomeNewEntriesOnlyUnread(t *testing.T) {
 			},
 		),
 	}
-
-	// Sort inner entries first, since ElementsMatch cares about inner array elements order.
-	sortPullResultEntries(want)
-	sortPullResultEntries(got)
 
 	// Set LastPulled fields to the zero value as this value is always updated on every pull.
 	for _, item := range got {
@@ -554,8 +541,8 @@ func TestPullFeedsSelectedOkSomeNewEntries(t *testing.T) {
 				Updated:    db.getFeedUpdateTime(pulledFeed.feedURL),
 				Subscribed: db.getFeedSubTime(pulledFeed.feedURL),
 				LastPulled: time.Time{},
-				Entries: []*entity.Entry{
-					{
+				Entries: map[entity.ID]*entity.Entry{
+					db.getEntryID(pulledFeed.feedURL, pulledFeed.entries[1].extID): {
 						ID:        db.getEntryID(pulledFeed.feedURL, pulledFeed.entries[1].extID),
 						FeedID:    keys[pulledFeed.title].ID,
 						Title:     pulledFeed.entries[1].title,
@@ -570,27 +557,12 @@ func TestPullFeedsSelectedOkSomeNewEntries(t *testing.T) {
 		),
 	}
 
-	// Sort inner entries first, since ElementsMatch cares about inner array elements order.
-	sortPullResultEntries(want)
-	sortPullResultEntries(got)
-
 	// Set LastPulled fields to the zero value as this value is always updated on every pull.
 	for _, item := range got {
 		item.Feed().LastPulled = time.Time{}
 	}
 
 	a.ElementsMatch(want, got)
-}
-
-func sortPullResultEntries(arr []entity.PullResult) {
-	for _, item := range arr {
-		sort.SliceStable(
-			item.Feed().Entries,
-			func(i, j int) bool {
-				return item.Feed().Entries[i].ExtID < item.Feed().Entries[j].ExtID
-			},
-		)
-	}
 }
 
 func toGFeed(t *testing.T, feed *feedRecord) *gofeed.Feed {

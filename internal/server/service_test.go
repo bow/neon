@@ -234,9 +234,9 @@ func TestPullFeedsAllOk(t *testing.T) {
 				Subscribed: mustTimeVV(t, "2021-07-23T17:20:29.499+02:00"),
 				LastPulled: mustTimeVV(t, "2021-07-23T17:20:29.499+02:00"),
 				IsStarred:  true,
-				Entries: []*entity.Entry{
-					{Title: "Entry A1", IsRead: false},
-					{Title: "Entry A2", IsRead: false},
+				Entries: map[entity.ID]*entity.Entry{
+					1: {Title: "Entry A1", IsRead: false},
+					2: {Title: "Entry A2", IsRead: false},
 				},
 			},
 		),
@@ -249,8 +249,8 @@ func TestPullFeedsAllOk(t *testing.T) {
 				Subscribed: mustTimeVV(t, "2021-07-23T17:21:11.489+02:00"),
 				LastPulled: mustTimeVV(t, "2021-07-23T17:21:11.489+02:00"),
 				IsStarred:  false,
-				Entries: []*entity.Entry{
-					{Title: "Entry C3", IsRead: false},
+				Entries: map[entity.ID]*entity.Entry{
+					3: {Title: "Entry C3", IsRead: false},
 				},
 			},
 		),
@@ -330,8 +330,8 @@ func TestPullFeedsSelectedAllOk(t *testing.T) {
 				Subscribed: mustTimeVV(t, "2021-07-23T17:21:11.489+02:00"),
 				LastPulled: mustTimeVV(t, "2021-07-23T17:21:11.489+02:00"),
 				IsStarred:  false,
-				Entries: []*entity.Entry{
-					{Title: "Entry C3", IsRead: false},
+				Entries: map[entity.ID]*entity.Entry{
+					3: {Title: "Entry C3", IsRead: false},
 				},
 			},
 		),
@@ -404,9 +404,9 @@ func TestPullFeedsErrSomeFeed(t *testing.T) {
 				Subscribed: mustTimeVV(t, "2021-07-23T17:20:29.499+02:00"),
 				LastPulled: mustTimeVV(t, "2021-07-23T17:20:29.499+02:00"),
 				IsStarred:  true,
-				Entries: []*entity.Entry{
-					{Title: "Entry A1", IsRead: false},
-					{Title: "Entry A2", IsRead: false},
+				Entries: map[entity.ID]*entity.Entry{
+					1: {Title: "Entry A1", IsRead: false},
+					2: {Title: "Entry A2", IsRead: false},
 				},
 			},
 		),
@@ -420,8 +420,8 @@ func TestPullFeedsErrSomeFeed(t *testing.T) {
 				Subscribed: mustTimeVV(t, "2021-07-23T17:21:11.489+02:00"),
 				LastPulled: mustTimeVV(t, "2021-07-23T17:21:11.489+02:00"),
 				IsStarred:  false,
-				Entries: []*entity.Entry{
-					{Title: "Entry C3", IsRead: false},
+				Entries: map[entity.ID]*entity.Entry{
+					3: {Title: "Entry C3", IsRead: false},
 				},
 			},
 		),
@@ -502,9 +502,9 @@ func TestPullFeedsErrNonFeed(t *testing.T) {
 				Subscribed: mustTimeVV(t, "2021-07-23T17:20:29.499+02:00"),
 				LastPulled: mustTimeVV(t, "2021-07-23T17:20:29.499+02:00"),
 				IsStarred:  true,
-				Entries: []*entity.Entry{
-					{Title: "Entry A1", IsRead: false},
-					{Title: "Entry A2", IsRead: false},
+				Entries: map[entity.ID]*entity.Entry{
+					1: {Title: "Entry A1", IsRead: false},
+					2: {Title: "Entry A2", IsRead: false},
 				},
 			},
 		),
@@ -517,8 +517,8 @@ func TestPullFeedsErrNonFeed(t *testing.T) {
 				Subscribed: mustTimeVV(t, "2021-07-23T17:21:11.489+02:00"),
 				LastPulled: mustTimeVV(t, "2021-07-23T17:21:11.489+02:00"),
 				IsStarred:  false,
-				Entries: []*entity.Entry{
-					{Title: "Entry C3", IsRead: false},
+				Entries: map[entity.ID]*entity.Entry{
+					3: {Title: "Entry C3", IsRead: false},
 				},
 			},
 		),

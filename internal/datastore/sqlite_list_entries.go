@@ -39,7 +39,7 @@ func (db *SQLite) ListEntries(
 		return nil, fail(err)
 	}
 
-	return entryRecords(recs).entries(), nil
+	return entryRecords(recs).entriesSlice(), nil
 }
 
 func getEntries(
