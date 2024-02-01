@@ -19,19 +19,15 @@ type feedsPane struct {
 	theme *Theme
 	lang  *Lang
 
-	groupOrder []*tview.TreeNode
-	groupNodes map[feedUpdatePeriod]*tview.TreeNode
-	feedNodes  map[string]*tview.TreeNode
+	store *feedStore
 }
 
 func newFeedsPane(theme *Theme, lang *Lang) *feedsPane {
 
 	fp := feedsPane{
-		theme:      theme,
-		lang:       lang,
-		groupOrder: make([]*tview.TreeNode, 0),
-		groupNodes: make(map[feedUpdatePeriod]*tview.TreeNode),
-		feedNodes:  make(map[string]*tview.TreeNode),
+		theme: theme,
+		lang:  lang,
+		store: newFeedStore(),
 	}
 
 	fp.initTree()
@@ -63,34 +59,23 @@ func newFeedsPane(theme *Theme, lang *Lang) *feedsPane {
 }
 
 // TODO: How to handle feeds being removed altogether?
-// TODO: How to maintain ordering of most-recently updated feeds first?
 func (fp *feedsPane) startFeedsPoll(ch <-chan *entity.Feed) {
 	root := fp.GetRoot()
-	for feed := range ch {
-		fnode, exists := fp.feedNodes[feed.FeedURL]
-		newGroup := whenUpdated(feed)
-		targetGNode := fp.groupNodes[newGroup]
 
-		if !exists {
-			fnode = feedNode(feed, fp.theme)
-			fp.feedNodes[feed.FeedURL] = fnode
-			targetGNode.AddChild(fnode)
-			if len(targetGNode.GetChildren()) == 1 {
-				root.AddChild(targetGNode)
+	for incoming := range ch {
+		fp.store.upsert(incoming)
+
+		root.ClearChildren()
+
+		for _, group := range fp.store.feedsByPeriod() {
+			gnode := groupNode(group.label, fp.theme, fp.lang)
+			root.AddChild(gnode)
+
+			for _, feed := range group.feedsSlice() {
+				fnode := feedNode(feed, fp.theme)
+				setFeedNodeDisplay(fnode, fp.theme)
+				gnode.AddChild(fnode)
 			}
-		} else {
-			oldFeed := fnode.GetReference().(*entity.Feed)
-			oldGroup := whenUpdated(oldFeed)
-			// TODO: Combine entries for existing feeds, set fnode reference, add to target.
-			if oldGroup != newGroup {
-				existingGNode := fp.groupNodes[oldGroup]
-				existingGNode.RemoveChild(fnode)
-				if len(existingGNode.GetChildren()) == 0 {
-					root.RemoveChild(existingGNode)
-					root.AddChild(targetGNode)
-				}
-			}
-			setFeedNodeDisplay(fnode, fp.theme)
 		}
 	}
 }
@@ -107,13 +92,6 @@ func (fp *feedsPane) initTree() {
 		SetTopLevel(1)
 
 	fp.TreeView = *tree
-
-	for i := uint8(0); i < uint8(updatedUnknown); i++ {
-		ug := feedUpdatePeriod(i)
-		gnode := groupNode(ug, fp.theme, fp.lang)
-		fp.groupNodes[ug] = gnode
-		fp.groupOrder = append(fp.groupOrder, gnode)
-	}
 }
 
 func (fp *feedsPane) makeDrawFuncs() (focusf, unfocusf drawFunc) {
