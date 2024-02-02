@@ -41,6 +41,7 @@ type Display struct {
 	handlersSet bool
 
 	focusStack tview.Primitive
+	counter    int
 }
 
 func NewDisplay(screen tcell.Screen, theme string) (*Display, error) {
@@ -428,6 +429,7 @@ func (d *Display) focusPane(pane tview.Primitive) {
 }
 
 func (d *Display) focusAdjacentPane(reverse bool) {
+	d.counter++
 	if front := d.frontPageName(); front != mainPageName {
 		d.hidePopup(front)
 	}

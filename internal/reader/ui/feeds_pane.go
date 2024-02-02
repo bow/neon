@@ -16,12 +16,13 @@ import (
 type feedsPane struct {
 	tview.TreeView
 
-	theme *Theme
-	lang  *Lang
-
-	store *feedStore
+	theme      *Theme
+	lang       *Lang
+	store      *feedStore
+	focusStack *entity.ID
 }
 
+// nolint:revive
 func newFeedsPane(theme *Theme, lang *Lang) *feedsPane {
 
 	fp := feedsPane{
@@ -37,20 +38,39 @@ func newFeedsPane(theme *Theme, lang *Lang) *feedsPane {
 	fp.SetFocusFunc(
 		func() {
 			fp.SetDrawFunc(focusf)
+
+			// TODO: Simplify by adding select/deselect based on feed IDs.
+			var previous, fallback *tview.TreeNode
 			if root := fp.GetRoot(); root != nil {
-				if gnodes := root.GetChildren(); len(gnodes) > 0 {
-					if fnodes := gnodes[0].GetChildren(); len(fnodes) > 0 {
-						// TODO: Store last focused item and restore instead of always
-						//       focusing on first item.
-						fp.TreeView.SetCurrentNode(fnodes[0])
+				for i, gnode := range root.GetChildren() {
+					for j, fnode := range gnode.GetChildren() {
+						feed := fnode.GetReference().(*entity.Feed)
+						if i == 0 && j == 0 {
+							fallback = fnode
+						}
+						if top := fp.focusStack; top != nil && *top == feed.ID {
+							previous = fnode
+							break
+						}
 					}
 				}
+			}
+			if previous != nil {
+				fp.TreeView.SetCurrentNode(previous)
+			} else if fallback != nil {
+				fp.TreeView.SetCurrentNode(fallback)
 			}
 		},
 	)
 	fp.SetBlurFunc(
 		func() {
 			fp.SetDrawFunc(unfocusf)
+			if fnode := fp.TreeView.GetCurrentNode(); fnode != nil {
+				feed := fnode.GetReference().(*entity.Feed)
+				if feed != nil {
+					fp.focusStack = &feed.ID
+				}
+			}
 			fp.TreeView.SetCurrentNode(nil)
 		},
 	)
@@ -62,6 +82,8 @@ func newFeedsPane(theme *Theme, lang *Lang) *feedsPane {
 func (fp *feedsPane) startFeedsPoll(ch <-chan *entity.Feed) {
 	root := fp.GetRoot()
 
+	// FIXME: This loop resets selected feed node. Update it so that
+	//		  we maintain focus.
 	for incoming := range ch {
 		fp.store.upsert(incoming)
 

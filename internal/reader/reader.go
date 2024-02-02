@@ -144,8 +144,6 @@ func (r *Reader) feedsPaneKeyHandler() ui.KeyHandler {
 				ctxs, cancels := r.callCtx()
 				defer cancels()
 				r.opr.RefreshStats(r.display, r.backend.GetStatsF(ctxs))
-
-				r.display.Draw()
 			}()
 			return nil
 		}
