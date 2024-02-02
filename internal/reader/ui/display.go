@@ -292,7 +292,6 @@ func (d *Display) setHelpPopup() {
 }
 
 func (d *Display) setIntroPopup() {
-	// TODO: Move some constants here into more commonly-accessible place.
 	introText := fmt.Sprintf(`Hello and welcome the %s reader.
 
 For help, press [yellow]?[-] or go to [yellow]%s[-].
