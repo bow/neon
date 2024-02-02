@@ -55,8 +55,7 @@ func (tcb *testClientBuilder) Build() api.NeonClient {
 
 	t := tcb.t
 
-	// TODO: Avoid global states like this.
-	zerolog.SetGlobalLevel(zerolog.Disabled)
+	SetLogger(zerolog.Nop())
 
 	b := tcb.serverBuilder
 	if b == nil {
