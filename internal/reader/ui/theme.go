@@ -25,6 +25,10 @@ type Theme struct {
 	feedNodeNormal tcell.Color
 	feedNodeDim    tcell.Color
 
+	feedNodeUnread       tcell.Color
+	feedNodeUnreadNormal tcell.Color
+	feedNodeUnreadDim    tcell.Color
+
 	feedGroupNode       tcell.Color
 	feedGroupNodeNormal tcell.Color
 	feedGroupNodeDim    tcell.Color
@@ -61,6 +65,7 @@ func (t *Theme) dim() {
 	t.eventErrFG = t.eventErrDimFG
 
 	t.feedNode = t.feedNodeDim
+	t.feedNodeUnread = t.feedNodeUnreadDim
 	t.feedGroupNode = t.feedGroupNodeDim
 }
 
@@ -74,6 +79,7 @@ func (t *Theme) normalize() {
 	t.eventErrFG = t.eventErrNormalFG
 
 	t.feedNode = t.feedNodeNormal
+	t.feedNodeUnread = t.feedNodeUnreadNormal
 	t.feedGroupNode = t.feedGroupNodeNormal
 }
 
@@ -106,6 +112,10 @@ var DarkTheme = &Theme{
 	feedNode:       tcell.ColorWhite,
 	feedNodeNormal: tcell.ColorWhite,
 	feedNodeDim:    darkForegroundDim,
+
+	feedNodeUnread:       tcell.ColorYellow,
+	feedNodeUnreadNormal: tcell.ColorYellow,
+	feedNodeUnreadDim:    darkForegroundDim,
 
 	feedGroupNode:       tcell.ColorGrey,
 	feedGroupNodeNormal: tcell.ColorGrey,

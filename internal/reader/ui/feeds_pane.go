@@ -152,7 +152,7 @@ func (fp *feedsPane) refreshColors() {
 	for _, gnode := range fp.TreeView.GetRoot().GetChildren() {
 		gnode.SetColor(fp.theme.feedGroupNode)
 		for _, fnode := range gnode.GetChildren() {
-			fnode.SetColor(fp.theme.feedNode)
+			setFeedNodeDisplay(fnode, fp.theme)
 		}
 	}
 }
@@ -196,7 +196,7 @@ func setFeedNodeDisplay(fnode *tview.TreeNode, theme *Theme) {
 	feed := fnode.GetReference().(*entity.Feed)
 	if c := feed.NumEntriesUnread(); c > 0 {
 		fnode.SetText(fmt.Sprintf("%s (%d)", feed.Title, c)).
-			SetColor(tcell.ColorYellow)
+			SetColor(theme.feedNodeUnread)
 	} else {
 		fnode.SetText(feed.Title).
 			SetColor(theme.feedNode)
