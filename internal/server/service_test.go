@@ -56,6 +56,7 @@ func TestAddFeedOk(t *testing.T) {
 			req.Description,
 			req.Tags,
 			req.IsStarred,
+			nil,
 		).
 		Return(record, true, nil)
 

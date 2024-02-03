@@ -43,9 +43,9 @@ func (m *MockDatastore) EXPECT() *MockDatastoreMockRecorder {
 }
 
 // AddFeed mocks base method.
-func (m *MockDatastore) AddFeed(ctx context.Context, feedURL string, title, desc *string, tags []string, isStarred *bool) (*entity.Feed, bool, error) {
+func (m *MockDatastore) AddFeed(ctx context.Context, feedURL string, title, desc *string, tags []string, isStarred *bool, pullTimeout *time.Duration) (*entity.Feed, bool, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "AddFeed", ctx, feedURL, title, desc, tags, isStarred)
+	ret := m.ctrl.Call(m, "AddFeed", ctx, feedURL, title, desc, tags, isStarred, pullTimeout)
 	ret0, _ := ret[0].(*entity.Feed)
 	ret1, _ := ret[1].(bool)
 	ret2, _ := ret[2].(error)
@@ -53,9 +53,9 @@ func (m *MockDatastore) AddFeed(ctx context.Context, feedURL string, title, desc
 }
 
 // AddFeed indicates an expected call of AddFeed.
-func (mr *MockDatastoreMockRecorder) AddFeed(ctx, feedURL, title, desc, tags, isStarred any) *gomock.Call {
+func (mr *MockDatastoreMockRecorder) AddFeed(ctx, feedURL, title, desc, tags, isStarred, pullTimeout any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddFeed", reflect.TypeOf((*MockDatastore)(nil).AddFeed), ctx, feedURL, title, desc, tags, isStarred)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddFeed", reflect.TypeOf((*MockDatastore)(nil).AddFeed), ctx, feedURL, title, desc, tags, isStarred, pullTimeout)
 }
 
 // DeleteFeeds mocks base method.

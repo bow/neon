@@ -21,11 +21,21 @@ func (db *SQLite) AddFeed(
 	desc *string,
 	tags []string,
 	isStarred *bool,
+	pullTimeout *time.Duration,
 ) (*entity.Feed, bool, error) {
 
 	fail := failF("SQLite.AddFeed")
 
-	feed, err := db.parser.ParseURLWithContext(feedURL, ctx)
+	var (
+		actx   = ctx
+		cancel context.CancelFunc
+	)
+	if pullTimeout != nil {
+		actx, cancel = context.WithTimeout(ctx, *pullTimeout)
+		defer cancel()
+	}
+
+	feed, err := db.parser.ParseURLWithContext(feedURL, actx)
 	if err != nil {
 		return nil, false, err
 	}

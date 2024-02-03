@@ -59,7 +59,15 @@ func newFeedAddCommand() *cobra.Command {
 				return err
 			}
 
-			feed, added, err := db.AddFeed(cmd.Context(), url, title, desc, tags, isStarred)
+			feed, added, err := db.AddFeed(
+				cmd.Context(),
+				url,
+				title,
+				desc,
+				tags,
+				isStarred,
+				nil,
+			)
 			if err != nil {
 				return err
 			}

@@ -36,6 +36,7 @@ func (svc *service) AddFeed(
 		req.Description,
 		req.GetTags(),
 		req.IsStarred,
+		nil,
 	)
 	if err != nil {
 		return nil, err

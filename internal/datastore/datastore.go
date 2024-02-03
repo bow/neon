@@ -29,6 +29,7 @@ type Datastore interface {
 		desc *string,
 		tags []string,
 		isStarred *bool,
+		pullTimeout *time.Duration,
 	) (
 		feed *entity.Feed,
 		added bool,
