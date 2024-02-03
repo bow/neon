@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
@@ -15,11 +16,12 @@ import (
 func newFeedAddCommand() *cobra.Command {
 
 	const (
-		name     = "add"
-		titleKey = "title"
-		descKey  = "desc"
-		starKey  = "star"
-		tagKey   = "tag"
+		name       = "add"
+		titleKey   = "title"
+		descKey    = "desc"
+		starKey    = "star"
+		tagKey     = "tag"
+		timeoutKey = "timeout"
 	)
 	var v = newViper(name)
 
@@ -54,6 +56,11 @@ func newFeedAddCommand() *cobra.Command {
 				tags = value
 			}
 
+			var pullTimeout *time.Duration
+			if value := v.GetDuration(timeoutKey); value > 0 {
+				pullTimeout = &value
+			}
+
 			db, err := dbFromCmdCtx(cmd)
 			if err != nil {
 				return err
@@ -66,7 +73,7 @@ func newFeedAddCommand() *cobra.Command {
 				desc,
 				tags,
 				isStarred,
-				nil,
+				pullTimeout,
 			)
 			if err != nil {
 				return err
@@ -84,6 +91,7 @@ func newFeedAddCommand() *cobra.Command {
 	flags.String(descKey, "", "feed description")
 	flags.Bool(starKey, false, "star the feed")
 	flags.StringArray(tagKey, nil, "feed tags")
+	flags.Duration(timeoutKey, 20*time.Second, "timeout for adding the feed")
 
 	if err := v.BindPFlags(flags); err != nil {
 		panic(err)
