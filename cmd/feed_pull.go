@@ -20,9 +20,11 @@ import (
 func newFeedPullCommand() *cobra.Command {
 
 	const (
-		name      = "pull"
-		numMaxIDs = 500
+		name       = "pull"
+		timeoutKey = "timeout"
+		numMaxIDs  = 500
 	)
+	var v = newViper(name)
 
 	command := cobra.Command{
 		Use:     fmt.Sprintf("%s [FEED-ID...]", name),
@@ -47,13 +49,17 @@ func newFeedPullCommand() *cobra.Command {
 			if err != nil {
 				return err
 			}
+			var perFeedTimeout *time.Duration
+			if value := v.GetDuration(timeoutKey); value > 0 {
+				perFeedTimeout = &value
+			}
 
 			var (
 				errs []error
 				n    int
 				s    = newPullSpinner(rawIDs)
 				max  = uint32(0)
-				ch   = db.PullFeeds(cmd.Context(), ids, nil, &max, nil)
+				ch   = db.PullFeeds(cmd.Context(), ids, nil, &max, perFeedTimeout)
 			)
 
 			s.Start()
@@ -74,6 +80,14 @@ func newFeedPullCommand() *cobra.Command {
 
 			return nil
 		},
+	}
+
+	flags := command.Flags()
+
+	flags.Duration(timeoutKey, 20*time.Second, "timeout for pulling each feed")
+
+	if err := v.BindPFlags(flags); err != nil {
+		panic(err)
 	}
 
 	return &command
