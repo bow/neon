@@ -18,16 +18,12 @@ import (
 // newServerCommand creates a new 'server' subcommand along with its command-line flags.
 func newServerCommand() *cobra.Command {
 
-	var (
-		name        = "server"
-		v           = newViper(name)
-		defaultAddr = defaultServerAddr
-	)
-
 	const (
-		quietKey = "quiet"
+		name     = "server"
 		addrKey  = "addr"
+		quietKey = "quiet"
 	)
+	var v = newViper(name)
 
 	command := cobra.Command{
 		Use:     name,
@@ -54,7 +50,7 @@ func newServerCommand() *cobra.Command {
 	flags := command.Flags()
 
 	flags.BoolP(quietKey, "q", false, "hide startup banner")
-	flags.StringP(addrKey, "a", defaultAddr, "listening address")
+	flags.StringP(addrKey, "a", defaultServerAddr, "listening address")
 	flags.StringP(dbPathKey, "d", defaultDBPath, "datastore location")
 
 	if err := v.BindPFlags(flags); err != nil {

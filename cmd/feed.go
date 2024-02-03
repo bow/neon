@@ -10,10 +10,9 @@ import (
 )
 
 func newFeedCommand() *cobra.Command {
-	var (
-		name = "feed"
-		v    = newViper(name)
-	)
+
+	const name = "feed"
+	var v = newViper(name)
 
 	command := cobra.Command{
 		Use:     name,

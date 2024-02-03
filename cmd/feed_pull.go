@@ -18,8 +18,11 @@ import (
 )
 
 func newFeedPullCommand() *cobra.Command {
-	var name = "pull"
-	const numMaxIDs = 500
+
+	const (
+		name      = "pull"
+		numMaxIDs = 500
+	)
 
 	command := cobra.Command{
 		Use:     fmt.Sprintf("%s [FEED-ID...]", name),

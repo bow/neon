@@ -16,9 +16,10 @@ import (
 	"github.com/bow/neon/internal"
 )
 
-const dbPathKey = "db-path"
-
-var defaultServerAddr = "127.0.0.1:5151"
+const (
+	dbPathKey         = "db-path"
+	defaultServerAddr = "127.0.0.1:5151"
+)
 
 func newViper(cmdName string) *viper.Viper {
 	v := viper.New()

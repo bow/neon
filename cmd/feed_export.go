@@ -16,7 +16,7 @@ import (
 )
 
 func newFeedExportCommand() *cobra.Command {
-	var name = "export"
+	const name = "export"
 
 	command := cobra.Command{
 		Use:     fmt.Sprintf("%s [output]", name),

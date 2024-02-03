@@ -13,7 +13,7 @@ import (
 )
 
 func newFeedListCommand() *cobra.Command {
-	var name = "list"
+	const name = "list"
 
 	command := cobra.Command{
 		Use:     name,

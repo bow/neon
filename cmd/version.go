@@ -16,7 +16,7 @@ import (
 // newVersionCommand creates a new 'version' subcommand.
 func newVersionCommand() *cobra.Command {
 
-	var name = "version"
+	const name = "version"
 
 	command := cobra.Command{
 		Use:     name,

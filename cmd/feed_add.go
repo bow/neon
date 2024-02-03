@@ -13,17 +13,15 @@ import (
 )
 
 func newFeedAddCommand() *cobra.Command {
-	var (
-		name = "add"
-		v    = newViper(name)
-	)
 
 	const (
+		name     = "add"
 		titleKey = "title"
 		descKey  = "desc"
 		starKey  = "star"
 		tagKey   = "tag"
 	)
+	var v = newViper(name)
 
 	command := cobra.Command{
 		Use:     fmt.Sprintf("%s [input]", name),

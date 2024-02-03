@@ -13,14 +13,12 @@ import (
 )
 
 func newFeedListEntriesCommand() *cobra.Command {
-	var (
-		name = "list-entries"
-		v    = newViper(name)
-	)
 
 	const (
+		name          = "list-entries"
 		bookmarkedKey = "bookmarked"
 	)
+	var v = newViper(name)
 
 	command := cobra.Command{
 		Use:                   fmt.Sprintf("%s FEED-ID", name),

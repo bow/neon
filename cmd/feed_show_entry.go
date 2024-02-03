@@ -12,7 +12,7 @@ import (
 )
 
 func newFeedShowEntryCommand() *cobra.Command {
-	var name = "show-entry"
+	const name = "show-entry"
 
 	command := cobra.Command{
 		Use:                   fmt.Sprintf("%s ENTRY-ID", name),

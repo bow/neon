@@ -15,7 +15,7 @@ import (
 // interface.
 func newServerShowProtoCommand() *cobra.Command {
 
-	var name = "show-proto"
+	const name = "show-proto"
 
 	command := cobra.Command{
 		Use:     name,

@@ -18,17 +18,17 @@ import (
 )
 
 func newReaderCommand() *cobra.Command {
-	var (
-		name               = "reader"
-		v                  = newViper(name)
-		defaultStartAddr   = "localhost:0"
-		defaultConnectAddr = defaultServerAddr
-	)
 
 	const (
+		name              = "reader"
 		addrKey           = "address"
 		connectKey        = "connect"
 		connectTimeoutKey = "connect-timeout"
+	)
+	var (
+		v                  = newViper(name)
+		defaultStartAddr   = "localhost:0"
+		defaultConnectAddr = defaultServerAddr
 	)
 
 	command := cobra.Command{

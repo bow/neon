@@ -16,7 +16,8 @@ import (
 )
 
 func newFeedImportCommand() *cobra.Command {
-	var name = "import"
+
+	const name = "import"
 
 	command := cobra.Command{
 		Use:     fmt.Sprintf("%s [input]", name),
