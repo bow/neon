@@ -9,6 +9,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/rs/zerolog"
 	"modernc.org/sqlite"
@@ -55,6 +56,7 @@ type Datastore interface {
 		ids []entity.ID,
 		entryReadStatus *bool,
 		maxEntriesPerFeed *uint32,
+		timeoutPerFeed *time.Duration,
 	) (
 		results <-chan entity.PullResult,
 	)

@@ -19,6 +19,7 @@ func (db *SQLite) PullFeeds(
 	ids []entity.ID,
 	entryReadStatus *bool,
 	maxEntriesPerFeed *uint32,
+	timeoutPerFeed *time.Duration,
 ) <-chan entity.PullResult {
 
 	var (
@@ -51,6 +52,11 @@ func (db *SQLite) PullFeeds(
 
 		chs := make([]<-chan entity.PullResult, len(pks))
 		for i, pk := range pks {
+			var cancel context.CancelFunc
+			if tpf := timeoutPerFeed; tpf != nil {
+				ctx, cancel = context.WithTimeout(ctx, *tpf)
+				defer cancel() // nolint: revive
+			}
 			chs[i] = pullFeedEntries(
 				ctx,
 				tx,

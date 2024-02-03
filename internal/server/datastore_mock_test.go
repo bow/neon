@@ -12,6 +12,7 @@ package server
 import (
 	context "context"
 	reflect "reflect"
+	time "time"
 
 	datastore "github.com/bow/neon/internal/datastore"
 	entity "github.com/bow/neon/internal/entity"
@@ -193,17 +194,17 @@ func (mr *MockDatastoreMockRecorder) ListFeeds(ctx, maxEntriesPerFeed any) *gomo
 }
 
 // PullFeeds mocks base method.
-func (m *MockDatastore) PullFeeds(ctx context.Context, ids []entity.ID, entryReadStatus *bool, maxEntriesPerFeed *uint32) <-chan entity.PullResult {
+func (m *MockDatastore) PullFeeds(ctx context.Context, ids []entity.ID, entryReadStatus *bool, maxEntriesPerFeed *uint32, timeoutPerFeed *time.Duration) <-chan entity.PullResult {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "PullFeeds", ctx, ids, entryReadStatus, maxEntriesPerFeed)
+	ret := m.ctrl.Call(m, "PullFeeds", ctx, ids, entryReadStatus, maxEntriesPerFeed, timeoutPerFeed)
 	ret0, _ := ret[0].(<-chan entity.PullResult)
 	return ret0
 }
 
 // PullFeeds indicates an expected call of PullFeeds.
-func (mr *MockDatastoreMockRecorder) PullFeeds(ctx, ids, entryReadStatus, maxEntriesPerFeed any) *gomock.Call {
+func (mr *MockDatastoreMockRecorder) PullFeeds(ctx, ids, entryReadStatus, maxEntriesPerFeed, timeoutPerFeed any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PullFeeds", reflect.TypeOf((*MockDatastore)(nil).PullFeeds), ctx, ids, entryReadStatus, maxEntriesPerFeed)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PullFeeds", reflect.TypeOf((*MockDatastore)(nil).PullFeeds), ctx, ids, entryReadStatus, maxEntriesPerFeed, timeoutPerFeed)
 }
 
 // MockeditableTable is a mock of editableTable interface.

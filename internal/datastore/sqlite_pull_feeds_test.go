@@ -29,7 +29,7 @@ func TestPullFeedsAllOkEmptyDB(t *testing.T) {
 		ParseURLWithContext(gomock.Any(), gomock.Any()).
 		MaxTimes(0)
 
-	c := db.PullFeeds(context.Background(), nil, nil, nil)
+	c := db.PullFeeds(context.Background(), nil, nil, nil, nil)
 	a.Empty(c)
 }
 
@@ -68,7 +68,7 @@ func TestPullFeedsAllOkEmptyEntries(t *testing.T) {
 		MaxTimes(1).
 		Return(toGFeed(t, dbFeeds[1]), nil)
 
-	c := db.PullFeeds(context.Background(), nil, nil, nil)
+	c := db.PullFeeds(context.Background(), nil, nil, nil, nil)
 
 	got := make([]entity.PullResult, 0)
 	for res := range c {
@@ -182,7 +182,7 @@ func TestPullFeedsAllOkNoNewEntries(t *testing.T) {
 		MaxTimes(1).
 		Return(toGFeed(t, pulledFeeds[1]), nil)
 
-	c := db.PullFeeds(context.Background(), nil, pointer(false), nil)
+	c := db.PullFeeds(context.Background(), nil, pointer(false), nil, nil)
 
 	got := make([]entity.PullResult, 0)
 	for res := range c {
@@ -208,7 +208,7 @@ func TestPullFeedsAllOkSomeNewEntriesAll(t *testing.T) {
 	a := assert.New(t)
 	db, dbFeeds, keys, pulledFeeds := setupComplexDBFixture(t)
 
-	c := db.PullFeeds(context.Background(), nil, nil, nil)
+	c := db.PullFeeds(context.Background(), nil, nil, nil, nil)
 
 	got := make([]entity.PullResult, 0)
 	for res := range c {
@@ -310,7 +310,7 @@ func TestPullFeedsAllOkSomeNewEntriesNoneReturned(t *testing.T) {
 	a := assert.New(t)
 	db, dbFeeds, keys, pulledFeeds := setupComplexDBFixture(t)
 
-	c := db.PullFeeds(context.Background(), nil, nil, pointer(uint32(0)))
+	c := db.PullFeeds(context.Background(), nil, nil, pointer(uint32(0)), nil)
 
 	got := make([]entity.PullResult, 0)
 	for res := range c {
@@ -360,7 +360,7 @@ func TestPullFeedsAllOkSomeNewEntriesOnlyUnread(t *testing.T) {
 	a := assert.New(t)
 	db, dbFeeds, keys, pulledFeeds := setupComplexDBFixture(t)
 
-	c := db.PullFeeds(context.Background(), nil, pointer(false), nil)
+	c := db.PullFeeds(context.Background(), nil, pointer(false), nil, nil)
 
 	got := make([]entity.PullResult, 0)
 	for res := range c {
@@ -524,7 +524,13 @@ func TestPullFeedsSelectedOkSomeNewEntries(t *testing.T) {
 		MaxTimes(1).
 		Return(toGFeed(t, pulledFeed), nil)
 
-	c := db.PullFeeds(context.Background(), []ID{keys[pulledFeed.title].ID}, pointer(false), nil)
+	c := db.PullFeeds(
+		context.Background(),
+		[]ID{keys[pulledFeed.title].ID},
+		pointer(false),
+		nil,
+		nil,
+	)
 
 	got := make([]entity.PullResult, 0)
 	for res := range c {

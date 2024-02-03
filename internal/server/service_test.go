@@ -273,7 +273,7 @@ func TestPullFeedsAllOk(t *testing.T) {
 	}()
 
 	ds.EXPECT().
-		PullFeeds(gomock.Any(), []entity.ID{}, gomock.Any(), gomock.Any()).
+		PullFeeds(gomock.Any(), []entity.ID{}, gomock.Any(), gomock.Any(), nil).
 		Return(ch)
 
 	req := api.PullFeedsRequest{}
@@ -354,7 +354,7 @@ func TestPullFeedsSelectedAllOk(t *testing.T) {
 	}()
 
 	ds.EXPECT().
-		PullFeeds(gomock.Any(), []entity.ID{2, 3}, gomock.Any(), gomock.Any()).
+		PullFeeds(gomock.Any(), []entity.ID{2, 3}, gomock.Any(), gomock.Any(), nil).
 		Return(ch)
 
 	req := api.PullFeedsRequest{FeedIds: []uint32{2, 3}}
@@ -444,7 +444,7 @@ func TestPullFeedsErrSomeFeed(t *testing.T) {
 	}()
 
 	ds.EXPECT().
-		PullFeeds(gomock.Any(), []entity.ID{}, gomock.Any(), gomock.Any()).
+		PullFeeds(gomock.Any(), []entity.ID{}, gomock.Any(), gomock.Any(), nil).
 		Return(ch)
 
 	req := api.PullFeedsRequest{}
@@ -542,7 +542,7 @@ func TestPullFeedsErrNonFeed(t *testing.T) {
 	}()
 
 	ds.EXPECT().
-		PullFeeds(gomock.Any(), []entity.ID{}, gomock.Any(), gomock.Any()).
+		PullFeeds(gomock.Any(), []entity.ID{}, gomock.Any(), gomock.Any(), nil).
 		Return(ch)
 
 	req := api.PullFeedsRequest{}

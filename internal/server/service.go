@@ -131,6 +131,7 @@ func (svc *service) PullFeeds(
 		ids,
 		nil,
 		req.MaxEntriesPerFeed,
+		nil,
 	)
 
 	for pr := range ch {
