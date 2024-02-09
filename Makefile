@@ -95,7 +95,7 @@ dev:  ## Install dependencies for local development.
 		fi; \
 		asdf reshim; \
 	fi
-	go install gotest.tools/gotestsum@v1.8.0 \
+	go install gotest.tools/gotestsum@v1.11.0 \
 		&& go install golang.org/x/tools/cmd/goimports@latest \
 		&& go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@$(PROTOC_GEN_GO_GRPC_VERSION) \
 		&& go install google.golang.org/protobuf/cmd/protoc-gen-go@$(GO_PROTOBUF_VERSION) \
