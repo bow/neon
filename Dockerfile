@@ -5,7 +5,7 @@
 #
 # This file is part of neon <https://github.com/bow/neon>.
 
-FROM golang:1.21-alpine AS builder
+FROM golang:1.22-alpine AS builder
 
 WORKDIR /src
 
@@ -17,7 +17,7 @@ RUN git checkout -- . && make bin
 
 # -- #
 
-FROM golang:1.21-alpine
+FROM golang:1.22-alpine
 
 ARG REVISION
 ARG BUILD_TIME
