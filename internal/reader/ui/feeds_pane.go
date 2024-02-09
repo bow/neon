@@ -39,25 +39,9 @@ func newFeedsPane(theme *Theme, lang *Lang) *feedsPane {
 		func() {
 			fp.SetDrawFunc(focusf)
 
-			// TODO: Simplify by adding select/deselect based on feed IDs.
-			var previous, fallback *tview.TreeNode
-			if root := fp.GetRoot(); root != nil {
-				for i, gnode := range root.GetChildren() {
-					for j, fnode := range gnode.GetChildren() {
-						feed := fnode.GetReference().(*entity.Feed)
-						if i == 0 && j == 0 {
-							fallback = fnode
-						}
-						if top := fp.focusStack; top != nil && *top == feed.ID {
-							previous = fnode
-							break
-						}
-					}
-				}
-			}
-			if previous != nil {
+			if previous := fp.findFeedNode(fp.focusStack); previous != nil {
 				fp.TreeView.SetCurrentNode(previous)
-			} else if fallback != nil {
+			} else if fallback := fp.getFirstFeedNode(); fallback != nil {
 				fp.TreeView.SetCurrentNode(fallback)
 			}
 		},
@@ -114,6 +98,36 @@ func (fp *feedsPane) initTree() {
 		SetTopLevel(1)
 
 	fp.TreeView = *tree
+}
+
+func (fp *feedsPane) findFeedNode(id *entity.ID) *tview.TreeNode {
+	if id == nil {
+		return nil
+	}
+	if root := fp.GetRoot(); root != nil {
+		for _, gnode := range root.GetChildren() {
+			for _, fnode := range gnode.GetChildren() {
+				feed := fnode.GetReference().(*entity.Feed)
+				if feed.ID == *id {
+					return fnode
+				}
+			}
+		}
+	}
+	return nil
+}
+
+func (fp *feedsPane) getFirstFeedNode() *tview.TreeNode {
+	if root := fp.GetRoot(); root != nil {
+		for i, gnode := range root.GetChildren() {
+			for j, fnode := range gnode.GetChildren() {
+				if i == 0 && j == 0 {
+					return fnode
+				}
+			}
+		}
+	}
+	return nil
 }
 
 func (fp *feedsPane) makeDrawFuncs() (focusf, unfocusf drawFunc) {
