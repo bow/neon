@@ -244,6 +244,8 @@ func setupReaderTest(t *testing.T) *testWrapper {
 		})
 
 		setupWG.Wait()
+		<-rdr.prestartDone
+
 		return rdr
 	}
 

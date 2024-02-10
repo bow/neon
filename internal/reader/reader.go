@@ -6,6 +6,7 @@ package reader
 import (
 	"context"
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/gdamore/tcell/v2"
@@ -25,6 +26,9 @@ type Reader struct {
 	state   st.State
 
 	callTimeout time.Duration
+
+	// For testing
+	prestartDone chan struct{}
 }
 
 func (r *Reader) Start() error {
@@ -32,11 +36,19 @@ func (r *Reader) Start() error {
 		r.opr.ShowIntroPopup(r.display)
 		defer r.state.MarkIntroSeen()
 	}
+	var wg sync.WaitGroup
+	wg.Add(1)
 	go func() {
+		defer wg.Done()
 		ctx, cancel := r.callCtx()
 		defer cancel()
 		r.opr.PopulateFeedsPane(r.display, r.backend.GetAllFeedsF(ctx))
 		r.opr.RefreshStats(r.display, r.backend.GetStatsF(ctx))
+	}()
+	go func() {
+		defer close(r.prestartDone)
+		wg.Wait()
+		r.prestartDone <- struct{}{}
 	}()
 	return r.display.Start()
 }
@@ -307,6 +319,8 @@ func (b *Builder) Build() (*Reader, error) {
 		state:   stt,
 
 		callTimeout: b.callTimeout,
+
+		prestartDone: make(chan struct{}, 1),
 	}
 	rdr.display.SetHandlers(
 		rdr.globalKeyHandler(),
