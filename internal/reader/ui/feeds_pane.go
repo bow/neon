@@ -59,30 +59,28 @@ func newFeedsPane(theme *Theme, lang *Lang) *feedsPane {
 	return &fp
 }
 
-func (fp *feedsPane) startFeedsPoll(ch <-chan *entity.Feed) {
+func (fp *feedsPane) updateFeed(feed *entity.Feed) {
 	root := fp.GetRoot()
 
-	for incoming := range ch {
-		fp.store.upsert(incoming)
+	fp.store.upsert(feed)
 
-		var currentFeedID *entity.ID
-		if currentFeed := fp.getCurrentFeed(); currentFeed != nil {
-			currentFeedID = &currentFeed.ID
-		}
+	var currentFeedID *entity.ID
+	if currentFeed := fp.getCurrentFeed(); currentFeed != nil {
+		currentFeedID = &currentFeed.ID
+	}
 
-		root.ClearChildren()
+	root.ClearChildren()
 
-		for _, group := range fp.store.feedsByPeriod() {
-			gnode := groupNode(group.label, fp.theme, fp.lang)
-			root.AddChild(gnode)
+	for _, group := range fp.store.feedsByPeriod() {
+		gnode := groupNode(group.label, fp.theme, fp.lang)
+		root.AddChild(gnode)
 
-			for _, feed := range group.feedsSlice() {
-				fnode := feedNode(feed, fp.theme)
-				setFeedNodeDisplay(fnode, fp.theme)
-				gnode.AddChild(fnode)
-				if currentFeedID != nil && feed.ID == *currentFeedID {
-					fp.TreeView.SetCurrentNode(fnode)
-				}
+		for _, feed := range group.feedsSlice() {
+			fnode := feedNode(feed, fp.theme)
+			setFeedNodeDisplay(fnode, fp.theme)
+			gnode.AddChild(fnode)
+			if currentFeedID != nil && feed.ID == *currentFeedID {
+				fp.TreeView.SetCurrentNode(fnode)
 			}
 		}
 	}

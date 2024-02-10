@@ -77,10 +77,10 @@ func (d *Display) Start() error {
 	if !d.handlersSet {
 		return fmt.Errorf("display key handlers must be set before starting")
 	}
-	stop := d.startEventPoll()
-	defer stop()
-	// TODO: Consider making this similar to event polling.
-	go d.feedsPane.startFeedsPoll(d.feedsCh)
+	stope := d.startEventPoll()
+	defer stope()
+	stopf := d.startFeedPoll()
+	defer stopf()
 
 	return d.inner.Run()
 }
@@ -209,6 +209,27 @@ func (d *Display) startEventPoll() (stop func()) {
 				return
 			case ev := <-d.eventsCh:
 				d.bar.showEvent(ev)
+			}
+		}
+	}()
+
+	return stop
+}
+
+func (d *Display) startFeedPoll() (stop func()) {
+	done := make(chan struct{})
+	stop = func() {
+		defer close(done)
+		done <- struct{}{}
+	}
+
+	go func() {
+		for {
+			select {
+			case <-done:
+				return
+			case feed := <-d.feedsCh:
+				d.feedsPane.updateFeed(feed)
 			}
 		}
 	}()
