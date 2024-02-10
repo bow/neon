@@ -201,7 +201,8 @@ func setupReaderTest(t *testing.T) *testWrapper {
 	tw := &testWrapper{}
 	tw.introSeen = true
 
-	var wg sync.WaitGroup
+	var startWG, setupWG sync.WaitGroup
+
 	drawf := func() *Reader {
 		rdr, err := NewBuilder(context.Background()).
 			backend(be).
@@ -216,23 +217,22 @@ func setupReaderTest(t *testing.T) *testWrapper {
 		// among other things, resets its size.
 		screen.SetSize(screenW, screenH)
 
-		wg.Add(1)
+		startWG.Add(1)
+		setupWG.Add(1)
 		go func() {
-			defer wg.Done()
+			defer startWG.Done()
 
 			stt.EXPECT().IntroSeen().Return(tw.introSeen)
 
 			be.EXPECT().GetStatsF(gomock.Any()).
-				MinTimes(0).
 				Return(func() (*entity.Stats, error) { return nil, nil })
-			opr.EXPECT().RefreshStats(gomock.Any(), gomock.Any()).
-				MinTimes(0)
+			opr.EXPECT().RefreshStats(gomock.Any(), gomock.Any())
 
 			be.EXPECT().GetAllFeedsF(gomock.Any()).
-				MinTimes(0).
 				Return(func() ([]*entity.Feed, error) { return nil, nil })
-			opr.EXPECT().PopulateFeedsPane(gomock.Any(), gomock.Any()).
-				MinTimes(0)
+			opr.EXPECT().PopulateFeedsPane(gomock.Any(), gomock.Any())
+
+			setupWG.Done()
 
 			rerr := rdr.Start()
 			r.NoError(rerr)
@@ -240,9 +240,10 @@ func setupReaderTest(t *testing.T) *testWrapper {
 
 		t.Cleanup(func() {
 			screen.InjectKey(tcell.KeyRune, 'q', tcell.ModNone)
-			wg.Wait()
+			startWG.Wait()
 		})
 
+		setupWG.Wait()
 		return rdr
 	}
 
