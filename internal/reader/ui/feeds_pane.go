@@ -49,11 +49,8 @@ func newFeedsPane(theme *Theme, lang *Lang) *feedsPane {
 	fp.SetBlurFunc(
 		func() {
 			fp.SetDrawFunc(unfocusf)
-			if fnode := fp.TreeView.GetCurrentNode(); fnode != nil {
-				feed := fnode.GetReference().(*entity.Feed)
-				if feed != nil {
-					fp.focusStack = &feed.ID
-				}
+			if feed := fp.getCurrentFeed(); feed != nil {
+				fp.focusStack = &feed.ID
 			}
 			fp.TreeView.SetCurrentNode(nil)
 		},
@@ -125,6 +122,16 @@ func (fp *feedsPane) getFirstFeedNode() *tview.TreeNode {
 					return fnode
 				}
 			}
+		}
+	}
+	return nil
+}
+
+func (fp *feedsPane) getCurrentFeed() *entity.Feed {
+	if fnode := fp.TreeView.GetCurrentNode(); fnode != nil {
+		feed, ok := fnode.GetReference().(*entity.Feed)
+		if ok {
+			return feed
 		}
 	}
 	return nil
