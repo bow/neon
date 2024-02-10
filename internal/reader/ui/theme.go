@@ -113,8 +113,8 @@ var DarkTheme = &Theme{
 	feedNodeNormal: tcell.ColorWhite,
 	feedNodeDim:    darkForegroundDim,
 
-	feedNodeUnread:       tcell.ColorYellow,
-	feedNodeUnreadNormal: tcell.ColorYellow,
+	feedNodeUnread:       tcell.ColorWhite,
+	feedNodeUnreadNormal: tcell.ColorWhite,
 	feedNodeUnreadDim:    darkForegroundDim,
 
 	feedGroupNode:       tcell.ColorGrey,
