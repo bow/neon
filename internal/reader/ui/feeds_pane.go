@@ -59,14 +59,16 @@ func newFeedsPane(theme *Theme, lang *Lang) *feedsPane {
 	return &fp
 }
 
-// TODO: How to handle feeds being removed altogether?
 func (fp *feedsPane) startFeedsPoll(ch <-chan *entity.Feed) {
 	root := fp.GetRoot()
 
-	// FIXME: This loop resets selected feed node. Update it so that
-	//		  we maintain focus.
 	for incoming := range ch {
 		fp.store.upsert(incoming)
+
+		var currentFeedID *entity.ID
+		if currentFeed := fp.getCurrentFeed(); currentFeed != nil {
+			currentFeedID = &currentFeed.ID
+		}
 
 		root.ClearChildren()
 
@@ -78,6 +80,9 @@ func (fp *feedsPane) startFeedsPoll(ch <-chan *entity.Feed) {
 				fnode := feedNode(feed, fp.theme)
 				setFeedNodeDisplay(fnode, fp.theme)
 				gnode.AddChild(fnode)
+				if currentFeedID != nil && feed.ID == *currentFeedID {
+					fp.TreeView.SetCurrentNode(fnode)
+				}
 			}
 		}
 	}
