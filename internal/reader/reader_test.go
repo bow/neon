@@ -104,7 +104,7 @@ func TestToggleStatsPopupCalled(t *testing.T) {
 	// For some not-completely-clear-yet reason, this fails when GOMAXPROCS or
 	// NumCPU is 1. So we skip such conditions are true for now.
 	if os.Getenv("GOMAXPROCS") == "1" || runtime.NumCPU() == 1 {
-		t.Skip("Test requires GOMAXPROCS>1")
+		t.Skip("Test requires GOMAXPROCS > 1 / runtime.NumCPU > 1")
 	}
 
 	tw := setupReaderTest(t)
