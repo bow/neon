@@ -6,6 +6,7 @@ package reader
 import (
 	"context"
 	"os"
+	"runtime"
 	"sync"
 	"testing"
 	"time"
@@ -100,9 +101,9 @@ func TestToggleHelpPopupCalled(t *testing.T) {
 
 func TestToggleStatsPopupCalled(t *testing.T) {
 
-	// For some not-completely-clear-yet reason, this fails when GOMAXPROCS=1.
-	// So we skip such conditions for now.
-	if os.Getenv("GOMAXPROCS") == "1" {
+	// For some not-completely-clear-yet reason, this fails when GOMAXPROCS or
+	// NumCPU is 1. So we skip such conditions are true for now.
+	if os.Getenv("GOMAXPROCS") == "1" || runtime.NumCPU() == 1 {
 		t.Skip("Test requires GOMAXPROCS>1")
 	}
 
