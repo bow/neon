@@ -6,7 +6,6 @@ package reader
 import (
 	"context"
 	"fmt"
-	"sync"
 	"time"
 
 	"github.com/gdamore/tcell/v2"
@@ -36,18 +35,12 @@ func (r *Reader) Start() error {
 		r.opr.ShowIntroPopup(r.display)
 		defer r.state.MarkIntroSeen()
 	}
-	var wg sync.WaitGroup
-	wg.Add(1)
 	go func() {
-		defer wg.Done()
+		defer close(r.prestartDone)
 		ctx, cancel := r.callCtx()
 		defer cancel()
 		r.opr.PopulateFeedsPane(r.display, r.backend.GetAllFeedsF(ctx))
 		r.opr.RefreshStats(r.display, r.backend.GetStatsF(ctx))
-	}()
-	go func() {
-		defer close(r.prestartDone)
-		wg.Wait()
 		r.prestartDone <- struct{}{}
 	}()
 	return r.display.Start()
