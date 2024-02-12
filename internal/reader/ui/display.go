@@ -26,8 +26,9 @@ type Display struct {
 	feedsCh   chan *entity.Feed
 	feedsPane *feedsPane
 
-	entriesPane *tview.Box
-	readingPane *tview.Box
+	entriesPane *entriesPane
+
+	readingPane *readingPane
 
 	bar        *statusBar
 	barVisible bool
@@ -154,9 +155,8 @@ func (d *Display) setMainPage() {
 
 	d.feedsCh = make(chan *entity.Feed)
 	feedsPane := newFeedsPane(d.theme, d.lang)
-
-	entriesPane := newPane(d.lang.entriesPaneTitle, d.theme, false)
-	readingPane := newPane(d.lang.readingPaneTitle, d.theme, true)
+	entriesPane := newEntriesPane(d.theme, d.lang)
+	readingPane := newReadingPane(d.theme, d.lang)
 
 	narrowFlex := tview.NewFlex().
 		SetDirection(tview.FlexRow).
@@ -494,48 +494,6 @@ func (d *Display) errEvent(err error) {
 func (d *Display) eventf(level eventLevel, text string, a ...any) {
 	ev := event{level: level, timestamp: time.Now(), text: fmt.Sprintf(text, a...)}
 	go func() { d.eventsCh <- &ev }()
-}
-
-func newPane(title string, theme *Theme, addTopLeftBorderTip bool) *tview.Box {
-
-	titleUF, titleF := fmtPaneTitle(title)
-
-	makedrawf := func(
-		title string,
-		leftPad int,
-	) func(screen tcell.Screen, x int, y int, width int, height int) (int, int, int, int) {
-
-		return func(screen tcell.Screen, x int, y int, width int, height int) (int, int, int, int) {
-			style := theme.lineStyle()
-			// Draw top and optionally bottom borders.
-			for cx := x; cx < x+width; cx++ {
-				screen.SetContent(cx, y, tview.BoxDrawingsLightHorizontal, nil, style)
-			}
-			if addTopLeftBorderTip {
-				screen.SetContent(x-1, y, tview.BoxDrawingsLightVerticalAndRight, nil, style)
-			}
-
-			// Write the title text.
-			tview.Print(
-				screen,
-				title,
-				x+leftPad,
-				y,
-				width-2,
-				tview.AlignLeft,
-				theme.titleFG,
-			)
-
-			return x + 2, y + 1, width - 2, height - 1
-		}
-	}
-
-	box := tview.NewBox().SetDrawFunc(makedrawf(titleUF, 1))
-
-	box.SetFocusFunc(func() { box.SetDrawFunc(makedrawf(titleF, 0)) })
-	box.SetBlurFunc(func() { box.SetDrawFunc(makedrawf(titleUF, 1)) })
-
-	return box
 }
 
 func newNarrowStatusBarBorder(theme *Theme) *tview.Box {

@@ -22,7 +22,6 @@ type feedsPane struct {
 	focusStack *entity.ID
 }
 
-// nolint:revive
 func newFeedsPane(theme *Theme, lang *Lang) *feedsPane {
 
 	fp := feedsPane{
