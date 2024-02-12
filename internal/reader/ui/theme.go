@@ -105,8 +105,8 @@ var DarkTheme = &Theme{
 	lineNormalFG: tcell.ColorWhite,
 	lineDimFG:    darkForegroundDim,
 
-	titleFG:       tcell.ColorYellowGreen,
-	titleNormalFG: tcell.ColorYellowGreen,
+	titleFG:       tcell.ColorAqua,
+	titleNormalFG: tcell.ColorAqua,
 	titleDimFG:    darkForegroundDim,
 
 	feedNode:       tcell.ColorWhite,
