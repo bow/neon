@@ -13,10 +13,17 @@ type readingPane struct {
 
 	theme *Theme
 	lang  *Lang
+
+	narrowBranchPoint int
 }
 
-func newReadingPane(theme *Theme, lang *Lang) *readingPane {
-	rp := readingPane{theme: theme, lang: lang}
+func newReadingPane(theme *Theme, lang *Lang, narrowBranchPoint int) *readingPane {
+	rp := readingPane{
+		theme: theme,
+		lang:  lang,
+
+		narrowBranchPoint: narrowBranchPoint,
+	}
 	box := tview.NewBox()
 	rp.Box = *box
 
@@ -52,7 +59,11 @@ func (rp *readingPane) makeDrawFuncs() (focusf, unfocusf drawFunc) {
 			style := rp.theme.lineStyle()
 			// Draw top and optionally bottom borders.
 			for cx := x; cx < x+width; cx++ {
-				screen.SetContent(cx, y, tview.BoxDrawingsLightHorizontal, nil, style)
+				if cx == rp.narrowBranchPoint {
+					screen.SetContent(cx, y, tview.BoxDrawingsLightUpAndHorizontal, nil, style)
+				} else {
+					screen.SetContent(cx, y, tview.BoxDrawingsLightHorizontal, nil, style)
+				}
 			}
 			screen.SetContent(x-1, y, tview.BoxDrawingsLightVerticalAndRight, nil, style)
 

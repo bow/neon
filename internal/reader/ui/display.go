@@ -153,16 +153,24 @@ func (d *Display) setRoot() {
 
 func (d *Display) setMainPage() {
 
+	narrowFeedsPaneWidth := 30
+
 	d.feedsCh = make(chan *entity.Feed)
 	feedsPane := newFeedsPane(d.theme, d.lang)
 	entriesPane := newEntriesPane(d.theme, d.lang)
-	readingPane := newReadingPane(d.theme, d.lang)
+	readingPane := newReadingPane(d.theme, d.lang, narrowFeedsPaneWidth)
 
 	narrowFlex := tview.NewFlex().
 		SetDirection(tview.FlexRow).
-		AddItem(feedsPane, 0, 3, false).
-		AddItem(entriesPane, 0, 4, false).
-		AddItem(readingPane, 0, 5, false).
+		AddItem(
+			tview.NewFlex().
+				SetDirection(tview.FlexColumn).
+				AddItem(feedsPane, narrowFeedsPaneWidth, 0, false).
+				AddItem(newPaneDivider(d.theme), 1, 0, false).
+				AddItem(entriesPane, 0, 2, false),
+			0, 3, false,
+		).
+		AddItem(readingPane, 0, 4, false).
 		AddItem(newNarrowStatusBarBorder(d.theme), 1, 0, false)
 
 	wideFlex := tview.NewFlex().
