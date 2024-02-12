@@ -246,6 +246,8 @@ func setupReaderTest(t *testing.T) *testWrapper {
 				Return(func() ([]*entity.Feed, error) { return nil, nil })
 			opr.EXPECT().PopulateFeedsPane(gomock.Any(), gomock.Any())
 
+			opr.EXPECT().FocusFeedsPane(gomock.Any())
+
 			setupWG.Done()
 
 			rerr := rdr.Start()

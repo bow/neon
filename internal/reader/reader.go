@@ -41,6 +41,7 @@ func (r *Reader) Start() error {
 		defer cancel()
 		r.opr.PopulateFeedsPane(r.display, r.backend.GetAllFeedsF(ctx))
 		r.opr.RefreshStats(r.display, r.backend.GetStatsF(ctx))
+		r.opr.FocusFeedsPane(r.display)
 		r.prestartDone <- struct{}{}
 	}()
 	return r.display.Start()
