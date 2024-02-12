@@ -250,10 +250,20 @@ func setFeedNodeDisplay(fnode *tview.TreeNode, theme *Theme) {
 }
 
 func groupNode(ug feedUpdatePeriod, theme *Theme, lang *Lang) *tview.TreeNode {
-	return tview.NewTreeNode(ug.Text(lang)).
+	node := tview.NewTreeNode(ug.Text(lang)).
 		SetReference(ug).
 		SetColor(theme.feedGroupNode).
-		SetSelectable(false)
+		SetSelectable(true)
+
+	node.SetSelectedFunc(func() {
+		if node.IsExpanded() {
+			node.Collapse()
+		} else {
+			node.Expand()
+		}
+	})
+
+	return node
 }
 
 func whenUpdated(feed *entity.Feed) feedUpdatePeriod {
