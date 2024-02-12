@@ -498,13 +498,7 @@ func (d *Display) eventf(level eventLevel, text string, a ...any) {
 
 func newPane(title string, theme *Theme, addTopLeftBorderTip bool) *tview.Box {
 
-	var unfocused, focused string
-	if title != "" {
-		unfocused = fmt.Sprintf(" %s ", title)
-		focused = fmt.Sprintf("[::b]▶ %s[::-] ", title)
-	} else {
-		focused = "[::b]▶[::-] "
-	}
+	titleUF, titleF := fmtPaneTitle(title)
 
 	makedrawf := func(
 		title string,
@@ -536,10 +530,10 @@ func newPane(title string, theme *Theme, addTopLeftBorderTip bool) *tview.Box {
 		}
 	}
 
-	box := tview.NewBox().SetDrawFunc(makedrawf(unfocused, 1))
+	box := tview.NewBox().SetDrawFunc(makedrawf(titleUF, 1))
 
-	box.SetFocusFunc(func() { box.SetDrawFunc(makedrawf(focused, 0)) })
-	box.SetBlurFunc(func() { box.SetDrawFunc(makedrawf(unfocused, 1)) })
+	box.SetFocusFunc(func() { box.SetDrawFunc(makedrawf(titleF, 0)) })
+	box.SetBlurFunc(func() { box.SetDrawFunc(makedrawf(titleUF, 1)) })
 
 	return box
 }

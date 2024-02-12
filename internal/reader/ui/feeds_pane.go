@@ -142,13 +142,7 @@ func (fp *feedsPane) getCurrentFeed() *entity.Feed {
 
 func (fp *feedsPane) makeDrawFuncs() (focusf, unfocusf drawFunc) {
 
-	var titleUF, titleF string
-	if fp.lang.feedsPaneTitle != "" {
-		titleUF = fmt.Sprintf(" %s ", fp.lang.feedsPaneTitle)
-		titleF = fmt.Sprintf("[::b]▶ %s[::-] ", fp.lang.feedsPaneTitle)
-	} else {
-		titleF = "[::b]▶[::-] "
-	}
+	titleUF, titleF := fmtPaneTitle(fp.lang.feedsPaneTitle)
 
 	drawf := func(
 		focused bool,
