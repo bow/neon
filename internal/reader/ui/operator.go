@@ -19,6 +19,7 @@ type Operator interface {
 	ShowIntroPopup(*Display)
 	ToggleAboutPopup(*Display, string)
 	ToggleAllFeedsFold(*Display)
+	ToggleCurrentFeedFold(*Display)
 	ToggleHelpPopup(*Display)
 	ToggleStatsPopup(*Display, func() (*entity.Stats, error))
 	ToggleStatusBar(*Display)

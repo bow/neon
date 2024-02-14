@@ -159,6 +159,10 @@ func (r *Reader) feedsPaneKeyHandler() ui.KeyHandler {
 		case 'Z':
 			r.opr.ToggleAllFeedsFold(r.display)
 			return nil
+
+		case 'z':
+			r.opr.ToggleCurrentFeedFold(r.display)
+			return nil
 		}
 
 		return event

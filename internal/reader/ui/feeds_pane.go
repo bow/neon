@@ -174,6 +174,35 @@ func (fp *feedsPane) toggleAllFeedsFold() {
 	panic("impossible fold state")
 }
 
+func (fp *feedsPane) toggleCurrentFeedFold() {
+	root := fp.GetRoot()
+	if root == nil {
+		return
+	}
+	current := fp.GetCurrentNode()
+	if current == nil {
+		return
+	}
+	var target feedUpdatePeriod
+	switch t := current.GetReference().(type) {
+	case *entity.Feed:
+		target = whenUpdated(t)
+	case feedUpdatePeriod:
+		target = t
+	}
+	for _, gnode := range root.GetChildren() {
+		if period, ok := gnode.GetReference().(feedUpdatePeriod); ok && period == target {
+			if gnode.IsExpanded() {
+				gnode.Collapse()
+			} else {
+				gnode.Expand()
+			}
+			fp.SetCurrentNode(gnode)
+			return
+		}
+	}
+}
+
 func (fp *feedsPane) makeDrawFuncs() (focusf, unfocusf drawFunc) {
 
 	titleUF, titleF := fmtPaneTitle(fp.lang.feedsPaneTitle)

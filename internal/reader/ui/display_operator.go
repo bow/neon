@@ -112,6 +112,10 @@ func (do *DisplayOperator) ToggleAllFeedsFold(d *Display) {
 	d.feedsPane.toggleAllFeedsFold()
 }
 
+func (do *DisplayOperator) ToggleCurrentFeedFold(d *Display) {
+	d.feedsPane.toggleCurrentFeedFold()
+}
+
 func (do *DisplayOperator) ToggleHelpPopup(d *Display) {
 	if name := d.frontPageName(); name == helpPageName {
 		d.hidePopup(name)
