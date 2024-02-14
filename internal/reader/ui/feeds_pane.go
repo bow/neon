@@ -39,9 +39,9 @@ func newFeedsPane(theme *Theme, lang *Lang) *feedsPane {
 			fp.SetDrawFunc(focusf)
 
 			if previous := fp.findFeedNode(fp.focusStack); previous != nil {
-				fp.TreeView.SetCurrentNode(previous)
+				fp.SetCurrentNode(previous)
 			} else if fallback := fp.getFirstFeedNode(); fallback != nil {
-				fp.TreeView.SetCurrentNode(fallback)
+				fp.SetCurrentNode(fallback)
 			}
 		},
 	)
@@ -51,7 +51,7 @@ func newFeedsPane(theme *Theme, lang *Lang) *feedsPane {
 			if feed := fp.getCurrentFeed(); feed != nil {
 				fp.focusStack = &feed.ID
 			}
-			fp.TreeView.SetCurrentNode(nil)
+			fp.SetCurrentNode(nil)
 		},
 	)
 
@@ -79,7 +79,7 @@ func (fp *feedsPane) updateFeed(feed *entity.Feed) {
 			setFeedNodeDisplay(fnode, fp.theme)
 			gnode.AddChild(fnode)
 			if currentFeedID != nil && feed.ID == *currentFeedID {
-				fp.TreeView.SetCurrentNode(fnode)
+				fp.SetCurrentNode(fnode)
 			}
 		}
 	}
@@ -134,7 +134,7 @@ func (fp *feedsPane) getFirstFeedNode() *tview.TreeNode {
 }
 
 func (fp *feedsPane) getCurrentFeed() *entity.Feed {
-	if fnode := fp.TreeView.GetCurrentNode(); fnode != nil {
+	if fnode := fp.GetCurrentNode(); fnode != nil {
 		feed, ok := fnode.GetReference().(*entity.Feed)
 		if ok {
 			return feed
@@ -252,7 +252,7 @@ func (fp *feedsPane) makeDrawFuncs() (focusf, unfocusf drawFunc) {
 }
 
 func (fp *feedsPane) refreshColors() {
-	for _, gnode := range fp.TreeView.GetRoot().GetChildren() {
+	for _, gnode := range fp.GetRoot().GetChildren() {
 		gnode.SetColor(fp.theme.feedGroupNode)
 		for _, fnode := range gnode.GetChildren() {
 			setFeedNodeDisplay(fnode, fp.theme)
