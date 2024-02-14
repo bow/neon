@@ -172,6 +172,18 @@ func (mr *MockOperatorMockRecorder) ToggleAboutPopup(arg0, arg1 any) *gomock.Cal
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ToggleAboutPopup", reflect.TypeOf((*MockOperator)(nil).ToggleAboutPopup), arg0, arg1)
 }
 
+// ToggleAllFeedsFold mocks base method.
+func (m *MockOperator) ToggleAllFeedsFold(arg0 *ui.Display) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "ToggleAllFeedsFold", arg0)
+}
+
+// ToggleAllFeedsFold indicates an expected call of ToggleAllFeedsFold.
+func (mr *MockOperatorMockRecorder) ToggleAllFeedsFold(arg0 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ToggleAllFeedsFold", reflect.TypeOf((*MockOperator)(nil).ToggleAllFeedsFold), arg0)
+}
+
 // ToggleHelpPopup mocks base method.
 func (m *MockOperator) ToggleHelpPopup(arg0 *ui.Display) {
 	m.ctrl.T.Helper()

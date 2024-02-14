@@ -18,6 +18,7 @@ type Operator interface {
 	PopulateFeedsPane(*Display, func() ([]*entity.Feed, error))
 	ShowIntroPopup(*Display)
 	ToggleAboutPopup(*Display, string)
+	ToggleAllFeedsFold(*Display)
 	ToggleHelpPopup(*Display)
 	ToggleStatsPopup(*Display, func() (*entity.Stats, error))
 	ToggleStatusBar(*Display)

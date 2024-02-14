@@ -108,6 +108,10 @@ func (do *DisplayOperator) ToggleAboutPopup(d *Display, backend string) {
 	}
 }
 
+func (do *DisplayOperator) ToggleAllFeedsFold(d *Display) {
+	d.feedsPane.toggleAllFeedsFold()
+}
+
 func (do *DisplayOperator) ToggleHelpPopup(d *Display) {
 	if name := d.frontPageName(); name == helpPageName {
 		d.hidePopup(name)

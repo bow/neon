@@ -143,6 +143,37 @@ func (fp *feedsPane) getCurrentFeed() *entity.Feed {
 	return nil
 }
 
+func (fp *feedsPane) toggleAllFeedsFold() {
+	root := fp.GetRoot()
+	if root == nil {
+		return
+	}
+	var allExpanded, allCollapsed bool
+	for i, gnode := range root.GetChildren() {
+		expanded := gnode.IsExpanded()
+		if i == 0 {
+			allExpanded = expanded
+			allCollapsed = !expanded
+			continue
+		}
+		allExpanded = allExpanded && expanded
+		allCollapsed = allCollapsed && !expanded
+	}
+	// treat mixed state as if everything is collapsed. that is, we then expand everything.
+	if (!allExpanded && !allCollapsed) || (allCollapsed && !allExpanded) {
+		for _, gnode := range root.GetChildren() {
+			gnode.Expand()
+		}
+		return
+	} else if allExpanded && !allCollapsed {
+		for _, gnode := range root.GetChildren() {
+			gnode.Collapse()
+		}
+		return
+	}
+	panic("impossible fold state")
+}
+
 func (fp *feedsPane) makeDrawFuncs() (focusf, unfocusf drawFunc) {
 
 	titleUF, titleF := fmtPaneTitle(fp.lang.feedsPaneTitle)

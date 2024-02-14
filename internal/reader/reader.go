@@ -135,7 +135,10 @@ func (r *Reader) feedsPaneKeyHandler() ui.KeyHandler {
 	return func(event *tcell.EventKey) *tcell.EventKey {
 		keyr := event.Rune()
 
-		if keyr == 'P' {
+		// nolint:exhaustive
+		switch keyr {
+
+		case 'P':
 			go func() {
 				select {
 				case pullFeedsLock <- struct{}{}:
@@ -152,7 +155,12 @@ func (r *Reader) feedsPaneKeyHandler() ui.KeyHandler {
 				r.opr.RefreshStats(r.display, r.backend.GetStatsF(ctxs))
 			}()
 			return nil
+
+		case 'Z':
+			r.opr.ToggleAllFeedsFold(r.display)
+			return nil
 		}
+
 		return event
 	}
 }

@@ -278,6 +278,7 @@ func (d *Display) setHelpPopup() {
 [yellow]a[-]  : Add feed
 [yellow]e[-]  : Edit feed
 [yellow]d[-]  : Delete feed
+[yellow]Z[-]  : Expand / collapse all feeds
 
 [aqua]Entries pane[-]
 [yellow]j/k[-]: Next / previous entry
