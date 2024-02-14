@@ -189,9 +189,12 @@ func (fp *feedsPane) toggleAllFeedsFold() {
 		}
 		return
 	} else if allExpanded && !allCollapsed {
+		current := fp.getCurrentGroupNode()
 		for _, gnode := range root.GetChildren() {
 			gnode.Collapse()
 		}
+		// Set selection to nearest group prior to collapsing.
+		fp.SetCurrentNode(current)
 		return
 	}
 	panic("impossible fold state")
