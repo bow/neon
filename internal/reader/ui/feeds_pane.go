@@ -103,13 +103,15 @@ func (fp *feedsPane) findFeedNode(id *entity.ID) *tview.TreeNode {
 	if id == nil {
 		return nil
 	}
-	if root := fp.GetRoot(); root != nil {
-		for _, gnode := range root.GetChildren() {
-			for _, fnode := range gnode.GetChildren() {
-				feed := fnode.GetReference().(*entity.Feed)
-				if feed.ID == *id {
-					return fnode
-				}
+	root := fp.GetRoot()
+	if root == nil {
+		return nil
+	}
+	for _, gnode := range root.GetChildren() {
+		for _, fnode := range gnode.GetChildren() {
+			feed := fnode.GetReference().(*entity.Feed)
+			if feed.ID == *id {
+				return fnode
 			}
 		}
 	}
@@ -117,12 +119,14 @@ func (fp *feedsPane) findFeedNode(id *entity.ID) *tview.TreeNode {
 }
 
 func (fp *feedsPane) getFirstFeedNode() *tview.TreeNode {
-	if root := fp.GetRoot(); root != nil {
-		for i, gnode := range root.GetChildren() {
-			for j, fnode := range gnode.GetChildren() {
-				if i == 0 && j == 0 {
-					return fnode
-				}
+	root := fp.GetRoot()
+	if root == nil {
+		return nil
+	}
+	for i, gnode := range root.GetChildren() {
+		for j, fnode := range gnode.GetChildren() {
+			if i == 0 && j == 0 {
+				return fnode
 			}
 		}
 	}
