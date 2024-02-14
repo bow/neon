@@ -133,6 +133,29 @@ func (fp *feedsPane) getFirstFeedNode() *tview.TreeNode {
 	return nil
 }
 
+func (fp *feedsPane) getCurrentGroupNode() *tview.TreeNode {
+	root := fp.GetRoot()
+	if root == nil {
+		return nil
+	}
+	current := fp.GetCurrentNode()
+	if current == nil {
+		return nil
+	}
+	switch t := current.GetReference().(type) {
+	case feedUpdatePeriod:
+		return current
+	case *entity.Feed:
+		targetGroup := whenUpdated(t)
+		for _, gnode := range root.GetChildren() {
+			if group, ok := gnode.GetReference().(feedUpdatePeriod); ok && group == targetGroup {
+				return gnode
+			}
+		}
+	}
+	return nil
+}
+
 func (fp *feedsPane) getCurrentFeed() *entity.Feed {
 	if fnode := fp.GetCurrentNode(); fnode != nil {
 		feed, ok := fnode.GetReference().(*entity.Feed)
@@ -183,23 +206,14 @@ func (fp *feedsPane) toggleCurrentFeedFold() {
 	if current == nil {
 		return
 	}
-	var target feedUpdatePeriod
-	switch t := current.GetReference().(type) {
-	case *entity.Feed:
-		target = whenUpdated(t)
-	case feedUpdatePeriod:
-		target = t
-	}
-	for _, gnode := range root.GetChildren() {
-		if period, ok := gnode.GetReference().(feedUpdatePeriod); ok && period == target {
-			if gnode.IsExpanded() {
-				gnode.Collapse()
-			} else {
-				gnode.Expand()
-			}
-			fp.SetCurrentNode(gnode)
-			return
+	if gnode := fp.getCurrentGroupNode(); gnode != nil {
+		if gnode.IsExpanded() {
+			gnode.Collapse()
+		} else {
+			gnode.Expand()
 		}
+		fp.SetCurrentNode(gnode)
+		return
 	}
 }
 
