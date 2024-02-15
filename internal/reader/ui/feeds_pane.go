@@ -147,7 +147,7 @@ func (fp *feedsPane) getCurrentGroupNode() *tview.TreeNode {
 	case *entity.Feed:
 		targetGroup := whenUpdated(t)
 		for _, gnode := range root.GetChildren() {
-			if group, ok := gnode.GetReference().(feedUpdatePeriod); ok && group == targetGroup {
+			if group := periodOf(gnode); group != nil && targetGroup == *group {
 				return gnode
 			}
 		}
@@ -360,4 +360,15 @@ func feedOf(node *tview.TreeNode) *entity.Feed {
 		return nil
 	}
 	return feed
+}
+
+func periodOf(node *tview.TreeNode) *feedUpdatePeriod {
+	if node == nil {
+		return nil
+	}
+	period, ok := node.GetReference().(feedUpdatePeriod)
+	if !ok {
+		return nil
+	}
+	return &period
 }
