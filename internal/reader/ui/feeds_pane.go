@@ -178,12 +178,20 @@ func (fp *feedsPane) toggleAllFeedsFold() {
 	// treat mixed state as if everything is collapsed. that is, we then expand everything.
 	if (!allExpanded && !allCollapsed) || (allCollapsed && !allExpanded) {
 		for _, gnode := range root.GetChildren() {
+			if period := periodOf(gnode); period != nil {
+				gnode.SetText(period.Text(fp.lang))
+			}
 			gnode.Expand()
 		}
 		return
 	} else if allExpanded && !allCollapsed {
 		current := fp.getCurrentGroupNode()
 		for _, gnode := range root.GetChildren() {
+			if unread := countGroupUnread(gnode); unread > 0 {
+				if period := periodOf(gnode); period != nil {
+					gnode.SetText(fmt.Sprintf("%s (%d)", period.Text(fp.lang), unread))
+				}
+			}
 			gnode.Collapse()
 		}
 		// Set selection to nearest group prior to collapsing.
@@ -204,8 +212,16 @@ func (fp *feedsPane) toggleCurrentFeedFold() {
 	}
 	if gnode := fp.getCurrentGroupNode(); gnode != nil {
 		if gnode.IsExpanded() {
+			if unread := countGroupUnread(gnode); unread > 0 {
+				if period := periodOf(gnode); period != nil {
+					gnode.SetText(fmt.Sprintf("%s (%d)", period.Text(fp.lang), unread))
+				}
+			}
 			gnode.Collapse()
 		} else {
+			if period := periodOf(gnode); period != nil {
+				gnode.SetText(period.Text(fp.lang))
+			}
 			gnode.Expand()
 		}
 		fp.SetCurrentNode(gnode)
@@ -324,6 +340,22 @@ func groupNode(period feedUpdatePeriod, theme *Theme, lang *Lang) *tview.TreeNod
 		SetReference(period).
 		SetColor(theme.feedGroupNode).
 		SetSelectable(true)
+}
+
+func countGroupUnread(gnode *tview.TreeNode) int {
+	var unread int
+	period := periodOf(gnode)
+	if period == nil {
+		return 0
+	}
+	for _, fnode := range gnode.GetChildren() {
+		feed := feedOf(fnode)
+		if feed == nil {
+			continue
+		}
+		unread = unread + feed.NumEntriesUnread()
+	}
+	return unread
 }
 
 func whenUpdated(feed *entity.Feed) feedUpdatePeriod {
