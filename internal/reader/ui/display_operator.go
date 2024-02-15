@@ -35,13 +35,17 @@ func (do *DisplayOperator) FocusReadingPane(d *Display) {
 	d.focusPane(d.readingPane)
 }
 
-func (do *DisplayOperator) RefreshStats(d *Display, f func() (*entity.Stats, error)) {
-	stats, err := f()
+func (do *DisplayOperator) PopulateFeedsPane(d *Display, f func() ([]*entity.Feed, error)) {
+	feeds, err := f()
 	if err != nil {
 		d.errEvent(err)
 		return
 	}
-	d.setStats(stats)
+	go func() {
+		for _, feed := range feeds {
+			d.feedsCh <- feed
+		}
+	}()
 }
 
 func (do *DisplayOperator) RefreshFeeds(d *Display, f func() (<-chan entity.PullResult, error)) {
@@ -82,17 +86,13 @@ func (do *DisplayOperator) RefreshFeeds(d *Display, f func() (<-chan entity.Pull
 	}
 }
 
-func (do *DisplayOperator) PopulateFeedsPane(d *Display, f func() ([]*entity.Feed, error)) {
-	feeds, err := f()
+func (do *DisplayOperator) RefreshStats(d *Display, f func() (*entity.Stats, error)) {
+	stats, err := f()
 	if err != nil {
 		d.errEvent(err)
 		return
 	}
-	go func() {
-		for _, feed := range feeds {
-			d.feedsCh <- feed
-		}
-	}()
+	d.setStats(stats)
 }
 
 func (do *DisplayOperator) ShowIntroPopup(d *Display) {
