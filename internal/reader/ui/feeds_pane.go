@@ -109,8 +109,7 @@ func (fp *feedsPane) findFeedNode(id *entity.ID) *tview.TreeNode {
 	}
 	for _, gnode := range root.GetChildren() {
 		for _, fnode := range gnode.GetChildren() {
-			feed := fnode.GetReference().(*entity.Feed)
-			if feed.ID == *id {
+			if feed := feedOf(fnode); feed != nil && feed.ID == *id {
 				return fnode
 			}
 		}
@@ -157,13 +156,7 @@ func (fp *feedsPane) getCurrentGroupNode() *tview.TreeNode {
 }
 
 func (fp *feedsPane) getCurrentFeed() *entity.Feed {
-	if fnode := fp.GetCurrentNode(); fnode != nil {
-		feed, ok := fnode.GetReference().(*entity.Feed)
-		if ok {
-			return feed
-		}
-	}
-	return nil
+	return feedOf(fp.GetCurrentNode())
 }
 
 func (fp *feedsPane) toggleAllFeedsFold() {
@@ -313,7 +306,10 @@ func feedNode(feed *entity.Feed, theme *Theme) *tview.TreeNode {
 }
 
 func setFeedNodeDisplay(fnode *tview.TreeNode, theme *Theme) {
-	feed := fnode.GetReference().(*entity.Feed)
+	feed := feedOf(fnode)
+	if feed == nil {
+		return
+	}
 	if c := feed.NumEntriesUnread(); c > 0 {
 		fnode.SetText(fmt.Sprintf("%s (%d)", feed.Title, c)).
 			SetColor(theme.feedNodeUnread)
@@ -353,4 +349,15 @@ func whenUpdated(feed *entity.Feed) feedUpdatePeriod {
 	default:
 		return updatedToday
 	}
+}
+
+func feedOf(node *tview.TreeNode) *entity.Feed {
+	if node == nil {
+		return nil
+	}
+	feed, ok := node.GetReference().(*entity.Feed)
+	if !ok {
+		return nil
+	}
+	return feed
 }
