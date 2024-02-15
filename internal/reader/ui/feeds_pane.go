@@ -280,8 +280,8 @@ const (
 	updatedUnknown
 )
 
-func (ug feedUpdatePeriod) Text(lang *Lang) string {
-	switch ug {
+func (period feedUpdatePeriod) Text(lang *Lang) string {
+	switch period {
 	case updatedToday:
 		return lang.updatedTodayText
 	case updatedThisWeek:
@@ -319,9 +319,9 @@ func setFeedNodeDisplay(fnode *tview.TreeNode, theme *Theme) {
 	}
 }
 
-func groupNode(ug feedUpdatePeriod, theme *Theme, lang *Lang) *tview.TreeNode {
-	return tview.NewTreeNode(ug.Text(lang)).
-		SetReference(ug).
+func groupNode(period feedUpdatePeriod, theme *Theme, lang *Lang) *tview.TreeNode {
+	return tview.NewTreeNode(period.Text(lang)).
+		SetReference(period).
 		SetColor(theme.feedGroupNode).
 		SetSelectable(true)
 }
