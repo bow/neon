@@ -30,9 +30,9 @@ var langEN = &Lang{
 	statsPopupTitle: "Stats",
 	introPopupTitle: "Welcome",
 
-	updatedTodayText:     "Today",
-	updatedThisWeekText:  "This Week",
-	updatedThisMonthText: "This Month",
-	updatedEarlierText:   "Earlier",
+	updatedTodayText:     "Updated today",
+	updatedThisWeekText:  "Updated this week",
+	updatedThisMonthText: "Updated this month",
+	updatedEarlierText:   "Updated earlier",
 	updatedUnknownText:   "Unknown",
 }
