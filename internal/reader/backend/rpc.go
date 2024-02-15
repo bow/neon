@@ -64,11 +64,14 @@ func (r *RPC) GetAllFeedsF(ctx context.Context) func() ([]*entity.Feed, error) {
 
 func (r *RPC) PullFeedsF(
 	ctx context.Context,
-	_ []entity.ID,
+	ids []entity.ID,
 ) func() (<-chan entity.PullResult, error) {
 	return func() (<-chan entity.PullResult, error) {
 		max := uint32(0)
-		req := api.PullFeedsRequest{MaxEntriesPerFeed: &max}
+		req := api.PullFeedsRequest{
+			MaxEntriesPerFeed: &max,
+			FeedIds:           ids,
+		}
 		stream, err := r.client.PullFeeds(ctx, &req)
 		if err != nil {
 			return nil, err

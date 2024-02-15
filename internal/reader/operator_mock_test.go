@@ -112,6 +112,20 @@ func (mr *MockOperatorMockRecorder) FocusReadingPane(arg0 any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FocusReadingPane", reflect.TypeOf((*MockOperator)(nil).FocusReadingPane), arg0)
 }
 
+// GetCurrentFeed mocks base method.
+func (m *MockOperator) GetCurrentFeed(arg0 *ui.Display) *entity.Feed {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetCurrentFeed", arg0)
+	ret0, _ := ret[0].(*entity.Feed)
+	return ret0
+}
+
+// GetCurrentFeed indicates an expected call of GetCurrentFeed.
+func (mr *MockOperatorMockRecorder) GetCurrentFeed(arg0 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCurrentFeed", reflect.TypeOf((*MockOperator)(nil).GetCurrentFeed), arg0)
+}
+
 // PopulateFeedsPane mocks base method.
 func (m *MockOperator) PopulateFeedsPane(arg0 *ui.Display, arg1 func() ([]*entity.Feed, error)) {
 	m.ctrl.T.Helper()
@@ -125,15 +139,15 @@ func (mr *MockOperatorMockRecorder) PopulateFeedsPane(arg0, arg1 any) *gomock.Ca
 }
 
 // RefreshFeeds mocks base method.
-func (m *MockOperator) RefreshFeeds(arg0 *ui.Display, arg1 func() (<-chan entity.PullResult, error)) {
+func (m *MockOperator) RefreshFeeds(arg0 *ui.Display, arg1 func() (<-chan entity.PullResult, error), arg2 *entity.Feed) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "RefreshFeeds", arg0, arg1)
+	m.ctrl.Call(m, "RefreshFeeds", arg0, arg1, arg2)
 }
 
 // RefreshFeeds indicates an expected call of RefreshFeeds.
-func (mr *MockOperatorMockRecorder) RefreshFeeds(arg0, arg1 any) *gomock.Call {
+func (mr *MockOperatorMockRecorder) RefreshFeeds(arg0, arg1, arg2 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RefreshFeeds", reflect.TypeOf((*MockOperator)(nil).RefreshFeeds), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RefreshFeeds", reflect.TypeOf((*MockOperator)(nil).RefreshFeeds), arg0, arg1, arg2)
 }
 
 // RefreshStats mocks base method.

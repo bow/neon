@@ -3,7 +3,9 @@
 
 package ui
 
-import "github.com/bow/neon/internal/entity"
+import (
+	"github.com/bow/neon/internal/entity"
+)
 
 type DisplayOperator struct{}
 
@@ -35,6 +37,10 @@ func (do *DisplayOperator) FocusReadingPane(d *Display) {
 	d.focusPane(d.readingPane)
 }
 
+func (do *DisplayOperator) GetCurrentFeed(d *Display) *entity.Feed {
+	return d.feedsPane.getCurrentFeed()
+}
+
 func (do *DisplayOperator) PopulateFeedsPane(d *Display, f func() ([]*entity.Feed, error)) {
 	feeds, err := f()
 	if err != nil {
@@ -48,8 +54,17 @@ func (do *DisplayOperator) PopulateFeedsPane(d *Display, f func() ([]*entity.Fee
 	}()
 }
 
-func (do *DisplayOperator) RefreshFeeds(d *Display, f func() (<-chan entity.PullResult, error)) {
-	d.infoEventf("Pulling feeds")
+func (do *DisplayOperator) RefreshFeeds(
+	d *Display,
+	f func() (<-chan entity.PullResult, error),
+	hint *entity.Feed,
+) {
+
+	if hint == nil {
+		d.infoEventf("Pulling all feeds")
+	} else {
+		d.infoEventf("Pulling %s", hint.FeedURL)
+	}
 
 	var okc, errc int
 	ch, err := f()

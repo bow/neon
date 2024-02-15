@@ -11,6 +11,7 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"google.golang.org/grpc"
 
+	"github.com/bow/neon/internal/entity"
 	bknd "github.com/bow/neon/internal/reader/backend"
 	st "github.com/bow/neon/internal/reader/state"
 	"github.com/bow/neon/internal/reader/ui"
@@ -132,6 +133,31 @@ func (r *Reader) globalKeyHandler() ui.KeyHandler {
 func (r *Reader) feedsPaneKeyHandler() ui.KeyHandler {
 	pullFeedsLock := make(chan struct{}, 1)
 
+	pullFeeds := func(feed *entity.Feed) {
+		select {
+		case pullFeedsLock <- struct{}{}:
+			defer func() { <-pullFeedsLock }()
+		default:
+			return
+		}
+		ctxf, cancelf := r.callCtx()
+		defer cancelf()
+
+		var (
+			hint *entity.Feed
+			ids  []entity.ID
+		)
+		if feed != nil {
+			hint = feed
+			ids = []entity.ID{feed.ID}
+		}
+		r.opr.RefreshFeeds(r.display, r.backend.PullFeedsF(ctxf, ids), hint)
+
+		ctxs, cancels := r.callCtx()
+		defer cancels()
+		r.opr.RefreshStats(r.display, r.backend.GetStatsF(ctxs))
+	}
+
 	return func(event *tcell.EventKey) *tcell.EventKey {
 		keyr := event.Rune()
 
@@ -139,21 +165,13 @@ func (r *Reader) feedsPaneKeyHandler() ui.KeyHandler {
 		switch keyr {
 
 		case 'P':
-			go func() {
-				select {
-				case pullFeedsLock <- struct{}{}:
-					defer func() { <-pullFeedsLock }()
-				default:
-					return
-				}
-				ctxf, cancelf := r.callCtx()
-				defer cancelf()
-				r.opr.RefreshFeeds(r.display, r.backend.PullFeedsF(ctxf, nil))
+			go pullFeeds(nil)
+			return nil
 
-				ctxs, cancels := r.callCtx()
-				defer cancels()
-				r.opr.RefreshStats(r.display, r.backend.GetStatsF(ctxs))
-			}()
+		case 'p':
+			if current := r.opr.GetCurrentFeed(r.display); current != nil {
+				go pullFeeds(current)
+			}
 			return nil
 
 		case 'Z':
