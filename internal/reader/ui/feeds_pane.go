@@ -159,6 +159,7 @@ func (fp *feedsPane) getCurrentFeed() *entity.Feed {
 	return feedOf(fp.GetCurrentNode())
 }
 
+// nolint:revive
 func (fp *feedsPane) toggleAllFeedsFold() {
 	root := fp.GetRoot()
 	if root == nil {
@@ -353,7 +354,7 @@ func countGroupUnread(gnode *tview.TreeNode) int {
 		if feed == nil {
 			continue
 		}
-		unread = unread + feed.NumEntriesUnread()
+		unread += feed.NumEntriesUnread()
 	}
 	return unread
 }
