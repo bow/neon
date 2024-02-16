@@ -16,17 +16,24 @@ import (
 type feedsPane struct {
 	tview.TreeView
 
-	theme      *Theme
-	lang       *Lang
-	store      *feedStore
+	theme    *Theme
+	lang     *Lang
+	incoming <-chan *entity.Feed
+
+	store *feedStore
 }
 
-func newFeedsPane(theme *Theme, lang *Lang) *feedsPane {
+func newFeedsPane(
+	theme *Theme,
+	lang *Lang,
+	incoming <-chan *entity.Feed,
+) *feedsPane {
 
 	fp := feedsPane{
-		theme: theme,
-		lang:  lang,
-		store: newFeedStore(),
+		theme:    theme,
+		lang:     lang,
+		incoming: incoming,
+		store:    newFeedStore(),
 	}
 
 	fp.initTree()
@@ -47,6 +54,27 @@ func newFeedsPane(theme *Theme, lang *Lang) *feedsPane {
 	fp.SetBlurFunc(func() { fp.SetDrawFunc(unfocusf) })
 
 	return &fp
+}
+
+func (fp *feedsPane) startPoll() (stop func()) {
+	done := make(chan struct{})
+	stop = func() {
+		defer close(done)
+		done <- struct{}{}
+	}
+
+	go func() {
+		for {
+			select {
+			case <-done:
+				return
+			case feed := <-fp.incoming:
+				fp.updateFeed(feed)
+			}
+		}
+	}()
+
+	return stop
 }
 
 func (fp *feedsPane) updateFeed(feed *entity.Feed) {

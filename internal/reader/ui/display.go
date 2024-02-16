@@ -60,7 +60,6 @@ func NewDisplay(screen tcell.Screen, theme string) (*Display, error) {
 	}
 	d.setRoot()
 	d.eventsCh = make(chan *event)
-	d.feedsCh = make(chan *entity.Feed)
 
 	return &d, nil
 }
@@ -80,7 +79,8 @@ func (d *Display) Start() error {
 	}
 	stope := d.startEventPoll()
 	defer stope()
-	stopf := d.startFeedPoll()
+
+	stopf := d.feedsPane.startPoll()
 	defer stopf()
 
 	return d.inner.Run()
@@ -156,7 +156,7 @@ func (d *Display) setMainPage() {
 	narrowFeedsPaneWidth := 30
 
 	d.feedsCh = make(chan *entity.Feed)
-	feedsPane := newFeedsPane(d.theme, d.lang)
+	feedsPane := newFeedsPane(d.theme, d.lang, d.feedsCh)
 	entriesPane := newEntriesPane(d.theme, d.lang)
 	readingPane := newReadingPane(d.theme, d.lang, narrowFeedsPaneWidth)
 
@@ -217,27 +217,6 @@ func (d *Display) startEventPoll() (stop func()) {
 				return
 			case ev := <-d.eventsCh:
 				d.bar.showEvent(ev)
-			}
-		}
-	}()
-
-	return stop
-}
-
-func (d *Display) startFeedPoll() (stop func()) {
-	done := make(chan struct{})
-	stop = func() {
-		defer close(done)
-		done <- struct{}{}
-	}
-
-	go func() {
-		for {
-			select {
-			case <-done:
-				return
-			case feed := <-d.feedsCh:
-				d.feedsPane.updateFeed(feed)
 			}
 		}
 	}()
