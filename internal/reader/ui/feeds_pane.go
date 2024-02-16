@@ -19,7 +19,6 @@ type feedsPane struct {
 	theme      *Theme
 	lang       *Lang
 	store      *feedStore
-	focusStack *entity.ID
 }
 
 func newFeedsPane(theme *Theme, lang *Lang) *feedsPane {
@@ -37,23 +36,15 @@ func newFeedsPane(theme *Theme, lang *Lang) *feedsPane {
 	fp.SetFocusFunc(
 		func() {
 			fp.SetDrawFunc(focusf)
-
-			if previous := fp.findFeedNode(fp.focusStack); previous != nil {
-				fp.SetCurrentNode(previous)
-			} else if fallback := fp.getFirstFeedNode(); fallback != nil {
-				fp.SetCurrentNode(fallback)
+			current := fp.GetCurrentNode()
+			if current == nil || current == fp.GetRoot() {
+				if target := fp.getFirstFeedNode(); target != nil {
+					fp.SetCurrentNode(target)
+				}
 			}
 		},
 	)
-	fp.SetBlurFunc(
-		func() {
-			fp.SetDrawFunc(unfocusf)
-			if feed := fp.getCurrentFeed(); feed != nil {
-				fp.focusStack = &feed.ID
-			}
-			fp.SetCurrentNode(nil)
-		},
-	)
+	fp.SetBlurFunc(func() { fp.SetDrawFunc(unfocusf) })
 
 	return &fp
 }
@@ -92,29 +83,10 @@ func (fp *feedsPane) initTree() {
 	tree := tview.NewTreeView().
 		SetRoot(root).
 		SetGraphics(false).
-		SetCurrentNode(root).
 		SetPrefixes([]string{"  ", "· "}).
 		SetTopLevel(1)
 
 	fp.TreeView = *tree
-}
-
-func (fp *feedsPane) findFeedNode(id *entity.ID) *tview.TreeNode {
-	if id == nil {
-		return nil
-	}
-	root := fp.GetRoot()
-	if root == nil {
-		return nil
-	}
-	for _, gnode := range root.GetChildren() {
-		for _, fnode := range gnode.GetChildren() {
-			if feed := feedOf(fnode); feed != nil && feed.ID == *id {
-				return fnode
-			}
-		}
-	}
-	return nil
 }
 
 func (fp *feedsPane) getFirstFeedNode() *tview.TreeNode {
