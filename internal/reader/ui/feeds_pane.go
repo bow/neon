@@ -159,11 +159,10 @@ func (fp *feedsPane) getCurrentFeed() *entity.Feed {
 	return feedOf(fp.GetCurrentNode())
 }
 
-// nolint:revive
-func (fp *feedsPane) toggleAllFeedsFold() {
+func (fp *feedsPane) getFoldState() foldState {
 	root := fp.GetRoot()
 	if root == nil {
-		return
+		return foldUnknown
 	}
 	var allExpanded, allCollapsed bool
 	for i, gnode := range root.GetChildren() {
@@ -176,8 +175,27 @@ func (fp *feedsPane) toggleAllFeedsFold() {
 		allExpanded = allExpanded && expanded
 		allCollapsed = allCollapsed && !expanded
 	}
-	// treat mixed state as if everything is collapsed. that is, we then expand everything.
-	if (!allExpanded && !allCollapsed) || (allCollapsed && !allExpanded) {
+	if !allExpanded && !allCollapsed {
+		return foldMixed
+	}
+	if allCollapsed && !allExpanded {
+		return foldAllCollapsed
+	}
+	if allExpanded && !allCollapsed {
+		return foldAllExpanded
+	}
+	panic("impossible fold state")
+}
+
+func (fp *feedsPane) toggleAllFeedsFold() {
+	root := fp.GetRoot()
+	if root == nil {
+		return
+	}
+
+	switch state := fp.getFoldState(); state {
+
+	case foldMixed, foldAllCollapsed:
 		for _, gnode := range root.GetChildren() {
 			if period := periodOf(gnode); period != nil {
 				gnode.SetText(period.Text(fp.lang))
@@ -185,7 +203,8 @@ func (fp *feedsPane) toggleAllFeedsFold() {
 			gnode.Expand()
 		}
 		return
-	} else if allExpanded && !allCollapsed {
+
+	case foldAllExpanded:
 		current := fp.getCurrentGroupNode()
 		for _, gnode := range root.GetChildren() {
 			if unread := countGroupUnread(gnode); unread > 0 {
@@ -198,8 +217,10 @@ func (fp *feedsPane) toggleAllFeedsFold() {
 		// Set selection to nearest group prior to collapsing.
 		fp.SetCurrentNode(current)
 		return
+
+	case foldUnknown:
+		return
 	}
-	panic("impossible fold state")
 }
 
 func (fp *feedsPane) toggleCurrentFeedFold() {
@@ -286,6 +307,15 @@ func (fp *feedsPane) refreshColors() {
 		}
 	}
 }
+
+type foldState uint8
+
+const (
+	foldUnknown foldState = iota
+	foldMixed
+	foldAllCollapsed
+	foldAllExpanded
+)
 
 type feedUpdatePeriod uint8
 
