@@ -70,7 +70,8 @@ func (fp *feedsPane) startPoll() (stop func()) {
 			case <-done:
 				return
 			case feed := <-fp.incoming:
-				fp.updateFeed(feed)
+				fp.store.upsert(feed)
+				fp.refreshFeeds()
 			}
 		}
 	}()
@@ -78,10 +79,8 @@ func (fp *feedsPane) startPoll() (stop func()) {
 	return stop
 }
 
-func (fp *feedsPane) updateFeed(feed *entity.Feed) {
+func (fp *feedsPane) refreshFeeds() {
 	root := fp.GetRoot()
-
-	fp.store.upsert(feed)
 
 	var currentFeedID *entity.ID
 	if currentFeed := fp.getCurrentFeed(); currentFeed != nil {
