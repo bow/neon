@@ -43,16 +43,11 @@ func (rp *readingPane) makeDrawFuncs() (focusf, unfocusf drawFunc) {
 		focused bool,
 	) func(screen tcell.Screen, x int, y int, width int, height int) (int, int, int, int) {
 
-		var (
-			title   string
-			leftPad int
-		)
+		var title string
 		if focused {
 			title = titleF
-			leftPad = 0
 		} else {
 			title = titleUF
-			leftPad = 1
 		}
 
 		return func(screen tcell.Screen, x int, y int, width int, height int) (int, int, int, int) {
@@ -71,14 +66,14 @@ func (rp *readingPane) makeDrawFuncs() (focusf, unfocusf drawFunc) {
 			tview.Print(
 				screen,
 				title,
-				x+leftPad,
+				x,
 				y,
 				width-2,
 				tview.AlignLeft,
 				rp.theme.titleFG,
 			)
 
-			return x + 2, y + 1, width - 2, height - 1
+			return x + 1, y + 1, width - 2, height - 1
 		}
 	}
 

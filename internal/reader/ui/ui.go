@@ -16,9 +16,9 @@ type drawFunc func(screen tcell.Screen, x int, y int, w int, h int) (ix int, iy 
 func fmtPaneTitle(title string) (unfocused, focused string) {
 	if title != "" {
 		unfocused = fmt.Sprintf(" %s ", title)
-		focused = fmt.Sprintf("[::b]▶ %s[::-] ", title)
+		focused = fmt.Sprintf("[::b] %s[::-] ● ", title)
 	} else {
-		focused = "[::b]▶[::-] "
+		focused = "[::b] ● [::-]"
 	}
 	return unfocused, focused
 }

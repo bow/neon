@@ -118,7 +118,8 @@ func (fp *feedsPane) initTree() {
 	tree := tview.NewTreeView().
 		SetRoot(root).
 		SetGraphics(false).
-		SetPrefixes([]string{"  ", "· "}).
+		SetPrefixes([]string{"", "· "}).
+		SetAlign(true).
 		SetTopLevel(1)
 
 	fp.TreeView = *tree
@@ -258,6 +259,7 @@ func (fp *feedsPane) toggleCurrentFeedFold() {
 	}
 }
 
+// nolint:dupl
 func (fp *feedsPane) makeDrawFuncs() (focusf, unfocusf drawFunc) {
 
 	titleUF, titleF := fmtPaneTitle(fp.lang.feedsPaneTitle)
@@ -266,16 +268,11 @@ func (fp *feedsPane) makeDrawFuncs() (focusf, unfocusf drawFunc) {
 		focused bool,
 	) func(screen tcell.Screen, x int, y int, width int, height int) (int, int, int, int) {
 
-		var (
-			title   string
-			leftPad int
-		)
+		var title string
 		if focused {
 			title = titleF
-			leftPad = 0
 		} else {
 			title = titleUF
-			leftPad = 1
 		}
 
 		return func(screen tcell.Screen, x int, y int, width int, height int) (int, int, int, int) {
@@ -289,14 +286,14 @@ func (fp *feedsPane) makeDrawFuncs() (focusf, unfocusf drawFunc) {
 			tview.Print(
 				screen,
 				title,
-				x+leftPad,
+				x,
 				y,
-				width-2,
+				width-1,
 				tview.AlignLeft,
 				fp.theme.titleFG,
 			)
 
-			return x, y + 1, width - 2, height - 1
+			return x + 1, y + 1, width - 1, height - 1
 		}
 	}
 
