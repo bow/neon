@@ -77,7 +77,10 @@ func (d *Display) Start() error {
 	if !d.handlersSet {
 		return fmt.Errorf("display key handlers must be set before starting")
 	}
-	stope := d.startEventPoll()
+	stopv := d.startEventPoll()
+	defer stopv()
+
+	stope := d.entriesPane.startPoll()
 	defer stope()
 
 	stopf := d.feedsPane.startPoll()
@@ -113,8 +116,18 @@ const (
 	introPageName = "intro"
 	statsPageName = "stats"
 
-	longDateFormat  = "2 January 2006 - 15:04:05 MST"
-	shortDateFormat = "02/Jan/06 15:04"
+	longDateFormat = "2 January 2006 · 15:04:05 MST"
+
+	shortDateFormat   = "2-Jan-06 15:04"
+	compactDateFormat = "2/1/06 15:04"
+
+	shortTruncDateFormat   = "2-Jan 15:04"
+	compactTruncDateFormat = "2/1 15:04"
+)
+
+var (
+	shortDateWidth   = len(shortDateFormat) + 1   // because the date is not zero-padded
+	compactDateWidth = len(compactDateFormat) + 2 // because the date and month are not zero-padded
 )
 
 func (d *Display) setRoot() {
@@ -157,7 +170,7 @@ func (d *Display) setMainPage() {
 
 	d.feedsCh = make(chan *entity.Feed)
 	feedsPane := newFeedsPane(d.theme, d.lang, d.feedsCh)
-	entriesPane := newEntriesPane(d.theme, d.lang)
+	entriesPane := newEntriesPane(d.theme, d.lang, feedsPane.outgoing)
 	readingPane := newReadingPane(d.theme, d.lang, narrowFeedsPaneWidth)
 
 	narrowFlex := tview.NewFlex().

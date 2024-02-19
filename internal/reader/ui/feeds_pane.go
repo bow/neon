@@ -21,7 +21,8 @@ type feedsPane struct {
 	lang     *Lang
 	incoming <-chan *entity.Feed
 
-	store *feedStore
+	store    *feedStore
+	outgoing chan []*entity.Entry
 }
 
 func newFeedsPane(
@@ -34,7 +35,9 @@ func newFeedsPane(
 		theme:    theme,
 		lang:     lang,
 		incoming: incoming,
+
 		store:    newFeedStore(),
+		outgoing: make(chan []*entity.Entry),
 	}
 
 	fp.initTree()
@@ -47,6 +50,9 @@ func newFeedsPane(
 			current := fp.GetCurrentNode()
 			if current == nil || current == fp.GetRoot() {
 				if target := fp.getFirstFeedNode(); target != nil {
+					if feed := feedOf(target); feed != nil {
+						fp.outgoing <- feed.EntriesSlice()
+					}
 					fp.SetCurrentNode(target)
 				}
 			}
@@ -96,6 +102,7 @@ func (fp *feedsPane) refreshFeeds() {
 		for _, feed := range group.feedsSlice() {
 			fnode := feedNode(feed, fp.theme)
 			setFeedNodeDisplay(fnode, fp.theme)
+			fnode.SetSelectedFunc(func() { fp.outgoing <- feed.EntriesSlice() })
 			gnode.AddChild(fnode)
 			if currentFeedID != nil && feed.ID == *currentFeedID {
 				fp.SetCurrentNode(fnode)
