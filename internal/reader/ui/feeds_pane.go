@@ -17,27 +17,30 @@ import (
 type feedsPane struct {
 	tview.TreeView
 
-	theme    *Theme
-	lang     *Lang
-	incoming <-chan *entity.Feed
+	theme *Theme
+	lang  *Lang
 
+	incoming <-chan *entity.Feed
 	store    *feedStore
-	outgoing chan []*entity.Entry
+
+	entriesPane *entriesPane
 }
 
 func newFeedsPane(
 	theme *Theme,
 	lang *Lang,
 	incoming <-chan *entity.Feed,
+	ep *entriesPane,
 ) *feedsPane {
 
 	fp := feedsPane{
-		theme:    theme,
-		lang:     lang,
-		incoming: incoming,
+		theme: theme,
+		lang:  lang,
 
+		incoming: incoming,
 		store:    newFeedStore(),
-		outgoing: make(chan []*entity.Entry),
+
+		entriesPane: ep,
 	}
 
 	fp.initTree()
@@ -51,7 +54,7 @@ func newFeedsPane(
 			if current == nil || current == fp.GetRoot() {
 				if target := fp.getFirstFeedNode(); target != nil {
 					if feed := feedOf(target); feed != nil {
-						fp.outgoing <- feed.EntriesSlice()
+						fp.entriesPane.setEntries(feed.EntriesSlice())
 					}
 					fp.SetCurrentNode(target)
 				}
@@ -102,7 +105,7 @@ func (fp *feedsPane) refreshFeeds() {
 		for _, feed := range group.feedsSlice() {
 			fnode := feedNode(feed, fp.theme)
 			setFeedNodeDisplay(fnode, fp.theme)
-			fnode.SetSelectedFunc(func() { fp.outgoing <- feed.EntriesSlice() })
+			fnode.SetSelectedFunc(func() { fp.entriesPane.setEntries(feed.EntriesSlice()) })
 			gnode.AddChild(fnode)
 			if currentFeedID != nil && feed.ID == *currentFeedID {
 				fp.SetCurrentNode(fnode)

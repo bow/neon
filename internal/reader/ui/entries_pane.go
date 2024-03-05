@@ -15,20 +15,22 @@ import (
 type entriesPane struct {
 	tview.Table
 
-	theme    *Theme
-	lang     *Lang
-	incoming <-chan []*entity.Entry
+	theme *Theme
+	lang  *Lang
 
 	store *entriesStore
+
+	readingPane *readingPane
 }
 
-func newEntriesPane(theme *Theme, lang *Lang, incoming <-chan []*entity.Entry) *entriesPane {
+func newEntriesPane(theme *Theme, lang *Lang, rp *readingPane) *entriesPane {
 	ep := entriesPane{
-		theme:    theme,
-		lang:     lang,
-		incoming: incoming,
+		theme: theme,
+		lang:  lang,
 
 		store: newEntriesStore(),
+
+		readingPane: rp,
 	}
 
 	ep.initTable()
@@ -41,26 +43,9 @@ func newEntriesPane(theme *Theme, lang *Lang, incoming <-chan []*entity.Entry) *
 	return &ep
 }
 
-func (ep *entriesPane) startPoll() (stop func()) {
-	done := make(chan struct{})
-	stop = func() {
-		defer close(done)
-		done <- struct{}{}
-	}
-
-	go func() {
-		for {
-			select {
-			case <-done:
-				return
-			case entries := <-ep.incoming:
-				ep.store.set(entries)
-				ep.refreshEntries()
-			}
-		}
-	}()
-
-	return stop
+func (ep *entriesPane) setEntries(entries []*entity.Entry) {
+	ep.store.set(entries)
+	ep.refreshEntries()
 }
 
 func (ep *entriesPane) refreshEntries() {

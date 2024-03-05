@@ -80,9 +80,6 @@ func (d *Display) Start() error {
 	stopv := d.startEventPoll()
 	defer stopv()
 
-	stope := d.entriesPane.startPoll()
-	defer stope()
-
 	stopf := d.feedsPane.startPoll()
 	defer stopf()
 
@@ -169,9 +166,9 @@ func (d *Display) setMainPage() {
 	narrowFeedsPaneWidth := 30
 
 	d.feedsCh = make(chan *entity.Feed)
-	feedsPane := newFeedsPane(d.theme, d.lang, d.feedsCh)
-	entriesPane := newEntriesPane(d.theme, d.lang, feedsPane.outgoing)
 	readingPane := newReadingPane(d.theme, d.lang, narrowFeedsPaneWidth)
+	entriesPane := newEntriesPane(d.theme, d.lang, readingPane)
+	feedsPane := newFeedsPane(d.theme, d.lang, d.feedsCh, entriesPane)
 
 	narrowFlex := tview.NewFlex().
 		SetDirection(tview.FlexRow).
