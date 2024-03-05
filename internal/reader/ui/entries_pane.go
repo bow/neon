@@ -61,6 +61,7 @@ func (ep *entriesPane) refreshEntries() {
 		}
 
 		for _, cell := range rowf(entry) {
+			cell.SetReference(entry)
 			addCell(cell)
 		}
 
@@ -70,6 +71,15 @@ func (ep *entriesPane) refreshEntries() {
 
 func (ep *entriesPane) initTable() {
 	table := tview.NewTable().SetSelectable(true, false)
+
+	table.SetSelectedFunc(
+		func(row, column int) {
+			entry, ok := table.GetCell(row, column).GetReference().(*entity.Entry)
+			if ok {
+				ep.readingPane.setEntry(entry)
+			}
+		},
+	)
 	ep.Table = *table
 }
 

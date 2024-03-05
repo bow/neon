@@ -4,12 +4,13 @@
 package ui
 
 import (
+	"github.com/bow/neon/internal/entity"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
 
 type readingPane struct {
-	tview.Box
+	*tview.TextView
 
 	theme *Theme
 	lang  *Lang
@@ -24,8 +25,8 @@ func newReadingPane(theme *Theme, lang *Lang, narrowBranchPoint int) *readingPan
 
 		narrowBranchPoint: narrowBranchPoint,
 	}
-	box := tview.NewBox()
-	rp.Box = *box
+
+	rp.TextView = tview.NewTextView()
 
 	focusf, unfocusf := rp.makeDrawFuncs()
 	rp.SetDrawFunc(unfocusf)
@@ -33,6 +34,18 @@ func newReadingPane(theme *Theme, lang *Lang, narrowBranchPoint int) *readingPan
 	rp.SetBlurFunc(func() { rp.SetDrawFunc(unfocusf) })
 
 	return &rp
+}
+
+func (rp *readingPane) setEntry(entry *entity.Entry) {
+	if content := entry.Content; content != nil {
+		rp.SetText(*content)
+		return
+	}
+	if url := entry.URL; url != nil {
+		rp.SetText(*url)
+		return
+	}
+	rp.SetText("<no-content>")
 }
 
 func (rp *readingPane) makeDrawFuncs() (focusf, unfocusf drawFunc) {
