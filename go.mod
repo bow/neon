@@ -6,7 +6,7 @@ require (
 	github.com/adrg/xdg v0.4.0
 	github.com/briandowns/spinner v1.23.0
 	github.com/gdamore/tcell/v2 v2.7.4
-	github.com/golang-migrate/migrate/v4 v4.17.0
+	github.com/golang-migrate/migrate/v4 v4.17.1
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.0.1
 	github.com/mmcdole/gofeed v1.3.0
 	github.com/rivo/tview v0.0.0-20240307173318-e804876934a1
