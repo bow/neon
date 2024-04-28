@@ -23,8 +23,8 @@ type RPC struct {
 // Ensure rpcRepo implements Repo.
 var _ Backend = new(RPC)
 
-func NewRPC(ctx context.Context, addr string, dialOpts ...grpc.DialOption) (*RPC, error) {
-	conn, err := grpc.DialContext(ctx, addr, dialOpts...)
+func NewRPC(_ context.Context, addr string, dialOpts ...grpc.DialOption) (*RPC, error) {
+	conn, err := grpc.NewClient(addr, dialOpts...)
 	if err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {
 			return nil, fmt.Errorf("timeout when connecting to server %q", addr)

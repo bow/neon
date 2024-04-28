@@ -129,7 +129,7 @@ func newTestClient(
 		return net.Dial(addr.Network(), rawAddr)
 	}
 	opts = append(opts, grpc.WithContextDialer(dialer))
-	conn, err := grpc.Dial(addr.String(), opts...)
+	conn, err := grpc.NewClient(addr.String(), opts...)
 	require.NoError(t, err)
 	client := api.NewNeonClient(conn)
 
