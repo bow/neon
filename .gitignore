@@ -14,7 +14,8 @@ bin/
 coverage.html
 
 # Misc
-.envrc
+.envrc-private
+.direnv/
 .DS_Store
 .idea/
 *.swp
