@@ -5,17 +5,16 @@ description: Checkout the repository, setup nix, and setup cachix
 inputs:
   nix_path:
     required: true
+    default: nixpkgs=flake:nixpkgs
   cachix_name:
     required: true
+    default: bow
   cachix_auth_token:
     required: true
 
 runs:
   using: composite
   steps:
-    - name: Checkout repo
-      uses: actions/checkout@v4
-
     - name: Install Nix
       uses: cachix/install-nix-action@v27
       with:
@@ -25,4 +24,4 @@ runs:
       uses: cachix/cachix-action@v15
       with:
         name: ${{ inputs.cachix_name }}
-        authToken: '${{ inputs.cachix_auth_token }}'
+        authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
