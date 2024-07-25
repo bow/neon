@@ -25,6 +25,12 @@
           inherit system;
           overlays = [ gomod2nix.overlays.default ];
         };
+        readFileOr = (path: default: with builtins; if pathExists path then (readFile path) else default);
+        repoName = "github.com/bow/neon";
+        tagFile = "${self}/.tag";
+        revFile = "${self}/.rev";
+        version = readFileOr tagFile "0.0.0";
+        commit = readFileOr revFile "";
         app = gomod2nix.legacyPackages.${system}.buildGoApplication {
           src = ./.;
           pwd = ./.;
@@ -34,6 +40,8 @@
           ldflags = [
             "-w" # do not generate debug output
             "-s" # strip symbols table
+            "-X ${repoName}/internal.version=${version}"
+            "-X ${repoName}/internal.gitCommit=${commit}"
           ];
         };
       in
@@ -67,8 +75,7 @@
         };
         packages =
           let
-            readFileOr = (path: default: with builtins; if pathExists path then (readFile path) else default);
-            imgTag = readFileOr "${self}/.tag" "latest";
+            imgTag = readFileOr tagFile "latest";
             imgAttrs = rec {
               name = "ghcr.io/bow/${app.name}";
               tag = imgTag;
@@ -80,7 +87,7 @@
                   "NEON_SERVER_DB_PATH=/var/data/neon.db"
                 ];
                 Labels = {
-                  "org.opencontainers.image.revision" = readFileOr "${self}/.rev" "";
+                  "org.opencontainers.image.revision" = readFileOr revFile "";
                   "org.opencontainers.image.source" = "https://github.com/bow/${app.name}";
                   "org.opencontainers.image.title" = "${app.name}";
                   "org.opencontainers.image.url" = "https://${name}";
