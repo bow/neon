@@ -29,6 +29,7 @@
           src = ./.;
           pwd = ./.;
           name = "neon";
+          doCheck = false;
           CGO_ENABLED = 0;
           ldflags = [
             "-w" # do not generate debug output
@@ -37,9 +38,6 @@
         };
       in
       {
-        packages = {
-          default = app;
-        };
         devShells = {
           default = pkgs.mkShell {
             packages = with pkgs; [
@@ -53,7 +51,6 @@
               gotestsum
               gotools
               (go-migrate.overrideAttrs (_final: _prev: { tags = [ "sqlite" ]; }))
-              mockgen
               protobuf
               protoc-gen-go
               protoc-gen-go-grpc
@@ -62,6 +59,7 @@
               nixfmt-rfc-style
               statix
               # others
+              gnugrep
               pre-commit
               sqlite
             ];
