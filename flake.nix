@@ -68,7 +68,6 @@
               statix
               # others
               gnugrep
-              pre-commit
               sqlite
             ];
           };
