@@ -65,6 +65,37 @@
             ];
           };
         };
+        packages =
+          let
+            readFileOr = (path: default: with builtins; if pathExists path then (readFile path) else default);
+            imgTag = readFileOr "${self}/.tag" "latest";
+            imgAttrs = rec {
+              name = "ghcr.io/bow/${app.name}";
+              tag = imgTag;
+              contents = [ app ];
+              config = {
+                Entrypoint = [ "/bin/${app.name}" ];
+                Env = [
+                  "NEON_SERVER_ADDR=tcp://0.0.0.0:5151"
+                  "NEON_SERVER_DB_PATH=/var/data/neon.db"
+                ];
+                Labels = {
+                  "org.opencontainers.image.revision" = readFileOr "${self}/.rev" "";
+                  "org.opencontainers.image.source" = "https://github.com/bow/${app.name}";
+                  "org.opencontainers.image.title" = "${app.name}";
+                  "org.opencontainers.image.url" = "https://${name}";
+                };
+              };
+              extraCommands = ''
+                mkdir -p var/data
+              '';
+            };
+          in
+          {
+            dockerArchive = pkgs.dockerTools.buildLayeredImage imgAttrs;
+            dockerArchiveStreamer = pkgs.dockerTools.streamLayeredImage imgAttrs;
+            local = app;
+          };
       }
     );
 }
