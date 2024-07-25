@@ -57,7 +57,7 @@ func newServer(lis net.Listener, grpcServer *grpc.Server, ds datastore.Datastore
 		defer close(sigCh)
 		defer close(stoppedCh)
 
-		reason := "unknown"
+		var reason string
 		select {
 		case sig := <-sigCh:
 			reason = sig.String()

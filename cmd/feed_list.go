@@ -21,7 +21,7 @@ func newFeedListCommand() *cobra.Command {
 		Short:   "List feeds",
 
 		DisableFlagsInUseLine: true,
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(cmd *cobra.Command, _ []string) error {
 
 			db, err := dbFromCmdCtx(cmd)
 			if err != nil {

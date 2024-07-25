@@ -29,7 +29,7 @@ func newServerCommand() *cobra.Command {
 		Use:     name,
 		Aliases: makeAlias(name),
 		Short:   "Start a gRPC server",
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(cmd *cobra.Command, _ []string) error {
 
 			datastore.SetLogger(zlog.Logger)
 			server.SetLogger(zlog.Logger)

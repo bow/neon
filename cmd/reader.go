@@ -35,7 +35,7 @@ func newReaderCommand() *cobra.Command {
 		Use:     name,
 		Aliases: append(makeAlias(name), []string{"r"}...),
 		Short:   "Open the feed reader",
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(cmd *cobra.Command, _ []string) error {
 
 			var (
 				err            error

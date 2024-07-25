@@ -24,7 +24,7 @@ func New() *cobra.Command {
 		SilenceErrors:      true,
 		DisableSuggestions: true,
 		CompletionOptions:  cobra.CompletionOptions{DisableDefaultCmd: true},
-		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		PersistentPreRunE: func(_ *cobra.Command, _ []string) error {
 
 			caser := cases.Title(language.English)
 

@@ -446,7 +446,7 @@ func (d *Display) focusAdjacentPane(reverse bool) {
 	}
 	targets := []tview.Primitive{d.feedsPane, d.entriesPane, d.readingPane}
 	current := d.inner.GetFocus()
-	idx := 0
+	var idx int
 	if reverse {
 		switch current {
 		case d.entriesPane:

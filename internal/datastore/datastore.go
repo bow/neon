@@ -156,8 +156,9 @@ func tableFieldSetter[T any](
 		}
 
 		// https://github.com/golang/go/issues/18478
-		// nolint: gosec
-		sql1 := `UPDATE ` + table.name() + ` SET ` + columnName + ` = $2 WHERE id = $1 RETURNING id`
+		sql1 := `UPDATE ` + table.name() +
+			` SET ` + columnName +
+			` = $2 WHERE id = $1 RETURNING id` // #nosec G202
 		stmt1, err := tx.PrepareContext(ctx, sql1)
 		if err != nil {
 			return err

@@ -23,7 +23,7 @@ func newServerShowProtoCommand() *cobra.Command {
 		Short:   "Show the server protobuf interface",
 
 		DisableFlagsInUseLine: true,
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(cmd *cobra.Command, _ []string) error {
 			fmt.Fprintf(cmd.OutOrStdout(), "%s", api.Proto())
 			return nil
 		},

@@ -24,7 +24,7 @@ func newVersionCommand() *cobra.Command {
 		Short:   "Show the version",
 
 		DisableFlagsInUseLine: true,
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(cmd *cobra.Command, _ []string) error {
 			bi, ok := debug.ReadBuildInfo()
 			if !ok {
 				return fmt.Errorf("could not read build info")

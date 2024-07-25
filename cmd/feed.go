@@ -18,7 +18,7 @@ func newFeedCommand() *cobra.Command {
 		Use:     name,
 		Aliases: makeAlias(name),
 		Short:   "View or modify feeds",
-		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		PersistentPreRunE: func(cmd *cobra.Command, _ []string) error {
 
 			dbPath, err := resolveDBPath(v.GetString(dbPathKey))
 			if err != nil {

@@ -52,7 +52,7 @@ func TestServer(t *testing.T) {
 	require.False(t, dbExists())
 
 	go func() {
-		cmd, _, _ := newCommand()
+		cmd, _, _ := newCommand() // nolint: contextcheck
 		cmd.SetArgs([]string{"server", "-a", "tcp://:0", "-d", dbPath})
 
 		err = cmd.ExecuteContext(ctx)
