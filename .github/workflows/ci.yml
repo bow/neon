@@ -19,19 +19,11 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-
-      - name: Install Nix
-        uses: cachix/install-nix-action@v27
+      - uses: ./.github/actions/setup-nix
         with:
           nix_path: nixpkgs=flake:nixpkgs
-
-      - name: Install Cachix
-        uses: cachix/cachix-action@v15
-        with:
-          name: bow
-          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+          cachix_name: bow
+          cachix_auth_token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
       - name: Run tests
         run: nix develop . --command make test-cov-xml
@@ -55,19 +47,11 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-
-      - name: Install Nix
-        uses: cachix/install-nix-action@v27
+      - uses: ./.github/actions/setup-nix
         with:
           nix_path: nixpkgs=flake:nixpkgs
-
-      - name: Install Cachix
-        uses: cachix/cachix-action@v15
-        with:
-          name: bow
-          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+          cachix_name: bow
+          cachix_auth_token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
       - name: Run tests
         run: nix develop . --command make lint
@@ -76,19 +60,11 @@ jobs:
     name: Scan AST security
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-
-      - name: Install Nix
-        uses: cachix/install-nix-action@v27
+      - uses: ./.github/actions/setup-nix
         with:
           nix_path: nixpkgs=flake:nixpkgs
-
-      - name: Install Cachix
-        uses: cachix/cachix-action@v15
-        with:
-          name: bow
-          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+          cachix_name: bow
+          cachix_auth_token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
       - name: Scan AST security
         run: nix develop . --command make scan-sec-ast
@@ -97,19 +73,11 @@ jobs:
     name: Scan dependencies
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-
-      - name: Install Nix
-        uses: cachix/install-nix-action@v27
+      - uses: ./.github/actions/setup-nix
         with:
           nix_path: nixpkgs=flake:nixpkgs
-
-      - name: Install Cachix
-        uses: cachix/cachix-action@v15
-        with:
-          name: bow
-          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+          cachix_name: bow
+          cachix_auth_token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
       - name: Export dependencies
         run: go list -json -deps ./... > go.list
@@ -124,19 +92,11 @@ jobs:
     runs-on: ubuntu-latest
     needs: [lint, test, scan-ast, scan-deps]
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-
-      - name: Install Nix
-        uses: cachix/install-nix-action@v27
+      - uses: ./.github/actions/setup-nix
         with:
           nix_path: nixpkgs=flake:nixpkgs
-
-      - name: Install Cachix
-        uses: cachix/cachix-action@v15
-        with:
-          name: bow
-          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+          cachix_name: bow
+          cachix_auth_token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
       - name: Set image tag
         run: >
