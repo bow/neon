@@ -905,12 +905,10 @@ func TestGetInfoOk(t *testing.T) {
 		Name:      internal.AppName(),
 		Version:   internal.Version(),
 		GitCommit: internal.GitCommit(),
-		BuildTime: internal.BuildTime(),
 	}
 	a.Equal(want.Name, rsp.Name)
 	a.Equal(want.Version, rsp.Version)
 	a.Equal(want.GitCommit, rsp.GitCommit)
-	a.Equal(want.BuildTime, rsp.BuildTime)
 }
 
 func pointer[T any](value T) *T { return &value }

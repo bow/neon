@@ -46,7 +46,6 @@ func newVersionCommand() *cobra.Command {
 				map[string]string{
 					"Version":    internal.Version(),
 					"Git commit": internal.GitCommit(),
-					"Build time": internal.BuildTime(),
 					"OS/Arch":    fmt.Sprintf("%s/%s", os, arch),
 					"Go version": bi.GoVersion,
 				},

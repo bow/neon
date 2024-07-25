@@ -294,7 +294,6 @@ func (svc *service) GetInfo(
 		Name:      internal.AppName(),
 		Version:   internal.Version(),
 		GitCommit: internal.GitCommit(),
-		BuildTime: internal.BuildTime(),
 	}
 
 	return &rsp, nil

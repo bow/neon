@@ -221,5 +221,4 @@ message GetInfoResponse {
   string name = 1;
   string version = 2;
   string git_commit = 3;
-  string build_time = 4;
 }

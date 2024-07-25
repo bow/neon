@@ -337,19 +337,11 @@ To close this message, press [yellow]<Esc>[-].
 func (d *Display) setAboutPopupText(name string) {
 	commit := internal.GitCommit()
 
-	var buildTime = internal.BuildTime()
-	buildTimeVal, err := time.Parse(time.RFC3339, buildTime)
-	if err == nil {
-		buildTime = buildTimeVal.Format(longDateFormat)
-	}
-
 	infoText := fmt.Sprintf(`[yellow]Version[-]   : %s
 [yellow]Git commit[-]: %s
-[yellow]Build time[-]: %s
 [yellow]Backend[-]   : %s`,
 		internal.Version(),
 		commit,
-		buildTime,
 		name,
 	)
 

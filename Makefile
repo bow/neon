@@ -28,7 +28,6 @@ ASDF_GO_VERSION := $(GO_VERSION).0
 GIT_TAG    := $(shell git describe --tags --always --dirty 2> /dev/null || echo "untagged")
 GIT_COMMIT := $(shell git rev-parse --quiet --verify HEAD || echo "?")
 GIT_DIRTY  := $(shell test -n "$(shell git status --porcelain)" && echo "-dirty" || true)
-BUILD_TIME := $(shell $(DATE_EXE) -u '+%Y-%m-%dT%H:%M:%SZ')
 IS_RELEASE := $(shell ((echo "${GIT_TAG}" | $(GREP_EXE) -qE "^v?[0-9]+\.[0-9]+\.[0-9]+$$") && echo '1') || true)
 
 IMG_NAME   := ghcr.io/bow/$(APP_NAME)
@@ -48,7 +47,6 @@ endif
 # Linker flags for go-build
 # BASE_LD_FLAGS are linker flags that can not be overwritten.
 BASE_LD_FLAGS := -X ${REPO_NAME}/internal.version=$(GIT_TAG)
-BASE_LD_FLAGS += -X ${REPO_NAME}/internal.buildTime=$(BUILD_TIME)
 BASE_LD_FLAGS += -X ${REPO_NAME}/internal.gitCommit=$(GIT_COMMIT)$(GIT_DIRTY)
 
 # Allow for optional LD flags from env, appended to base flags, stripping trailing whitespaces.
