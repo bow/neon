@@ -31,7 +31,6 @@ func New() *cobra.Command {
 			log.Debug().
 				Str("version", internal.Version()).
 				Int("pid", os.Getpid()).
-				Bool("in_docker", inDocker()).
 				Msgf("starting %s", caser.String(internal.AppName()))
 
 			return nil
@@ -44,9 +43,4 @@ func New() *cobra.Command {
 	command.AddCommand(newVersionCommand())
 
 	return &command
-}
-
-func inDocker() bool {
-	_, errStat := os.Stat("/.dockerenv")
-	return errStat == nil
 }
