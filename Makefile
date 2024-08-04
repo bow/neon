@@ -59,7 +59,7 @@ clean:  ## Remove all build artifacts.
 .PHONY: dev
 dev:  ## Install dependencies for local development.
 	@if command -v nix-env > /dev/null && command -v direnv > /dev/null; then \
-		printf "Configuring a local dev environment and setting up git pre-commit hooks...\n" >&2 \
+		printf "Configuring a local dev environment...\n" >&2 \
 			&& direnv allow . > /dev/null \
 			&& DIRENV_LOG_FORMAT="" direnv exec $(CURDIR) go install go.uber.org/mock/mockgen@v0.4.0 \
 			&& DIRENV_LOG_FORMAT="" direnv exec $(CURDIR) go install github.com/sonatype-nexus-community/nancy@latest \

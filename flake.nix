@@ -1,5 +1,5 @@
 {
-  description = "A basic gomod2nix flake";
+  description = "Nix flake for Neon";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/9355fa86e6f27422963132c2c9aeedb0fb963d93";
