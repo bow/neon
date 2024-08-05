@@ -53,7 +53,6 @@ func newReaderCommand() *cobra.Command {
 				if err != nil {
 					return err
 				}
-				dialOpts = append(dialOpts, grpc.WithBlock())
 				connectTimeout = v.GetDuration(connectTimeoutKey)
 
 			} else {
