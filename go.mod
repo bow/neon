@@ -15,8 +15,8 @@ require (
 	github.com/spf13/viper v1.19.0
 	github.com/stretchr/testify v1.9.0
 	go.uber.org/mock v0.4.0
-	golang.org/x/net v0.27.0
-	golang.org/x/text v0.16.0
+	golang.org/x/net v0.28.0
+	golang.org/x/text v0.17.0
 	google.golang.org/grpc v1.65.0
 	google.golang.org/protobuf v1.34.2
 	modernc.org/sqlite v1.31.1
@@ -61,8 +61,8 @@ require (
 	go.uber.org/atomic v1.11.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/exp v0.0.0-20240719175910-8a7402abbf56 // indirect
-	golang.org/x/sys v0.22.0 // indirect
-	golang.org/x/term v0.22.0 // indirect
+	golang.org/x/sys v0.23.0 // indirect
+	golang.org/x/term v0.23.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240730163845-b1a4ccb954bf // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
