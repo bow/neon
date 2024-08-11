@@ -59,6 +59,7 @@
               gotestsum
               gotools
               (go-migrate.overrideAttrs (_final: _prev: { tags = [ "sqlite" ]; }))
+              mockgen
               protobuf
               protoc-gen-go
               protoc-gen-go-grpc
