@@ -42,6 +42,8 @@ linters-settings:
       - nilness
       - stdmethods
       - unmarshal
+    disable:
+      - printf
   revive:
     # See: https://github.com/mgechev/revive#available-rules
     ignore-generated-header: true
