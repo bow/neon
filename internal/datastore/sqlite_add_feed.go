@@ -146,7 +146,7 @@ func upsertFeed(
 
 	if err == nil {
 		lid, ierr := res.LastInsertId()
-		feedID = ID(lid)
+		feedID = ID(lid) // #nosec: G115
 		if ierr != nil {
 			return feedID, added, ierr
 		}

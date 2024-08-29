@@ -261,8 +261,8 @@ func (svc *service) ImportOPML(
 	}
 
 	rsp := api.ImportOPMLResponse{
-		NumProcessed: uint32(nproc),
-		NumImported:  uint32(nimp),
+		NumProcessed: uint32(nproc), // #nosec: G115
+		NumImported:  uint32(nimp),  // #nosec: G115
 	}
 
 	return &rsp, nil

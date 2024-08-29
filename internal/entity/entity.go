@@ -19,7 +19,7 @@ func ToFeedID(raw string) (ID, error) {
 	if err != nil {
 		return 0, FeedNotFoundError{ID: raw}
 	}
-	return ID(id), nil
+	return ID(id), nil // #nosec: G115
 }
 
 func ToFeedIDs(raw []string) ([]ID, error) {
