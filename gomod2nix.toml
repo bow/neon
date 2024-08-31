@@ -182,8 +182,8 @@ schema = 3
     version = "v3.0.0-20240801135723-a856999a2e4a"
     hash = "sha256-mNcc0Tw2uVVb9YzBUhZ5POHxBiUnCckQywHm/p9NI9s="
   [mod."modernc.org/libc"]
-    version = "v1.60.0"
-    hash = "sha256-0e5pRgeEGQebDj//RzRSzXfogqvHV6rjrFlgIDRGKck="
+    version = "v1.60.1"
+    hash = "sha256-ye90p/54Qh7txsX/TWjFShdS+AE3Hk6v6Q3zHSKDeWc="
   [mod."modernc.org/mathutil"]
     version = "v1.6.0"
     hash = "sha256-lfuEiS1odd2TWrTylnaGihSJ9myqKs3FLdpvd7PqTnE="
