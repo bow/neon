@@ -181,9 +181,6 @@ schema = 3
   [mod."modernc.org/gc/v3"]
     version = "v3.0.0-20240801135723-a856999a2e4a"
     hash = "sha256-mNcc0Tw2uVVb9YzBUhZ5POHxBiUnCckQywHm/p9NI9s="
-  [mod."modernc.org/libc"]
-    version = "v1.60.1"
-    hash = "sha256-ye90p/54Qh7txsX/TWjFShdS+AE3Hk6v6Q3zHSKDeWc="
   [mod."modernc.org/mathutil"]
     version = "v1.6.0"
     hash = "sha256-lfuEiS1odd2TWrTylnaGihSJ9myqKs3FLdpvd7PqTnE="
@@ -191,8 +188,8 @@ schema = 3
     version = "v1.8.0"
     hash = "sha256-ucvPr73zg8LjvU+bcoIPKTgwgcon3U9VhKrLEMH81xg="
   [mod."modernc.org/sqlite"]
-    version = "v1.32.0"
-    hash = "sha256-RHIhxRmovkIngrjC+DqOydhTSd3TwtYARuZKWInZdks="
+    version = "v1.33.0"
+    hash = "sha256-hNUuF2xhrkM13sTdIORaYxiFHqGuJ/5aZSncHh/BUdY="
   [mod."modernc.org/strutil"]
     version = "v1.2.0"
     hash = "sha256-NTYIWMRZjHmR77LMvsFOMCitt7toKTfH+zChYAMzZ2Y="
