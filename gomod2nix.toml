@@ -32,8 +32,8 @@ schema = 3
     version = "v2.7.4"
     hash = "sha256-zRZ132vNob63Qd8u2KJ9xywUj6Tb0d6a5JYi558WYhU="
   [mod."github.com/golang-migrate/migrate/v4"]
-    version = "v4.17.1"
-    hash = "sha256-KT/7xzUXjvYD4ZwM6IK5RnjMC+d9GjoYu5ZEIn/n4K8="
+    version = "v4.18.1"
+    hash = "sha256-AcJ+qI7g/TKB5N6TUhkPE6BWskz9710V8WuEB3oQtQY="
   [mod."github.com/google/uuid"]
     version = "v1.6.0"
     hash = "sha256-VWl9sqUzdOuhW0KzQlv0gwwUQClYkmZwSydHG2sALYw="
@@ -149,8 +149,8 @@ schema = 3
     version = "v1.11.0"
     hash = "sha256-Lb6rHHfR62Ozg2j2JZy3MKOMKdsfzd1IYTR57r3Mhp0="
   [mod."golang.org/x/exp"]
-    version = "v0.0.0-20240823005443-9b4947da3948"
-    hash = "sha256-1rLGU6YhOS3LeSkrCT40AmdO7uuE3TC6NhSYH99XyL4="
+    version = "v0.0.0-20240909161429-701f63a606c0"
+    hash = "sha256-nB3zQGSyCNU9Z6QP0iYYBpUeu7HKBBXS1z9ba4DxjMQ="
   [mod."golang.org/x/net"]
     version = "v0.29.0"
     hash = "sha256-dH9Rdf5T04KJ4B5WvIZh12ogMbADWiWgIt77nvPTk2k="
@@ -164,11 +164,11 @@ schema = 3
     version = "v0.18.0"
     hash = "sha256-aNvJW4gQs+MTfdz6DZqyyHQS2GJ9W8L8qKPVODPn4+k="
   [mod."google.golang.org/genproto/googleapis/rpc"]
-    version = "v0.0.0-20240827150818-7e3bb234dfed"
+    version = "v0.0.0-20240903143218-8af14fe29dc1"
     hash = "sha256-4T4DTrmFbqT4tD7PSL7Ie7u8ZN2iwGkhK02nWugssxk="
   [mod."google.golang.org/grpc"]
-    version = "v1.66.0"
-    hash = "sha256-uFX1JsW1lx+CFLmj0B8wA8iE7ijaWMTNufBvMPMa0P0="
+    version = "v1.66.2"
+    hash = "sha256-ZGEQK9lLC55Jkdifef/SO9mRPwEZmMJPXLH6MAKIGDA="
   [mod."google.golang.org/protobuf"]
     version = "v1.34.2"
     hash = "sha256-nMTlrDEE2dbpWz50eQMPBQXCyQh4IdjrTIccaU0F3m0="
@@ -181,6 +181,9 @@ schema = 3
   [mod."modernc.org/gc/v3"]
     version = "v3.0.0-20240801135723-a856999a2e4a"
     hash = "sha256-mNcc0Tw2uVVb9YzBUhZ5POHxBiUnCckQywHm/p9NI9s="
+  [mod."modernc.org/libc"]
+    version = "v1.60.1"
+    hash = "sha256-ye90p/54Qh7txsX/TWjFShdS+AE3Hk6v6Q3zHSKDeWc="
   [mod."modernc.org/mathutil"]
     version = "v1.6.0"
     hash = "sha256-lfuEiS1odd2TWrTylnaGihSJ9myqKs3FLdpvd7PqTnE="
@@ -188,8 +191,8 @@ schema = 3
     version = "v1.8.0"
     hash = "sha256-ucvPr73zg8LjvU+bcoIPKTgwgcon3U9VhKrLEMH81xg="
   [mod."modernc.org/sqlite"]
-    version = "v1.33.0"
-    hash = "sha256-hNUuF2xhrkM13sTdIORaYxiFHqGuJ/5aZSncHh/BUdY="
+    version = "v1.33.1"
+    hash = "sha256-Bhk9RNeHjgMIHt8n6L6cLxY2mMMAp4Wik5KR0954GaA="
   [mod."modernc.org/strutil"]
     version = "v1.2.0"
     hash = "sha256-NTYIWMRZjHmR77LMvsFOMCitt7toKTfH+zChYAMzZ2Y="
