@@ -18,7 +18,7 @@ require (
 	github.com/stretchr/testify v1.9.0
 	go.uber.org/mock v0.4.0
 	golang.org/x/net v0.29.0
-	golang.org/x/text v0.18.0
+	golang.org/x/text v0.19.0
 	google.golang.org/grpc v1.67.0
 	google.golang.org/protobuf v1.34.2
 	modernc.org/sqlite v1.33.1
