@@ -35,11 +35,11 @@ func (p *popup) setContent(prim tview.Primitive) {
 }
 
 func (p *popup) setWidth(w int) {
-	p.Grid.SetColumns(0, w, 0)
+	p.SetColumns(0, w, 0)
 }
 
 func (p *popup) setHeight(h int) {
-	p.Grid.SetRows(p.topSpacing, h, p.bottomSpacing)
+	p.SetRows(p.topSpacing, h, p.bottomSpacing)
 }
 
 func newPopup(

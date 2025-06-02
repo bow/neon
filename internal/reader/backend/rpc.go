@@ -67,9 +67,9 @@ func (r *RPC) PullFeedsF(
 	ids []entity.ID,
 ) func() (<-chan entity.PullResult, error) {
 	return func() (<-chan entity.PullResult, error) {
-		max := uint32(0)
+		maxN := uint32(0)
 		req := api.PullFeedsRequest{
-			MaxEntriesPerFeed: &max,
+			MaxEntriesPerFeed: &maxN,
 			FeedIds:           ids,
 		}
 		stream, err := r.client.PullFeeds(ctx, &req)
