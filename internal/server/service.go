@@ -233,7 +233,7 @@ func (svc *service) ExportOPML(
 	payload, err := sub.Export()
 	if err != nil {
 		msg := fmt.Errorf("failed to convert subscriptions to OPML: %w", err).Error()
-		return nil, status.Errorf(codes.Internal, msg)
+		return nil, status.Errorf(codes.Internal, "%s", msg)
 	}
 
 	rsp := api.ExportOPMLResponse{Payload: payload}
@@ -252,7 +252,7 @@ func (svc *service) ImportOPML(
 	sub, err := entity.NewSubscriptionFromRawOPML(payload)
 	if err != nil {
 		msg := fmt.Errorf("failed to parse OPML: %w", err).Error()
-		return nil, status.Errorf(codes.InvalidArgument, msg)
+		return nil, status.Errorf(codes.InvalidArgument, "%s", msg)
 	}
 
 	nproc, nimp, err := svc.ds.ImportSubscription(ctx, sub)

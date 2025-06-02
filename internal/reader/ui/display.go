@@ -474,11 +474,11 @@ func (d *Display) infoEventf(text string, a ...any) { d.eventf(eventLevelInfo, t
 func (d *Display) warnEventf(text string, a ...any) { d.eventf(eventLevelWarn, text, a...) }
 
 func (d *Display) errEventf(text string, a ...any) {
-	d.eventf(eventLevelErr, fmt.Sprintf(text, a...))
+	d.eventf(eventLevelErr, "%s", fmt.Sprintf(text, a...))
 }
 
 func (d *Display) errEvent(err error) {
-	d.eventf(eventLevelErr, fmt.Sprintf("%s", err))
+	d.eventf(eventLevelErr, "%s", err)
 }
 
 func (d *Display) eventf(level eventLevel, text string, a ...any) {
