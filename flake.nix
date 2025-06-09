@@ -68,6 +68,7 @@
               nixfmt-rfc-style
               statix
               # others
+              just
               gnugrep
               sqlite
             ];
