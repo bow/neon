@@ -28,7 +28,7 @@ jobs:
           cachix_auth_token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
       - name: Run tests
-        run: nix develop . --command make test-cov-xml
+        run: nix develop . --command just test-cov-xml
 
       - name: Upload test report
         if: always()
@@ -58,7 +58,7 @@ jobs:
           cachix_auth_token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
       - name: Run tests
-        run: nix develop . --command make lint
+        run: nix develop . --command just lint
 
   scan-ast:
     name: Scan AST security
@@ -72,7 +72,7 @@ jobs:
           cachix_auth_token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
       - name: Scan AST security
-        run: nix develop . --command make scan-sec-ast
+        run: nix develop . --command just scan-sec-ast
 
   scan-deps:
     name: Scan dependencies
