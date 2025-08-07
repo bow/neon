@@ -33,23 +33,35 @@ gopath := shell("go env GOPATH")
 mockgen-exe := gopath / "bin" / "mockgen"
 nancy-exe := gopath / "bin" / "nancy"
 
-# Show this help and exit.
-default:
-    @just --list --list-prefix $'{{BOLD}}{{BLUE}}→{{NORMAL}} ' --justfile {{justfile()}} --list-heading $'{{BOLD}}{{CYAN}}◉ {{YELLOW}}{{app-id}}{{CYAN}} dev console{{NORMAL}}\n'
+
+[private]
+default: help
 
 # Compile an executable binary
-bin:
+build-bin:
     @mkdir -p {{bin-dir}}
     go mod tidy
     CGO_ENABLED={{cgo-enabled}} go build -ldflags '{{ld-flags}}' -o {{bin-path}}
+
+# Build a docker image and load it into a running daemon
+build-img:
+    nix build .#dockerArchiveStreamer && ./result | docker image load
 
 # Remove all build artifacts
 clean:
     @rm -f bin/* coverage.html .coverage.out .junit.xml {{dev-db-file}} result
     -@docker rmi ghcr.io/bow/{{app-id}} 2> /dev/null
 
-# Install dependencies for local development
-dev:
+# Apply gofmt
+fmt:
+    go fmt ./...
+
+# Show this help and exit.
+help:
+    @just --list --list-prefix $'{{BOLD}}{{BLUE}}→{{NORMAL}} ' --justfile {{justfile()}} --list-heading $'{{BOLD}}{{CYAN}}◉ {{YELLOW}}{{app-id}}{{CYAN}} dev console{{NORMAL}}\n'
+
+# Install dependencies for local development not yet in Nix
+install-dev:
     #!/usr/bin/env bash
     if command -v nix-env > /dev/null && command -v direnv > /dev/null; then
         printf "Configuring a local dev environment...\n" >&2 \
@@ -65,20 +77,12 @@ dev:
         printf "Error: both direnv and nix seem to be unconfigured and/or missing" >&2 && exit 1
     fi
 
-# Apply gofmt
-fmt:
-    go fmt ./...
-
-# Build a docker image and load it into a running daemon
-img:
-    nix build .#dockerArchiveStreamer && ./result | docker image load
-
 # Lint the code
 lint:
     golangci-lint run
 
 # Generate mocks from interfaces
-mocks:
+gen-mocks:
     #!/usr/bin/env -S parallel --shebang --ungroup --jobs {{ num_cpus() }}
     {{mockgen-exe}} -source=internal/datastore/parser.go -package=datastore Parser > internal/datastore/parser_mock_test.go
     {{mockgen-exe}} -source=internal/datastore/datastore.go -package=server Datastore > internal/server/datastore_mock_test.go
@@ -88,7 +92,7 @@ mocks:
     {{mockgen-exe}} -source=api/neon_grpc.pb.go -package=backend NeonClient > internal/reader/backend/client_mock_test.go
 
 # Generate code from protobuf
-protos:
+gen-protos:
     protoc \
         -I={{proto-dir}} \
         --go_opt=Mneon.proto="{{repo-name}}/api;api" \
@@ -109,22 +113,29 @@ scan-sec-ast:
     gosec -exclude=G304 ./...
 
 # Compile the binary and run the server in development mode
-serve db=(dev-db-file): bin
+serve db=(dev-db-file): build-bin
     {{bin-path}} server --db-path {{db}}
 
 # Run the test suite
-test: mocks coverage-out
+test: gen-mocks test-cov
 
 [private]
-coverage-out:
+test-cov:
     gotestsum --format dots-v2 --junitfile .junit.xml -- ./... -coverprofile=.coverage.out.all -covermode=atomic -coverpkg ./internal/...,./cmd/...,./api,./.
     @grep -v "_mock_test.go" .coverage.out.all | grep -v "/api/" > .coverage.out
     @go tool cover -func=.coverage.out
 
 # Run the test suite and output coverage to XML
-test-cov-xml: coverage-out
+test-cov-xml: test-cov
     gocover-cobertura < .coverage.out > .coverage.xml
 
 # Run the test suite and output coverage to HTML
-test-cov-html: coverage-out
+test-cov-html: test-cov
     go tool cover -html=.coverage.out -o coverage.html
+
+# Update dependencies and nix flake
+update:
+    nix flake update
+    go get -u ./...
+    go mod tidy
+    gomod2nix
