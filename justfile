@@ -109,7 +109,7 @@ scan-sec-deps:
 
 # Perform static security analysis on the AST
 scan-sec-ast:
-    gosec -exclude=G304 ./...
+    gosec -exclude-generated -exclude=G304 ./...
 
 # Compile the binary and run the server in development mode
 serve db=(dev-db-file): build-bin
