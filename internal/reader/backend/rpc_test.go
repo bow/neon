@@ -61,8 +61,8 @@ func TestGetAllFeedsFOk(t *testing.T) {
 	r := require.New(t)
 	a := assert.New(t)
 	rpc, client := newBackendRPCTest(t)
-	streamClient1 := NewMockNeon_StreamEntriesClient(gomock.NewController(t))
-	streamClient2 := NewMockNeon_StreamEntriesClient(gomock.NewController(t))
+	streamClient1 := NewMockServerStreamingClient[api.StreamEntriesResponse](gomock.NewController(t))
+	streamClient2 := NewMockServerStreamingClient[api.StreamEntriesResponse](gomock.NewController(t))
 
 	client.EXPECT().
 		ListFeeds(gomock.Any(), gomock.Any(), gomock.Any()).
@@ -175,7 +175,7 @@ func TestGetAllFeedsFErrStream(t *testing.T) {
 	r := require.New(t)
 	a := assert.New(t)
 	rpc, client := newBackendRPCTest(t)
-	streamClient1 := NewMockNeon_StreamEntriesClient(gomock.NewController(t))
+	streamClient1 := NewMockServerStreamingClient[api.StreamEntriesResponse](gomock.NewController(t))
 
 	client.EXPECT().
 		ListFeeds(gomock.Any(), gomock.Any(), gomock.Any()).
@@ -229,8 +229,8 @@ func TestGetAllFeedsFErrStreamRecv(t *testing.T) {
 	r := require.New(t)
 	a := assert.New(t)
 	rpc, client := newBackendRPCTest(t)
-	streamClient1 := NewMockNeon_StreamEntriesClient(gomock.NewController(t))
-	streamClient2 := NewMockNeon_StreamEntriesClient(gomock.NewController(t))
+	streamClient1 := NewMockServerStreamingClient[api.StreamEntriesResponse](gomock.NewController(t))
+	streamClient2 := NewMockServerStreamingClient[api.StreamEntriesResponse](gomock.NewController(t))
 
 	client.EXPECT().
 		ListFeeds(gomock.Any(), gomock.Any(), gomock.Any()).
@@ -290,7 +290,7 @@ func TestPullFeedsFExtended(t *testing.T) {
 	r := require.New(t)
 	a := assert.New(t)
 	rpc, client := newBackendRPCTest(t)
-	streamClient := NewMockNeon_PullFeedsClient(gomock.NewController(t))
+	streamClient := NewMockServerStreamingClient[api.PullFeedsResponse](gomock.NewController(t))
 
 	client.EXPECT().
 		PullFeeds(gomock.Any(), gomock.Any()).
@@ -369,7 +369,7 @@ func TestPullFeedsFErrStream(t *testing.T) {
 	r := require.New(t)
 	a := assert.New(t)
 	rpc, client := newBackendRPCTest(t)
-	streamClient := NewMockNeon_PullFeedsClient(gomock.NewController(t))
+	streamClient := NewMockServerStreamingClient[api.PullFeedsResponse](gomock.NewController(t))
 
 	client.EXPECT().
 		PullFeeds(gomock.Any(), gomock.Any()).

@@ -30,7 +30,6 @@ dev-db-file := "dev.db"
 
 # Tool paths
 gopath := shell("go env GOPATH")
-mockgen-exe := gopath / "bin" / "mockgen"
 nancy-exe := gopath / "bin" / "nancy"
 
 
@@ -66,7 +65,6 @@ install-dev:
     if command -v nix-env > /dev/null && command -v direnv > /dev/null; then
         printf "Configuring a local dev environment...\n" >&2 \
             && direnv allow . > /dev/null \
-            && DIRENV_LOG_FORMAT="" direnv exec {{justfile_directory()}} go install go.uber.org/mock/mockgen@v0.4.0 \
             && DIRENV_LOG_FORMAT="" direnv exec {{justfile_directory()}} go install github.com/sonatype-nexus-community/nancy@latest \
             && printf "Done.\n" >&2
     elif command -v nix-env > /dev/null; then
@@ -84,12 +82,13 @@ lint:
 # Generate mocks from interfaces
 gen-mocks:
     #!/usr/bin/env -S parallel --shebang --ungroup --jobs {{ num_cpus() }}
-    {{mockgen-exe}} -source=internal/datastore/parser.go -package=datastore Parser > internal/datastore/parser_mock_test.go
-    {{mockgen-exe}} -source=internal/datastore/datastore.go -package=server Datastore > internal/server/datastore_mock_test.go
-    {{mockgen-exe}} -source=internal/reader/ui/operator.go -package=reader Operator > internal/reader/operator_mock_test.go
-    {{mockgen-exe}} -source=internal/reader/backend/backend.go -package=reader Backend > internal/reader/backend_mock_test.go
-    {{mockgen-exe}} -source=internal/reader/state/state.go -package=reader State > internal/reader/state_mock_test.go
-    {{mockgen-exe}} -source=api/neon_grpc.pb.go -package=backend NeonClient > internal/reader/backend/client_mock_test.go
+    mockgen -source=internal/datastore/parser.go -package=datastore Parser > internal/datastore/parser_mock_test.go
+    mockgen -source=internal/datastore/datastore.go -package=server Datastore > internal/server/datastore_mock_test.go
+    mockgen -source=internal/reader/ui/operator.go -package=reader Operator > internal/reader/operator_mock_test.go
+    mockgen -source=internal/reader/backend/backend.go -package=reader Backend > internal/reader/backend_mock_test.go
+    mockgen -source=internal/reader/state/state.go -package=reader State > internal/reader/state_mock_test.go
+    mockgen -package=backend google.golang.org/grpc ServerStreamingClient > internal/reader/backend/client_grpc_mock_test.go
+    mockgen -source=api/neon_grpc.pb.go -package=backend NeonClient > internal/reader/backend/client_mock_test.go
 
 # Generate code from protobuf
 gen-protos:
