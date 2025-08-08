@@ -23,6 +23,7 @@ import (
 type MockDatastore struct {
 	ctrl     *gomock.Controller
 	recorder *MockDatastoreMockRecorder
+	isgomock struct{}
 }
 
 // MockDatastoreMockRecorder is the mock recorder for MockDatastore.
@@ -211,6 +212,7 @@ func (mr *MockDatastoreMockRecorder) PullFeeds(ctx, ids, entryReadStatus, maxEnt
 type MockeditableTable struct {
 	ctrl     *gomock.Controller
 	recorder *MockeditableTableMockRecorder
+	isgomock struct{}
 }
 
 // MockeditableTableMockRecorder is the mock recorder for MockeditableTable.

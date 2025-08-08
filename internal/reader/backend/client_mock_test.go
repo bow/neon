@@ -16,13 +16,13 @@ import (
 	api "github.com/bow/neon/api"
 	gomock "go.uber.org/mock/gomock"
 	grpc "google.golang.org/grpc"
-	metadata "google.golang.org/grpc/metadata"
 )
 
 // MockNeonClient is a mock of NeonClient interface.
 type MockNeonClient struct {
 	ctrl     *gomock.Controller
 	recorder *MockNeonClientMockRecorder
+	isgomock struct{}
 }
 
 // MockNeonClientMockRecorder is the mock recorder for MockNeonClient.
@@ -263,14 +263,14 @@ func (mr *MockNeonClientMockRecorder) ListFeeds(ctx, in any, opts ...any) *gomoc
 }
 
 // PullFeeds mocks base method.
-func (m *MockNeonClient) PullFeeds(ctx context.Context, in *api.PullFeedsRequest, opts ...grpc.CallOption) (api.Neon_PullFeedsClient, error) {
+func (m *MockNeonClient) PullFeeds(ctx context.Context, in *api.PullFeedsRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[api.PullFeedsResponse], error) {
 	m.ctrl.T.Helper()
 	varargs := []any{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "PullFeeds", varargs...)
-	ret0, _ := ret[0].(api.Neon_PullFeedsClient)
+	ret0, _ := ret[0].(grpc.ServerStreamingClient[api.PullFeedsResponse])
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -283,14 +283,14 @@ func (mr *MockNeonClientMockRecorder) PullFeeds(ctx, in any, opts ...any) *gomoc
 }
 
 // StreamEntries mocks base method.
-func (m *MockNeonClient) StreamEntries(ctx context.Context, in *api.StreamEntriesRequest, opts ...grpc.CallOption) (api.Neon_StreamEntriesClient, error) {
+func (m *MockNeonClient) StreamEntries(ctx context.Context, in *api.StreamEntriesRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[api.StreamEntriesResponse], error) {
 	m.ctrl.T.Helper()
 	varargs := []any{ctx, in}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "StreamEntries", varargs...)
-	ret0, _ := ret[0].(api.Neon_StreamEntriesClient)
+	ret0, _ := ret[0].(grpc.ServerStreamingClient[api.StreamEntriesResponse])
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -302,256 +302,11 @@ func (mr *MockNeonClientMockRecorder) StreamEntries(ctx, in any, opts ...any) *g
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "StreamEntries", reflect.TypeOf((*MockNeonClient)(nil).StreamEntries), varargs...)
 }
 
-// MockNeon_PullFeedsClient is a mock of Neon_PullFeedsClient interface.
-type MockNeon_PullFeedsClient struct {
-	ctrl     *gomock.Controller
-	recorder *MockNeon_PullFeedsClientMockRecorder
-}
-
-// MockNeon_PullFeedsClientMockRecorder is the mock recorder for MockNeon_PullFeedsClient.
-type MockNeon_PullFeedsClientMockRecorder struct {
-	mock *MockNeon_PullFeedsClient
-}
-
-// NewMockNeon_PullFeedsClient creates a new mock instance.
-func NewMockNeon_PullFeedsClient(ctrl *gomock.Controller) *MockNeon_PullFeedsClient {
-	mock := &MockNeon_PullFeedsClient{ctrl: ctrl}
-	mock.recorder = &MockNeon_PullFeedsClientMockRecorder{mock}
-	return mock
-}
-
-// EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockNeon_PullFeedsClient) EXPECT() *MockNeon_PullFeedsClientMockRecorder {
-	return m.recorder
-}
-
-// CloseSend mocks base method.
-func (m *MockNeon_PullFeedsClient) CloseSend() error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CloseSend")
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// CloseSend indicates an expected call of CloseSend.
-func (mr *MockNeon_PullFeedsClientMockRecorder) CloseSend() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CloseSend", reflect.TypeOf((*MockNeon_PullFeedsClient)(nil).CloseSend))
-}
-
-// Context mocks base method.
-func (m *MockNeon_PullFeedsClient) Context() context.Context {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Context")
-	ret0, _ := ret[0].(context.Context)
-	return ret0
-}
-
-// Context indicates an expected call of Context.
-func (mr *MockNeon_PullFeedsClientMockRecorder) Context() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Context", reflect.TypeOf((*MockNeon_PullFeedsClient)(nil).Context))
-}
-
-// Header mocks base method.
-func (m *MockNeon_PullFeedsClient) Header() (metadata.MD, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Header")
-	ret0, _ := ret[0].(metadata.MD)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// Header indicates an expected call of Header.
-func (mr *MockNeon_PullFeedsClientMockRecorder) Header() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Header", reflect.TypeOf((*MockNeon_PullFeedsClient)(nil).Header))
-}
-
-// Recv mocks base method.
-func (m *MockNeon_PullFeedsClient) Recv() (*api.PullFeedsResponse, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Recv")
-	ret0, _ := ret[0].(*api.PullFeedsResponse)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// Recv indicates an expected call of Recv.
-func (mr *MockNeon_PullFeedsClientMockRecorder) Recv() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Recv", reflect.TypeOf((*MockNeon_PullFeedsClient)(nil).Recv))
-}
-
-// RecvMsg mocks base method.
-func (m_2 *MockNeon_PullFeedsClient) RecvMsg(m any) error {
-	m_2.ctrl.T.Helper()
-	ret := m_2.ctrl.Call(m_2, "RecvMsg", m)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// RecvMsg indicates an expected call of RecvMsg.
-func (mr *MockNeon_PullFeedsClientMockRecorder) RecvMsg(m any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RecvMsg", reflect.TypeOf((*MockNeon_PullFeedsClient)(nil).RecvMsg), m)
-}
-
-// SendMsg mocks base method.
-func (m_2 *MockNeon_PullFeedsClient) SendMsg(m any) error {
-	m_2.ctrl.T.Helper()
-	ret := m_2.ctrl.Call(m_2, "SendMsg", m)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// SendMsg indicates an expected call of SendMsg.
-func (mr *MockNeon_PullFeedsClientMockRecorder) SendMsg(m any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendMsg", reflect.TypeOf((*MockNeon_PullFeedsClient)(nil).SendMsg), m)
-}
-
-// Trailer mocks base method.
-func (m *MockNeon_PullFeedsClient) Trailer() metadata.MD {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Trailer")
-	ret0, _ := ret[0].(metadata.MD)
-	return ret0
-}
-
-// Trailer indicates an expected call of Trailer.
-func (mr *MockNeon_PullFeedsClientMockRecorder) Trailer() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Trailer", reflect.TypeOf((*MockNeon_PullFeedsClient)(nil).Trailer))
-}
-
-// MockNeon_StreamEntriesClient is a mock of Neon_StreamEntriesClient interface.
-type MockNeon_StreamEntriesClient struct {
-	ctrl     *gomock.Controller
-	recorder *MockNeon_StreamEntriesClientMockRecorder
-}
-
-// MockNeon_StreamEntriesClientMockRecorder is the mock recorder for MockNeon_StreamEntriesClient.
-type MockNeon_StreamEntriesClientMockRecorder struct {
-	mock *MockNeon_StreamEntriesClient
-}
-
-// NewMockNeon_StreamEntriesClient creates a new mock instance.
-func NewMockNeon_StreamEntriesClient(ctrl *gomock.Controller) *MockNeon_StreamEntriesClient {
-	mock := &MockNeon_StreamEntriesClient{ctrl: ctrl}
-	mock.recorder = &MockNeon_StreamEntriesClientMockRecorder{mock}
-	return mock
-}
-
-// EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockNeon_StreamEntriesClient) EXPECT() *MockNeon_StreamEntriesClientMockRecorder {
-	return m.recorder
-}
-
-// CloseSend mocks base method.
-func (m *MockNeon_StreamEntriesClient) CloseSend() error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CloseSend")
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// CloseSend indicates an expected call of CloseSend.
-func (mr *MockNeon_StreamEntriesClientMockRecorder) CloseSend() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CloseSend", reflect.TypeOf((*MockNeon_StreamEntriesClient)(nil).CloseSend))
-}
-
-// Context mocks base method.
-func (m *MockNeon_StreamEntriesClient) Context() context.Context {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Context")
-	ret0, _ := ret[0].(context.Context)
-	return ret0
-}
-
-// Context indicates an expected call of Context.
-func (mr *MockNeon_StreamEntriesClientMockRecorder) Context() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Context", reflect.TypeOf((*MockNeon_StreamEntriesClient)(nil).Context))
-}
-
-// Header mocks base method.
-func (m *MockNeon_StreamEntriesClient) Header() (metadata.MD, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Header")
-	ret0, _ := ret[0].(metadata.MD)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// Header indicates an expected call of Header.
-func (mr *MockNeon_StreamEntriesClientMockRecorder) Header() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Header", reflect.TypeOf((*MockNeon_StreamEntriesClient)(nil).Header))
-}
-
-// Recv mocks base method.
-func (m *MockNeon_StreamEntriesClient) Recv() (*api.StreamEntriesResponse, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Recv")
-	ret0, _ := ret[0].(*api.StreamEntriesResponse)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// Recv indicates an expected call of Recv.
-func (mr *MockNeon_StreamEntriesClientMockRecorder) Recv() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Recv", reflect.TypeOf((*MockNeon_StreamEntriesClient)(nil).Recv))
-}
-
-// RecvMsg mocks base method.
-func (m_2 *MockNeon_StreamEntriesClient) RecvMsg(m any) error {
-	m_2.ctrl.T.Helper()
-	ret := m_2.ctrl.Call(m_2, "RecvMsg", m)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// RecvMsg indicates an expected call of RecvMsg.
-func (mr *MockNeon_StreamEntriesClientMockRecorder) RecvMsg(m any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RecvMsg", reflect.TypeOf((*MockNeon_StreamEntriesClient)(nil).RecvMsg), m)
-}
-
-// SendMsg mocks base method.
-func (m_2 *MockNeon_StreamEntriesClient) SendMsg(m any) error {
-	m_2.ctrl.T.Helper()
-	ret := m_2.ctrl.Call(m_2, "SendMsg", m)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// SendMsg indicates an expected call of SendMsg.
-func (mr *MockNeon_StreamEntriesClientMockRecorder) SendMsg(m any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendMsg", reflect.TypeOf((*MockNeon_StreamEntriesClient)(nil).SendMsg), m)
-}
-
-// Trailer mocks base method.
-func (m *MockNeon_StreamEntriesClient) Trailer() metadata.MD {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Trailer")
-	ret0, _ := ret[0].(metadata.MD)
-	return ret0
-}
-
-// Trailer indicates an expected call of Trailer.
-func (mr *MockNeon_StreamEntriesClientMockRecorder) Trailer() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Trailer", reflect.TypeOf((*MockNeon_StreamEntriesClient)(nil).Trailer))
-}
-
 // MockNeonServer is a mock of NeonServer interface.
 type MockNeonServer struct {
 	ctrl     *gomock.Controller
 	recorder *MockNeonServerMockRecorder
+	isgomock struct{}
 }
 
 // MockNeonServerMockRecorder is the mock recorder for MockNeonServer.
@@ -737,7 +492,7 @@ func (mr *MockNeonServerMockRecorder) ListFeeds(arg0, arg1 any) *gomock.Call {
 }
 
 // PullFeeds mocks base method.
-func (m *MockNeonServer) PullFeeds(arg0 *api.PullFeedsRequest, arg1 api.Neon_PullFeedsServer) error {
+func (m *MockNeonServer) PullFeeds(arg0 *api.PullFeedsRequest, arg1 grpc.ServerStreamingServer[api.PullFeedsResponse]) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "PullFeeds", arg0, arg1)
 	ret0, _ := ret[0].(error)
@@ -751,7 +506,7 @@ func (mr *MockNeonServerMockRecorder) PullFeeds(arg0, arg1 any) *gomock.Call {
 }
 
 // StreamEntries mocks base method.
-func (m *MockNeonServer) StreamEntries(arg0 *api.StreamEntriesRequest, arg1 api.Neon_StreamEntriesServer) error {
+func (m *MockNeonServer) StreamEntries(arg0 *api.StreamEntriesRequest, arg1 grpc.ServerStreamingServer[api.StreamEntriesResponse]) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "StreamEntries", arg0, arg1)
 	ret0, _ := ret[0].(error)
@@ -780,6 +535,7 @@ func (mr *MockNeonServerMockRecorder) mustEmbedUnimplementedNeonServer() *gomock
 type MockUnsafeNeonServer struct {
 	ctrl     *gomock.Controller
 	recorder *MockUnsafeNeonServerMockRecorder
+	isgomock struct{}
 }
 
 // MockUnsafeNeonServerMockRecorder is the mock recorder for MockUnsafeNeonServer.
@@ -809,242 +565,4 @@ func (m *MockUnsafeNeonServer) mustEmbedUnimplementedNeonServer() {
 func (mr *MockUnsafeNeonServerMockRecorder) mustEmbedUnimplementedNeonServer() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "mustEmbedUnimplementedNeonServer", reflect.TypeOf((*MockUnsafeNeonServer)(nil).mustEmbedUnimplementedNeonServer))
-}
-
-// MockNeon_PullFeedsServer is a mock of Neon_PullFeedsServer interface.
-type MockNeon_PullFeedsServer struct {
-	ctrl     *gomock.Controller
-	recorder *MockNeon_PullFeedsServerMockRecorder
-}
-
-// MockNeon_PullFeedsServerMockRecorder is the mock recorder for MockNeon_PullFeedsServer.
-type MockNeon_PullFeedsServerMockRecorder struct {
-	mock *MockNeon_PullFeedsServer
-}
-
-// NewMockNeon_PullFeedsServer creates a new mock instance.
-func NewMockNeon_PullFeedsServer(ctrl *gomock.Controller) *MockNeon_PullFeedsServer {
-	mock := &MockNeon_PullFeedsServer{ctrl: ctrl}
-	mock.recorder = &MockNeon_PullFeedsServerMockRecorder{mock}
-	return mock
-}
-
-// EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockNeon_PullFeedsServer) EXPECT() *MockNeon_PullFeedsServerMockRecorder {
-	return m.recorder
-}
-
-// Context mocks base method.
-func (m *MockNeon_PullFeedsServer) Context() context.Context {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Context")
-	ret0, _ := ret[0].(context.Context)
-	return ret0
-}
-
-// Context indicates an expected call of Context.
-func (mr *MockNeon_PullFeedsServerMockRecorder) Context() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Context", reflect.TypeOf((*MockNeon_PullFeedsServer)(nil).Context))
-}
-
-// RecvMsg mocks base method.
-func (m_2 *MockNeon_PullFeedsServer) RecvMsg(m any) error {
-	m_2.ctrl.T.Helper()
-	ret := m_2.ctrl.Call(m_2, "RecvMsg", m)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// RecvMsg indicates an expected call of RecvMsg.
-func (mr *MockNeon_PullFeedsServerMockRecorder) RecvMsg(m any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RecvMsg", reflect.TypeOf((*MockNeon_PullFeedsServer)(nil).RecvMsg), m)
-}
-
-// Send mocks base method.
-func (m *MockNeon_PullFeedsServer) Send(arg0 *api.PullFeedsResponse) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Send", arg0)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// Send indicates an expected call of Send.
-func (mr *MockNeon_PullFeedsServerMockRecorder) Send(arg0 any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Send", reflect.TypeOf((*MockNeon_PullFeedsServer)(nil).Send), arg0)
-}
-
-// SendHeader mocks base method.
-func (m *MockNeon_PullFeedsServer) SendHeader(arg0 metadata.MD) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SendHeader", arg0)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// SendHeader indicates an expected call of SendHeader.
-func (mr *MockNeon_PullFeedsServerMockRecorder) SendHeader(arg0 any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendHeader", reflect.TypeOf((*MockNeon_PullFeedsServer)(nil).SendHeader), arg0)
-}
-
-// SendMsg mocks base method.
-func (m_2 *MockNeon_PullFeedsServer) SendMsg(m any) error {
-	m_2.ctrl.T.Helper()
-	ret := m_2.ctrl.Call(m_2, "SendMsg", m)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// SendMsg indicates an expected call of SendMsg.
-func (mr *MockNeon_PullFeedsServerMockRecorder) SendMsg(m any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendMsg", reflect.TypeOf((*MockNeon_PullFeedsServer)(nil).SendMsg), m)
-}
-
-// SetHeader mocks base method.
-func (m *MockNeon_PullFeedsServer) SetHeader(arg0 metadata.MD) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SetHeader", arg0)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// SetHeader indicates an expected call of SetHeader.
-func (mr *MockNeon_PullFeedsServerMockRecorder) SetHeader(arg0 any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetHeader", reflect.TypeOf((*MockNeon_PullFeedsServer)(nil).SetHeader), arg0)
-}
-
-// SetTrailer mocks base method.
-func (m *MockNeon_PullFeedsServer) SetTrailer(arg0 metadata.MD) {
-	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "SetTrailer", arg0)
-}
-
-// SetTrailer indicates an expected call of SetTrailer.
-func (mr *MockNeon_PullFeedsServerMockRecorder) SetTrailer(arg0 any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetTrailer", reflect.TypeOf((*MockNeon_PullFeedsServer)(nil).SetTrailer), arg0)
-}
-
-// MockNeon_StreamEntriesServer is a mock of Neon_StreamEntriesServer interface.
-type MockNeon_StreamEntriesServer struct {
-	ctrl     *gomock.Controller
-	recorder *MockNeon_StreamEntriesServerMockRecorder
-}
-
-// MockNeon_StreamEntriesServerMockRecorder is the mock recorder for MockNeon_StreamEntriesServer.
-type MockNeon_StreamEntriesServerMockRecorder struct {
-	mock *MockNeon_StreamEntriesServer
-}
-
-// NewMockNeon_StreamEntriesServer creates a new mock instance.
-func NewMockNeon_StreamEntriesServer(ctrl *gomock.Controller) *MockNeon_StreamEntriesServer {
-	mock := &MockNeon_StreamEntriesServer{ctrl: ctrl}
-	mock.recorder = &MockNeon_StreamEntriesServerMockRecorder{mock}
-	return mock
-}
-
-// EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockNeon_StreamEntriesServer) EXPECT() *MockNeon_StreamEntriesServerMockRecorder {
-	return m.recorder
-}
-
-// Context mocks base method.
-func (m *MockNeon_StreamEntriesServer) Context() context.Context {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Context")
-	ret0, _ := ret[0].(context.Context)
-	return ret0
-}
-
-// Context indicates an expected call of Context.
-func (mr *MockNeon_StreamEntriesServerMockRecorder) Context() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Context", reflect.TypeOf((*MockNeon_StreamEntriesServer)(nil).Context))
-}
-
-// RecvMsg mocks base method.
-func (m_2 *MockNeon_StreamEntriesServer) RecvMsg(m any) error {
-	m_2.ctrl.T.Helper()
-	ret := m_2.ctrl.Call(m_2, "RecvMsg", m)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// RecvMsg indicates an expected call of RecvMsg.
-func (mr *MockNeon_StreamEntriesServerMockRecorder) RecvMsg(m any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RecvMsg", reflect.TypeOf((*MockNeon_StreamEntriesServer)(nil).RecvMsg), m)
-}
-
-// Send mocks base method.
-func (m *MockNeon_StreamEntriesServer) Send(arg0 *api.StreamEntriesResponse) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Send", arg0)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// Send indicates an expected call of Send.
-func (mr *MockNeon_StreamEntriesServerMockRecorder) Send(arg0 any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Send", reflect.TypeOf((*MockNeon_StreamEntriesServer)(nil).Send), arg0)
-}
-
-// SendHeader mocks base method.
-func (m *MockNeon_StreamEntriesServer) SendHeader(arg0 metadata.MD) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SendHeader", arg0)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// SendHeader indicates an expected call of SendHeader.
-func (mr *MockNeon_StreamEntriesServerMockRecorder) SendHeader(arg0 any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendHeader", reflect.TypeOf((*MockNeon_StreamEntriesServer)(nil).SendHeader), arg0)
-}
-
-// SendMsg mocks base method.
-func (m_2 *MockNeon_StreamEntriesServer) SendMsg(m any) error {
-	m_2.ctrl.T.Helper()
-	ret := m_2.ctrl.Call(m_2, "SendMsg", m)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// SendMsg indicates an expected call of SendMsg.
-func (mr *MockNeon_StreamEntriesServerMockRecorder) SendMsg(m any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendMsg", reflect.TypeOf((*MockNeon_StreamEntriesServer)(nil).SendMsg), m)
-}
-
-// SetHeader mocks base method.
-func (m *MockNeon_StreamEntriesServer) SetHeader(arg0 metadata.MD) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SetHeader", arg0)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// SetHeader indicates an expected call of SetHeader.
-func (mr *MockNeon_StreamEntriesServerMockRecorder) SetHeader(arg0 any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetHeader", reflect.TypeOf((*MockNeon_StreamEntriesServer)(nil).SetHeader), arg0)
-}
-
-// SetTrailer mocks base method.
-func (m *MockNeon_StreamEntriesServer) SetTrailer(arg0 metadata.MD) {
-	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "SetTrailer", arg0)
-}
-
-// SetTrailer indicates an expected call of SetTrailer.
-func (mr *MockNeon_StreamEntriesServerMockRecorder) SetTrailer(arg0 any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetTrailer", reflect.TypeOf((*MockNeon_StreamEntriesServer)(nil).SetTrailer), arg0)
 }
